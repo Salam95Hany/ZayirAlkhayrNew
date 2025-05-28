@@ -1,0 +1,39 @@
+<div class="p-4 gradient-nw-wrraper-bg">
+    <div class="container-fluid width-90-per">
+        <app-za-header></app-za-header>
+        <main class="main-design-wrapper pt-3">
+            <div class="d-flex">
+                <aside class="nw-sidebar-wrapper" [class.is-toggle]="isToggle">
+                    <button class="sidebar-button-collapser" (click)="onToggleContent()">
+                        <i class="uil uil-angle-left"></i>
+                    </button>
+                    <div class="p-2">
+                        <div *ngIf="menuItem && menuItem.subMenus?.length >0" class="sidebar-scrolling small-scroll d-flex flex-column gap-4 nw-sidebar-height">
+                            <section class="d-flex flex-column gap-4">
+                                <h4 class="nw-sidebar-title mb-0">
+                                    {{menuItem.displayName}}
+                                </h4>
+                                <ul class="nw-sidebar-list list-unstyled p-0 m-0 d-flex flex-column gap-3">
+                                    <li *ngFor="let item of menuItem.subMenus" class="nw-sidebar-item">
+                                        <a [routerLink]="item.route" routerLinkActive="active" class="nw-sidebar-link d-flex align-items-center gap-3">
+                                            <div class="nw-sidebar-icon">
+                                                <i [class]="item.icon"></i>
+                                            </div>
+                                            <div class="nw-sidebar-text">{{item.displayName}}</div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </section>
+
+                        </div>
+                    </div>
+                </aside>
+                <div class="main-general-account-content py-3">
+                    <router-outlet></router-outlet>
+                </div>
+            </div>
+            <div id="overlaying-element" class="cursor-pointer" [class.show]="isToggle" (click)="onOverlayClicked()">
+            </div>
+        </main>
+    </div>
+</div>

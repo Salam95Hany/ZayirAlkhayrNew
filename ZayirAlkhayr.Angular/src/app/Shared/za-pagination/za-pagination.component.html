@@ -1,0 +1,41 @@
+<!-- <div *ngIf="!newPagination" class="pagination-container d-flex align-items-center justify-content-end flex-wrap">
+    <span class="me-2">
+    <span class="CrossRef_2_Info">{{'Showing'}} {{showingStr}} {{'of'}} </span>
+    <span class="CrossRef_2_InfoTotal">{{totalCount}}</span>
+    </span>
+    <div class="pull-right NewPaging">
+        <pagination [boundaryLinks]="true" [totalItems]="totalCount" [maxSize]="maxSize" [itemsPerPage]="pageSize" previousText="{{'Previous'}}" nextText="{{'Next'}}" firstText="{{'First'}}" lastText="{{'Last'}}">
+        </pagination>
+    </div>
+</div> -->
+<div *ngIf="newPagination" class="pagination-container d-flex align-items-center justify-content-end flex-wrap">
+    <span class="me-2">
+    <span class="CrossRef_2_Info">عرض {{showingStr}} من </span>
+    <span class="CrossRef_2_InfoTotal">{{totalCount}}</span>
+    </span>
+    <div class="pull-right NewPaging">
+        <nav>
+            <ul class="table-pagination pagination m-0 p-0 gap-2">
+                <li *ngIf="totalPages>3" class="page-item" [class.disabled]="currentPage === 1">
+                    <a (click)="setPage(1)" class="page-link">الأولي</a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                    <a class="page-link" aria-label="Previous" (click)="setPage(currentPage - 1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                <li *ngFor="let page of pages" class="page-item" [class.active]="page === currentPage">
+                    <a (click)="setPage(page)" class="page-link">{{page}}</a>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                    <a class="page-link" (click)="setPage(currentPage + 1)" aria-label="Next">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                <li *ngIf="totalPages>3" class="page-item" [class.disabled]="currentPage === totalPages">
+                    <a (click)="setPage(totalPages)" class="page-link">الأخيرة</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>

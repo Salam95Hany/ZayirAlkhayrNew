@@ -1,0 +1,52 @@
+<div *ngIf="!selectMulti" ngbDropdown class="dropdown-as-input">
+    <button type="button" style="padding-left: 80px;" [disabled]="disabled" id="dropdownBasic1" ngbDropdownToggle>
+        <span>{{selectedName?selectedName?.substring(0, 30):placeholder}}
+            <sup>*</sup>
+        </span>
+        <span *ngIf="selectedCode">{{selectedCode}}</span>
+    </button>
+    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="w-100">
+        <div *ngIf="showSearch" class="p-2 bg-light border-bottom">
+            <input type="text" class="form-control form-control" (input)="onInputChange($event)" placeholder="Search..." />
+        </div>
+        <div class="dropdown-h large-scroll">
+            <ng-container *ngFor="let item of data | searchArry: searchText: searchFields">
+                <div class="d-flex dropdown-item cursor-pointer" [class]="item.value==selectedValue?'active DropDownSelected':''" (click)="selectOption(item)">
+                    <a style="width:270px; min-width: 270px">{{item.name}}</a>
+                    <a class="dropdown-item text-center" *ngIf="item && item.code">{{item.code}}</a>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="selectMulti" ngbDropdown [autoClose]="'outside'" class="dropdown-as-input">
+    <button type="button" [disabled]="disabled" id="dropdownBasic1" ngbDropdownToggle>
+        <div class="overflow-hidden"> 
+            <span *ngIf="selectedItems.length === 0">{{placeholder}}</span>
+            <span *ngIf="selectedItems.length > 0" >
+                <span *ngFor="let item of selectedItems?.slice(0,2)">
+                    {{item?.substring(0, 20)}} - 
+                </span>
+            </span>
+            <span *ngIf="selectedItems.length > 2"> ...</span>  
+        </div>
+    </button>
+    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="w-100">
+        <div *ngIf="showSearch" class="p-2 bg-light border-bottom">
+            <input type="text" class="form-control form-control-sm" (input)="onInputChange($event)" placeholder="Search..." />
+        </div>
+        <div class="dropdown-h large-scroll">
+            <ng-container *ngFor="let item of data | searchArry: searchText: searchFields">
+                <div class="dropdown-item cursor-pointer">
+                    <input [checked]="item.isSelected" type="checkbox" class="cursor-pointer" (change)="selectMultiOption(item)">
+
+                    <span (click)="selectMultiOption(item)" class="black pl-1 w-100 cursor-pointer">
+                      {{item.name}}
+                  </span>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

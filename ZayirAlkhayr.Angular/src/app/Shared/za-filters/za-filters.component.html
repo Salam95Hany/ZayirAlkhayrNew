@@ -1,0 +1,42 @@
+<div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+    <div class="input-group max-width-300 min-width-300">
+        <span class="input-group-text bg-light">
+      <button (click)="filterChecked()" class="border-0 bg-transparent">
+        <i class="fas fa-search"></i>
+      </button>
+
+    </span>
+        <input [(ngModel)]="SearchText" (keyup.enter)="filterChecked()" type="text" [placeholder]="searchPlaceholder" class="form-control">
+    </div>
+    <div ngbDropdown class="dropdown-filter-wrapper d-inline-block" *ngFor="let filter of FilterList;let i = index">
+        <button type="button" class="filter-button border px-3 py-2 rounded bg-white min-width-100 d-flex align-items-center justify-content-between" id="filterInput1" ngbDropdownToggle>
+      {{filter.categoryDisplayName}}
+    </button>
+        <div ngbDropdownMenu aria-labelledby="filterInput1" class="dropdown-filter p-0 overflow-hidden" container="body">
+            <div class="p-2 bg-light border-bottom">
+                <input type="text" [(ngModel)]="filterSearch" class="form-control form-control-sm" placeholder="Search..." />
+            </div>
+            <div class="erp-filter-box small-scroll">
+                <div class="check-row px-2" *ngFor="let filterItem of filter.filterItems | searchArry: filterSearch:['itemFlag'];let x = index">
+                    <div class="form-check">
+                        <input class="form-check-input" [(ngModel)]="filterItem.isChecked" (change)="filterChecked()" type="checkbox" id="filter-input_{{i}}_{{x}}">
+                        <label class="form-check-label d-flex align-items-center justify-content-between w-100 pe-2" for="filter-input_{{i}}_{{x}}">
+                        <span>{{filterItem.itemKey}}</span>
+                        <span>{{filterItem.itemValue}}</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="d-flex align-items-center">
+    <span class="badge badge-size bg-primary me-1 mb-1" *ngFor="let selected of SelectedFilter;let i = index">
+    {{selected.categoryDisplayName}} : {{selected.itemKey}}
+    <i class="fas fa-times-circle ms-1 icon-close cursor-pointer" (click)="RemoveSelectedFilter(selected,i)"></i>
+  </span>
+    <span class="badge badge-size bg-secondary me-1 mb-1" *ngIf="SelectedFilter.length > 0">
+    Clear All
+    <i class="fas fa-times-circle ms-1 icon-close cursor-pointer" (click)="RemoveAllFilters()"></i>
+  </span>
+</div>

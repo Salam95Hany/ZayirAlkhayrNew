@@ -1,0 +1,70 @@
+::ng-deep .pagination-container ul.pagination {
+    margin: 0;
+}
+
+::ng-deep .pagination-container ul.pagination .page-link {
+    padding: 0.3rem 0.45rem;
+    font-size: 0.8rem;
+    color: #000;
+    background-color: #fff;
+    border-color: #ddd;
+    --dim: 25px;
+    min-width: var(--dim);
+    min-height: var(--dim);
+    width: var(--dim);
+    height: var(--dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+::ng-deep .pagination-container ul.pagination .page-link:hover {
+    background-color: #f9fafd;
+}
+
+::ng-deep .pagination-container ul.pagination .page-item {
+    cursor: pointer;
+}
+
+::ng-deep .pagination-container ul.pagination .page-item:first-child .page-link {
+    border-top-left-radius: 0.21rem;
+    border-bottom-left-radius: 0.21rem;
+}
+
+::ng-deep .pagination-container ul.pagination .page-item:last-child .page-link {
+    border-top-right-radius: 0.21rem;
+    border-bottom-right-radius: 0.21rem;
+}
+
+::ng-deep .pagination-container ul.pagination .page-item.disabled .page-link {
+    color: #6b6f82;
+    pointer-events: none;
+    cursor: auto;
+    background-color: #fff;
+    border-color: #ddd;
+}
+
+::ng-deep .active>.page-link,
+.page-link.active {
+    background-color: var(--main-color) !important;
+    border-color: var(--main-color) !important;
+    color: #fff !important;
+}
+
+.table-pagination .page-link {
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+}
+
+.table-pagination .page-item:first-child .page-link {
+    border-top-right-radius: 50%;
+    border-bottom-right-radius: 50%;
+}
+
+.table-pagination .page-item:last-child .page-link {
+    border-top-left-radius: 50%;
+    border-bottom-left-radius: 50%;
+}

@@ -1,0 +1,126 @@
+<div class="p-4 gradient-nw-wrraper-bg">
+    <app-za-header></app-za-header>
+    <main class="pt-3">
+        <div class="position-relative zindex-2 px-3">
+            <header class="module-header rounded shadow-lg d-flex align-items-center mb-4">
+                <div class="half-content">
+                    <div class="row gy-2">
+                        <div class="col-lg-11">
+                            <div class="horizontal-line w-100 h-100 d-flex align-items-center justify-content-center justify-content-lg-start text-white ps-0 ps-lg-4">
+                                <div>
+                                    <h2 class="with-bullets d-flex align-items-center">
+                                        <div class="module-header-icon me-2">
+                                            <i class="fas fa-user-tie"></i>
+                                        </div>
+                                        <div>مرحبا
+                                            <span class="username-title text-white text-uppercase fw-bold ms-2">سلام هاني البدوي</span>
+                                        </div>
+                                    </h2>
+                                    <h4 class="with-bullets">
+                                        <div class="module-header-icon me-2">
+                                            <i class="fas fa-map-marker"></i>
+                                        </div>
+                                        <div>
+                                            <span>زائر الخير</span>
+                                        </div>
+                                    </h4>
+                                    <h6 class="with-bullets">
+                                        <div class="module-header-icon me-2">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </div>
+                                        <div>{{time | date}}</div>
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-1 d-flex justify-content-center justify-content-lg-end">
+                            <div class="summary-circle-date shadow-sm">
+                                <span>{{clock}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <img src="svg-banner.svg" class="image-banner" loading="lazy" alt="" />
+            </header>
+
+            <section class="erp-home-products">
+                <div class="card radius-10 border shadow-sm mb-4">
+                    <div class="card-body pt-3">
+                        <div class="d-flex align-items-center mb-3 gap-3 pb-3 border-bottom">
+                            <div class="title-with-img">
+                                <img src="select-product.png" class="title-imaged" loading="lazy" alt="" />
+                            </div>
+                            <h4 class="fw-bold m-0">اختر نظام</h4>
+                        </div>
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-6 gy-4">
+                            <div class="col" routerLink="/za-institution">
+                                <div class="erp-prod-item prod-blue box-hover cursor-pointer">
+                                    <div class="d-flex flex-column align-items-center justify-content-between">
+                                        <div class="erp-prod-icon shadow-sm erp-icon-blue">
+                                            <img src="stock.png" class="product-img" loading="lazy" alt="" />
+                                        </div>
+                                        <div class="erp-prod-text prod-text-blue fw-bold fs-5">مؤسسة زائر الخير</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col" routerLink="general-accounts">
+                                <div class="erp-prod-item prod-orange box-hover cursor-pointer">
+                                    <div class="d-flex flex-column align-items-center justify-content-between">
+                                        <div class="erp-prod-icon shadow-sm erp-icon-orange">
+                                            <img src="call-center.png" class="product-img" loading="lazy" alt="" />
+                                        </div>
+                                        <div class="erp-prod-text prod-text-orange fw-bold fs-5">الحسابات العامة
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col" routerLink="purchases">
+                                <div class="erp-prod-item prod-gray box-hover cursor-pointer">
+                                    <div class="d-flex flex-column align-items-center justify-content-between">
+                                        <div class="erp-prod-icon shadow-sm erp-icon-gray">
+                                            <img src="pay-payment.png" class="product-img" loading="lazy" alt="" />
+                                        </div>
+                                        <div class="erp-prod-text prod-text-gray fw-bold fs-5">دار القران</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col" routerLink="sales">
+                                <div class="erp-prod-item prod-red box-hover cursor-pointer">
+                                    <div class="d-flex flex-column align-items-center justify-content-between">
+                                        <div class="erp-prod-icon shadow-sm erp-icon-red">
+                                            <img src="sale.png" class="product-img" loading="lazy" alt="" />
+                                        </div>
+                                        <div class="erp-prod-text prod-text-red fw-bold fs-5">مركز بشائر القرآن</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="col" routerLink="hr">
+                                <div class="erp-prod-item prod-purple box-hover cursor-pointer">
+                                    <div class="d-flex flex-column align-items-center justify-content-between">
+                                        <div class="erp-prod-icon shadow-sm erp-icon-purple">
+                                            <img src="hr.png" class="product-img" loading="lazy" alt="" />
+                                        </div>
+                                        <div class="erp-prod-text prod-text-purple fw-bold fs-5">الموارد البشرية
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <div class="col" routerLink="system-settings">
+                                <div class="erp-prod-item prod-green box-hover cursor-pointer">
+                                    <div class="d-flex flex-column align-items-center justify-content-between">
+                                        <div class="erp-prod-icon shadow-sm erp-icon-green">
+                                            <img src="settings.png" class="product-img" loading="lazy" alt="" />
+                                        </div>
+                                        <div class="erp-prod-text prod-text-green fw-bold fs-5">إعدادات النظام
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

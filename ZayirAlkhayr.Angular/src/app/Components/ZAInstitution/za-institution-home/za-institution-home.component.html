@@ -1,0 +1,142 @@
+<div class="d-flex flex-column gap-5">
+    <section class="general-accounts-section d-flex flex-column gap-4">
+        <div class="section-content d-flex">
+            <div class="col-md-3 p-2" *ngFor="let data of statisticsCardList">
+                <app-overview-card [data]="data"></app-overview-card>
+            </div>
+        </div>
+    </section>
+    <section *ngIf="selectedTabName && menuItem" class="general-accounts-section d-flex flex-column gap-4">
+        <header class="section-header d-flex flex-column gap-2">
+            <h2 class="section-title m-0">{{menuItem.displayName}}</h2>
+            <span class="text-muted">٢٥/٤/٢٠٢٥ . الاحد</span>
+        </header>
+        <div *ngIf="menuItem?.subMenus?.length >0 " class="section-content">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-6 g-4">
+                <div *ngFor="let item of menuItem?.subMenus" class="col">
+                    <div [routerLink]="item.route" routerLinkActive="active" class="bg-white shadow-sm column-card d-flex flex-column align-items-center gap-3 text-center h-100  cursor-pointer hovered">
+                        <div class="column-card-icon">
+                            <i [class]="item.icon"></i>
+                        </div>
+                        <div class="column-card-title">{{item.displayName}}</div>
+                        <div class="column-card-description text-muted">
+                            {{item.description}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="general-accounts-section d-flex flex-column gap-4">
+        <header class="section-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <h2 class="section-title m-0">الحسابات العامة</h2>
+            <div ngbDropdown class="nw-dropdown" display="dynamic">
+                <button id="month-toggle" type="button" class="btn bg-white-5 rounded d-flex align-items-center justify-content-between gap-2 px-3" ngbDropdownToggle>
+                    <span>هذا الشهر</span>
+                    <i class="fa-solid fa-chevron-down dropdown-arrow fs-13"></i>
+                </button>
+                <div ngbDropdownMenu aria-labelledby="month-toggle" class="border shadow-lg bg-white rounded">
+                    <button class="dropdown-item cursor-pointer">يناير</button>
+                    <button class="dropdown-item cursor-pointer">مارس</button>
+                    <button class="dropdown-item cursor-pointer">أبريل</button>
+                    <button class="dropdown-item cursor-pointer">أكتوبر</button>
+                </div>
+            </div>
+        </header>
+        <div class="section-content">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <div class="col">
+                    <div class="bg-white shadow-sm column-card d-flex flex-column align-items-center gap-3 h-100">
+                        <header class="d-flex align-items-center justify-content-between gap-2 w-100 light-purple-header">
+                            <div class="d-flex flex-column gap-2">
+                                <div class="column-card-title">العمليات المالية</div>
+                                <div class="column-card-description text-muted">إجمالي العمليات اليومية</div>
+                            </div>
+                            <div class="column-card-icon">
+                                <i class="uil uil-university"></i>
+                            </div>
+                        </header>
+                        <div class="light-purple-content d-flex flex-column gap-3 w-100">
+                            <div class="light-purple-content-item">
+                                <div class="fw-bold">٣٥ عملية</div>
+                                <div class="text-success">١٢٪ أعلى من الأمس</div>
+                            </div>
+                            <div class="light-purple-content-item d-flex justify-content-between gap-2 flex-wrap">
+                                <div>
+                                    <div class="text-muted">إجمالي الإيرادات</div>
+                                    <div class="fw-bold">١٨,٥٠٠ ر.س</div>
+                                </div>
+                                <div>
+                                    <div class="text-muted">إجمالي المصروفات</div>
+                                    <div class="fw-bold">٧,٢٠٠ ر.س</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="bg-white shadow-sm column-card d-flex flex-column align-items-center gap-3 h-100">
+                        <header class="d-flex align-items-center justify-content-between gap-2 w-100 light-purple-header">
+                            <div class="d-flex flex-column gap-2">
+                                <div class="column-card-title">الإيرادات</div>
+                                <div class="column-card-description text-muted">إجمالي الإيرادات اليومية</div>
+                            </div>
+                            <div class="column-card-icon">
+                                <i class="uil uil-money-insert"></i>
+                            </div>
+                        </header>
+                        <div class="light-purple-content d-flex flex-column gap-3 w-100">
+                            <div class="light-purple-content-item">
+                                <div class="fw-bold">١٨,٥٠٠ ر.س</div>
+                                <div class="text-success">١٢٪ أعلى من الأمس</div>
+                            </div>
+                            <div class="light-purple-content-item d-flex justify-content-between gap-2 flex-wrap">
+                                <div>
+                                    <div class="text-muted">عدد العمليات</div>
+                                    <div class="fw-bold">٢٢ عملية</div>
+                                </div>
+                                <div>
+                                    <div class="text-muted">متوسط القيمة</div>
+                                    <div class="fw-bold">٨٤٠ ر.س</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col">
+                    <div class="bg-white shadow-sm column-card d-flex flex-column align-items-center gap-3 h-100">
+                        <header class="d-flex align-items-center justify-content-between gap-2 w-100 light-purple-header">
+                            <div class="d-flex flex-column gap-2">
+                                <div class="column-card-title">الصادرات</div>
+                                <div class="column-card-description text-muted">إجمالي الصادرات اليومية</div>
+                            </div>
+                            <div class="column-card-icon">
+                                <i class="uil uil-money-stack"></i>
+                            </div>
+                        </header>
+                        <div class="light-purple-content d-flex flex-column gap-3 w-100">
+                            <div class="light-purple-content-item">
+                                <div class="fw-bold">٧,٢٠٠ ر.س</div>
+                                <div class="text-danger">٥٪ أقل من الأمس</div>
+                            </div>
+                            <div class="light-purple-content-item d-flex justify-content-between gap-2 flex-wrap">
+                                <div>
+                                    <div class="text-muted">عدد العمليات</div>
+                                    <div class="fw-bold">٢٢ عملية</div>
+                                </div>
+                                <div>
+                                    <div class="text-muted">متوسط القيمة</div>
+                                    <div class="fw-bold">٨٤٠ ر.س</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
