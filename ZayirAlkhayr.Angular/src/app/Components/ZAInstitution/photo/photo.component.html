@@ -8,22 +8,6 @@
                     <i class="fas fa-plus-circle"></i>
                     <span>إضافة</span>
                 </button>
-                <!-- <div ngbDropdown class="d-inline-block">
-                    <button type="button" class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" id="dropdownBasic1" ngbDropdownToggle>
-                        <i class="uil uil-export"></i>
-                        <span>تنزيل</span>
-                    </button>
-                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="border rounded">
-                        <button ngbDropdownItem class="d-flex align-items-center gap-2">
-                            <i class="fas fa-file-download"></i>
-                            <span class="px-2">PDF</span>
-                        </button>
-                        <button ngbDropdownItem>
-                            <i class="fas fa-file-download"></i>
-                            <span class="px-2">Excel</span>
-                        </button>
-                    </div>
-                </div> -->
                 <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
                     <i class="uil uil-filter"></i>
                     <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
@@ -36,7 +20,7 @@
         <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
             <div class="d-flex align-items-center">
                 <ng-container>
-                    <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)" [searchPlaceholder]="'البحث بالوصف ...'"></app-za-filters>
+                    <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)" [searchPlaceholder]="'البحث بالعنوان ...'"></app-za-filters>
                 </ng-container>
             </div>
         </div>
@@ -47,6 +31,7 @@
                 <thead>
                     <tr>
                         <th></th>
+                        <th>العنوان</th>
                         <th>الوصف</th>
                         <th>تمت الاضافة من قبل</th>
                         <th>تاريخ الاضافة</th>
@@ -57,11 +42,11 @@
                 <tbody>
                     <ng-container>
                         <tr *ngFor="let item of pagedResponseModel.results">
-                            <!-- <td><input type="checkbox" class="big-checkbox"></td> -->
                             <td>
                                 <img src="{{item.image}}" class="table-image">
                             </td>
                             <td>{{item.title}}</td>
+                            <td>{{item.description}}</td>
                             <td>{{item.createdBy}}</td>
                             <td>{{item.insertDate}}</td>
                             <td class="text-center">
@@ -77,6 +62,10 @@
                                     <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
                                         <i class="uil uil-pen"></i>
                                         <span>تعديل</span>
+                                    </button>
+                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openAddImagesModal(OpenAddImagesModal,item)">
+                                        <i class="uil uil-plus"></i>
+                                        <span>اضافة</span>
                                     </button>
                                     <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item)">
                                     <i class="uil uil-trash-alt"></i>
@@ -97,86 +86,6 @@
     </div>
 </div>
 
-<!-- <ng-template #DetailsSidePanel let-offcanvas>
-    <div class="offcanvas-header justify-content-between gap-3 fs-4 border-bottom py-3">
-        <div class="d-flex align-items-center gap-2">
-            <i class="fas fa-info-circle offcanvas-header-icon"></i>
-            <span>
-                تفاصيل القيد رقم
-            </span>
-        </div>
-        <div class="cursor-pointer text-danger fs-2" (click)="offcanvas.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
-    </div>
-    <div class="offcanvas-body pt-4 bg-light">
-        <div class="employee-card-body mb-3">
-            <div class="inputs-wrapper border rounded bg-white mb-3">
-                <div class="inputs-sec-content px-3 py-3">
-                    <div class="row gy-3">
-                        <div class="col-lg-6">
-                            <div class="mb-2">
-                                <label class="form-label d-flex align-items-center gap-2">رقم القيد</label>
-                                <input type="text" disabled class="form-control nw-form-input" />
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="mb-2">
-                                <label class="form-label d-flex align-items-center gap-2">تاريخ القيد</label>
-                                <input type="text" disabled class="form-control nw-form-input" />
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="mb-2">
-                                <label class="form-label d-flex align-items-center gap-2">
-                                    البيان
-                                </label>
-                                <input type="text" disabled class="form-control nw-form-input description-area" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-start m-3">
-                    <button (click)="offcanvas.dismiss()" routerLink="/general-accounts/new-entry" class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2">
-                        <i class="uil uil-pen"></i>
-                        <span>تعديل</span>
-                    </button>
-                    <button class="btn btn-table-action  gap-2 border rounded px-3 me-2">
-                        <i class="fas fa-print fs-7"></i>
-                        <span>طباعة</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <hr class="border-black" />
-        <div class="inputs-wrapper border rounded bg-white mb-3">
-            <div class="inputs-sec-title fw-semibold fs-16 px-3 py-2 border-bottom mb-2">الحسابات</div>
-            <div class="inputs-sec-content px-3 py-2 table-responsive table-vp-height small-scroll">
-                <table class="table table-bordered table-middle text-center table-actions m-0">
-                    <thead>
-                        <tr>
-                            <th>الحساب</th>
-                            <th>مدين</th>
-                            <th>دائن</th>
-                            <th>مركز التكلفة</th>
-                            <th style="width: 290px;">ملاحظات</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="row-hover">
-                        </tr>
-                        <tr *ngIf="!selectedEntryModel?.journalEntryAccounts?.length">
-                            <td colspan="5" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!selectedEntryModel?.journalEntryAccounts?.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</ng-template> -->
-
 <ng-template #OpenItemModal let-modal>
     <div class="modal-header modal-header-bg justify-content-between">
         <h2 class="d-flex align-items-center gap-2">
@@ -192,12 +101,22 @@
             <table class="table table-bordered table-feature-value align-middle border m-0">
                 <tbody>
                     <tr>
-                        <td class="table-feature">عنوان السلايدر</td>
+                        <td class="table-feature">العنوان</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="title" placeholder="عنوان السلايدر...">
+                            <input type="text" class="form-control form-control-lg" formControlName="title" placeholder="العنوان...">
                             <div *ngIf="ItemForm.controls['title']?.invalid && (ItemForm.controls['title']?.dirty || ItemForm.controls['title']?.touched)" class="error-message">
                                 <span *ngIf="ItemForm.controls['title'].errors?.['required']"> هذا الحقل مطلوب</span>
                                 <span *ngIf="ItemForm.controls['title'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">الوصف</td>
+                        <td class="table-value">
+                            <input type="text" class="form-control form-control-lg" formControlName="description" placeholder="الوصف...">
+                            <div *ngIf="ItemForm.controls['description']?.invalid && (ItemForm.controls['description']?.dirty || ItemForm.controls['description']?.touched)" class="error-message">
+                                <span *ngIf="ItemForm.controls['description'].errors?.['required']"> هذا الحقل مطلوب</span>
+                                <span *ngIf="ItemForm.controls['description'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
                             </div>
                         </td>
                     </tr>
@@ -242,23 +161,12 @@
                             </div>
                         </td>
                     </tr>
-                    <!-- <tr>
-                        <td class="table-feature">الدولة</td>
-                        <td class="table-value">
-                            <div class="form-floating">
-                                <app-za-drop-down-form-control [showSearch]="true" [placeholder]="'الدولة'"></app-za-drop-down-form-control>
-                            </div>
-                            <div *ngIf="formErrors.countryId" class="text-danger  font-small-3 m-03">
-                                {{formErrors.countryId}}
-                            </div>
-                        </td>
-                    </tr> -->
                 </tbody>
             </table>
         </form>
     </div>
     <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewSlider()">
+        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewPhoto()">
             <i class="uil uil-save fs-3"></i>
             <span>حفظ</span>
         </button>
@@ -269,7 +177,64 @@
     </div>
 </ng-template>
 
-<input type="file" #InputFile class="choose-file-input" (change)="onFileChange($event)" hidden />
+<ng-template #OpenAddImagesModal let-modal>
+    <div class="modal-header modal-header-bg justify-content-between">
+        <h2 class="d-flex align-items-center gap-2">
+            <i class="uil uil-plus"></i>
+            <span>اضافة صور</span>
+        </h2>
+        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+            <i class="uil uil-times-circle"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <table class="table table-bordered table-feature-value align-middle border m-0">
+            <tbody>
+                <tr>
+                    <td class="table-feature">تحميل صورة</td>
+                    <td class="table-value">
+                        <div class="choose-file-box position-relative border rounded h-58" (click)="InputMultiFile.click()">
+                            <div class="choose-file-btn">تحميل صورة</div>
+                        </div>
+                        <div class="error-message" *ngIf="isFileExist">
+                            <span>هذا الحقل مطلوب</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-feature"></td>
+                    <td>
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-2">
+                            <div class="w-25" *ngFor="let url of multiFileURL;let i = index">
+                                <div class="choosed-img img-thumbnail shadow-sm">
+                                    <img src="{{url.image}}" loading="lazy" alt="" />
+                                    <div class="choosed-img-delete" (click)="DeleteMultiImageFiles(i,url)">
+                                        <i class="far fa-times-circle"></i>
+                                    </div>
+                                </div>
+                                <input *ngIf="url?.id" type="number" class="form-control text-center" [(ngModel)]="url.displayOrder">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer flex-nowrap gap-2">
+        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddMultiImagesFile()">
+            <i class="uil uil-save fs-3"></i>
+            <span>حفظ</span>
+        </button>
+        <button class="btn btn-secondary rounded-25 d-flex align-items-center gap-2" (click)="ApplyFilesSorting()">
+        <i class="uil uil-sort fs-3"></i>
+        <span>ترتيب</span>
+      </button>
+        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
+            <i class="uil uil-times-circle fs-3"></i>
+            <span>الغاء</span>
+        </button>
+    </div>
+</ng-template>
 
 <ng-template #deleteItemModal let-modal>
     <div class="modal-header modal-header-bg justify-content-between">
@@ -284,7 +249,7 @@
         <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
     </div>
     <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success" (click)="DeleteSlider()">
+        <button type="button" class="btn btn-success" (click)="DeletePhoto()">
             <i class="fas fa-check"></i>
             <span class="ms-2">نعم</span>
         </button>
@@ -295,10 +260,5 @@
     </div>
 </ng-template>
 
-<!-- <app-za-loader [show]="true"></app-za-loader> -->
-
-<!-- <button class="btn btn-primary" [disabled]="loading">
-  <app-za-loader [show]="true" [inline]="true"></app-za-loader>
-  <span *ngIf="!loading">حفظ</span>
-  <span *ngIf="loading">جارٍ الحفظ...</span>
-</button> -->
+<input type="file" #InputFile class="choose-file-input" (change)="onFileChange($event)" hidden />
+<input type="file" #InputMultiFile multiple class="choose-file-input" (change)="onMultiFileChange($event)" hidden />
