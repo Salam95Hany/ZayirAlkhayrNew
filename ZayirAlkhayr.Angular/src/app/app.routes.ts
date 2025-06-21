@@ -10,6 +10,15 @@ export const routes: Routes = [
         path: 'home',
         loadComponent: () => import('./Shared/za-home/za-home.component').then(m => m.ZaHomeComponent)
     },
+    {
+        path: 'not-authorized',
+        loadComponent: () => import('./Auth/not-authorized/not-authorized.component').then(m => m.NotAuthorizedComponent)
+    },
+    {
+        path: 'web-project',
+        loadComponent: () =>
+            import('./Components/ZAInstitution/WebSite/web-project/web-project.component').then(m => m.WebProjectComponent),
+    },
     ...ZAInstitutionRoutes
 
 ];

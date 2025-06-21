@@ -1,18 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ZaBreadcrumbComponent } from "../../../Shared/za-breadcrumb/za-breadcrumb.component";
-import { ZaPaginationComponent } from "../../../Shared/za-pagination/za-pagination.component";
-import { ZaFiltersComponent } from "../../../Shared/za-filters/za-filters.component";
-import { ZaEmptyDataComponent } from "../../../Shared/za-empty-data/za-empty-data.component";
-import { FilterModel } from '../../../Models/shared/FilterModel';
 import { ToastrService } from 'ngx-toastr';
-import { PagedResponseModel } from '../../../Models/shared/PagedResponseModel';
-import { PagingFilterModel } from '../../../Models/shared/PagingFilterModel ';
-import { ValidationFormService } from '../../../Services/shared/validation-form.service';
-import { ZaWebsiteService } from '../../../Services/zainstitution/za-website.service';
+import { ZaBreadcrumbComponent } from '../../../../Shared/za-breadcrumb/za-breadcrumb.component';
+import { ZaPaginationComponent } from '../../../../Shared/za-pagination/za-pagination.component';
+import { ZaFiltersComponent } from '../../../../Shared/za-filters/za-filters.component';
+import { ZaEmptyDataComponent } from '../../../../Shared/za-empty-data/za-empty-data.component';
+import { FilterModel } from '../../../../Models/shared/FilterModel';
+import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
+import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
+import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
+import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.service';
 
 @Component({
   selector: 'app-slide-image',

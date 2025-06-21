@@ -1,0 +1,43 @@
+<canvas #particleCanvas class="particle-canvas"></canvas>
+
+<div class="floating-elements">
+    <div class="floating-element" *ngFor="let element of floatingElements; trackBy: trackByFn" [style.left.%]="element.left" [style.width.px]="element.size" [style.height.px]="element.size" [style.animation-delay.s]="element.animationDelay" [style.animation-duration.s]="element.duration"
+        [@floatingRotate]>
+    </div>
+</div>
+
+<div class="geometric-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+</div>
+
+<div class="container" [@containerAnimation] [@textStagger]>
+    <div class="icon-container glow-effect" [@iconAnimation]>
+        <div class="icon">🔒</div>
+        <div class="icon-glow"></div>
+        <div class="icon-pulse"></div>
+    </div>
+
+    <h1 class="stagger-item glitch-effect">غير مصرح بالوصول</h1>
+    <div class="error-code stagger-item typing-effect">ERROR 403</div>
+
+    <p class="message stagger-item fade-in-up">
+        عذراً، لا تملك الصلاحيات اللازمة للوصول إلى هذه الصفحة. يرجى التواصل مع المسؤول للحصول على الإذن المطلوب.
+    </p>
+
+    <div class="actions stagger-item">
+        <button class="btn btn-primary magnetic-effect" [@buttonHover]="buttonStates['home']" (mouseenter)="onButtonHover('home', true)" (mouseleave)="onButtonHover('home', false)" (click)="goToHome()">
+      <span class="btn-icon">🏠</span>
+      <span class="btn-text">العودة للرئيسية</span>
+      <div class="btn-particles"></div>
+    </button>
+
+        <button class="btn btn-secondary magnetic-effect" [@buttonHover]="buttonStates['login']" (mouseenter)="onButtonHover('login', true)" (mouseleave)="onButtonHover('login', false)" (click)="goToLogin()">
+      <span class="btn-icon">🔑</span>
+      <span class="btn-text">تسجيل الدخول</span>
+      <div class="btn-particles"></div>
+    </button>
+    </div>
+</div>

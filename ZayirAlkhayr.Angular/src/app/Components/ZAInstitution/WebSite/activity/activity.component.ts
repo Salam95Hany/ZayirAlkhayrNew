@@ -1,30 +1,31 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FilterModel } from '../../../Models/shared/FilterModel';
-import { FileSortingModel, UploadFileModel } from '../../../Models/shared/FileModel';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PagingFilterModel } from '../../../Models/shared/PagingFilterModel ';
-import { PagedResponseModel } from '../../../Models/shared/PagedResponseModel';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ValidationFormService } from '../../../Services/shared/validation-form.service';
-import { ZaWebsiteService } from '../../../Services/zainstitution/za-website.service';
 import { CommonModule } from '@angular/common';
-import { ZaBreadcrumbComponent } from '../../../Shared/za-breadcrumb/za-breadcrumb.component';
-import { ZaPaginationComponent } from '../../../Shared/za-pagination/za-pagination.component';
-import { ZaFiltersComponent } from '../../../Shared/za-filters/za-filters.component';
-import { ZaEmptyDataComponent } from '../../../Shared/za-empty-data/za-empty-data.component';
+import { ZaBreadcrumbComponent } from '../../../../Shared/za-breadcrumb/za-breadcrumb.component';
+import { ZaPaginationComponent } from '../../../../Shared/za-pagination/za-pagination.component';
+import { ZaFiltersComponent } from '../../../../Shared/za-filters/za-filters.component';
+import { ZaEmptyDataComponent } from '../../../../Shared/za-empty-data/za-empty-data.component';
+import { FilterModel } from '../../../../Models/shared/FilterModel';
+import { FileSortingModel, UploadFileModel } from '../../../../Models/shared/FileModel';
+import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
+import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
+import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
+import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.service';
 
 @Component({
-  selector: 'app-event',
+  selector: 'app-activity',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
     ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
-  templateUrl: './event.component.html',
-  styleUrl: './event.component.css'
+  templateUrl: './activity.component.html',
+  styleUrl: './activity.component.css'
 })
-export class EventComponent implements OnInit {
+export class ActivityComponent implements OnInit {
+  @ViewChild('InputFile') InputFile: ElementRef;
   @ViewChild('InputMultiFile') InputMultiFile: ElementRef;
-  TitleList = ['مؤسسة زائر الخير', 'موقع زائر الخير', 'الفعاليات'];
+  TitleList = ['مؤسسة زائر الخير', 'موقع زائر الخير', 'الأنشطة'];
   filterList: FilterModel[] = [];
   fileURL: any[] = [];
   multiFileURL: any[] = [];
@@ -34,12 +35,13 @@ export class EventComponent implements OnInit {
   showLoader: boolean = false;
   isFilter = false;
   isFileExist = false;
-  EventId: any;
+  ActivityId: any;
+  ImageFile: any;
   UserModel: any;
   FileModel: UploadFileModel = {
     files: [],
     deletedFiles: []
-  } as UploadFileModel;
+  }
   pagingFilterModel: PagingFilterModel = {
     currentPage: 1,
     pageSize: 20,
@@ -57,44 +59,51 @@ export class EventComponent implements OnInit {
   ngOnInit(): void {
     this.UserModel = JSON.parse(localStorage.getItem('UserModel'));;
     this.FormInit();
-    this.GetAllEvents();
+    this.GetAllActivities();
     this.GetWebsiteAdminFilters();
   }
 
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
-      title: ['', [Validators.required, this.formService.noSpaceValidator]],
+      name: ['', [Validators.required, this.formService.noSpaceValidator]],
       description: ['', [Validators.required, this.formService.noSpaceValidator]],
-      fromDate: ['', Validators.required],
-      toDate: ['', Validators.required],
       isVisible: true,
-      insertUser: null
+      InsertUser: null,
+      oldFileName: null,
+      file: null,
     });
   }
 
   FillEditForm(item: any) {
+    this.fileURL = [];
+    this.fileURL.push(item);
+    let fileName = item.image.split('/');
     this.ItemForm.setValue({
       id: item.id,
-      title: item.title,
+      name: item.name,
       description: item?.description,
-      fromDate: item?.fromDate,
-      toDate: item?.toDate,
       isVisible: item?.isVisible,
-      insertUser: this.UserModel?.userId ?? null
+      oldFileName: fileName[fileName.length - 1],
+      InsertUser: this.UserModel?.userId,
+      file: null,
     });
   }
 
   ResetForm() {
     this.ItemForm.reset();
-    this.EventId = '';
+    this.ActivityId = '';
+    this.InputFile.nativeElement.value = '';
     this.ItemForm.get('id').setValue(0);
     this.ItemForm.get('isVisible').setValue(true);
-    this.ItemForm.get('insertUser').setValue(this.UserModel?.userId);
+    this.ItemForm.get('InsertUser').setValue(this.UserModel?.userId);
   }
 
   openItemModal(content: any, item: any) {
     this.ResetForm();
+    this.isFileExist = false;
+    this.fileURL = [];
+    this.ImageFile = null;
     if (item)
       this.FillEditForm(item);
 
@@ -109,9 +118,9 @@ export class EventComponent implements OnInit {
     this.multiFileURL = [];
     this.multiImagesFile = [];
     this.FileModel = { files: [], deletedFiles: [] };
-    this.EventId = item.id;
+    this.ActivityId = item.id;
     this.InputMultiFile.nativeElement.value = '';
-    this.websiteService.GetEventSliderImagesById(item.id).subscribe(data => {
+    this.websiteService.GetActivitySliderImagesById(item.id).subscribe(data => {
       this.multiFileURL = data;
       this.modalService.open(content, {
         size: 'xl',
@@ -122,16 +131,16 @@ export class EventComponent implements OnInit {
   }
 
   openDeleteItemModal(content: any, item: any) {
-    this.EventId = item.id;
+    this.ActivityId = item.id;
     this.modalService.open(content, {
       size: 'md',
       scrollable: true,
       centered: true
-    });
+    })
   }
 
-  GetAllEvents() {
-    this.websiteService.GetAllEvents(this.pagingFilterModel).subscribe(data => {
+  GetAllActivities() {
+    this.websiteService.GetAllActivities(this.pagingFilterModel).subscribe(data => {
       this.pagedResponseModel.results = data.results;
       this.pagedResponseModel.totalCount = data.totalCount;
     });
@@ -139,18 +148,34 @@ export class EventComponent implements OnInit {
 
   pageChanged(obj: any) {
     this.pagingFilterModel.currentPage = obj.page;
-    this.GetAllEvents();
+    this.GetAllActivities();
   }
 
   GetWebsiteAdminFilters() {
-    this.websiteService.GetAllWebPagesFilters('Event').subscribe(data => {
+    this.websiteService.GetAllWebPagesFilters('Activity').subscribe(data => {
       this.filterList = data;
     });
   }
 
   filterChecked(filterItems: FilterModel[]) {
     this.pagingFilterModel.filterList = filterItems;
-    this.GetAllEvents();
+    this.GetAllActivities();
+  }
+
+  onFileChange(event: any) {
+    let fileSize = this.formService.getFileSize(event.target.files[0]);
+    if (fileSize > 1) {
+      this.toaster.warning(`هذا الملف ${event.target.files[0].name} حجمه أكبر من 1 ميجا`);
+      return;
+    }
+
+    this.fileURL = [];
+    this.ImageFile = null;
+    this.formService.onSelectedFile(event.target.files).then(data => {
+      this.fileURL.push(data[0]);
+      this.ImageFile = data[1][0];
+      this.isFileExist = false;
+    });
   }
 
   onMultiFileChange(event: any) {
@@ -172,6 +197,12 @@ export class EventComponent implements OnInit {
     });
   }
 
+  DeleteSelectedFile() {
+    this.ImageFile = null;
+    this.fileURL = [];
+    this.InputFile.nativeElement.value = '';
+  }
+
   DeleteMultiImageFiles(index: number, item: any) {
     this.multiFileURL.splice(index, 1);
     this.InputMultiFile.nativeElement.value = '';
@@ -188,12 +219,12 @@ export class EventComponent implements OnInit {
     if (this.multiImagesFile.length == 0 && this.FileModel.deletedFiles.length == 0)
       return;
 
-    this.FileModel.id = this.EventId;
+    this.FileModel.id = this.ActivityId;
     this.FileModel.files = this.multiImagesFile.map(i => i.file);
     const formData = new FormData();
     this.formService.buildFormData(formData, this.FileModel);
     this.showLoader = true;
-    this.websiteService.AddEventSliderImage(formData).subscribe(data => {
+    this.websiteService.AddActivitySliderImage(formData).subscribe(data => {
       if (data.done) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);
@@ -204,20 +235,24 @@ export class EventComponent implements OnInit {
     });
   }
 
-  AddNewEvent() {
+  AddNewActivity() {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
     let isValid = this.ItemForm.valid;
+    this.isFileExist = this.fileURL.length == 0;
 
-    if (!isValid) {
+    if (!isValid || this.isFileExist) {
       this.formService.validateAllFormFields(this.ItemForm);
       return;
     }
+    this.ItemForm.patchValue({ file: this.ImageFile });
+    const formData = new FormData();
+    this.formService.buildFormData(formData, this.ItemForm.value);
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.websiteService.AddNewEvent(this.ItemForm.value).subscribe(data => {
+      this.websiteService.AddNewActivity(formData).subscribe(data => {
         if (data.done) {
           this.toaster.success(data.message);
-          this.GetAllEvents();
+          this.GetAllActivities();
           this.GetWebsiteAdminFilters();
           this.modalService.dismissAll();
         }
@@ -226,10 +261,10 @@ export class EventComponent implements OnInit {
         this.showLoader = false;
       });
     } else {
-      this.websiteService.UpdateEvent(this.ItemForm.value).subscribe(data => {
+      this.websiteService.UpdateActivity(formData).subscribe(data => {
         if (data.done) {
           this.toaster.success(data.message);
-          this.GetAllEvents();
+          this.GetAllActivities();
           this.modalService.dismissAll();
         }
         else
@@ -241,10 +276,10 @@ export class EventComponent implements OnInit {
 
   DeleteItem() {
     this.showLoader = true;
-    this.websiteService.DeleteEvent(this.EventId).subscribe(data => {
+    this.websiteService.DeleteActivity(this.ActivityId).subscribe(data => {
       if (data.done) {
         this.toaster.success(data.message);
-        this.GetAllEvents();
+        this.GetAllActivities();
         this.GetWebsiteAdminFilters();
         this.modalService.dismissAll();
       }
@@ -261,9 +296,9 @@ export class EventComponent implements OnInit {
       return;
     }
 
-    let FileSotingModel = this.multiFileURL.map<FileSortingModel>(i => { return { fileId: i.id, displayOrder: i.displayOrder } });
+    this.FileSotingModel = this.multiFileURL.map<FileSortingModel>(i => { return { fileId: i.id, displayOrder: i.displayOrder } });
     this.showLoader = true;
-    this.websiteService.ApplyEventFilesSorting(FileSotingModel, this.EventId).subscribe(data => {
+    this.websiteService.ApplyFilesSorting(this.FileSotingModel, this.ActivityId).subscribe(data => {
       if (data.done) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);

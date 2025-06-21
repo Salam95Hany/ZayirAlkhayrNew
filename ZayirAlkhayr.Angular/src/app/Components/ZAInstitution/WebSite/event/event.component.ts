@@ -1,30 +1,30 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FilterModel } from '../../../Models/shared/FilterModel';
-import { FileSortingModel, UploadFileModel } from '../../../Models/shared/FileModel';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { PagingFilterModel } from '../../../Models/shared/PagingFilterModel ';
-import { PagedResponseModel } from '../../../Models/shared/PagedResponseModel';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ValidationFormService } from '../../../Services/shared/validation-form.service';
-import { ZaWebsiteService } from '../../../Services/zainstitution/za-website.service';
 import { CommonModule } from '@angular/common';
-import { ZaBreadcrumbComponent } from '../../../Shared/za-breadcrumb/za-breadcrumb.component';
-import { ZaPaginationComponent } from '../../../Shared/za-pagination/za-pagination.component';
-import { ZaFiltersComponent } from '../../../Shared/za-filters/za-filters.component';
-import { ZaEmptyDataComponent } from '../../../Shared/za-empty-data/za-empty-data.component';
+import { ZaBreadcrumbComponent } from '../../../../Shared/za-breadcrumb/za-breadcrumb.component';
+import { ZaPaginationComponent } from '../../../../Shared/za-pagination/za-pagination.component';
+import { ZaFiltersComponent } from '../../../../Shared/za-filters/za-filters.component';
+import { ZaEmptyDataComponent } from '../../../../Shared/za-empty-data/za-empty-data.component';
+import { FilterModel } from '../../../../Models/shared/FilterModel';
+import { FileSortingModel, UploadFileModel } from '../../../../Models/shared/FileModel';
+import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
+import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
+import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
+import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.service';
 
 @Component({
-  selector: 'app-project',
+  selector: 'app-event',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-      ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
-  templateUrl: './project.component.html',
-  styleUrl: './project.component.css'
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
+  templateUrl: './event.component.html',
+  styleUrl: './event.component.css'
 })
-export class ProjectComponent implements OnInit {
- @ViewChild('InputMultiFile') InputMultiFile: ElementRef;
-  TitleList = ['مؤسسة زائر الخير', 'موقع زائر الخير', 'المشاريع'];
+export class EventComponent implements OnInit {
+  @ViewChild('InputMultiFile') InputMultiFile: ElementRef;
+  TitleList = ['مؤسسة زائر الخير', 'موقع زائر الخير', 'الفعاليات'];
   filterList: FilterModel[] = [];
   fileURL: any[] = [];
   multiFileURL: any[] = [];
@@ -34,12 +34,12 @@ export class ProjectComponent implements OnInit {
   showLoader: boolean = false;
   isFilter = false;
   isFileExist = false;
-  ProjectId: any;
+  EventId: any;
   UserModel: any;
   FileModel: UploadFileModel = {
     files: [],
     deletedFiles: []
-  } as UploadFileModel;
+  }
   pagingFilterModel: PagingFilterModel = {
     currentPage: 1,
     pageSize: 20,
@@ -57,7 +57,7 @@ export class ProjectComponent implements OnInit {
   ngOnInit(): void {
     this.UserModel = JSON.parse(localStorage.getItem('UserModel'));;
     this.FormInit();
-    this.GetAllProjects();
+    this.GetAllEvents();
     this.GetWebsiteAdminFilters();
   }
 
@@ -66,10 +66,8 @@ export class ProjectComponent implements OnInit {
       id: 0,
       title: ['', [Validators.required, this.formService.noSpaceValidator]],
       description: ['', [Validators.required, this.formService.noSpaceValidator]],
-      totalDonationAmount: ['', [Validators.required, this.formService.noSpaceValidator,Validators.pattern("[0-9]+")]],
-      benefactorCount: ['', [Validators.required, this.formService.noSpaceValidator,Validators.pattern("[0-9]+")]],
-      totalAmount: ['', [Validators.required, this.formService.noSpaceValidator,Validators.pattern("[0-9]+")]],
-      remainingAmount: ['', [Validators.required, this.formService.noSpaceValidator,Validators.pattern("[0-9]+")]],
+      fromDate: ['', Validators.required],
+      toDate: ['', Validators.required],
       isVisible: true,
       insertUser: null
     });
@@ -80,10 +78,8 @@ export class ProjectComponent implements OnInit {
       id: item.id,
       title: item.title,
       description: item?.description,
-      totalDonationAmount: item?.totalDonationAmount,
-      benefactorCount: item?.benefactorCount,
-      totalAmount: item?.totalAmount,
-      remainingAmount: item?.remainingAmount,
+      fromDate: item?.fromDate,
+      toDate: item?.toDate,
       isVisible: item?.isVisible,
       insertUser: this.UserModel?.userId ?? null
     });
@@ -91,14 +87,14 @@ export class ProjectComponent implements OnInit {
 
   ResetForm() {
     this.ItemForm.reset();
-    this.ProjectId = '';
+    this.EventId = '';
     this.ItemForm.get('id').setValue(0);
     this.ItemForm.get('isVisible').setValue(true);
     this.ItemForm.get('insertUser').setValue(this.UserModel?.userId);
   }
 
   openItemModal(content: any, item: any) {
-   this.ResetForm();
+    this.ResetForm();
     if (item)
       this.FillEditForm(item);
 
@@ -110,12 +106,12 @@ export class ProjectComponent implements OnInit {
   }
 
   openAddImagesModal(content: any, item: any) {
-  this.multiFileURL = [];
+    this.multiFileURL = [];
     this.multiImagesFile = [];
     this.FileModel = { files: [], deletedFiles: [] };
-    this.ProjectId = item.id;
+    this.EventId = item.id;
     this.InputMultiFile.nativeElement.value = '';
-    this.websiteService.GetProjectsSliderImagesById(item.id).subscribe(data => {
+    this.websiteService.GetEventSliderImagesById(item.id).subscribe(data => {
       this.multiFileURL = data;
       this.modalService.open(content, {
         size: 'xl',
@@ -126,7 +122,7 @@ export class ProjectComponent implements OnInit {
   }
 
   openDeleteItemModal(content: any, item: any) {
-    this.ProjectId = item.id;
+    this.EventId = item.id;
     this.modalService.open(content, {
       size: 'md',
       scrollable: true,
@@ -134,8 +130,8 @@ export class ProjectComponent implements OnInit {
     });
   }
 
-  GetAllProjects() {
-    this.websiteService.GetAllProjects(this.pagingFilterModel).subscribe(data => {
+  GetAllEvents() {
+    this.websiteService.GetAllEvents(this.pagingFilterModel).subscribe(data => {
       this.pagedResponseModel.results = data.results;
       this.pagedResponseModel.totalCount = data.totalCount;
     });
@@ -143,19 +139,18 @@ export class ProjectComponent implements OnInit {
 
   pageChanged(obj: any) {
     this.pagingFilterModel.currentPage = obj.page;
-     this.GetAllProjects();
+    this.GetAllEvents();
   }
 
- GetWebsiteAdminFilters() {
-    this.websiteService.GetAllWebPagesFilters('Project').subscribe(data => {
+  GetWebsiteAdminFilters() {
+    this.websiteService.GetAllWebPagesFilters('Event').subscribe(data => {
       this.filterList = data;
-
     });
   }
 
   filterChecked(filterItems: FilterModel[]) {
     this.pagingFilterModel.filterList = filterItems;
-    this.GetAllProjects();
+    this.GetAllEvents();
   }
 
   onMultiFileChange(event: any) {
@@ -170,7 +165,7 @@ export class ProjectComponent implements OnInit {
 
     if (fileSizeValidate)
       return;
-    
+
     this.formService.onSelectedMultiFile([...event.target.files]).then(data => {
       this.multiFileURL.push(...data?.urls);
       this.multiImagesFile.push(...data?.fileContents);
@@ -193,12 +188,12 @@ export class ProjectComponent implements OnInit {
     if (this.multiImagesFile.length == 0 && this.FileModel.deletedFiles.length == 0)
       return;
 
-    this.FileModel.id = this.ProjectId;
+    this.FileModel.id = this.EventId;
     this.FileModel.files = this.multiImagesFile.map(i => i.file);
     const formData = new FormData();
     this.formService.buildFormData(formData, this.FileModel);
     this.showLoader = true;
-    this.websiteService.AddProjectsSliderImage(formData).subscribe(data => {
+    this.websiteService.AddEventSliderImage(formData).subscribe(data => {
       if (data.done) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);
@@ -209,7 +204,7 @@ export class ProjectComponent implements OnInit {
     });
   }
 
-  AddNewProject() {
+  AddNewEvent() {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
     let isValid = this.ItemForm.valid;
 
@@ -219,10 +214,10 @@ export class ProjectComponent implements OnInit {
     }
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.websiteService.AddNewProjects(this.ItemForm.value).subscribe(data => {
+      this.websiteService.AddNewEvent(this.ItemForm.value).subscribe(data => {
         if (data.done) {
           this.toaster.success(data.message);
-          this.GetAllProjects();
+          this.GetAllEvents();
           this.GetWebsiteAdminFilters();
           this.modalService.dismissAll();
         }
@@ -231,10 +226,10 @@ export class ProjectComponent implements OnInit {
         this.showLoader = false;
       });
     } else {
-      this.websiteService.UpdateProjects(this.ItemForm.value).subscribe(data => {
+      this.websiteService.UpdateEvent(this.ItemForm.value).subscribe(data => {
         if (data.done) {
           this.toaster.success(data.message);
-          this.GetAllProjects();
+          this.GetAllEvents();
           this.modalService.dismissAll();
         }
         else
@@ -246,16 +241,36 @@ export class ProjectComponent implements OnInit {
 
   DeleteItem() {
     this.showLoader = true;
-    this.websiteService.DeleteProjects(this.ProjectId).subscribe(data => {
+    this.websiteService.DeleteEvent(this.EventId).subscribe(data => {
       if (data.done) {
         this.toaster.success(data.message);
-        this.GetAllProjects();
+        this.GetAllEvents();
         this.GetWebsiteAdminFilters();
         this.modalService.dismissAll();
       }
       else
         this.toaster.error(data.message);
-        this.showLoader = false;
+      this.showLoader = false;
+    });
+  }
+
+  ApplyFilesSorting() {
+    let checked = this.multiFileURL.every(i => i.id);
+    if (!checked) {
+      this.toaster.warning('برجاء اضافة الصور الجديدة اولا');
+      return;
+    }
+
+    let FileSotingModel = this.multiFileURL.map<FileSortingModel>(i => { return { fileId: i.id, displayOrder: i.displayOrder } });
+    this.showLoader = true;
+    this.websiteService.ApplyEventFilesSorting(FileSotingModel, this.EventId).subscribe(data => {
+      if (data.done) {
+        this.modalService.dismissAll();
+        this.toaster.success(data.message);
+      }
+      else
+        this.toaster.error(data.message);
+      this.showLoader = false;
     });
   }
 }

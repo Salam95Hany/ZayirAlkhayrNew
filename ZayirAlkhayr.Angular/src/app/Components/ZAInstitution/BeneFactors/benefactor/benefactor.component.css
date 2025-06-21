@@ -1,0 +1,23 @@
+.td-collapser .uil-plus-circle {
+    font-size: 19px;
+}
+
+.td-collapser[aria-expanded="false"] .uil-plus-circle {
+    color: #198754;
+}
+
+.td-collapser[aria-expanded="true"] .uil-plus-circle {
+    color: #dc3545;
+}
+
+.td-collapser[aria-expanded="true"] .uil-plus-circle::before {
+    content: '\e994';
+}
+
+.collapsed-tr>td:first-child {
+    padding-right: 32px;
+}
+
+.mr-25 {
+    margin-right: 25px;
+}

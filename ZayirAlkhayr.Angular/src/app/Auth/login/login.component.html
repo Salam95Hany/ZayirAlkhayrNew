@@ -1,49 +1,63 @@
-<div class="background-shapes">
-    <div class="shape"></div>
-    <div class="shape"></div>
-    <div class="shape"></div>
-</div>
-<div class="security-badge">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z"/>
-      </svg> آمن ومشفر
-</div>
-<div class="login-container">
-    <div class="logo-section">
-        <div class="logo">
-            <svg viewBox="0 0 24 24">
-            <path d="M12,2A3,3 0 0,1 15,5V7H19A1,1 0 0,1 20,8V20A1,1 0 0,1 19,21H5A1,1 0 0,1 4,20V8A1,1 0 0,1 5,7H9V5A3,3 0 0,1 12,2M12,4A1,1 0 0,0 11,5V7H13V5A1,1 0 0,0 12,4M6,9V19H18V9H6Z"/>
-          </svg>
+<div class="animated-bg">
+    <div class="floating-shapes">
+        @for (shape of shapes(); track $index) {
+        <div class="shape" [style.width.px]="shape.size" [style.height.px]="shape.size" [style.top.%]="shape.top" [style.left.%]="shape.left" [style.animation-delay.s]="shape.delay">
         </div>
-        <h1 class="charity-name">زائر الخير</h1>
-        <p class="subtitle">معاً نصنع الأمل</p>
+        }
     </div>
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <div class="form-group" [class.focused]="isEmailFocused()">
-            <label class="form-label" for="email">اسم المستخدم</label>
-            <input type="email" id="email" class="form-input" formControlName="email" dir="rtl" placeholder="اسم المستخدم" (focus)="setEmailFocus(true)" (blur)="setEmailFocus(false)" [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-            <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-                <span *ngIf="loginForm.get('email')?.errors?.['required']">اسم المستخدم مطلوب</span>
-                <!-- <span *ngIf="loginForm.get('email')?.errors?.['email']">يرجى إدخال بريد إلكتروني صحيح</span> -->
-            </div>
+</div>
+
+<div class="container">
+    <div class="login-card" [class.shake]="showError()">
+        <div class="logo-section">
+            <div class="logo"></div>
+            <h1>زائر الخير</h1>
+            <p class="subtitle">معا نصنع الأمل</p>
         </div>
-        <div class="form-group" [class.focused]="isPasswordFocused()">
-            <label class="form-label" for="password">كلمة المرور</label>
-            <div class="password-wrapper">
-                <input [type]="showPassword() ? 'text' : 'password'" id="password" class="form-input" formControlName="password" placeholder="كلمة المرور" (focus)="setPasswordFocus(true)" (blur)="setPasswordFocus(false)" [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-                <span class="password-toggle" (click)="togglePassword()">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path [attr.d]="getEyeIconPath()"/>
-              </svg>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <input type="email" class="input-field" placeholder="اسم المستخدم" formControlName="email" [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                    <span class="input-icon">📧</span>
+                </div>
+                @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                <div class="error-message">اسم المستخدم مطلوب</div>
+                }
+            </div>
+
+            <div class="form-group">
+                <div class="input-wrapper">
+                    <input [type]="showPassword() ? 'text' : 'password'" class="input-field" placeholder="كلمة المرور" formControlName="password" [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                    <button type="button" class="password-toggle" (click)="togglePassword()">
+                {{ showPassword() ? '🙈' : '👁️' }}
+              </button>
+                </div>
+                @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                <div class="error-message">كلمة المرور مطلوبة (6 أحرف على الأقل)</div>
+                }
+            </div>
+
+            @if (showError()) {
+            <div class="login-error">
+                بيانات تسجيل الدخول غير صحيحة
+            </div>
+            }
+
+            <button type="submit" class="login-button" [disabled]="isLoading() || loginForm.invalid" [class.loading]="isLoading()">
+            @if (isLoading()) {
+              <div class="spinner"></div>
+            }
+            <span class="button-text">
+              @if (isLoading()) {
+                جارٍ تسجيل الدخول...
+              } @else if (loginSuccess()) {
+                تم بنجاح! ✓
+              } @else {
+                تسجيل الدخول
+              }
             </span>
-            </div>
-            <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-                <span *ngIf="loginForm.get('password')?.errors?.['required']">كلمة المرور مطلوبة</span>
-                <span *ngIf="loginForm.get('password')?.errors?.['minlength']">كلمة المرور يجب أن تكون 6 أحرف على الأقل</span>
-            </div>
-        </div>
-        <button type="submit" class="login-btn" [disabled]="loginForm.invalid || isLoading()" [class.loading]="isLoading()">
-          {{ isLoading() ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول' }}
-        </button>
-    </form>
+          </button>
+        </form>
+    </div>
 </div>

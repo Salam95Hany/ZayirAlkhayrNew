@@ -9,7 +9,7 @@
     <section *ngIf="selectedTabName && menuItem" class="general-accounts-section d-flex flex-column gap-4">
         <header class="section-header d-flex flex-column gap-2">
             <h2 class="section-title m-0">{{menuItem.displayName}}</h2>
-            <span class="text-muted">٢٥/٤/٢٠٢٥ . الاحد</span>
+            <span class="text-muted">{{today | arabicDayDate}}</span>
         </header>
         <div *ngIf="menuItem?.subMenus?.length >0 " class="section-content">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-6 g-4">

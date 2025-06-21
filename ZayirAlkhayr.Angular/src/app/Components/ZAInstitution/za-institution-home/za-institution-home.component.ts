@@ -5,11 +5,12 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MenueService, MenuType } from '../../../Services/shared/menue.service';
 import { OverviewCardComponent } from "../../../Shared/overview-card/overview-card.component";
+import { ArabicDayDatePipe } from '../../../Pipes/arabic-day-date.pipe';
 
 @Component({
   selector: 'app-za-institution-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgbDropdownModule, OverviewCardComponent],
+  imports: [CommonModule, RouterModule, NgbDropdownModule, OverviewCardComponent,ArabicDayDatePipe],
   providers: [DatePipe],
   templateUrl: './za-institution-home.component.html',
   styleUrl: './za-institution-home.component.css'
@@ -17,6 +18,7 @@ import { OverviewCardComponent } from "../../../Shared/overview-card/overview-ca
 export class ZaInstitutionHomeComponent implements OnInit {
   selectedTabName: string;
   menuItem: MenuSidebarItem;
+  today = new Date();
   statisticsCardList: any[] = [
     {
       title: 'عدد المتبرعين',

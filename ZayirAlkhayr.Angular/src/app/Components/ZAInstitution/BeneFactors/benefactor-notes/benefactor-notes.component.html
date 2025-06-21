@@ -1,0 +1,59 @@
+<app-za-breadcrumb [TitleList]="TitleList"></app-za-breadcrumb>
+
+<div class="table-card border radius-10 overflow-hidden shadow-sm">
+    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
+        <div class="col-md-8 mb-2">
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                    <i class="uil uil-filter"></i>
+                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2">
+            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage" [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount"></app-za-pagination>
+        </div>
+        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <div class="d-flex align-items-center">
+                <ng-container>
+                    <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)" [searchPlaceholder]="'البحث بالكود, الاسم ...'"></app-za-filters>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <div class="p-3 bg-white">
+        <div class="table-responsive shadow-sm radius-10">
+            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+                <thead>
+                    <tr>
+                        <th>الكود</th>
+                        <th>الاسم</th>
+                        <th>رقم التلفون</th>
+                        <th>الجنسية</th>
+                        <th>ملاحظات</th>
+                        <th>اقتراحات</th>
+                        <th>تاريخ الاضافة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container>
+                        <tr *ngFor="let item of pagedResponseModel.results">
+                            <td>{{item.code}}</td>
+                            <td>{{item.fullName}}</td>
+                            <td>{{item.phone}}</td>
+                            <td>{{item.nationality}}</td>
+                            <td>{{item.note}}</td>
+                            <td>{{item.suggestion}}</td>
+                            <td>{{item.insertDate}}</td>
+                        </tr>
+                        <tr *ngIf="!pagedResponseModel.results.length">
+                            <td colspan="12" class="text-right">
+                                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -18,27 +18,52 @@ export const ZAInstitutionRoutes: Routes = [
             {
                 path: 'slide-image',
                 loadComponent: () =>
-                    import('./slide-image/slide-image.component').then(m => m.SlideImageComponent),
+                    import('./WebSite/slide-image/slide-image.component').then(m => m.SlideImageComponent),
             },
             {
                 path: 'activity',
                 loadComponent: () =>
-                    import('./activity/activity.component').then(m => m.ActivityComponent),
+                    import('./WebSite/activity/activity.component').then(m => m.ActivityComponent),
             },
             {
                 path: 'event',
                 loadComponent: () =>
-                    import('./event/event.component').then(m => m.EventComponent),
+                    import('./WebSite/event/event.component').then(m => m.EventComponent),
             },
             {
                 path: 'photo',
                 loadComponent: () =>
-                    import('./photo/photo.component').then(m => m.PhotoComponent),
+                    import('./WebSite/photo/photo.component').then(m => m.PhotoComponent),
             },
             {
                 path: 'project',
                 loadComponent: () =>
-                    import('./project/project.component').then(m => m.ProjectComponent),
+                    import('./WebSite/project/project.component').then(m => m.ProjectComponent),
+            },
+            {
+                path: 'benefactors',
+                loadComponent: () =>
+                    import('./BeneFactors/benefactor/benefactor.component').then(m => m.BenefactorComponent),
+            },
+            {
+                path: 'benefactor-detail',
+                loadComponent: () =>
+                    import('./BeneFactors/benefactor-details/benefactor-details.component').then(m => m.BenefactorDetailsComponent),
+            },
+            {
+                path: 'benefactor-note',
+                loadComponent: () =>
+                    import('./BeneFactors/benefactor-notes/benefactor-notes.component').then(m => m.BenefactorNotesComponent),
+            },
+            {
+                path: 'benefactor-nationality',
+                loadComponent: () =>
+                    import('./BeneFactors/benefactor-nationalities/benefactor-nationalities.component').then(m => m.BenefactorNationalitiesComponent),
+            },
+            {
+                path: 'benefactor-type',
+                loadComponent: () =>
+                    import('./BeneFactors/benefactor-types/benefactor-types.component').then(m => m.BenefactorTypesComponent),
             },
             { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]

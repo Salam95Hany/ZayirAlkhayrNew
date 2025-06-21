@@ -1,31 +1,31 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { ZaPaginationComponent } from "../../../Shared/za-pagination/za-pagination.component";
-import { ZaFiltersComponent } from "../../../Shared/za-filters/za-filters.component";
-import { ZaEmptyDataComponent } from "../../../Shared/za-empty-data/za-empty-data.component";
-import { ZaBreadcrumbComponent } from "../../../Shared/za-breadcrumb/za-breadcrumb.component";
-import { FilterModel } from '../../../Models/shared/FilterModel';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ValidationFormService } from '../../../Services/shared/validation-form.service';
-import { ZaWebsiteService } from '../../../Services/zainstitution/za-website.service';
-import { PagingFilterModel } from '../../../Models/shared/PagingFilterModel ';
-import { PagedResponseModel } from '../../../Models/shared/PagedResponseModel';
 import { CommonModule } from '@angular/common';
-import { FileSortingModel, UploadFileModel } from '../../../Models/shared/FileModel';
+import { ZaBreadcrumbComponent } from '../../../../Shared/za-breadcrumb/za-breadcrumb.component';
+import { ZaPaginationComponent } from '../../../../Shared/za-pagination/za-pagination.component';
+import { ZaFiltersComponent } from '../../../../Shared/za-filters/za-filters.component';
+import { ZaEmptyDataComponent } from '../../../../Shared/za-empty-data/za-empty-data.component';
+import { FilterModel } from '../../../../Models/shared/FilterModel';
+import { FileSortingModel, UploadFileModel } from '../../../../Models/shared/FileModel';
+import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
+import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
+import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
+import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.service';
 
 @Component({
-  selector: 'app-activity',
+  selector: 'app-photo',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
     ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
-  templateUrl: './activity.component.html',
-  styleUrl: './activity.component.css'
+  templateUrl: './photo.component.html',
+  styleUrl: './photo.component.css'
 })
-export class ActivityComponent implements OnInit {
+export class PhotoComponent implements OnInit {
   @ViewChild('InputFile') InputFile: ElementRef;
   @ViewChild('InputMultiFile') InputMultiFile: ElementRef;
-  TitleList = ['مؤسسة زائر الخير', 'موقع زائر الخير', 'الأنشطة'];
+  TitleList = ['مؤسسة زائر الخير', 'موقع زائر الخير', 'الصور'];
   filterList: FilterModel[] = [];
   fileURL: any[] = [];
   multiFileURL: any[] = [];
@@ -35,13 +35,13 @@ export class ActivityComponent implements OnInit {
   showLoader: boolean = false;
   isFilter = false;
   isFileExist = false;
-  ActivityId: any;
+  PhotoId: any;
   ImageFile: any;
   UserModel: any;
   FileModel: UploadFileModel = {
     files: [],
     deletedFiles: []
-  } as UploadFileModel;
+  }
   pagingFilterModel: PagingFilterModel = {
     currentPage: 1,
     pageSize: 20,
@@ -59,14 +59,14 @@ export class ActivityComponent implements OnInit {
   ngOnInit(): void {
     this.UserModel = JSON.parse(localStorage.getItem('UserModel'));;
     this.FormInit();
-    this.GetAllActivities();
+    this.GetAllPhotos();
     this.GetWebsiteAdminFilters();
   }
 
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
-      name: ['', [Validators.required, this.formService.noSpaceValidator]],
+      title: ['', [Validators.required, this.formService.noSpaceValidator]],
       description: ['', [Validators.required, this.formService.noSpaceValidator]],
       isVisible: true,
       InsertUser: null,
@@ -81,7 +81,7 @@ export class ActivityComponent implements OnInit {
     let fileName = item.image.split('/');
     this.ItemForm.setValue({
       id: item.id,
-      name: item.name,
+      title: item?.title,
       description: item?.description,
       isVisible: item?.isVisible,
       oldFileName: fileName[fileName.length - 1],
@@ -92,7 +92,7 @@ export class ActivityComponent implements OnInit {
 
   ResetForm() {
     this.ItemForm.reset();
-    this.ActivityId = '';
+    this.PhotoId = '';
     this.InputFile.nativeElement.value = '';
     this.ItemForm.get('id').setValue(0);
     this.ItemForm.get('isVisible').setValue(true);
@@ -118,9 +118,9 @@ export class ActivityComponent implements OnInit {
     this.multiFileURL = [];
     this.multiImagesFile = [];
     this.FileModel = { files: [], deletedFiles: [] };
-    this.ActivityId = item.id;
+    this.PhotoId = item.id;
     this.InputMultiFile.nativeElement.value = '';
-    this.websiteService.GetActivitySliderImagesById(item.id).subscribe(data => {
+    this.websiteService.GetPhotoDetails(item.id).subscribe(data => {
       this.multiFileURL = data;
       this.modalService.open(content, {
         size: 'xl',
@@ -131,16 +131,16 @@ export class ActivityComponent implements OnInit {
   }
 
   openDeleteItemModal(content: any, item: any) {
-    this.ActivityId = item.id;
+    this.PhotoId = item.id;
     this.modalService.open(content, {
       size: 'md',
       scrollable: true,
       centered: true
-    })
+    });
   }
 
-  GetAllActivities() {
-    this.websiteService.GetAllActivities(this.pagingFilterModel).subscribe(data => {
+  GetAllPhotos() {
+    this.websiteService.GetAllPhotos(this.pagingFilterModel).subscribe(data => {
       this.pagedResponseModel.results = data.results;
       this.pagedResponseModel.totalCount = data.totalCount;
     });
@@ -148,18 +148,19 @@ export class ActivityComponent implements OnInit {
 
   pageChanged(obj: any) {
     this.pagingFilterModel.currentPage = obj.page;
-    this.GetAllActivities();
+    this.GetAllPhotos();
   }
 
   GetWebsiteAdminFilters() {
-    this.websiteService.GetAllWebPagesFilters('Activity').subscribe(data => {
+    this.websiteService.GetAllWebPagesFilters('Photo').subscribe(data => {
       this.filterList = data;
+
     });
   }
 
   filterChecked(filterItems: FilterModel[]) {
     this.pagingFilterModel.filterList = filterItems;
-    this.GetAllActivities();
+    this.GetAllPhotos();
   }
 
   onFileChange(event: any) {
@@ -191,6 +192,7 @@ export class ActivityComponent implements OnInit {
     if (fileSizeValidate)
       return;
 
+
     this.formService.onSelectedMultiFile([...event.target.files]).then(data => {
       this.multiFileURL.push(...data?.urls);
       this.multiImagesFile.push(...data?.fileContents);
@@ -219,12 +221,12 @@ export class ActivityComponent implements OnInit {
     if (this.multiImagesFile.length == 0 && this.FileModel.deletedFiles.length == 0)
       return;
 
-    this.FileModel.id = this.ActivityId;
+    this.FileModel.id = this.PhotoId;
     this.FileModel.files = this.multiImagesFile.map(i => i.file);
     const formData = new FormData();
     this.formService.buildFormData(formData, this.FileModel);
     this.showLoader = true;
-    this.websiteService.AddActivitySliderImage(formData).subscribe(data => {
+    this.websiteService.AddPhotoDetailsImage(formData).subscribe(data => {
       if (data.done) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);
@@ -235,7 +237,7 @@ export class ActivityComponent implements OnInit {
     });
   }
 
-  AddNewActivity() {
+  AddNewPhoto() {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
     let isValid = this.ItemForm.valid;
     this.isFileExist = this.fileURL.length == 0;
@@ -249,10 +251,10 @@ export class ActivityComponent implements OnInit {
     this.formService.buildFormData(formData, this.ItemForm.value);
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.websiteService.AddNewActivity(formData).subscribe(data => {
+      this.websiteService.AddNewPhoto(formData).subscribe(data => {
         if (data.done) {
           this.toaster.success(data.message);
-          this.GetAllActivities();
+          this.GetAllPhotos();
           this.GetWebsiteAdminFilters();
           this.modalService.dismissAll();
         }
@@ -261,10 +263,10 @@ export class ActivityComponent implements OnInit {
         this.showLoader = false;
       });
     } else {
-      this.websiteService.UpdateActivity(formData).subscribe(data => {
+      this.websiteService.UpdatePhoto(formData).subscribe(data => {
         if (data.done) {
           this.toaster.success(data.message);
-          this.GetAllActivities();
+          this.GetAllPhotos();
           this.modalService.dismissAll();
         }
         else
@@ -274,12 +276,12 @@ export class ActivityComponent implements OnInit {
     }
   }
 
-  DeleteItem() {
+  DeletePhoto() {
     this.showLoader = true;
-    this.websiteService.DeleteActivity(this.ActivityId).subscribe(data => {
+    this.websiteService.DeletePhoto(this.PhotoId).subscribe(data => {
       if (data.done) {
         this.toaster.success(data.message);
-        this.GetAllActivities();
+        this.GetAllPhotos();
         this.GetWebsiteAdminFilters();
         this.modalService.dismissAll();
       }
@@ -296,9 +298,9 @@ export class ActivityComponent implements OnInit {
       return;
     }
 
-    this.FileSotingModel = this.multiFileURL.map<FileSortingModel>(i => { return { fileId: i.id, displayOrder: i.displayOrder } });
+    let FileSotingModel = this.multiFileURL.map<FileSortingModel>(i => { return { fileId: i.id, displayOrder: i.displayOrder } });
     this.showLoader = true;
-    this.websiteService.ApplyFilesSorting(this.FileSotingModel, this.ActivityId).subscribe(data => {
+    this.websiteService.ApplyPhotoFilesSorting(FileSotingModel, this.PhotoId).subscribe(data => {
       if (data.done) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);
