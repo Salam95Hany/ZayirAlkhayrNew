@@ -14,8 +14,4 @@
     <ProjectReference Include="..\ZayirAlkhayr.Services\ZayirAlkhayr.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\ZAInstitution\WebSite\" />
-  </ItemGroup>
-
 </Project>
