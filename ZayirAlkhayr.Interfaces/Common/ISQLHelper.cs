@@ -15,8 +15,6 @@ namespace ZayirAlkhayr.Interfaces.Common
         Task<DataTable> ExecuteDataTableAsync(string commandText, params SqlParameter[] parameters);
         Task<DataSet> ExecuteDatasetAsync(string commandText, SqlParameter[] commandParameters);
         Task<int> ExecuteScalarAsync(string procName, params SqlParameter[] sqlParameters);
-        List<FilterModel> GroupingFilters(DataTable dt);
-        DataTable ConvertFilterModelToDataTable(List<FilterModel> FilterList);
-        Task<int> GenerateCode();
+        Task<int> GenerateCode(string procName);
     }
 }

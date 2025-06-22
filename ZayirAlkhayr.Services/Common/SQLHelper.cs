@@ -13,7 +13,7 @@ using ZayirAlkhayr.Interfaces.Common;
 
 namespace ZayirAlkhayr.Services.Common
 {
-    public class SQLHelper: ISQLHelper
+    public class SQLHelper : ISQLHelper
     {
         private readonly IConfiguration _configuration;
         int Timeout = 9999;
@@ -191,38 +191,10 @@ namespace ZayirAlkhayr.Services.Common
             return objList;
         }
 
-        public List<FilterModel> GroupingFilters(DataTable dt)
+        public async Task<int> GenerateCode(string procName)
         {
-            List<FilterModel> List = dt.AsEnumerable().GroupBy(y => new
-            {
-                CategoryName = y.Field<string>("CategoryName"),
-            }).Select(x => new FilterModel
-            {
-                CategoryName = x.Key.CategoryName,
-                IsVisible = x.FirstOrDefault().Field<bool>("IsVisible"),
-                FilterItems = x.Select(s => new FilterModel
-                {
-                    CategoryName = s.Field<string>("CategoryName"),
-                    ItemValue = s.Field<string>("ItemValue"),
-                    ItemKey = s.Field<string>("ItemKey"),
-                    ItemId = s.Field<string>("ItemId")
-                }).ToList()
-
-            }).ToList();
-
-            return List;
-        }
-
-        public DataTable ConvertFilterModelToDataTable(List<FilterModel> FilterList)
-        {
-            var dt = FilterList.Select(i => new { CategoryName = i.CategoryName, ItemId = i.ItemId }).ToList().ToDataTable();
-            return dt;
-        }
-
-        public async Task<int> GenerateCode()
-        {
-            var Params = new SqlParameter[0];
-            return await ExecuteScalarAsync("web.SP_GetBeneFactorCodeSequences", Params);
+            return await ExecuteScalarAsync(procName, Array.Empty<SqlParameter>());
+            //return await ExecuteScalarAsync("web.SP_GetBeneFactorCodeSequences", Array.Empty<SqlParameter>());
         }
 
     }

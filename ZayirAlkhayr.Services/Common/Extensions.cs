@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using ZayirAlkhayr.Entities.Common;
 
 namespace ZayirAlkhayr.Services.Common
 {
@@ -47,6 +48,39 @@ namespace ZayirAlkhayr.Services.Common
             }
 
             return dataTable;
+        }
+
+        public static List<FilterModel> ToGroupedFilters(this DataTable dt)
+        {
+            return dt.AsEnumerable()
+                .GroupBy(row => new
+                {
+                    CategoryName = row.Field<string>("CategoryName")
+                })
+                .Select(group => new FilterModel
+                {
+                    CategoryName = group.Key.CategoryName,
+                    IsVisible = group.FirstOrDefault().Field<bool>("IsVisible"),
+                    FilterItems = group.Select(s => new FilterModel
+                    {
+                        CategoryName = s.Field<string>("CategoryName"),
+                        ItemValue = s.Field<string>("ItemValue"),
+                        ItemKey = s.Field<string>("ItemKey"),
+                        ItemId = s.Field<string>("ItemId")
+                    }).ToList()
+                })
+                .ToList();
+        }
+
+        public static DataTable ToDataTableFromFilterModel(this List<FilterModel> filterList)
+        {
+            var simpleList = filterList.Select(i => new
+            {
+                CategoryName = i.CategoryName,
+                ItemId = i.ItemId
+            }).ToList();
+
+            return simpleList.ToDataTable();
         }
     }
 }
