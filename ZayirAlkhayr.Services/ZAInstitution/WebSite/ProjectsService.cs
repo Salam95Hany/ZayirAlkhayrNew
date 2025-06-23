@@ -5,75 +5,83 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Entities.Specifications.ProjectSpec;
 using ZayirAlkhayr.Interfaces.Common;
+using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
+using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
     public class ProjectsService : IProjectsService
     {
-        private readonly ZADbContext _Context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IManageFileService _manageFileService;
-        private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _environment;
+        private readonly IAppSettings _appSettings;
+        private readonly IHostEnvironment _environment;
         private readonly ISQLHelper _sQLHelper;
         private string ApiLocalUrl;
         private string UiHost;
-        public ProjectsService(ZADbContext Context, IManageFileService manageFileService, IConfiguration configuration, IWebHostEnvironment environment, ISQLHelper sQLHelper)
+        public ProjectsService(IManageFileService manageFileService, IHostEnvironment environment, ISQLHelper sQLHelper, IUnitOfWork unitOfWork, IAppSettings appSettings)
         {
-            _Context = Context;
             _manageFileService = manageFileService;
-            _configuration = configuration;
             _environment = environment;
             _sQLHelper = sQLHelper;
-            ApiLocalUrl = _configuration["ApiUrlLocal"];
-            UiHost = _configuration["UiHost"];
+            _unitOfWork = unitOfWork;
+            _appSettings = appSettings;
+            ApiLocalUrl = _appSettings.ApiUrlLocal;
+            UiHost = _appSettings.UiHost;
+
+
         }
 
-        public async Task<Projects> GetWebSiteProjectsById(int ProjectId)
+        public async Task<ErrorResponseModel<Project>> GetWebSiteProjectsById(int ProjectId)
         {
-            var result =await _Context.Projects.FirstOrDefault(i => i.Id == ProjectId);
+            var Spec = new ProjectDetailsSpecification(ProjectId);
+            var result = await _unitOfWork.Repository<Project>().GetByIdAsync(ProjectId);
             if (result != null)
             {
-                var ProjectImages =await _Context.ProjectDetails.Where(x => x.ProjectId == ProjectId).Select(i => Path.Combine(ApiLocalUrl, ImageFiles.ProjectSliderImages.ToString(), i.Image)).ToList();
-                result.Images = ProjectImages;
+                var ProjectImages = await _unitOfWork.Repository<ProjectDetail>().GetAllWithSpecAsync(Spec);
+                var data = ProjectImages.Select(i => Path.Combine(ApiLocalUrl, ImageFiles.ProjectSliderImages.ToString(), i.Image)).ToList();
+                result.Images = data;
             }
 
-            return result;
+            return ErrorResponseModel<Project>.Success(GenericErrors.GetSuccess, result);
         }
 
-        public async Task<DataTable> GetAllProjects(PagingFilterModel PagingFilter)
+        public async Task<ErrorResponseModel<DataTable>> GetAllProjects(PagingFilterModel PagingFilter)
         {
-            var FilterDt =await _sQLHelper.ConvertFilterModelToDataTable(PagingFilter.FilterList);
+            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[3];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt =await _sQLHelper.ExecuteDataTable("web.SP_GetAllProjects", Params);
-            return dt;
+            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllProjects", Params);
+            return ErrorResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public async List<ProjectDetails> GetProjectsSliderImagesById(int ProjectId)
+        public async Task<ErrorResponseModel<List<ProjectDetail>>> GetProjectsSliderImagesById(int ProjectId)
         {
-            var results =await _Context.ProjectDetails.Where(i => i.ProjectId == ProjectId).Select(i => new ProjectDetails
+            var Spec = new ProjectDetailsSpecification(ProjectId);
+            var results = await _unitOfWork.Repository<ProjectDetail>().GetAllWithSpecAsync(Spec);
+            var data = results.Select(i => new ProjectDetail
             {
                 Id = i.Id,
                 ProjectId = i.ProjectId,
                 Image = Path.Combine(ApiLocalUrl, ImageFiles.ProjectSliderImages.ToString(), i.Image),
             }).ToList();
-            return results;
+            return ErrorResponseModel<List<ProjectDetail>>.Success(GenericErrors.GetSuccess, data);
         }
 
-        public async Task<HandleErrorResponseModel> AddNewProjects(Projects Model)
+        public async Task<ErrorResponseModel<string>> AddNewProjects(Project Model)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
-                var Project = new Projects();
-                var Id =await _Context.Projects.Any() ? await _Context.Projects.Max(i => i.Id) + 1 : 1;
+                var Project = new Project();
+                var Id = await _unitOfWork.Repository<Project>().AnyAsync() ? await _unitOfWork.Repository<Project>().MaxAsync(i => i.Id) + 1 : 1;
                 Project.Title = Model.Title;
                 Project.Description = Model.Description;
                 Project.TotalDonationAmount = Model.TotalDonationAmount;
@@ -85,28 +93,22 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Project.InsertUser = Model.InsertUser;
                 Project.InsertDate = DateTime.Now.AddHours(1);
 
-               await _Context.Projects.Add(Project);
-               await _Context.SaveChanges();
+                await _unitOfWork.Repository<Project>().AddAsync(Project);
+                await _unitOfWork.CompleteAsync();
 
-                Response.Done = true;
-                Response.Message = "تم اضافة مشروع جديد بنجاح";
-                return Response;
+                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Success(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> UpdateProjects(Projects Model)
+        public async Task<ErrorResponseModel<string>> UpdateProjects(Project Model)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
-                var Project =await _Context.Projects.FirstOrDefault(x => x.Id == Model.Id);
+                var Project = await _unitOfWork.Repository<Project>().GetByIdAsync(Model.Id);
                 Project.Title = Model.Title;
                 Project.Description = Model.Description;
                 Project.TotalDonationAmount = Model.TotalDonationAmount;
@@ -117,106 +119,89 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Project.UpdateUser = Model.InsertUser;
                 Project.UpdateDate = DateTime.Now.AddHours(1);
 
-               await _Context.SaveChanges();
+                await _unitOfWork.CompleteAsync();
 
-                Response.Done = true;
-                Response.Message = "تم تعديل المشروع بنجاح";
-                return Response;
+                return ErrorResponseModel<string>.Success(GenericErrors.UpdateSuccess);
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> DeleteProjects(int ProjectId)
+        public async Task<ErrorResponseModel<string>> DeleteProjects(int ProjectId)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
-                var Project =await _Context.Projects.FirstOrDefault(i => i.Id == ProjectId);
+                var Project = await _unitOfWork.Repository<Project>().GetByIdAsync(ProjectId);
                 if (Project != null)
                 {
-                    var SliderImages =await _Context.ProjectDetails.Where(i => i.ProjectId == ProjectId).ToList();
+                    var Spec = new ProjectDetailsSpecification(ProjectId);
+                    var SliderImages = await _unitOfWork.Repository<ProjectDetail>().GetAllWithSpecAsync(Spec);
                     if (SliderImages.Count > 0)
-                       await _Context.ProjectDetails.RemoveRange(SliderImages);
+                        _unitOfWork.Repository<ProjectDetail>().DeleteRange(SliderImages);
 
-                   await _Context.Projects.Remove(Project);
+                    _unitOfWork.Repository<Project>().Delete(Project);
                     var ProjectSliderImageNames = SliderImages.Select(i => i.Image).ToList();
                     DeleteProjectsFiles(ProjectSliderImageNames);
-                   await _Context.SaveChanges();
-                    Response.Done = true;
-                    Response.Message = "تم حذف المشروع بنجاح";
-                    return Response;
+                    await _unitOfWork.CompleteAsync();
+                    return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
                 }
                 else
                 {
-                    Response.Done = false;
-                    Response.Message = "هذا المشروع غير موجود";
-                    return Response;
+                    return ErrorResponseModel<string>.Failure(GenericErrors.NotFound);
                 }
 
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> AddProjectsSliderImage(UploadFileModel Model)
+        public async Task<ErrorResponseModel<string>> AddProjectsSliderImage(UploadFileModel Model)
         {
-            var Response = new HandleErrorResponseModel();
             try
             {
                 if (Model.Files != null)
                     foreach (var newFile in Model.Files)
                     {
                         var FileName = await _manageFileService.UploadFile(newFile, "", ImageFiles.ProjectSliderImages);
-                        if (FileName.Done)
+                        if (FileName.IsSuccess)
                         {
-                            var Project = new ProjectDetails();
+                            var Project = new ProjectDetail();
                             Project.ProjectId = Model.Id;
-                            Project.Image = FileName.StringValue;
-                           await _Context.ProjectDetails.Add(Project);
-                           await _Context.SaveChanges();
+                            Project.Image = FileName.Results;
+                            await _unitOfWork.Repository<ProjectDetail>().AddAsync(Project);
+                            await _unitOfWork.CompleteAsync();
                         }
                     }
 
                 if (Model.DeletedFiles != null)
                     foreach (var file in Model?.DeletedFiles)
                     {
-                        var FileName =await _manageFileService.DeleteFile(file.FileName, ImageFiles.ProjectSliderImages);
-                        if (FileName.Done)
+                        var FileName = _manageFileService.DeleteFile(file.FileName, ImageFiles.ProjectSliderImages);
+                        if (FileName.IsSuccess)
                         {
-                            var Slider =await _Context.ProjectDetails.FirstOrDefault(i => i.Id == file.Id);
+                            var Slider = await _unitOfWork.Repository<ProjectDetail>().GetByIdAsync(file.Id);
                             if (Slider != null)
                             {
-                               await _Context.ProjectDetails.Remove(Slider);
-                               await _Context.SaveChanges();
+                                _unitOfWork.Repository<ProjectDetail>().Delete(Slider);
+                                await _unitOfWork.CompleteAsync();
                             }
                         }
                     }
-                Response.Done = true;
-                Response.Message = "تم اضافة الصور بنجاح";
-                return Response;
+                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
         private void DeleteProjectsFiles(List<string> ProjectSliderImageNames)
         {
-            var ProjectSliderImagePaths = Directory.GetFiles(Path.Combine(_environment.WebRootPath, ImageFiles.ProjectSliderImages.ToString()));
+            var ProjectSliderImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, "wwwroot", ImageFiles.ProjectSliderImages.ToString()));
 
             if (ProjectSliderImagePaths.Count() > 0)
             {
@@ -228,18 +213,19 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             }
         }
 
-        public async Task<bool> CheckProjectLinkIsActive(int ProjectId)
+        public async Task<ErrorResponseModel<bool>> CheckProjectLinkIsActive(int ProjectId)
         {
-            var result =await _Context.Projects.FirstOrDefault(i => i.Id == ProjectId);
+            var result = await _unitOfWork.Repository<Project>().GetByIdAsync(ProjectId);
             if (result == null)
-                return false;
+                return ErrorResponseModel<bool>.Success(GenericErrors.GetSuccess, false);
             else
-                return result.IsVisible;
+                return ErrorResponseModel<bool>.Success(GenericErrors.GetSuccess, result.IsVisible);
         }
 
-        public async List<ProjectsDenied> GetAllDeniedProjects()
+        public async Task<ErrorResponseModel<List<ProjectsDenied>>> GetAllDeniedProjects()
         {
-            var result =await _Context.Projects.Select(i => new ProjectsDenied
+            var result = await _unitOfWork.Repository<Project>().GetAllAsync();
+            var data = result.Select(i => new ProjectsDenied
             {
                 Id = i.Id,
                 Name = i.Title,
@@ -247,7 +233,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 IsVisible = i.IsVisible
             }).ToList();
 
-            return result;
+            return ErrorResponseModel<List<ProjectsDenied>>.Success(GenericErrors.GetSuccess, data);
         }
     }
 }

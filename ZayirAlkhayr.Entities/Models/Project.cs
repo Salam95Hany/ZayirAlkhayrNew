@@ -29,5 +29,8 @@ public partial class Project : AuditableEntity
 
     public string ProjectUrl { get; set; }
 
+    [NotMapped]
+    public List<string> Images { get; set; }
+
     public virtual ICollection<ProjectDetail> ProjectDetails { get; set; } = new List<ProjectDetail>();
 }

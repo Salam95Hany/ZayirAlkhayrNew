@@ -18,56 +18,56 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
         }
 
         [HttpGet("GetAllWebSiteEvents")]
-        public async Task<List<EventGroupingModel>> GetAllWebSiteEvents()
+        public async Task<ErrorResponseModel<List<EventGroupingModel>>> GetAllWebSiteEvents()
         {
-            var result =await _eventService.GetAllWebSiteEvents();
+            var result = await _eventService.GetAllWebSiteEvents();
             return result;
         }
 
         [HttpPost("GetAllEvents")]
-        public async Task<DataTable> GetAllEvents(PagingFilterModel PagingFilter)
+        public async Task<ErrorResponseModel<DataTable>> GetAllEvents(PagingFilterModel PagingFilter)
         {
             var result = await _eventService.GetAllEvents(PagingFilter);
             return result;
         }
 
         [HttpGet("GetEventSliderImagesById")]
-        public async Task<List<EventSliderImages>> GetEventSliderImagesById(int EventId)
+        public async Task<ErrorResponseModel<List<EventSliderImage>>> GetEventSliderImagesById(int EventId)
         {
             var result = await _eventService.GetEventSliderImagesById(EventId);
             return result;
         }
 
         [HttpPost("AddNewEvent")]
-        public async Task<HandleErrorResponseModel> AddNewEvent(Event Model)
+        public async Task<ErrorResponseModel<string>> AddNewEvent(Event Model)
         {
-            var result =await _eventService.AddNewEvent(Model);
+            var result = await _eventService.AddNewEvent(Model);
             return result;
         }
 
         [HttpPost("UpdateEvent")]
-        public async Task<HandleErrorResponseModel> UpdateEvent(Event Model)
+        public async Task<ErrorResponseModel<string>> UpdateEvent(Event Model)
         {
-            var result =await _eventService.UpdateEvent(Model);
+            var result = await _eventService.UpdateEvent(Model);
             return result;
         }
 
         [HttpGet("DeleteEvent")]
-        public async Task<HandleErrorResponseModel> DeleteEvent(int EventId)
+        public async Task<ErrorResponseModel<string>> DeleteEvent(int EventId)
         {
-            var result =await _eventService.DeleteEvent(EventId);
+            var result = await _eventService.DeleteEvent(EventId);
             return result;
         }
 
         [HttpPost("AddEventSliderImage")]
-        public async Task<HandleErrorResponseModel> AddEventSliderImage([FromForm] UploadFileModel Model)
+        public async Task<ErrorResponseModel<string>> AddEventSliderImage([FromForm] UploadFileModel Model)
         {
             var result = await _eventService.AddEventSliderImage(Model);
             return result;
         }
 
         [HttpPost("ApplyEventFilesSorting")]
-        public async Task<HandleErrorResponseModel> ApplyEventFilesSorting(List<FileSortingModel> Model, int EventId)
+        public async Task<ErrorResponseModel<string>> ApplyEventFilesSorting(List<FileSortingModel> Model, int EventId)
         {
             var result = await _eventService.ApplyEventFilesSorting(Model, EventId);
             return result;
