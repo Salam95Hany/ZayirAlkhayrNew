@@ -166,7 +166,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             try
             {
                 var sessionId = Guid.NewGuid().ToString();
-                var Visitor = new WebSiteVisitors { SessionId = sessionId, InsertDate = DateTime.Now.AddHours(1) };
+                var Visitor = new WebSiteVisitor { SessionId = sessionId, InsertDate = DateTime.Now.AddHours(1) };
                 await _Context.WebSiteVisitors.Add(Visitor);
                 await _Context.SaveChanges();
                 return sessionId;
