@@ -54,6 +54,10 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IManageFileService, ManageFileService>();
             services.AddScoped<IActivityService, ActivityService>();
+            services.AddScoped<IEventService, EventService>();
+            services.AddScoped<IPhotoService, PhotoService>();
+            services.AddScoped<IProjectsService, ProjectsService>();
+            services.AddScoped<IWebsiteHomeService, WebsiteHomeService>();
 
 
             return services;
