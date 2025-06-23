@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Common;
@@ -17,23 +18,25 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
     {
         private readonly ZADbContext _Context;
         private readonly IManageFileService _manageFileService;
-        private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _environment;
+        private readonly IHostEnvironment _environment;
         private readonly ISQLHelper _sQLHelper;
+        private readonly IAppSettings _appSettings;
         private string ApiLocalUrl;
-        public EventService(ZADbContext Context, IManageFileService manageFileService, IConfiguration configuration, IWebHostEnvironment environment, ISQLHelper sQLHelper)
+        public EventService(ZADbContext Context, IManageFileService manageFileService, IHostEnvironment environment, ISQLHelper sQLHelper, IAppSettings appSettings)
         {
             _Context = Context;
             _manageFileService = manageFileService;
-            _configuration = configuration;
             _environment = environment;
             _sQLHelper = sQLHelper;
-            ApiLocalUrl = _configuration["ApiUrlLocal"];
+            _appSettings = appSettings;
+            ApiLocalUrl = _appSettings.ApiUrlLocal;
+
+
         }
 
         public async Task<List<EventGroupingModel>> GetAllWebSiteEvents()
         {
-            var result =await _Context.Events.ToList();
+            var result = await _Context.Events.ToList();
             var Grouping = result.Where(i => i.IsVisible).GroupBy(g => g.Month).Select(group => new EventGroupingModel
             {
                 Month = group.Key,
@@ -45,7 +48,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                     Description = i.Description,
                     FromDateStr = i.FromDate != null ? i.FromDate.Value.ToString("d MMMM , yyyy @ hh:mm t", new CultureInfo("ar-AE")) : "",
                     ToDateStr = i.ToDate != null ? i.ToDate.Value.ToString("d MMMM , yyyy @ hh:mm t", new CultureInfo("ar-AE")) : "",
-                    Images =await _Context.EventSliderImages.Where(x => x.EventId == i.Id).OrderBy(i => i.DisplayOrder).Select(i => Path.Combine(ApiLocalUrl, ImageFiles.EventSliderImages.ToString(), i.Image)).ToList(),
+                    Images = await _Context.EventSliderImages.Where(x => x.EventId == i.Id).OrderBy(i => i.DisplayOrder).Select(i => Path.Combine(ApiLocalUrl, ImageFiles.EventSliderImages.ToString(), i.Image)).ToList(),
 
                 }).OrderByDescending(o => o.InsertDate).ToList(),
             }).OrderBy(o => o.ToDate).ToList();
@@ -55,19 +58,19 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
         public async Task<DataTable> GetAllEvents(PagingFilterModel PagingFilter)
         {
-            var FilterDt =await _sQLHelper.ConvertFilterModelToDataTable(PagingFilter.FilterList);
+            var FilterDt = await _sQLHelper.ConvertFilterModelToDataTable(PagingFilter.FilterList);
             var Params = new SqlParameter[4];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
             Params[1] = new SqlParameter("@ApiUrl", ApiLocalUrl);
             Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt =await _sQLHelper.ExecuteDataTable("web.SP_GetAllEvents", Params);
+            var dt = await _sQLHelper.ExecuteDataTable("web.SP_GetAllEvents", Params);
             return dt;
         }
 
         public async Task<List<EventSliderImages>> GetEventSliderImagesById(int EventId)
         {
-            var results =await _Context.EventSliderImages.Where(i => i.EventId == EventId).Select(i => new EventSliderImages
+            var results = await _Context.EventSliderImages.Where(i => i.EventId == EventId).Select(i => new EventSliderImages
             {
                 Id = i.Id,
                 EventId = i.EventId,
@@ -97,8 +100,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Event.InsertUser = Model.InsertUser;
                 Event.InsertDate = DateTime.Now.AddHours(1);
 
-               await _Context.Events.Add(Event);
-               await _Context.SaveChanges();
+                await _Context.Events.Add(Event);
+                await _Context.SaveChanges();
 
                 Response.Done = true;
                 Response.Message = "تم اضافة فعالية جديدة بنجاح";
@@ -133,7 +136,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Event.UpdateUser = Model.InsertUser;
                 Event.UpdateDate = DateTime.Now.AddHours(1);
 
-               await _Context.SaveChanges();
+                await _Context.SaveChanges();
 
                 Response.Done = true;
                 Response.Message = "تم تعديل الفعالية بنجاح";
@@ -158,12 +161,12 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 {
                     var SliderImages = _Context.EventSliderImages.Where(i => i.EventId == EventId).ToList();
                     if (SliderImages.Count > 0)
-                       await _Context.EventSliderImages.RemoveRange(SliderImages);
+                        await _Context.EventSliderImages.RemoveRange(SliderImages);
 
-                  await  _Context.Events.Remove(Event);
+                    await _Context.Events.Remove(Event);
                     var EventSliderImageNames = SliderImages.Select(i => i.Image).ToList();
                     DeleteEventFiles(EventSliderImageNames);
-                  await  _Context.SaveChanges();
+                    await _Context.SaveChanges();
                     Response.Done = true;
                     Response.Message = "تم حذف الفعالية بنجاح";
                     return Response;
@@ -199,8 +202,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                             var Event = new EventSliderImages();
                             Event.EventId = Model.Id;
                             Event.Image = FileName.StringValue;
-                           await _Context.EventSliderImages.Add(Event);
-                           await _Context.SaveChanges();
+                            await _Context.EventSliderImages.Add(Event);
+                            await _Context.SaveChanges();
                         }
                     }
 
@@ -213,8 +216,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                             var Slider = _Context.EventSliderImages.FirstOrDefault(i => i.Id == file.Id);
                             if (Slider != null)
                             {
-                               await _Context.EventSliderImages.Remove(Slider);
-                               await _Context.SaveChanges();
+                                await _Context.EventSliderImages.Remove(Slider);
+                                await _Context.SaveChanges();
                             }
                         }
                     }
@@ -243,7 +246,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                         image.DisplayOrder = Row.DisplayOrder;
                 }
 
-               await _Context.SaveChanges();
+                await _Context.SaveChanges();
                 Response.Done = true;
                 Response.Message = "تم تطبيق الترتيب بنجاح";
                 return Response;
@@ -260,7 +263,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
         private void DeleteEventFiles(List<string> EventSliderImageNames) //
         {
-            var EventSliderImagePaths = Directory.GetFiles(Path.Combine(_environment.WebRootPath, ImageFiles.EventSliderImages.ToString()));
+            var EventSliderImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, "wwwroot", ImageFiles.EventSliderImages.ToString()));
 
             if (EventSliderImagePaths.Count() > 0)
             {

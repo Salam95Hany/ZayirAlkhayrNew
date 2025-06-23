@@ -261,7 +261,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                         image.DisplayOrder = Row.DisplayOrder;
                 }
 
-                _unitOfWork.CompleteAsync();
+                await _unitOfWork.CompleteAsync();
 
                 return ErrorResponseModel<string>.Success(GenericErrors.ApplySort);
             }

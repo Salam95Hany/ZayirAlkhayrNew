@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Common;
+using ZayirAlkhayr.Services.Common;
+using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 
 
@@ -16,29 +18,29 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
     public class WebsiteHomeService : IWebsiteHomeService
     {
-        private readonly ZADbContext _Context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IManageFileService _manageFileService;
-        private readonly IConfiguration _configuration;
         private readonly ISQLHelper _sQLHelper;
+        private readonly IAppSettings _appSettings;
         private string ApiLocalUrl;
-        public WebsiteHomeService(ZADbContext Context, IManageFileService manageFileService, IConfiguration configuration, ISQLHelper sQLHelper)
+        public WebsiteHomeService(IManageFileService manageFileService, ISQLHelper sQLHelper, IUnitOfWork unitOfWork, IAppSettings appSettings)
         {
-            _Context = Context;
             _manageFileService = manageFileService;
-            _configuration = configuration;
             _sQLHelper = sQLHelper;
-            ApiLocalUrl = _configuration["ApiUrlLocal"];
+            _appSettings = appSettings;
+            _unitOfWork = unitOfWork;
+            ApiLocalUrl = _appSettings.ApiUrlLocal;
         }
 
         public async Task<DataTable> GetHomeSliderImages(PagingFilterModel PagingFilter)
         {
-            var FilterDt =await _sQLHelper.ConvertFilterModelToDataTable(PagingFilter.FilterList);
+            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[4];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
             Params[1] = new SqlParameter("@ApiUrl", ApiLocalUrl);
             Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt =await _sQLHelper.ExecuteDataTable("web.SP_GetHomeSliderImages", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetHomeSliderImages", Params);
             return dt;
         }
 
@@ -46,15 +48,9 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         {
             var Params = new SqlParameter[1];
             Params[0] = new SqlParameter("@PageName", PageName);
-            var dt =await _sQLHelper.ExecuteDataTable("web.SP_GetAllWebPagesFilter", Params);
-            var Filters =await _sQLHelper.GroupingFilters(dt);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllWebPagesFilter", Params);
+            var Filters = dt.ToGroupedFilters();
             return Filters;
-        }
-
-        public async Task<List<Footer>> GetFooterData()
-        {
-            var results =await _Context.Footers.ToList();
-            return results;
         }
 
         public async Task<List<PagesAutoSearch>> GetPagesAutoSearch(string SearchText)
@@ -82,8 +78,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 else
                     return FileName;
 
-               await _Context.SliderImages.Add(Slider);
-               await _Context.SaveChanges();
+                await _Context.SliderImages.Add(Slider);
+                await _Context.SaveChanges();
 
                 Response.Done = true;
                 Response.Message = "تم اضافة عنصر جديد بنجاح";
@@ -118,7 +114,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                         return FileName;
                 }
 
-               await _Context.SaveChanges();
+                await _Context.SaveChanges();
 
                 Response.Done = true;
                 Response.Message = "تم تعديل العنصر بنجاح";
@@ -141,97 +137,9 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 var Slider = await _Context.SliderImages.FirstOrDefault(i => i.Id == SliderImageId);
                 if (Slider != null)
                 {
-                   await _manageFileService.DeleteFile(Slider.Image, ImageFiles.SliderImages);
-                   await _Context.SliderImages.Remove(Slider);
-                   await _Context.SaveChanges();
-                    Response.Done = true;
-                    Response.Message = "تم حذف العنصر بنجاح";
-                    return Response;
-                }
-                else
-                {
-                    Response.Done = false;
-                    Response.Message = "هذا العنصر غير موجود";
-                    return Response;
-                }
-
-            }
-            catch (Exception)
-            {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
-            }
-        }
-
-        public async Task<HandleErrorResponseModel> AddNewFooterData(Footer Model)
-        {
-            try
-            {
-                var Response = new HandleErrorResponseModel();
-                var Footer = new Footer();
-
-                Footer.Phones = Model.Phones;
-
-               await _Context.Footers.Add(Footer);
-               await _Context.SaveChanges();
-
-                Response.Done = true;
-                Response.Message = "تم اضافة عنصر جديد بنجاح";
-                return Response;
-            }
-            catch (Exception)
-            {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
-            }
-        }
-
-        public async Task<HandleErrorResponseModel> UpdateFooterData(Footer Model)
-        {
-            try
-            {
-                var Response = new HandleErrorResponseModel();
-                var Footer = await _Context.Footers.FirstOrDefault(x => x.Id == Model.Id);
-                if (Footer != null)
-                {
-                    Footer.Phones = Model.Phones;
+                     _manageFileService.DeleteFile(Slider.Image, ImageFiles.SliderImages);
+                    await _Context.SliderImages.Remove(Slider);
                     await _Context.SaveChanges();
-
-                    Response.Done = true;
-                    Response.Message = "تم تعديل العنصر بنجاح";
-                    return Response;
-                }
-                else
-                {
-                    Response.Done = false;
-                    Response.Message = "هذا العنصر غير موجود";
-                    return Response;
-                }
-
-            }
-            catch (Exception)
-            {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
-            }
-        }
-
-        public async Task<HandleErrorResponseModel> DeleteFooterData(int FooterId)
-        {
-            try
-            {
-                var Response = new HandleErrorResponseModel();
-                var Footer = await _Context.Footers.FirstOrDefault(i => i.Id == FooterId);
-                if (Footer != null)
-                {
-                   await _Context.Footers.Remove(Footer);
-                   await _Context.SaveChanges();
                     Response.Done = true;
                     Response.Message = "تم حذف العنصر بنجاح";
                     return Response;
@@ -259,8 +167,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             {
                 var sessionId = Guid.NewGuid().ToString();
                 var Visitor = new WebSiteVisitors { SessionId = sessionId, InsertDate = DateTime.Now.AddHours(1) };
-               await _Context.WebSiteVisitors.Add(Visitor);
-               await _Context.SaveChanges();
+                await _Context.WebSiteVisitors.Add(Visitor);
+                await _Context.SaveChanges();
                 return sessionId;
             }
             catch (Exception)
