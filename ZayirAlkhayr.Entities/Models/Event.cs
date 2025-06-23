@@ -25,5 +25,12 @@ public partial class Event : AuditableEntity
 
     public string Month { get; set; }
 
+    [NotMapped]
+    public List<string> Images { get; set; }
+    [NotMapped]
+    public string FromDateStr { get; set; }
+    [NotMapped]
+    public string ToDateStr { get; set; }
+
     public virtual ICollection<EventSliderImage> EventSliderImages { get; set; } = new List<EventSliderImage>();
 }

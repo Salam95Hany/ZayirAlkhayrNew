@@ -5,61 +5,69 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
+using ZayirAlkhayr.Interfaces.Repositories;
+using ZayirAlkhayr.Services.Common;
+using ZayirAlkhayr.Entities.Specifications.PhotoSpec;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
     public class PhotoService : IPhotoService
     {
-        private readonly ZADbContext _Context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IManageFileService _manageFileService;
-        private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _environment;
+        private readonly IAppSettings _appSettings;
+        private readonly IHostEnvironment _environment;
         private readonly ISQLHelper _sQLHelper;
         private string ApiLocalUrl;
-        public PhotoService(ZADbContext Context, IManageFileService manageFileService, IConfiguration configuration, IWebHostEnvironment environment, ISQLHelper sQLHelper)
+        public PhotoService(IManageFileService manageFileService, IHostEnvironment environment, ISQLHelper sQLHelper, IUnitOfWork unitOfWork, IAppSettings appSettings)
         {
-            _Context = Context;
             _manageFileService = manageFileService;
-            _configuration = configuration;
             _environment = environment;
             _sQLHelper = sQLHelper;
-            ApiLocalUrl = _configuration["ApiUrlLocal"];
+            _unitOfWork = unitOfWork;
+            _appSettings = appSettings;
+            ApiLocalUrl = appSettings.ApiUrlLocal;
+
         }
 
-        public async Task<DataTable> GetAllPhotos(PagingFilterModel PagingFilter)
+        public async Task<ErrorResponseModel<DataTable>> GetAllPhotos(PagingFilterModel PagingFilter)
         {
-            var FilterDt =await _sQLHelper.ConvertFilterModelToDataTable(PagingFilter.FilterList);
+            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[4];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
             Params[1] = new SqlParameter("@ApiUrl", ApiLocalUrl);
             Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt = await _sQLHelper.ExecuteDataTable("web.SP_GetAllPhotos", Params);
-            return dt;
+            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllPhotos", Params);
+            return ErrorResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public async Task<List<PhotoDetails>> GetPhotoDetails(int PhotoId)
+        public async Task<ErrorResponseModel<List<PhotoDetail>>> GetPhotoDetails(int PhotoId)
         {
-            var results =await _Context.PhotoDetails.Where(i => i.PhotoId == PhotoId).Select(i => new PhotoDetails
+            var Spec = new PhotoDetailsSpecification(PhotoId);
+            var results = await _unitOfWork.Repository<PhotoDetail>().GetAllWithSpecAsync(Spec);
+            var data = results.Select(i => new PhotoDetail
             {
                 Id = i.Id,
                 Image = Path.Combine(ApiLocalUrl, ImageFiles.PhotoDetailImages.ToString(), i.Image),
                 DisplayOrder = i.DisplayOrder
-            }).ToList();
-            return results.OrderBy(i => i.DisplayOrder).ToList();
+            }).OrderBy(i => i.DisplayOrder).ToList();
+            return ErrorResponseModel<List<PhotoDetail>>.Success(GenericErrors.GetSuccess, data);
         }
 
-        public async Task<PhotoModel> GetPhotoWithDetailsById(int PhotoId)
+        public async Task<ErrorResponseModel<PhotoModel>> GetPhotoWithDetailsById(int PhotoId)
         {
-            var Photo =await _Context.Photos.FirstOrDefault(i => i.Id == PhotoId);
-            if (Photo == null) { return new PhotoModel(); }
-            var PhotoDetalImages =await _Context.PhotoDetails.Where(i => i.PhotoId == PhotoId).OrderBy(i => i.DisplayOrder).Select(i => Path.Combine(ApiLocalUrl, ImageFiles.PhotoDetailImages.ToString(), i.Image)).ToList();
+            var Spec = new PhotoDetailsSpecification(PhotoId, true);
+            var Photo = await _unitOfWork.Repository<Photo>().GetByIdAsync(PhotoId);
+            if (Photo == null) return ErrorResponseModel<PhotoModel>.Failure(GenericErrors.TransFailed);
 
+            var data = await _unitOfWork.Repository<PhotoDetail>().GetAllWithSpecAsync(Spec);
+            var PhotoDetalImages = data.Select(i => Path.Combine(ApiLocalUrl, ImageFiles.PhotoDetailImages.ToString(), i.Image)).ToList();
             var PhotoModel = new PhotoModel
             {
                 Id = Photo.Id,
@@ -68,15 +76,14 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Image = Path.Combine(ApiLocalUrl, ImageFiles.PhotoImages.ToString(), Photo.Image),
                 DetailImages = PhotoDetalImages
             };
-            return PhotoModel;
+            return ErrorResponseModel<PhotoModel>.Success(GenericErrors.GetSuccess, PhotoModel);
         }
 
-        public async Task<HandleErrorResponseModel> AddNewPhoto(Photos Model)
+        public async Task<ErrorResponseModel<string>> AddNewPhoto(Photo Model)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
-                var PhotoObj = new Photos();
+                var PhotoObj = new Photo();
                 PhotoObj.Title = Model.Title;
                 PhotoObj.Description = Model.Description;
                 PhotoObj.IsVisible = Model.IsVisible;
@@ -84,33 +91,27 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 PhotoObj.InsertDate = DateTime.Now.AddHours(1);
 
                 var FileName = await _manageFileService.UploadFile(Model.Files, "", ImageFiles.PhotoImages);
-                if (FileName.Done)
-                    PhotoObj.Image = FileName.StringValue;
+                if (FileName.IsSuccess)
+                    PhotoObj.Image = FileName.Results;
                 else
                     return FileName;
 
-               await _Context.Photos.Add(PhotoObj);
-               await _Context.SaveChanges();
+                await _unitOfWork.Repository<Photo>().AddAsync(PhotoObj);
+                await _unitOfWork.CompleteAsync();
 
-                Response.Done = true;
-                Response.Message = "تم اضافة صورة جديدة بنجاح";
-                return Response;
+                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> UpdatePhoto(Photos Model)
+        public async Task<ErrorResponseModel<string>> UpdatePhoto(Photo Model)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
-                var PhotoObj = _Context.Photos.FirstOrDefault(x => x.Id == Model.Id);
+                var PhotoObj = await _unitOfWork.Repository<Photo>().GetByIdAsync(Model.Id);
                 PhotoObj.Title = Model.Title;
                 PhotoObj.Description = Model.Description;
                 PhotoObj.IsVisible = Model.IsVisible;
@@ -120,132 +121,116 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 if (Model.Files != null)
                 {
                     var FileName = await _manageFileService.UploadFile(Model.Files, Model.OldFileName, ImageFiles.PhotoImages);
-                    if (FileName.Done)
-                        PhotoObj.Image = FileName.StringValue;
+                    if (FileName.IsSuccess)
+                        PhotoObj.Image = FileName.Results;
                     else
                         return FileName;
                 }
 
-               await _Context.SaveChanges();
+                await _unitOfWork.CompleteAsync();
 
-                Response.Done = true;
-                Response.Message = "تم تعديل الصورة بنجاح";
-                return Response;
+                return ErrorResponseModel<string>.Success(GenericErrors.UpdateSuccess);
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> DeletePhoto(int PhotoId)
+        public async Task<ErrorResponseModel<string>> DeletePhoto(int PhotoId)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
-                var Photo =await _Context.Photos.FirstOrDefault(i => i.Id == PhotoId);
+                var Photo = await _unitOfWork.Repository<Photo>().GetByIdAsync(PhotoId);
                 if (Photo != null)
                 {
-                    var DetailImages =await _Context.PhotoDetails.Where(i => i.PhotoId == PhotoId).ToList();
+                    var Spec = new PhotoDetailsSpecification(PhotoId);
+                    var DetailImages = await _unitOfWork.Repository<PhotoDetail>().GetAllWithSpecAsync(Spec);
                     if (DetailImages.Count > 0)
-                       await _Context.PhotoDetails.RemoveRange(DetailImages);
+                        _unitOfWork.Repository<PhotoDetail>().DeleteRange(DetailImages);
 
-                   await _Context.Photos.Remove(Photo);
+                    _unitOfWork.Repository<Photo>().Delete(Photo);
                     var PhotoDetailImageNames = DetailImages.Select(i => i.Image).ToList();
                     DeletePhotoFiles(Photo.Image, PhotoDetailImageNames);
-                  await _Context.SaveChanges();
-                    Response.Done = true;
-                    Response.Message = "تم حذف الصورة بنجاح";
-                    return Response;
+                    await _unitOfWork.CompleteAsync();
+                    return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
                 }
                 else
                 {
-                    Response.Done = false;
-                    Response.Message = "هذه الصورة غير موجود";
-                    return Response;
+                    return ErrorResponseModel<string>.Failure(GenericErrors.NotFound);
                 }
 
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> AddPhotoDetailsImage(UploadFileModel Model)
+        public async Task<ErrorResponseModel<string>> AddPhotoDetailsImage(UploadFileModel Model)
         {
-            var Response = new HandleErrorResponseModel();
             try
             {
                 if (Model.Files != null)
                     foreach (var newFile in Model.Files)
                     {
                         var FileName = await _manageFileService.UploadFile(newFile, "", ImageFiles.PhotoDetailImages);
-                        if (FileName.Done)
+                        if (FileName.IsSuccess)
                         {
-                            var Details = new PhotoDetails();
+                            var Details = new PhotoDetail();
                             Details.PhotoId = Model.Id;
-                            Details.Image = FileName.StringValue;
-                           await _Context.PhotoDetails.Add(Details);
-                           await _Context.SaveChanges();
+                            Details.Image = FileName.Results;
+                            await _unitOfWork.Repository<PhotoDetail>().AddAsync(Details);
+                            await _unitOfWork.CompleteAsync();
                         }
                     }
 
                 if (Model.DeletedFiles != null)
                     foreach (var file in Model?.DeletedFiles)
                     {
-                        var FileName =await _manageFileService.DeleteFile(file.FileName, ImageFiles.PhotoDetailImages);
-                        if (FileName.Done)
+                        var FileName = _manageFileService.DeleteFile(file.FileName, ImageFiles.PhotoDetailImages);
+                        if (FileName.IsSuccess)
                         {
-                            var Details = _Context.PhotoDetails.FirstOrDefault(i => i.Id == file.Id);
+                            var Details = await _unitOfWork.Repository<PhotoDetail>().GetByIdAsync(file.Id);
                             if (Details != null)
                             {
-                               await _Context.PhotoDetails.Remove(Details);
-                               await _Context.SaveChanges();
+                                _unitOfWork.Repository<PhotoDetail>().Delete(Details);
+                                await _unitOfWork.CompleteAsync();
                             }
                         }
                     }
-                Response.Done = true;
-                Response.Message = "تم اضافة الصور بنجاح";
-                return Response;
+
+                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> DeletePhotoDetailsImage(string FileName, int Id)
+        public async Task<ErrorResponseModel<string>> DeletePhotoDetailsImage(string FileName, int Id)
         {
-            var Photo =await _Context.PhotoDetails.FirstOrDefault(a => a.Id == Id);
+            var Photo = await _unitOfWork.Repository<PhotoDetail>().GetByIdAsync(Id);
             if (Photo != null)
             {
-                var File =await _manageFileService.DeleteFile(FileName, ImageFiles.PhotoDetailImages);
-                if (File.Done)
+                var File = _manageFileService.DeleteFile(FileName, ImageFiles.PhotoDetailImages);
+                if (File.IsSuccess)
                 {
-                    _Context.PhotoDetails.Remove(Photo);
-                    _Context.SaveChanges();
+                    _unitOfWork.Repository<PhotoDetail>().Delete(Photo);
+                    _unitOfWork.CompleteAsync();
                     return File;
                 }
             }
 
-            return new HandleErrorResponseModel() { Done = false, Message = "لقد حدث خطا" };
+            return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
         }
 
-        public async Task<HandleErrorResponseModel> ApplyPhotoFilesSorting(List<FileSortingModel> Model, int PhotoId)
+        public async Task<ErrorResponseModel<string>> ApplyPhotoFilesSorting(List<FileSortingModel> Model, int PhotoId)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
-                var SliderImages =await _Context.PhotoDetails.Where(i => i.PhotoId == PhotoId).ToList();
+                var Spec = new PhotoDetailsSpecification(PhotoId);
+                var SliderImages = await _unitOfWork.Repository<PhotoDetail>().GetAllWithSpecAsync(Spec);
                 foreach (var image in SliderImages)
                 {
                     var Row = Model.FirstOrDefault(i => i.FileId == image.Id);
@@ -253,25 +238,20 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                         image.DisplayOrder = Row.DisplayOrder;
                 }
 
-               await _Context.SaveChanges();
-                Response.Done = true;
-                Response.Message = "تم تطبيق الترتيب بنجاح";
-                return Response;
+                await _unitOfWork.CompleteAsync();
+                return ErrorResponseModel<string>.Success(GenericErrors.ApplySort);
 
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
         private void DeletePhotoFiles(string PhotoImageName, List<string> PhotoDetailImageNames)
         {
-            var PhotoImagePaths = Directory.GetFiles(Path.Combine(_environment.WebRootPath, ImageFiles.PhotoImages.ToString()));
-            var PhotoDetailImagePaths = Directory.GetFiles(Path.Combine(_environment.WebRootPath, ImageFiles.PhotoDetailImages.ToString()));
+            var PhotoImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, "wwwroot", ImageFiles.PhotoImages.ToString()));
+            var PhotoDetailImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, "wwwroot", ImageFiles.PhotoDetailImages.ToString()));
 
             if (PhotoImagePaths.Count() > 0)
             {

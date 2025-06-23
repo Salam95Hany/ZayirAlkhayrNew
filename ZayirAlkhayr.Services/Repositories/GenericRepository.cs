@@ -93,5 +93,13 @@ namespace ZayirAlkhayr.Services.Repositories
 
         public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
         => await _dbContext.Set<T>().AnyAsync(predicate, cancellationToken);
+
+        public async Task<bool> AnyAsync(CancellationToken cancellationToken = default)
+        => await _dbContext.Set<T>().AnyAsync(cancellationToken);
+
+        public async Task<TResult> MaxAsync<TResult>(Expression<Func<T, TResult>> selector, CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Set<T>().MaxAsync(selector, cancellationToken);
+        }
     }
 }

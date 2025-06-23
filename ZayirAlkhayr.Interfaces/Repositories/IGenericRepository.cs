@@ -26,5 +26,7 @@ namespace ZayirAlkhayr.Interfaces.Repositories
         void Delete(T entity);
         void DeleteRange(IEnumerable<T> entities);
         Task AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
+        Task<bool> AnyAsync(CancellationToken cancellationToken = default);
+        Task<TResult> MaxAsync<TResult>(Expression<Func<T, TResult>> selector, CancellationToken cancellationToken = default);
     }
 }
