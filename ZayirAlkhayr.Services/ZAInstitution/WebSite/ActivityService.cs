@@ -1,87 +1,82 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using System.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Data.SqlClient;
+using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Entities.Specifications.ActivitySpec;
+using ZayirAlkhayr.Interfaces.Common;
+using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
+using ZayirAlkhayr.Services.Common;
+using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
     public class ActivityService : IActivityService
     {
-        private readonly ZADbContext _Context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IAppSettings _appSettings;
+        private readonly ISQLHelper _sQLHelper;
         private readonly IManageFileService _manageFileService;
-        private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _environment;
+        private readonly IHostEnvironment _environment;
         private string ApiLocalUrl;
-        public ActivityService(ZADbContext Context, IManageFileService manageFileService, IConfiguration configuration, IWebHostEnvironment environment)
+        public ActivityService(IUnitOfWork unitOfWork, IAppSettings appSettings, ISQLHelper sQLHelper, IManageFileService manageFileService)
         {
-            _Context = Context;
+            _unitOfWork = unitOfWork;
+            _appSettings = appSettings;
+            _sQLHelper = sQLHelper;
             _manageFileService = manageFileService;
-            _configuration = configuration;
-            _environment = environment;
-            ApiLocalUrl = _configuration["ApiUrlLocal"];
+            ApiLocalUrl = _appSettings.ApiUrlLocal;
         }
 
-        public async Task<List<Activity>> GetAllActivities()
+        public async Task<ErrorResponseModel<DataTable>> GetAllActivities(PagingFilterModel PagingFilter)
         {
-            var results = await _Context.Activities.Where(i => i.IsVisible).Select(i => new Activity
-            {
-                Id = i.Id,
-                Name = i.Name,
-                Image = Path.Combine(ApiLocalUrl, ImageFiles.ActivityImages.ToString(), i.Image)
-            }).ToList();
-            return results;
+            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
+            var Params = new SqlParameter[4];
+            Params[0] = new SqlParameter("@FilterList", FilterDt);
+            Params[1] = new SqlParameter("@ApiUrl", ApiLocalUrl);
+            Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
+            Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllActivities", Params);
+            return ErrorResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public Task<List<ActivitySliderImage>> GetActivitySliderImagesById(int ActivityId)
+        public async Task<ErrorResponseModel<List<ActivitiesSliderImage>>> GetActivitySliderImagesById(int ActivityId)
         {
-            var results = await _Context.ActivitiesSliderImage.Where(i => i.ActivityId == ActivityId).Select(i => new ActivitySliderImage
+            var Spec = new ActivitiesSliderImageSpecification(ActivityId);
+            var Entity = await _unitOfWork.Repository<ActivitiesSliderImage>().GetAllWithSpecAsync(Spec);
+            var results = Entity.Select(i => new ActivitiesSliderImage
             {
                 Id = i.Id,
                 ActivityId = i.ActivityId,
                 Image = Path.Combine(ApiLocalUrl, ImageFiles.ActivitySliderImages.ToString(), i.Image)
             }).ToList();
-            return results;
+            return ErrorResponseModel<List<ActivitiesSliderImage>>.Success(GenericErrors.GetSuccess, results);
         }
 
-        public async Task<ActivityModel> GetActivityWithSliderImagesById(int ActivityId, int RowSize)
+        public async Task<ErrorResponseModel<ActivityModel>> GetActivityWithSliderImagesById(int ActivityId)
         {
-            var Activity = await _Context.Activities.FirstOrDefault(i => i.Id == ActivityId);
-            if (Activity == null) { return new ActivityModel(); }
-            var ActivitySliderImage = _Context.ActivitiesSliderImage.Where(i => i.ActivityId == ActivityId).ToList();
-            var SliderImages = new List<List<string>>();
-            bool KeepCalling = true;
-            var PageSize = 0;
-            while (KeepCalling)
-            {
-                var results = ActivitySliderImage.Select(i => Path.Combine(ApiLocalUrl, ImageFiles.ActivitySliderImages.ToString(), i.Image)).Skip(PageSize).Take(RowSize).ToList();
-                if (results.Count() > 0)
-                {
-                    SliderImages.Add(results);
-                    PageSize += RowSize;
-                }
-                else
-                    KeepCalling = false;
-            }
+            var Spec = new ActivitiesSliderImageSpecification(ActivityId);
+            var Activity = await _unitOfWork.Repository<Activity>().GetByIdAsync(ActivityId);
+            if (Activity == null) ErrorResponseModel<ActivityModel>.Failure(GenericErrors.TransFailed);
+            var ActivitySliderImage = await _unitOfWork.Repository<ActivitiesSliderImage>().GetAllWithSpecAsync(Spec);
+
             var ActivityModel = new ActivityModel
             {
                 Id = Activity.Id,
                 Name = Activity.Name,
                 Description = Activity.Description,
-                Image = Path.Combine(ApiLocalUrl, ImageFiles.ActivityImages.ToString(), Activity.Image),
-                SliderImages = SliderImages
+                SliderImages = ActivitySliderImage.OrderBy(i => i.DisplayOrder).Select(i => Path.Combine(ApiLocalUrl, ImageFiles.ActivitySliderImages.ToString(), i.Image)).ToList()
             };
-            return ActivityModel;
+            return ErrorResponseModel<ActivityModel>.Success(GenericErrors.GetSuccess, ActivityModel);
         }
 
-        public async Task<HandleErrorResponseModel> AddNewActivity(Activity Model)
+        public async Task<ErrorResponseModel<string>> AddNewActivity(Activity Model)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
                 var ActivityObj = new Activity();
                 ActivityObj.Name = Model.Name;
                 ActivityObj.Description = Model.Description;
@@ -89,138 +84,152 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 ActivityObj.InsertUser = Model.InsertUser;
                 ActivityObj.InsertDate = DateTime.Now;
 
-                var FileName = await _manageFileService.UploadFile(Model.File, "", ImageFiles.ActivityImages);
-                if (FileName.Done)
-                    ActivityObj.Image = FileName.StringValue;
+                var FileName = await _manageFileService.UploadFile(Model.Files, "", ImageFiles.ActivityImages);
+                if (FileName.IsSuccess)
+                    ActivityObj.Image = FileName.Results;
                 else
                     return FileName;
 
-                await _Context.Activities.Add(ActivityObj);
-                await _Context.SaveChanges();
+                await _unitOfWork.Repository<Activity>().AddAsync(ActivityObj);
+                await _unitOfWork.CompleteAsync();
 
-                Response.Done = true;
-                Response.Message = "تم اضافة نشاط جديد بنجاح";
-                return Response;
+                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> UpdateActivity(Activity Model)
+        public async Task<ErrorResponseModel<string>> UpdateActivity(Activity Model)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
-                var ActivityObj = await _Context.Activities.FirstOrDefault(x => x.Id == Model.Id);
-                ActivityObj.Name = Model.Name;
-                ActivityObj.Description = Model.Description;
-                ActivityObj.IsVisible = Model.IsVisible;
-                ActivityObj.UpdateUser = Model.UpdateUser;
-                ActivityObj.UpdateDate = DateTime.Now;
-
-                if (Model.File != null)
+                var ActivityObj = await _unitOfWork.Repository<Activity>().GetByIdAsync(Model.Id);
+                if (ActivityObj != null)
                 {
-                    var FileName = await _manageFileService.UploadFile(Model.File, Model.OldFileName, ImageFiles.ActivityImages);
-                    if (FileName.Done)
-                        ActivityObj.Image = FileName.StringValue;
-                    else
-                        return FileName;
+                    ActivityObj.Name = Model.Name;
+                    ActivityObj.Description = Model.Description;
+                    ActivityObj.IsVisible = Model.IsVisible;
+                    ActivityObj.UpdateUser = Model.UpdateUser;
+                    ActivityObj.UpdateDate = DateTime.Now;
+
+                    if (Model.Files != null)
+                    {
+                        var FileName = await _manageFileService.UploadFile(Model.Files, Model.OldFileName, ImageFiles.ActivityImages);
+                        if (FileName.IsSuccess)
+                            ActivityObj.Image = FileName.Results;
+                        else
+                            return FileName;
+                    }
+
+                    await _unitOfWork.CompleteAsync();
+
+                    return ErrorResponseModel<string>.Success(GenericErrors.UpdateSuccess);
                 }
+                else
+                    return ErrorResponseModel<string>.Failure(GenericErrors.NotFound);
 
-               await _Context.SaveChanges();
-
-                Response.Done = true;
-                Response.Message = "تم تعديل النشاط بنجاح";
-                return Response;
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> DeleteActivity(int ActivityId)
+        public async Task<ErrorResponseModel<string>> DeleteActivity(int ActivityId)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
-                var Activity = await _Context.Activities.FirstOrDefault(i => i.Id == ActivityId);
+                var Activity = await _unitOfWork.Repository<Activity>().GetByIdAsync(ActivityId);
                 if (Activity != null)
                 {
-                    var SliderImages = await _Context.ActivitiesSliderImage.Where(i => i.ActivityId == ActivityId).ToList();
+                    var Spec = new ActivitiesSliderImageSpecification(ActivityId);
+                    var SliderImages = await _unitOfWork.Repository<ActivitiesSliderImage>().GetAllWithSpecAsync(Spec);
                     if (SliderImages.Count > 0)
-                      await  _Context.ActivitiesSliderImage.RemoveRange(SliderImages);
+                        _unitOfWork.Repository<ActivitiesSliderImage>().DeleteRange(SliderImages);
 
-                  await  _Context.Activities.Remove(Activity);
+                    _unitOfWork.Repository<Activity>().Delete(Activity);
                     var ActivitySliderImageNames = SliderImages.Select(i => i.Image).ToList();
                     DeleteActivityFiles(Activity.Image, ActivitySliderImageNames);
-                    await _Context.SaveChanges();
-                    Response.Done = true;
-                    Response.Message = "تم حذف النشاط بنجاح";
-                    return Response;
+                    await _unitOfWork.CompleteAsync();
+
+                    return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
                 }
                 else
                 {
-                    Response.Done = false;
-                    Response.Message = "هذا النشاط غير موجود";
-                    return Response;
+                    return ErrorResponseModel<string>.Failure(GenericErrors.NotFound);
                 }
 
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> AddActivitySliderImage(IFormFile File, int ActivityId)
+        public async Task<ErrorResponseModel<string>> AddActivitySliderImage(UploadFileModel Model)
         {
-            var FileName = await _manageFileService.UploadFile(File, "", ImageFiles.ActivitySliderImages);
-            if (FileName.Done)
+            try
             {
-                var Activity = new ActivitySliderImage();
-                Activity.ActivityId = ActivityId;
-                Activity.Image = FileName.StringValue;
-                await _Context.ActivitiesSliderImage.Add(Activity);
-                await _Context.SaveChanges();
-                return FileName;
+                if (Model.Files != null)
+                    foreach (var newFile in Model.Files)
+                    {
+                        var FileName = await _manageFileService.UploadFile(newFile, "", ImageFiles.ActivitySliderImages);
+                        if (FileName.IsSuccess)
+                        {
+                            var Activity = new ActivitiesSliderImage();
+                            Activity.ActivityId = Model.Id;
+                            Activity.Image = FileName.Results;
+                            await _unitOfWork.Repository<ActivitiesSliderImage>().AddAsync(Activity);
+                            await _unitOfWork.CompleteAsync();
+                        }
+                    }
+
+                if (Model.DeletedFiles != null)
+                    foreach (var file in Model?.DeletedFiles)
+                    {
+                        var FileName = _manageFileService.DeleteFile(file.FileName, ImageFiles.ActivitySliderImages);
+                        if (FileName.IsSuccess)
+                        {
+                            var Slider = await _unitOfWork.Repository<ActivitiesSliderImage>().GetByIdAsync(file.Id);
+                            if (Slider != null)
+                            {
+                                _unitOfWork.Repository<ActivitiesSliderImage>().Delete(Slider);
+                                await _unitOfWork.CompleteAsync();
+                            }
+                        }
+                    }
+
+                return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
             }
-            else
-                return FileName;
+            catch (Exception)
+            {
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+            }
         }
 
-        public async Task<HandleErrorResponseModel> DeleteActivitySliderImage(string FileName, int Id)
+        public async Task<ErrorResponseModel<string>> DeleteActivitySliderImage(string FileName, int Id)
         {
-            var Activity = await _Context.ActivitiesSliderImage.FirstOrDefault(a => a.Id == Id);
+            var Activity = await _unitOfWork.Repository<ActivitiesSliderImage>().GetByIdAsync(Id);
             if (Activity != null)
             {
                 var File = _manageFileService.DeleteFile(FileName, ImageFiles.ActivitySliderImages);
-                if (File.Done)
+                if (File.IsSuccess)
                 {
-                    await _Context.ActivitiesSliderImage.Remove(Activity);
-                    await _Context.SaveChanges();
+                    _unitOfWork.Repository<ActivitiesSliderImage>().Delete(Activity);
+                    await _unitOfWork.CompleteAsync();
                     return File;
                 }
             }
 
-            return new HandleErrorResponseModel() { Done = false, Message = "لقد حدث خطا" };
+            return ErrorResponseModel<string>.Success(GenericErrors.GetSuccess);
         }
 
         private void DeleteActivityFiles(string ActivityImageName, List<string> ActivitySliderImageNames)
         {
-            var ActivityImagePaths = Directory.GetFiles(Path.Combine(_environment.WebRootPath, ImageFiles.ActivityImages.ToString()));
-            var ActivitySliderImagePaths = Directory.GetFiles(Path.Combine(_environment.WebRootPath, ImageFiles.ActivitySliderImages.ToString()));
+            var ActivityImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, ImageFiles.ActivityImages.ToString()));
+            var ActivitySliderImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, ImageFiles.ActivitySliderImages.ToString()));
 
             if (ActivityImagePaths.Count() > 0)
             {
@@ -236,6 +245,29 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 {
                     Files.ForEach(i => System.IO.File.Delete(i));
                 }
+            }
+        }
+
+        public async Task<ErrorResponseModel<string>> ApplyFilesSorting(List<FileSortingModel> Model, int ActivityId)
+        {
+            try
+            {
+                var Spec = new ActivitiesSliderImageSpecification(ActivityId);
+                var SliderImages = await _unitOfWork.Repository<ActivitiesSliderImage>().GetAllWithSpecAsync(Spec);
+                foreach (var image in SliderImages)
+                {
+                    var Row = Model.FirstOrDefault(i => i.FileId == image.Id);
+                    if (Row != null)
+                        image.DisplayOrder = Row.DisplayOrder;
+                }
+
+                _unitOfWork.CompleteAsync();
+
+                return ErrorResponseModel<string>.Success(GenericErrors.ApplySort);
+            }
+            catch (Exception)
+            {
+                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
     }

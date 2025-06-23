@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Entities.Specifications;
 using ZayirAlkhayr.Interfaces.Repositories;
 
 namespace ZayirAlkhayr.Services.Repositories
@@ -18,12 +14,12 @@ namespace ZayirAlkhayr.Services.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<IReadOnlyList<T>> GetAllWithSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken)
+        public async Task<List<T>> GetAllWithSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken)
         {
             return await ApplySecifications(spec).ToListAsync(cancellationToken);
         }
 
-        public async Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken)
+        public async Task<List<T>> GetAllAsync(CancellationToken cancellationToken)
         {
             return await _dbContext.Set<T>().AsNoTracking().ToListAsync(cancellationToken);
         }
@@ -47,6 +43,9 @@ namespace ZayirAlkhayr.Services.Repositories
         public void Delete(T entity)
         => _dbContext.Set<T>().Remove(entity);
 
+        public void DeleteRange(IEnumerable<T> entities)
+        => _dbContext.Set<T>().RemoveRange(entities);
+
         private IQueryable<T> ApplySecifications(ISpecification<T> spec)
         {
             return SpecificationsEvaluator<T>.GetQuery(_dbContext.Set<T>(), spec);
@@ -64,7 +63,7 @@ namespace ZayirAlkhayr.Services.Repositories
 
         public Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken)
         {
-            return _dbContext.Set<T>().FirstOrDefaultAsync(predicate, cancellationToken);
+            return _dbContext.Set<T>().FirstOrDefaultAsync(predicate, cancellationToken); // => indexer.name == "x"
         }
 
         public async Task<int> GetCountAsync(ISpecification<T> spec, CancellationToken cancellationToken)
@@ -72,7 +71,7 @@ namespace ZayirAlkhayr.Services.Repositories
             return await ApplySecifications(spec).CountAsync(cancellationToken);
         }
 
-        public IQueryable<T> GetAllAsQueryable(ISpecification<T>? spec = null)
+        public async Task<List<T>> GetAllAsQueryableAsync(ISpecification<T>? spec = null, CancellationToken cancellationToken = default)
         {
             var query = _dbContext.Set<T>().AsQueryable();
 
@@ -81,7 +80,7 @@ namespace ZayirAlkhayr.Services.Repositories
                 query = SpecificationsEvaluator<T>.GetQuery(query, spec);
             }
 
-            return query;
+            return await query.ToListAsync(cancellationToken);
         }
 
         public IQueryable<T> GetAllAsQueryable()

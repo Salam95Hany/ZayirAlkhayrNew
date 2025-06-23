@@ -9,9 +9,11 @@ using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
+using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
+using ZayirAlkhayr.Services.ZAInstitution.WebSite;
 
 namespace ZayirAlkhayr.DI
 {
@@ -50,6 +52,10 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ISQLHelper, SQLHelper>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IManageFileService, ManageFileService>();
+            services.AddScoped<IActivityService, ActivityService>();
+
+
             return services;
         }
 

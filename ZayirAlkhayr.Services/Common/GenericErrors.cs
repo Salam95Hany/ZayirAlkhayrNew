@@ -63,7 +63,9 @@ namespace ZayirAlkhayr.Services.Common
 
         public static Error UpdateRoleFailed = new("فشل في تحديث صلاحيات المستخدم");
 
-        
+        public static Error ApplySort = new("تم تطبيق الترتيب بنجاح");
+
+
 
 
     }

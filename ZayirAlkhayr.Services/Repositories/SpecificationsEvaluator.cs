@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Interfaces.Repositories;
 
-namespace ZayirAlkhayr.Services.Repositories
+namespace ZayirAlkhayr.Entities.Specifications
 {
     public class SpecificationsEvaluator<TEntity> where TEntity : class
     {
@@ -29,7 +29,8 @@ namespace ZayirAlkhayr.Services.Repositories
             if (spec.IsPaginationEnabled)
                 query = query.Skip(spec.Skip).Take(spec.Take);
 
-            query = spec.Includes.Aggregate(query, (currentQuery, includeExpression) => currentQuery.Include(includeExpression));
+            if (spec.Includes != null)
+                query = spec.Includes.Aggregate(query, (currentQuery, includeExpression) => currentQuery.Include(includeExpression));
 
 
             return query;

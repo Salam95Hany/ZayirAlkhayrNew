@@ -15,13 +15,14 @@ namespace ZayirAlkhayr.Services.Common
 {
     public class SQLHelper : ISQLHelper
     {
-        private readonly IConfiguration _configuration;
+        private readonly IAppSettings _appSettings;
         int Timeout = 9999;
         private string ConnectionString;
-        public SQLHelper(IConfiguration configuration)
+        public SQLHelper(IAppSettings appSettings)
         {
-            _configuration = configuration;
-            ConnectionString = _configuration.GetConnectionString("DBConnection");
+            _appSettings = appSettings;
+            ConnectionString = appSettings.ConnectionStrings.DBConnection;
+
         }
         public async Task<List<TElement>> SQLQueryAsync<TElement>(string commandText, params SqlParameter[] parameters)
         {
@@ -66,7 +67,7 @@ namespace ZayirAlkhayr.Services.Common
                 using (SqlCommand command = new SqlCommand(commandText, connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
-                    command.CommandTimeout = 1200;
+                    command.CommandTimeout = Timeout;
 
                     if (parameters != null && parameters.Length > 0)
                     {
