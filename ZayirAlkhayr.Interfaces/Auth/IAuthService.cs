@@ -12,10 +12,10 @@ namespace ZayirAlkhayr.Interfaces.Auth
     public interface IAuthService
     {
         Task<DataTable> GetAllUsers();
-        Task<ErrorResponseModel<ApplicationUserRespone>> AdminLogin(LoginModel request);
-        Task<ErrorResponseModel<string>> CreateUser(AddUserModel model);
-        Task<ErrorResponseModel<string>> EditUser(AddUserModel model);
-        Task<ErrorResponseModel<string>> DeleteUser(string userId);
-        Task<ErrorResponseModel<string>> AdminLogout(string UserId);
+        Task<ApiResponseModel<ApplicationUserRespone>> AdminLogin(LoginModel request);
+        Task<ApiResponseModel<string>> CreateUser(AddUserModel model);
+        Task<ApiResponseModel<string>> EditUser(AddUserModel model);
+        Task<ApiResponseModel<string>> DeleteUser(string userId);
+        Task<ApiResponseModel<string>> AdminLogout(string UserId);
     }
 }

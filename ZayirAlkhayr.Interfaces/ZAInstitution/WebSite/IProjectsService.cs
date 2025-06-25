@@ -11,14 +11,14 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.WebSite
 {
     public interface IProjectsService
     {
-        Task<ErrorResponseModel<Project>> GetWebSiteProjectsById(int ProjectId);
-        Task<ErrorResponseModel<DataTable>> GetAllProjects(PagingFilterModel PagingFilter);
-        Task<ErrorResponseModel<List<ProjectDetail>>> GetProjectsSliderImagesById(int ProjectId);
-        Task<ErrorResponseModel<string>> AddNewProjects(Project Model);
-        Task<ErrorResponseModel<string>> UpdateProjects(Project Model);
-        Task<ErrorResponseModel<string>> DeleteProjects(int ProjectId);
-        Task<ErrorResponseModel<string>> AddProjectsSliderImage(UploadFileModel Model);
-        Task<ErrorResponseModel<bool>> CheckProjectLinkIsActive(int ProjectId);
-        Task<ErrorResponseModel<List<ProjectsDenied>>> GetAllDeniedProjects();
+        Task<ApiResponseModel<Project>> GetWebSiteProjectsById(int ProjectId);
+        Task<ApiResponseModel<DataTable>> GetAllProjects(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<List<ProjectDetail>>> GetProjectsSliderImagesById(int ProjectId);
+        Task<ApiResponseModel<string>> AddNewProjects(Project Model);
+        Task<ApiResponseModel<string>> UpdateProjects(Project Model);
+        Task<ApiResponseModel<string>> DeleteProjects(int ProjectId);
+        Task<ApiResponseModel<string>> AddProjectsSliderImage(UploadFileModel Model);
+        Task<ApiResponseModel<bool>> CheckProjectLinkIsActive(int ProjectId);
+        Task<ApiResponseModel<List<ProjectsDenied>>> GetAllDeniedProjects();
     }
 }

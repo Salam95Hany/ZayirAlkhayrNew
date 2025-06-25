@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Models;
 
-namespace ZayirAlkhayr.Entities.Specifications.ProjectSpec
+namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.ProjectSpec
 {
     public class ProjectDetailsSpecification : BaseSpecification<ProjectDetail>
     {

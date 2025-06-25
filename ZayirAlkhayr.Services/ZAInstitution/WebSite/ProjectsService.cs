@@ -8,7 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Hosting;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
-using ZayirAlkhayr.Entities.Specifications.ProjectSpec;
+using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.ProjectSpec;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
@@ -38,7 +38,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
         }
 
-        public async Task<ErrorResponseModel<Project>> GetWebSiteProjectsById(int ProjectId)
+        public async Task<ApiResponseModel<Project>> GetWebSiteProjectsById(int ProjectId)
         {
             var Spec = new ProjectDetailsSpecification(ProjectId);
             var result = await _unitOfWork.Repository<Project>().GetByIdAsync(ProjectId);
@@ -49,10 +49,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 result.Images = data;
             }
 
-            return ErrorResponseModel<Project>.Success(GenericErrors.GetSuccess, result);
+            return ApiResponseModel<Project>.Success(GenericErrors.GetSuccess, result);
         }
 
-        public async Task<ErrorResponseModel<DataTable>> GetAllProjects(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<DataTable>> GetAllProjects(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[3];
@@ -60,10 +60,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllProjects", Params);
-            return ErrorResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public async Task<ErrorResponseModel<List<ProjectDetail>>> GetProjectsSliderImagesById(int ProjectId)
+        public async Task<ApiResponseModel<List<ProjectDetail>>> GetProjectsSliderImagesById(int ProjectId)
         {
             var Spec = new ProjectDetailsSpecification(ProjectId);
             var results = await _unitOfWork.Repository<ProjectDetail>().GetAllWithSpecAsync(Spec);
@@ -73,10 +73,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 ProjectId = i.ProjectId,
                 Image = Path.Combine(ApiLocalUrl, ImageFiles.ProjectSliderImages.ToString(), i.Image),
             }).ToList();
-            return ErrorResponseModel<List<ProjectDetail>>.Success(GenericErrors.GetSuccess, data);
+            return ApiResponseModel<List<ProjectDetail>>.Success(GenericErrors.GetSuccess, data);
         }
 
-        public async Task<ErrorResponseModel<string>> AddNewProjects(Project Model)
+        public async Task<ApiResponseModel<string>> AddNewProjects(Project Model)
         {
             try
             {
@@ -96,15 +96,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 await _unitOfWork.Repository<Project>().AddAsync(Project);
                 await _unitOfWork.CompleteAsync();
 
-                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Success(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Success(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> UpdateProjects(Project Model)
+        public async Task<ApiResponseModel<string>> UpdateProjects(Project Model)
         {
             try
             {
@@ -121,15 +121,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
                 await _unitOfWork.CompleteAsync();
 
-                return ErrorResponseModel<string>.Success(GenericErrors.UpdateSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> DeleteProjects(int ProjectId)
+        public async Task<ApiResponseModel<string>> DeleteProjects(int ProjectId)
         {
             try
             {
@@ -145,21 +145,21 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                     var ProjectSliderImageNames = SliderImages.Select(i => i.Image).ToList();
                     DeleteProjectsFiles(ProjectSliderImageNames);
                     await _unitOfWork.CompleteAsync();
-                    return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+                    return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
                 }
                 else
                 {
-                    return ErrorResponseModel<string>.Failure(GenericErrors.NotFound);
+                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
                 }
 
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> AddProjectsSliderImage(UploadFileModel Model)
+        public async Task<ApiResponseModel<string>> AddProjectsSliderImage(UploadFileModel Model)
         {
             try
             {
@@ -191,11 +191,11 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                             }
                         }
                     }
-                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
@@ -213,16 +213,16 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             }
         }
 
-        public async Task<ErrorResponseModel<bool>> CheckProjectLinkIsActive(int ProjectId)
+        public async Task<ApiResponseModel<bool>> CheckProjectLinkIsActive(int ProjectId)
         {
             var result = await _unitOfWork.Repository<Project>().GetByIdAsync(ProjectId);
             if (result == null)
-                return ErrorResponseModel<bool>.Success(GenericErrors.GetSuccess, false);
+                return ApiResponseModel<bool>.Success(GenericErrors.GetSuccess, false);
             else
-                return ErrorResponseModel<bool>.Success(GenericErrors.GetSuccess, result.IsVisible);
+                return ApiResponseModel<bool>.Success(GenericErrors.GetSuccess, result.IsVisible);
         }
 
-        public async Task<ErrorResponseModel<List<ProjectsDenied>>> GetAllDeniedProjects()
+        public async Task<ApiResponseModel<List<ProjectsDenied>>> GetAllDeniedProjects()
         {
             var result = await _unitOfWork.Repository<Project>().GetAllAsync();
             var data = result.Select(i => new ProjectsDenied
@@ -233,7 +233,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 IsVisible = i.IsVisible
             }).ToList();
 
-            return ErrorResponseModel<List<ProjectsDenied>>.Success(GenericErrors.GetSuccess, data);
+            return ApiResponseModel<List<ProjectsDenied>>.Success(GenericErrors.GetSuccess, data);
         }
     }
 }

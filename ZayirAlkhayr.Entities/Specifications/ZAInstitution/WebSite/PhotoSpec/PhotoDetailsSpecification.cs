@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Models;
 
-namespace ZayirAlkhayr.Entities.Specifications.PhotoSpec
+namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.PhotoSpec
 {
     public class PhotoDetailsSpecification : BaseSpecification<PhotoDetail>
     {

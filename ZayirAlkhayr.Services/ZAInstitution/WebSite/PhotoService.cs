@@ -12,7 +12,7 @@ using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Services.Common;
-using ZayirAlkhayr.Entities.Specifications.PhotoSpec;
+using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.PhotoSpec;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
@@ -35,7 +35,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
         }
 
-        public async Task<ErrorResponseModel<DataTable>> GetAllPhotos(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<DataTable>> GetAllPhotos(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[4];
@@ -44,10 +44,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllPhotos", Params);
-            return ErrorResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public async Task<ErrorResponseModel<List<PhotoDetail>>> GetPhotoDetails(int PhotoId)
+        public async Task<ApiResponseModel<List<PhotoDetail>>> GetPhotoDetails(int PhotoId)
         {
             var Spec = new PhotoDetailsSpecification(PhotoId);
             var results = await _unitOfWork.Repository<PhotoDetail>().GetAllWithSpecAsync(Spec);
@@ -57,14 +57,14 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Image = Path.Combine(ApiLocalUrl, ImageFiles.PhotoDetailImages.ToString(), i.Image),
                 DisplayOrder = i.DisplayOrder
             }).OrderBy(i => i.DisplayOrder).ToList();
-            return ErrorResponseModel<List<PhotoDetail>>.Success(GenericErrors.GetSuccess, data);
+            return ApiResponseModel<List<PhotoDetail>>.Success(GenericErrors.GetSuccess, data);
         }
 
-        public async Task<ErrorResponseModel<PhotoModel>> GetPhotoWithDetailsById(int PhotoId)
+        public async Task<ApiResponseModel<PhotoModel>> GetPhotoWithDetailsById(int PhotoId)
         {
             var Spec = new PhotoDetailsSpecification(PhotoId, true);
             var Photo = await _unitOfWork.Repository<Photo>().GetByIdAsync(PhotoId);
-            if (Photo == null) return ErrorResponseModel<PhotoModel>.Failure(GenericErrors.TransFailed);
+            if (Photo == null) return ApiResponseModel<PhotoModel>.Failure(GenericErrors.TransFailed);
 
             var data = await _unitOfWork.Repository<PhotoDetail>().GetAllWithSpecAsync(Spec);
             var PhotoDetalImages = data.Select(i => Path.Combine(ApiLocalUrl, ImageFiles.PhotoDetailImages.ToString(), i.Image)).ToList();
@@ -76,10 +76,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Image = Path.Combine(ApiLocalUrl, ImageFiles.PhotoImages.ToString(), Photo.Image),
                 DetailImages = PhotoDetalImages
             };
-            return ErrorResponseModel<PhotoModel>.Success(GenericErrors.GetSuccess, PhotoModel);
+            return ApiResponseModel<PhotoModel>.Success(GenericErrors.GetSuccess, PhotoModel);
         }
 
-        public async Task<ErrorResponseModel<string>> AddNewPhoto(Photo Model)
+        public async Task<ApiResponseModel<string>> AddNewPhoto(Photo Model)
         {
             try
             {
@@ -99,15 +99,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 await _unitOfWork.Repository<Photo>().AddAsync(PhotoObj);
                 await _unitOfWork.CompleteAsync();
 
-                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> UpdatePhoto(Photo Model)
+        public async Task<ApiResponseModel<string>> UpdatePhoto(Photo Model)
         {
             try
             {
@@ -129,15 +129,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
                 await _unitOfWork.CompleteAsync();
 
-                return ErrorResponseModel<string>.Success(GenericErrors.UpdateSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> DeletePhoto(int PhotoId)
+        public async Task<ApiResponseModel<string>> DeletePhoto(int PhotoId)
         {
             try
             {
@@ -153,21 +153,21 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                     var PhotoDetailImageNames = DetailImages.Select(i => i.Image).ToList();
                     DeletePhotoFiles(Photo.Image, PhotoDetailImageNames);
                     await _unitOfWork.CompleteAsync();
-                    return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+                    return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
                 }
                 else
                 {
-                    return ErrorResponseModel<string>.Failure(GenericErrors.NotFound);
+                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
                 }
 
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> AddPhotoDetailsImage(UploadFileModel Model)
+        public async Task<ApiResponseModel<string>> AddPhotoDetailsImage(UploadFileModel Model)
         {
             try
             {
@@ -200,15 +200,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                         }
                     }
 
-                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> DeletePhotoDetailsImage(string FileName, int Id)
+        public async Task<ApiResponseModel<string>> DeletePhotoDetailsImage(string FileName, int Id)
         {
             var Photo = await _unitOfWork.Repository<PhotoDetail>().GetByIdAsync(Id);
             if (Photo != null)
@@ -222,10 +222,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 }
             }
 
-            return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+            return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
         }
 
-        public async Task<ErrorResponseModel<string>> ApplyPhotoFilesSorting(List<FileSortingModel> Model, int PhotoId)
+        public async Task<ApiResponseModel<string>> ApplyPhotoFilesSorting(List<FileSortingModel> Model, int PhotoId)
         {
             try
             {
@@ -239,12 +239,12 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 }
 
                 await _unitOfWork.CompleteAsync();
-                return ErrorResponseModel<string>.Success(GenericErrors.ApplySort);
+                return ApiResponseModel<string>.Success(GenericErrors.ApplySort);
 
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 

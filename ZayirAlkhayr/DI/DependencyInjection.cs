@@ -9,10 +9,12 @@ using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
+using ZayirAlkhayr.Interfaces.ZAInstitution.Tasks;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
+using ZayirAlkhayr.Services.ZAInstitution.Tasks;
 using ZayirAlkhayr.Services.ZAInstitution.WebSite;
 
 namespace ZayirAlkhayr.DI
@@ -58,6 +60,9 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<IProjectsService, ProjectsService>();
             services.AddScoped<IWebsiteHomeService, WebsiteHomeService>();
+            services.AddScoped<IGeneralTasksService, GeneralTasksService>();
+
+
 
 
             return services;

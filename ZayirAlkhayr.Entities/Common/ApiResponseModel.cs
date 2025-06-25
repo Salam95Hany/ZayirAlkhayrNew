@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace ZayirAlkhayr.Entities.Common
 {
-    public class ErrorResponseModel<T>
+    public class ApiResponseModel<T>
     {
         public bool IsSuccess { get; set; }
         public string? Message { get; set; }
         public T? Results { get; set; }
 
-        public static ErrorResponseModel<T> Success(Error SuccessError, T? value = default)
+        public static ApiResponseModel<T> Success(Error SuccessError, T? value = default)
         {
-            return new ErrorResponseModel<T>
+            return new ApiResponseModel<T>
             {
                 IsSuccess = true,
                 Message = SuccessError.Message,
@@ -22,13 +22,13 @@ namespace ZayirAlkhayr.Entities.Common
             };
         }
 
-        public static ErrorResponseModel<T> Failure(Error Error, T? value = default)
+        public static ApiResponseModel<T> Failure(Error Error)
         {
-            return new ErrorResponseModel<T>
+            return new ApiResponseModel<T>
             {
                 IsSuccess = false,
                 Message = Error.Message,
-                Results = value
+                Results = default
             };
         }
     }

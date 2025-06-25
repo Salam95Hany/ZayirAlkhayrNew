@@ -12,6 +12,7 @@ using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
+using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.WebSiteHomeSpec;
 
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
@@ -32,7 +33,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             ApiLocalUrl = _appSettings.ApiUrlLocal;
         }
 
-        public async Task<DataTable> GetHomeSliderImages(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<DataTable>> GetHomeSliderImages(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[4];
@@ -41,31 +42,29 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetHomeSliderImages", Params);
-            return dt;
+            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public async Task<List<FilterModel>> GetAllWebPagesFilters(string PageName)
+        public async Task<ApiResponseModel<List<FilterModel>>> GetAllWebPagesFilters(string PageName)
         {
             var Params = new SqlParameter[1];
             Params[0] = new SqlParameter("@PageName", PageName);
             var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllWebPagesFilter", Params);
             var Filters = dt.ToGroupedFilters();
-            return Filters;
+            return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
         public async Task<List<PagesAutoSearch>> GetPagesAutoSearch(string SearchText)
         {
-            if (string.IsNullOrEmpty(SearchText))
-                return await _Context.PagesAutoSearch.ToList();
-            else
-                return await _Context.PagesAutoSearch.Where(i => i.Name.Contains(SearchText)).ToList();
+            var Spec = new PagesAutoSearchSpecification(SearchText);
+            var results = await _unitOfWork.Repository<PagesAutoSearch>().GetAllWithSpecAsync(Spec);
+            return results;
         }
 
-        public async Task<HandleErrorResponseModel> AddNewSliderImage(SliderImage Model)
+        public async Task<ApiResponseModel<string>> AddNewSliderImage(SliderImage Model)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
                 var Slider = new SliderImage();
                 Slider.Title = Model.Title;
                 Slider.IsVisible = Model.IsVisible;
@@ -73,33 +72,27 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Slider.InsertDate = DateTime.Now.AddHours(1);
 
                 var FileName = await _manageFileService.UploadFile(Model.Files, "", ImageFiles.SliderImages);
-                if (FileName.Done)
-                    Slider.Image = FileName.StringValue;
+                if (FileName.IsSuccess)
+                    Slider.Image = FileName.Results;
                 else
                     return FileName;
 
-                await _Context.SliderImages.Add(Slider);
-                await _Context.SaveChanges();
+                await _unitOfWork.Repository<SliderImage>().AddAsync(Slider);
+                await _unitOfWork.CompleteAsync();
 
-                Response.Done = true;
-                Response.Message = "تم اضافة عنصر جديد بنجاح";
-                return Response;
+                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> UpdateSliderImage(SliderImage Model)
+        public async Task<ApiResponseModel<string>> UpdateSliderImage(SliderImage Model)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
-                var Slider = await _Context.SliderImages.FirstOrDefault(x => x.Id == Model.Id);
+                var Slider = await _unitOfWork.Repository<SliderImage>().GetByIdAsync(Model.Id);
                 Slider.Title = Model.Title;
                 Slider.IsVisible = Model.IsVisible;
                 Slider.UpdateUser = Model.InsertUser;
@@ -108,72 +101,57 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 if (Model.Files != null)
                 {
                     var FileName = await _manageFileService.UploadFile(Model.Files, Model.OldFileName, ImageFiles.SliderImages);
-                    if (FileName.Done)
-                        Slider.Image = FileName.StringValue;
+                    if (FileName.IsSuccess)
+                        Slider.Image = FileName.Results;
                     else
                         return FileName;
                 }
 
-                await _Context.SaveChanges();
+                await _unitOfWork.CompleteAsync();
 
-                Response.Done = true;
-                Response.Message = "تم تعديل العنصر بنجاح";
-                return Response;
+                return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<HandleErrorResponseModel> DeleteSliderImage(int SliderImageId)
+        public async Task<ApiResponseModel<string>> DeleteSliderImage(int SliderImageId)
         {
             try
             {
-                var Response = new HandleErrorResponseModel();
-                var Slider = await _Context.SliderImages.FirstOrDefault(i => i.Id == SliderImageId);
+                var Slider = await _unitOfWork.Repository<SliderImage>().GetByIdAsync(SliderImageId);
                 if (Slider != null)
                 {
-                     _manageFileService.DeleteFile(Slider.Image, ImageFiles.SliderImages);
-                    await _Context.SliderImages.Remove(Slider);
-                    await _Context.SaveChanges();
-                    Response.Done = true;
-                    Response.Message = "تم حذف العنصر بنجاح";
-                    return Response;
+                    _manageFileService.DeleteFile(Slider.Image, ImageFiles.SliderImages);
+                    _unitOfWork.Repository<SliderImage>().Delete(Slider);
+                    await _unitOfWork.CompleteAsync();
+                    return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
                 }
                 else
-                {
-                    Response.Done = false;
-                    Response.Message = "هذا العنصر غير موجود";
-                    return Response;
-                }
+                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
 
             }
             catch (Exception)
             {
-                var Response = new HandleErrorResponseModel();
-                Response.Done = false;
-                Response.Message = "لقد حدث خطا";
-                return Response;
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<string> CreateSessionId()
+        public async Task<ApiResponseModel<string>> CreateSessionId()
         {
             try
             {
                 var sessionId = Guid.NewGuid().ToString();
-                var Visitor = new WebSiteVisitors { SessionId = sessionId, InsertDate = DateTime.Now.AddHours(1) };
-                await _Context.WebSiteVisitors.Add(Visitor);
-                await _Context.SaveChanges();
-                return sessionId;
+                var Visitor = new WebSiteVisitor { SessionId = sessionId, InsertDate = DateTime.Now.AddHours(1) };
+                await _unitOfWork.Repository<WebSiteVisitor>().AddAsync(Visitor);
+                await _unitOfWork.CompleteAsync();
+                return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, sessionId);
             }
             catch (Exception)
             {
-                return "";
+                return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, "");
             }
         }
     }

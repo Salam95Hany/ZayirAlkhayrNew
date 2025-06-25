@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Models;
 
-namespace ZayirAlkhayr.Entities.Specifications.EventSpec
+namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.EventSpec
 {
     public class EventSliderImageSpecification : BaseSpecification<EventSliderImage>
     {

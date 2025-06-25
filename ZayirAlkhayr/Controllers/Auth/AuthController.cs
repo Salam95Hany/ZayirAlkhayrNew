@@ -27,7 +27,7 @@ namespace ZayirAlkhayr.Controllers.Auth
 
         [HttpPost]
         [Route("AdminLogin")]
-        public async Task<ErrorResponseModel<ApplicationUserRespone>> AdminLogin(LoginModel model)
+        public async Task<ApiResponseModel<ApplicationUserRespone>> AdminLogin(LoginModel model)
         {
             var results = await _authService.AdminLogin(model);
             return results;
@@ -35,7 +35,7 @@ namespace ZayirAlkhayr.Controllers.Auth
 
         [HttpGet]
         [Route("AdminLogout")]
-        public async Task<ErrorResponseModel<string>> AdminLogout(string UserId)
+        public async Task<ApiResponseModel<string>> AdminLogout(string UserId)
         {
             var results = await _authService.AdminLogout(UserId);
             return results;
@@ -43,7 +43,7 @@ namespace ZayirAlkhayr.Controllers.Auth
 
         [HttpPost]
         [Route("CreateUser")]
-        public async Task<ErrorResponseModel<string>> CreateUser(AddUserModel model)
+        public async Task<ApiResponseModel<string>> CreateUser(AddUserModel model)
         {
             var results = await _authService.CreateUser(model);
             return results;
@@ -51,7 +51,7 @@ namespace ZayirAlkhayr.Controllers.Auth
 
         [HttpPost]
         [Route("EditUser")]
-        public async Task<ErrorResponseModel<string>> EditUser(AddUserModel model)
+        public async Task<ApiResponseModel<string>> EditUser(AddUserModel model)
         {
             var results = await _authService.EditUser(model);
             return results;
@@ -59,7 +59,7 @@ namespace ZayirAlkhayr.Controllers.Auth
 
         [HttpGet]
         [Route("DeleteUser")]
-        public async Task<ErrorResponseModel<string>> DeleteUser(string UserId)
+        public async Task<ApiResponseModel<string>> DeleteUser(string UserId)
         {
             var results = await _authService.DeleteUser(UserId);
             return results;

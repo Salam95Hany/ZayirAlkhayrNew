@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Models;
 
-namespace ZayirAlkhayr.Entities.Specifications.ActivitySpec
+namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.ActivitySpec
 {
-    public class ActivitiesSliderImageSpecification:BaseSpecification<ActivitiesSliderImage>
+    public class ActivitiesSliderImageSpecification : BaseSpecification<ActivitiesSliderImage>
     {
         public ActivitiesSliderImageSpecification(int Id) : base(p => p.ActivityId == Id) { }
     }

@@ -34,10 +34,10 @@ namespace ZayirAlkhayr.Services.Auth
             return dt;
         }
 
-        public async Task<ErrorResponseModel<ApplicationUserRespone>> AdminLogin(LoginModel request)
+        public async Task<ApiResponseModel<ApplicationUserRespone>> AdminLogin(LoginModel request)
         {
             if (await _userManager.FindByNameAsync(request.UserName) is not { } user)
-                return ErrorResponseModel<ApplicationUserRespone>.Failure(GenericErrors.InvalidCredentials);
+                return ApiResponseModel<ApplicationUserRespone>.Failure(GenericErrors.InvalidCredentials);
 
             var result = await _signInManager.PasswordSignInAsync(user, request.Password, false, false);
 
@@ -72,13 +72,13 @@ namespace ZayirAlkhayr.Services.Auth
                     ExpiresIn = expiresIn,
                 };
 
-                return ErrorResponseModel<ApplicationUserRespone>.Success(GenericErrors.SuccessLogin, userModel);
+                return ApiResponseModel<ApplicationUserRespone>.Success(GenericErrors.SuccessLogin, userModel);
             }
 
-            return ErrorResponseModel<ApplicationUserRespone>.Failure(GenericErrors.InvalidCredentials);
+            return ApiResponseModel<ApplicationUserRespone>.Failure(GenericErrors.InvalidCredentials);
         }
 
-        public async Task<ErrorResponseModel<string>> CreateUser(AddUserModel model)
+        public async Task<ApiResponseModel<string>> CreateUser(AddUserModel model)
         {
             AdminUser appUser = new AdminUser
             {
@@ -101,27 +101,27 @@ namespace ZayirAlkhayr.Services.Auth
 
                     var roleAssignResult = await _userManager.AddToRoleAsync(appUser, model.Role);
                     if (!roleAssignResult.Succeeded)
-                        return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                        return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
 
-                    return ErrorResponseModel<string>.Success(GenericErrors.SuccessRegister);
+                    return ApiResponseModel<string>.Success(GenericErrors.SuccessRegister);
                 }
                 else
-                    return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                    return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
             catch (Exception ex)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> EditUser(AddUserModel model)
+        public async Task<ApiResponseModel<string>> EditUser(AddUserModel model)
         {
             try
             {
                 var user = await _userManager.FindByIdAsync(model.UserId);
                 if (user == null)
                 {
-                    return ErrorResponseModel<string>.Failure(GenericErrors.UserNotFound);
+                    return ApiResponseModel<string>.Failure(GenericErrors.UserNotFound);
                 }
 
                 user.UserName = model.UserName;
@@ -135,66 +135,66 @@ namespace ZayirAlkhayr.Services.Auth
                 {
                     var removePassResult = await _userManager.RemovePasswordAsync(user);
                     if (!removePassResult.Succeeded)
-                        return ErrorResponseModel<string>.Failure(GenericErrors.DeletePassFailed);
+                        return ApiResponseModel<string>.Failure(GenericErrors.DeletePassFailed);
 
                     var addPassResult = await _userManager.AddPasswordAsync(user, model.Password);
                     if (!addPassResult.Succeeded)
-                        return ErrorResponseModel<string>.Failure(GenericErrors.NewPassFailed);
+                        return ApiResponseModel<string>.Failure(GenericErrors.NewPassFailed);
                 }
 
                 var updateResult = await _userManager.UpdateAsync(user);
                 if (!updateResult.Succeeded)
-                    return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                    return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
 
                 var roleAssignResult = await AssignNewRoleToUser(model.UserId, model.Role);
                 if (!roleAssignResult)
-                    return ErrorResponseModel<string>.Failure(GenericErrors.UpdateRoleFailed);
+                    return ApiResponseModel<string>.Failure(GenericErrors.UpdateRoleFailed);
 
-                return ErrorResponseModel<string>.Success(GenericErrors.UpdateSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> DeleteUser(string userId)
+        public async Task<ApiResponseModel<string>> DeleteUser(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                return ErrorResponseModel<string>.Failure(GenericErrors.UserNotFound);
+                return ApiResponseModel<string>.Failure(GenericErrors.UserNotFound);
 
             var roles = await _userManager.GetRolesAsync(user);
             if (roles.Any())
             {
                 var removeRolesResult = await _userManager.RemoveFromRolesAsync(user, roles);
                 if (!removeRolesResult.Succeeded)
-                    return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                    return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
 
             var result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)
-                return ErrorResponseModel<string>.Failure(GenericErrors.DeleteSuccess);
+                return ApiResponseModel<string>.Failure(GenericErrors.DeleteSuccess);
             else
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
         }
 
-        public async Task<ErrorResponseModel<string>> AdminLogout(string UserId)
+        public async Task<ApiResponseModel<string>> AdminLogout(string UserId)
         {
             var user = await _userManager.FindByIdAsync(UserId);
             if (user == null)
-                return ErrorResponseModel<string>.Failure(GenericErrors.UserNotFound);
+                return ApiResponseModel<string>.Failure(GenericErrors.UserNotFound);
 
             user.IsActive = false;
             user.LoginDate = null;
 
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
 
             await _signInManager.SignOutAsync();
 
-            return ErrorResponseModel<string>.Success(GenericErrors.GetSuccess);
+            return ApiResponseModel<string>.Success(GenericErrors.GetSuccess);
         }
 
         private async Task<bool> AssignNewRoleToUser(string userId, string newRole)

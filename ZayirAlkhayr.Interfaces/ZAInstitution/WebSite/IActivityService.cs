@@ -13,14 +13,14 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.WebSite
 {
     public interface IActivityService
     {
-        Task<ErrorResponseModel<DataTable>> GetAllActivities(PagingFilterModel PagingFilter);
-        Task<ErrorResponseModel<List<ActivitiesSliderImage>>> GetActivitySliderImagesById(int ActivityId);
-        Task<ErrorResponseModel<ActivityModel>> GetActivityWithSliderImagesById(int ActivityId);
-        Task<ErrorResponseModel<string>> AddNewActivity(Entities.Models.Activity Model);
-        Task<ErrorResponseModel<string>> UpdateActivity(Entities.Models.Activity Model);
-        Task<ErrorResponseModel<string>> DeleteActivity(int ActivityId);
-        Task<ErrorResponseModel<string>> AddActivitySliderImage(UploadFileModel Model);
-        Task<ErrorResponseModel<string>> ApplyFilesSorting(List<FileSortingModel> Model, int ActivityId);
+        Task<ApiResponseModel<DataTable>> GetAllActivities(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<List<ActivitiesSliderImage>>> GetActivitySliderImagesById(int ActivityId);
+        Task<ApiResponseModel<ActivityModel>> GetActivityWithSliderImagesById(int ActivityId);
+        Task<ApiResponseModel<string>> AddNewActivity(Entities.Models.Activity Model);
+        Task<ApiResponseModel<string>> UpdateActivity(Entities.Models.Activity Model);
+        Task<ApiResponseModel<string>> DeleteActivity(int ActivityId);
+        Task<ApiResponseModel<string>> AddActivitySliderImage(UploadFileModel Model);
+        Task<ApiResponseModel<string>> ApplyFilesSorting(List<FileSortingModel> Model, int ActivityId);
 
 
     }

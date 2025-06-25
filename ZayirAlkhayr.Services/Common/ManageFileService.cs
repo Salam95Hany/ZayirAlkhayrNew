@@ -19,7 +19,7 @@ namespace ZayirAlkhayr.Services.Common
         {
             _environment = environment;
         }
-        public async Task<ErrorResponseModel<string>> UploadFile(IFormFile File, string OldFileName, ImageFiles FolderName)
+        public async Task<ApiResponseModel<string>> UploadFile(IFormFile File, string OldFileName, ImageFiles FolderName)
         {
             string FolderPath = Path.Combine(_environment.ContentRootPath, "wwwroot", FolderName.ToString());
             if (!string.IsNullOrEmpty(OldFileName))
@@ -29,7 +29,7 @@ namespace ZayirAlkhayr.Services.Common
             bool ImageIsExist = CheckFileIsExist(FolderPath, File.FileName);
             if (ImageIsExist)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
 
             var FileName = Guid.NewGuid().ToString() + "_" + File.FileName;
@@ -38,7 +38,7 @@ namespace ZayirAlkhayr.Services.Common
             var supportedTypes = new[] { ".jpg", ".JPG", ".png", ".PNG", ".bmp", ".jpeg", ".JPEG", ".jfif", ".webp" };
             if (!supportedTypes.Contains(extension))
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
             else
             {
@@ -53,10 +53,10 @@ namespace ZayirAlkhayr.Services.Common
                     }
                 }
             }
-            return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess, FileName);
+            return ApiResponseModel<string>.Success(GenericErrors.AddSuccess, FileName);
         }
 
-        public ErrorResponseModel<string> DeleteFile(string FileName, ImageFiles FolderName)
+        public ApiResponseModel<string> DeleteFile(string FileName, ImageFiles FolderName)
         {
             string DirectoryPath = Path.Combine(_environment.ContentRootPath, "wwwroot", FolderName.ToString());
             string FullPath = Path.Combine(DirectoryPath, FileName);
@@ -68,12 +68,12 @@ namespace ZayirAlkhayr.Services.Common
                 }
                 catch (Exception)
                 {
-                    return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                    return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
                 }
 
             }
 
-            return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+            return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
         }
 
         private bool CheckFileIsExist(string FolderPath, string FileName)

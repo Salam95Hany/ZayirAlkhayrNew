@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Models;
 
-namespace ZayirAlkhayr.Entities.Specifications.ActivitySpec
+namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.ActivitySpec
 {
     public class ActivitySpecification : BaseSpecification<Activity>
     {
         public ActivitySpecification() : base(p => p.IsVisible) { }
-        
+
 
         //public ActivitySpecification(int id)
         //   : base(p => p.Id == id && p.IsVisible)

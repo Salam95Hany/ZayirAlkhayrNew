@@ -8,7 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Hosting;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
-using ZayirAlkhayr.Entities.Specifications.EventSpec;
+using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.EventSpec;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
@@ -33,7 +33,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             ApiLocalUrl = _appSettings.ApiUrlLocal;
         }
 
-        public async Task<ErrorResponseModel<List<EventGroupingModel>>> GetAllWebSiteEvents()
+        public async Task<ApiResponseModel<List<EventGroupingModel>>> GetAllWebSiteEvents()
         {
             var result = await _unitOfWork.Repository<Event>().GetAllAsync();
 
@@ -69,11 +69,11 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                     }));
 
             var data = grouping.OrderBy(g => g.ToDate).ToList();
-            return ErrorResponseModel<List<EventGroupingModel>>.Success(GenericErrors.GetSuccess, data);
+            return ApiResponseModel<List<EventGroupingModel>>.Success(GenericErrors.GetSuccess, data);
 
         }
 
-        public async Task<ErrorResponseModel<DataTable>> GetAllEvents(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<DataTable>> GetAllEvents(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[4];
@@ -82,10 +82,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllEvents", Params);
-            return ErrorResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public async Task<ErrorResponseModel<List<EventSliderImage>>> GetEventSliderImagesById(int EventId)
+        public async Task<ApiResponseModel<List<EventSliderImage>>> GetEventSliderImagesById(int EventId)
         {
             var Spec = new EventSliderImageSpecification(EventId);
             var results = await _unitOfWork.Repository<EventSliderImage>().GetAllWithSpecAsync(Spec);
@@ -97,10 +97,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 DisplayOrder = i.DisplayOrder
             }).ToList();
 
-            return ErrorResponseModel<List<EventSliderImage>>.Success(GenericErrors.GetSuccess, data);
+            return ApiResponseModel<List<EventSliderImage>>.Success(GenericErrors.GetSuccess, data);
         }
 
-        public async Task<ErrorResponseModel<string>> AddNewEvent(Event Model)
+        public async Task<ApiResponseModel<string>> AddNewEvent(Event Model)
         {
             try
             {
@@ -122,15 +122,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 await _unitOfWork.Repository<Event>().AddAsync(Event);
                 await _unitOfWork.CompleteAsync();
 
-                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> UpdateEvent(Event Model)
+        public async Task<ApiResponseModel<string>> UpdateEvent(Event Model)
         {
             try
             {
@@ -151,15 +151,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
                 await _unitOfWork.CompleteAsync();
 
-                return ErrorResponseModel<string>.Success(GenericErrors.UpdateSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> DeleteEvent(int EventId)
+        public async Task<ApiResponseModel<string>> DeleteEvent(int EventId)
         {
             try
             {
@@ -176,21 +176,21 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                     DeleteEventFiles(EventSliderImageNames);
                     await _unitOfWork.CompleteAsync();
 
-                    return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+                    return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
                 }
                 else
                 {
-                    return ErrorResponseModel<string>.Failure(GenericErrors.NotFound);
+                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
                 }
 
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> AddEventSliderImage(UploadFileModel Model)
+        public async Task<ApiResponseModel<string>> AddEventSliderImage(UploadFileModel Model)
         {
             try
             {
@@ -223,15 +223,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                         }
                     }
 
-                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> ApplyEventFilesSorting(List<FileSortingModel> Model, int EventId)
+        public async Task<ApiResponseModel<string>> ApplyEventFilesSorting(List<FileSortingModel> Model, int EventId)
         {
             try
             {
@@ -246,12 +246,12 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
                 await _unitOfWork.CompleteAsync();
 
-                return ErrorResponseModel<string>.Success(GenericErrors.ApplySort);
+                return ApiResponseModel<string>.Success(GenericErrors.ApplySort);
 
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 

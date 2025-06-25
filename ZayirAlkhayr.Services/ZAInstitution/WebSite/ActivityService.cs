@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
-using ZayirAlkhayr.Entities.Specifications.ActivitySpec;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Services.Common;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.ActivitySpec;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
@@ -31,7 +31,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             ApiLocalUrl = _appSettings.ApiUrlLocal;
         }
 
-        public async Task<ErrorResponseModel<DataTable>> GetAllActivities(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<DataTable>> GetAllActivities(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[4];
@@ -40,10 +40,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllActivities", Params);
-            return ErrorResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public async Task<ErrorResponseModel<List<ActivitiesSliderImage>>> GetActivitySliderImagesById(int ActivityId)
+        public async Task<ApiResponseModel<List<ActivitiesSliderImage>>> GetActivitySliderImagesById(int ActivityId)
         {
             var Spec = new ActivitiesSliderImageSpecification(ActivityId);
             var Entity = await _unitOfWork.Repository<ActivitiesSliderImage>().GetAllWithSpecAsync(Spec);
@@ -53,14 +53,14 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 ActivityId = i.ActivityId,
                 Image = Path.Combine(ApiLocalUrl, ImageFiles.ActivitySliderImages.ToString(), i.Image)
             }).ToList();
-            return ErrorResponseModel<List<ActivitiesSliderImage>>.Success(GenericErrors.GetSuccess, results);
+            return ApiResponseModel<List<ActivitiesSliderImage>>.Success(GenericErrors.GetSuccess, results);
         }
 
-        public async Task<ErrorResponseModel<ActivityModel>> GetActivityWithSliderImagesById(int ActivityId)
+        public async Task<ApiResponseModel<ActivityModel>> GetActivityWithSliderImagesById(int ActivityId)
         {
             var Spec = new ActivitiesSliderImageSpecification(ActivityId);
             var Activity = await _unitOfWork.Repository<Activity>().GetByIdAsync(ActivityId);
-            if (Activity == null) ErrorResponseModel<ActivityModel>.Failure(GenericErrors.TransFailed);
+            if (Activity == null) ApiResponseModel<ActivityModel>.Failure(GenericErrors.TransFailed);
             var ActivitySliderImage = await _unitOfWork.Repository<ActivitiesSliderImage>().GetAllWithSpecAsync(Spec);
 
             var ActivityModel = new ActivityModel
@@ -70,10 +70,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Description = Activity.Description,
                 SliderImages = ActivitySliderImage.OrderBy(i => i.DisplayOrder).Select(i => Path.Combine(ApiLocalUrl, ImageFiles.ActivitySliderImages.ToString(), i.Image)).ToList()
             };
-            return ErrorResponseModel<ActivityModel>.Success(GenericErrors.GetSuccess, ActivityModel);
+            return ApiResponseModel<ActivityModel>.Success(GenericErrors.GetSuccess, ActivityModel);
         }
 
-        public async Task<ErrorResponseModel<string>> AddNewActivity(Activity Model)
+        public async Task<ApiResponseModel<string>> AddNewActivity(Activity Model)
         {
             try
             {
@@ -93,15 +93,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 await _unitOfWork.Repository<Activity>().AddAsync(ActivityObj);
                 await _unitOfWork.CompleteAsync();
 
-                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> UpdateActivity(Activity Model)
+        public async Task<ApiResponseModel<string>> UpdateActivity(Activity Model)
         {
             try
             {
@@ -125,19 +125,19 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
                     await _unitOfWork.CompleteAsync();
 
-                    return ErrorResponseModel<string>.Success(GenericErrors.UpdateSuccess);
+                    return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
                 }
                 else
-                    return ErrorResponseModel<string>.Failure(GenericErrors.NotFound);
+                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
 
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> DeleteActivity(int ActivityId)
+        public async Task<ApiResponseModel<string>> DeleteActivity(int ActivityId)
         {
             try
             {
@@ -154,21 +154,21 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                     DeleteActivityFiles(Activity.Image, ActivitySliderImageNames);
                     await _unitOfWork.CompleteAsync();
 
-                    return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+                    return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
                 }
                 else
                 {
-                    return ErrorResponseModel<string>.Failure(GenericErrors.NotFound);
+                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
                 }
 
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> AddActivitySliderImage(UploadFileModel Model)
+        public async Task<ApiResponseModel<string>> AddActivitySliderImage(UploadFileModel Model)
         {
             try
             {
@@ -201,15 +201,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                         }
                     }
 
-                return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ErrorResponseModel<string>> DeleteActivitySliderImage(string FileName, int Id)
+        public async Task<ApiResponseModel<string>> DeleteActivitySliderImage(string FileName, int Id)
         {
             var Activity = await _unitOfWork.Repository<ActivitiesSliderImage>().GetByIdAsync(Id);
             if (Activity != null)
@@ -223,7 +223,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 }
             }
 
-            return ErrorResponseModel<string>.Success(GenericErrors.GetSuccess);
+            return ApiResponseModel<string>.Success(GenericErrors.GetSuccess);
         }
 
         private void DeleteActivityFiles(string ActivityImageName, List<string> ActivitySliderImageNames)
@@ -248,7 +248,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             }
         }
 
-        public async Task<ErrorResponseModel<string>> ApplyFilesSorting(List<FileSortingModel> Model, int ActivityId)
+        public async Task<ApiResponseModel<string>> ApplyFilesSorting(List<FileSortingModel> Model, int ActivityId)
         {
             try
             {
@@ -263,11 +263,11 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
                 await _unitOfWork.CompleteAsync();
 
-                return ErrorResponseModel<string>.Success(GenericErrors.ApplySort);
+                return ApiResponseModel<string>.Success(GenericErrors.ApplySort);
             }
             catch (Exception)
             {
-                return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
     }
