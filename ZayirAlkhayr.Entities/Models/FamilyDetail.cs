@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace ZayirAlkhayr.Entities.Models;
 
@@ -30,6 +31,5 @@ public partial class FamilyDetail
     public int? ChildernsCount { get; set; }
 
     public int? FamilyMembersCount { get; set; }
-
     public virtual FamilyStatus FamilyStatus { get; set; }
 }

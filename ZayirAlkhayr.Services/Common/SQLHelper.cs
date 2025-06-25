@@ -100,7 +100,7 @@ namespace ZayirAlkhayr.Services.Common
                         using (var reader = await sqlCommand.ExecuteReaderAsync())
                         {
                             DataSet dataSet = new DataSet();
-                            dataSet.Load(reader, LoadOption.PreserveChanges, new string[] { "Table" });
+                            dataSet.Load(reader, LoadOption.PreserveChanges, new string[] { "Table", "Table1" });
                             sqlCommand.Parameters.Clear();
                             return dataSet;
                         }

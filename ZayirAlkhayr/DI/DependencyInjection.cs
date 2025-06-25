@@ -9,12 +9,14 @@ using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
+using ZayirAlkhayr.Interfaces.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Settings;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Tasks;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
+using ZayirAlkhayr.Services.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Services.ZAInstitution.Settings;
 using ZayirAlkhayr.Services.ZAInstitution.Tasks;
 using ZayirAlkhayr.Services.ZAInstitution.WebSite;
@@ -46,10 +48,11 @@ namespace ZayirAlkhayr.DI
                 });
             });
 
-            services.AddControllers().AddJsonOptions(options =>
+            services.AddControllers().AddNewtonsoftJson(options =>
             {
-                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-                options.JsonSerializerOptions.WriteIndented = true;
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                options.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
             }).AddNewtonsoftJson();
             services.AddAuthConfig(configuration);
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -65,6 +68,9 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IGeneralTasksService, GeneralTasksService>();
             services.AddScoped<IAccountsMonyService, AccountsMonyService>();
             services.AddScoped<IDbBackupService, DbBackupService>();
+            services.AddScoped<IAddFamilyStatusService, AddFamilyStatusService>();
+            services.AddScoped<IUpdateFamilyStatusService, UpdateFamilyStatusService>();
+            services.AddScoped<IFamilyStatusService, FamilyStatusService>();
 
             return services;
         }
