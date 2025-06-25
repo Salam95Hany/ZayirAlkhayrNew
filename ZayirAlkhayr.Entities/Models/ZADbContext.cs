@@ -49,4 +49,7 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     public virtual DbSet<SliderImage> SliderImages { get; set; }
     public virtual DbSet<TaskStatus> TaskStatuses { get; set; }
     public virtual DbSet<WebSiteVisitor> WebSiteVisitors { get; set; }
+    public virtual DbSet<Footer> Footers { get; set; }
+
+    
 }
