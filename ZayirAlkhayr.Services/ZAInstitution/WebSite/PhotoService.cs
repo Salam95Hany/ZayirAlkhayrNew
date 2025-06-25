@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Hosting;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Common;
@@ -13,6 +8,7 @@ using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.PhotoSpec;
+using Microsoft.Extensions.Options;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
@@ -21,18 +17,17 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         private readonly IUnitOfWork _unitOfWork;
         private readonly IManageFileService _manageFileService;
         private readonly IAppSettings _appSettings;
-        private readonly IHostEnvironment _environment;
         private readonly ISQLHelper _sQLHelper;
+        private readonly string _webRootPath;
         private string ApiLocalUrl;
-        public PhotoService(IManageFileService manageFileService, IHostEnvironment environment, ISQLHelper sQLHelper, IUnitOfWork unitOfWork, IAppSettings appSettings)
+        public PhotoService(IManageFileService manageFileService, ISQLHelper sQLHelper, IUnitOfWork unitOfWork, IAppSettings appSettings, IOptions<AppPaths> options)
         {
             _manageFileService = manageFileService;
-            _environment = environment;
             _sQLHelper = sQLHelper;
             _unitOfWork = unitOfWork;
             _appSettings = appSettings;
+            _webRootPath = options.Value.WebRootPath;
             ApiLocalUrl = appSettings.ApiUrlLocal;
-
         }
 
         public async Task<ApiResponseModel<DataTable>> GetAllPhotos(PagingFilterModel PagingFilter)
@@ -88,7 +83,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 PhotoObj.Description = Model.Description;
                 PhotoObj.IsVisible = Model.IsVisible;
                 PhotoObj.InsertUser = Model.InsertUser;
-                PhotoObj.InsertDate = DateTime.Now.AddHours(1);
+                PhotoObj.InsertDate = DateTime.UtcNow;
 
                 var FileName = await _manageFileService.UploadFile(Model.Files, "", ImageFiles.PhotoImages);
                 if (FileName.IsSuccess)
@@ -116,7 +111,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 PhotoObj.Description = Model.Description;
                 PhotoObj.IsVisible = Model.IsVisible;
                 PhotoObj.UpdateUser = Model.InsertUser;
-                PhotoObj.UpdateDate = DateTime.Now.AddHours(1);
+                PhotoObj.UpdateDate = DateTime.UtcNow;
 
                 if (Model.Files != null)
                 {
@@ -250,8 +245,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
         private void DeletePhotoFiles(string PhotoImageName, List<string> PhotoDetailImageNames)
         {
-            var PhotoImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, "wwwroot", ImageFiles.PhotoImages.ToString()));
-            var PhotoDetailImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, "wwwroot", ImageFiles.PhotoDetailImages.ToString()));
+            var PhotoImagePaths = Directory.GetFiles(Path.Combine(_webRootPath, ImageFiles.PhotoImages.ToString()));
+            var PhotoDetailImagePaths = Directory.GetFiles(Path.Combine(_webRootPath, ImageFiles.PhotoDetailImages.ToString()));
 
             if (PhotoImagePaths.Count() > 0)
             {

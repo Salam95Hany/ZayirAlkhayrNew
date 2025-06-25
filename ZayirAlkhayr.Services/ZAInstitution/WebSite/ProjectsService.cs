@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.ProjectSpec;
@@ -21,17 +17,17 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         private readonly IUnitOfWork _unitOfWork;
         private readonly IManageFileService _manageFileService;
         private readonly IAppSettings _appSettings;
-        private readonly IHostEnvironment _environment;
         private readonly ISQLHelper _sQLHelper;
+        private readonly string _webRootPath;
         private string ApiLocalUrl;
         private string UiHost;
-        public ProjectsService(IManageFileService manageFileService, IHostEnvironment environment, ISQLHelper sQLHelper, IUnitOfWork unitOfWork, IAppSettings appSettings)
+        public ProjectsService(IManageFileService manageFileService, ISQLHelper sQLHelper, IUnitOfWork unitOfWork, IAppSettings appSettings, IOptions<AppPaths> options)
         {
             _manageFileService = manageFileService;
-            _environment = environment;
             _sQLHelper = sQLHelper;
             _unitOfWork = unitOfWork;
             _appSettings = appSettings;
+            _webRootPath = options.Value.WebRootPath;
             ApiLocalUrl = _appSettings.ApiUrlLocal;
             UiHost = _appSettings.UiHost;
 
@@ -91,7 +87,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Project.ProjectUrl = UiHost + "projects/events/" + Id;
                 Project.IsVisible = Model.IsVisible;
                 Project.InsertUser = Model.InsertUser;
-                Project.InsertDate = DateTime.Now.AddHours(1);
+                Project.InsertDate = DateTime.UtcNow;
 
                 await _unitOfWork.Repository<Project>().AddAsync(Project);
                 await _unitOfWork.CompleteAsync();
@@ -117,7 +113,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Project.RemainingAmount = Model.RemainingAmount;
                 Project.IsVisible = Model.IsVisible;
                 Project.UpdateUser = Model.InsertUser;
-                Project.UpdateDate = DateTime.Now.AddHours(1);
+                Project.UpdateDate = DateTime.UtcNow;
 
                 await _unitOfWork.CompleteAsync();
 
@@ -201,7 +197,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
         private void DeleteProjectsFiles(List<string> ProjectSliderImageNames)
         {
-            var ProjectSliderImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, "wwwroot", ImageFiles.ProjectSliderImages.ToString()));
+            var ProjectSliderImagePaths = Directory.GetFiles(Path.Combine(_webRootPath, ImageFiles.ProjectSliderImages.ToString()));
 
             if (ProjectSliderImagePaths.Count() > 0)
             {

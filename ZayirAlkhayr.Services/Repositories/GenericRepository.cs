@@ -34,6 +34,11 @@ namespace ZayirAlkhayr.Services.Repositories
             return await _dbContext.Set<T>().FindAsync(new object[] { id }, cancellationToken);
         }
 
+        public async Task<T?> GetByIdAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Set<T>().FirstOrDefaultAsync(predicate, cancellationToken);
+        }
+
         public async Task AddAsync(T entity, CancellationToken cancellationToken)
         => await _dbContext.Set<T>().AddAsync(entity, cancellationToken);
 
@@ -45,6 +50,9 @@ namespace ZayirAlkhayr.Services.Repositories
 
         public void DeleteRange(IEnumerable<T> entities)
         => _dbContext.Set<T>().RemoveRange(entities);
+
+        public async Task DeleteWhereAsync(Expression<Func<T, bool>> predicate)
+        => await _dbContext.Set<T>().Where(predicate).ExecuteDeleteAsync();
 
         private IQueryable<T> ApplySecifications(ISpecification<T> spec)
         {

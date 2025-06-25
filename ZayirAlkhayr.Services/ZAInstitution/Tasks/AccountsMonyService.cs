@@ -208,7 +208,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                     ImportObj.Details = Model.Details;
                     ImportObj.InsertDate = Model.InsertDate;
                     ImportObj.UpdateUser = Model.InsertUser;
-                    ImportObj.UpdateDate = DateTime.Now.AddHours(1);
+                    ImportObj.UpdateDate = DateTime.UtcNow;
 
                     await _unitOfWork.CompleteAsync();
 
@@ -281,7 +281,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                     ImportObj.Details = Model.Details;
                     ImportObj.InsertDate = Model.InsertDate;
                     ImportObj.UpdateUser = Model.InsertUser;
-                    ImportObj.UpdateDate = DateTime.Now.AddHours(1);
+                    ImportObj.UpdateDate = DateTime.UtcNow;
 
                    await _unitOfWork.CompleteAsync();
 

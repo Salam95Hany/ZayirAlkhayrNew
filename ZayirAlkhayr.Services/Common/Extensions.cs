@@ -82,5 +82,37 @@ namespace ZayirAlkhayr.Services.Common
 
             return simpleList.ToDataTable();
         }
+
+        public static bool AreAllPropertiesDefault(this object obj, List<string>? excludedProperties = null)
+        {
+            if (obj == null) return true;
+
+            excludedProperties ??= new List<string> { "Id", "FamilyStatusId" };
+
+            var properties = obj.GetType().GetProperties();
+
+            foreach (var property in properties)
+            {
+                if (!property.CanRead || excludedProperties.Contains(property.Name))
+                    continue;
+
+                var value = property.GetValue(obj);
+
+                var defaultValue = property.PropertyType.IsValueType
+                    ? Activator.CreateInstance(property.PropertyType)
+                    : null;
+
+                if (value is string str)
+                {
+                    if (!string.IsNullOrEmpty(str)) return false;
+                }
+                else if (!Equals(value, defaultValue))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }

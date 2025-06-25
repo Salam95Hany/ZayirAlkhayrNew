@@ -69,7 +69,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                 TaskObj.AssignTo = Model.AssignTo == null ? Model.InsertUser : Model.AssignTo;
                 TaskObj.InsertUser = Model.InsertUser;
                 TaskObj.TaskAddedDate = Model.TaskAddedDate;
-                TaskObj.InsertDate = DateTime.Now.AddHours(1);
+                TaskObj.InsertDate = DateTime.UtcNow;
 
                 await _unitOfWork.Repository<GeneralTask>().AddAsync(TaskObj);
                 await _unitOfWork.CompleteAsync();
@@ -91,7 +91,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                 TaskObj.AssignTo = Model.AssignTo == null ? Model.InsertUser : Model.AssignTo;
                 TaskObj.UpdateUser = Model.InsertUser;
                 TaskObj.TaskAddedDate = Model.TaskAddedDate;
-                TaskObj.UpdateDate = DateTime.Now.AddHours(1);
+                TaskObj.UpdateDate = DateTime.UtcNow;
 
                 await _unitOfWork.CompleteAsync();
 

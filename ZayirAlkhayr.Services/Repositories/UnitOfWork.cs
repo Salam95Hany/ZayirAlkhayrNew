@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,5 +41,10 @@ namespace ZayirAlkhayr.Services.Repositories
 
         public async ValueTask DisposeAsync()
          => await _dbContext.DisposeAsync();
+
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+        }
     }
 }

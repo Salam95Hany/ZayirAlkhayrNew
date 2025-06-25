@@ -11,6 +11,7 @@ namespace ZayirAlkhayr.Interfaces.Repositories
     public interface IGenericRepository<T> where T : class
     {
         Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<T?> GetByIdAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
         Task<List<T>> GetAllAsync(CancellationToken cancellationToken = default);
         Task<List<T>> GetAllWithSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken = default);
         Task<T?> GetByIdWithSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken = default);
@@ -25,6 +26,7 @@ namespace ZayirAlkhayr.Interfaces.Repositories
         void Update(T entity);
         void Delete(T entity);
         void DeleteRange(IEnumerable<T> entities);
+        Task DeleteWhereAsync(Expression<Func<T, bool>> predicate);
         Task AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
         Task<bool> AnyAsync(CancellationToken cancellationToken = default);
         Task<TResult> MaxAsync<TResult>(Expression<Func<T, TResult>> selector, CancellationToken cancellationToken = default);

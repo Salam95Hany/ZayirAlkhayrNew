@@ -1,27 +1,21 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using ZayirAlkhayr.Entities.Common;
-using Microsoft.Extensions.Hosting;
-using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Common;
+using Microsoft.Extensions.Options;
 
 namespace ZayirAlkhayr.Services.Common
 {
-    public class ManageFileService: IManageFileService
+    public class ManageFileService : IManageFileService
     {
-        private readonly IHostEnvironment _environment;
-        public ManageFileService(IHostEnvironment environment)
+        private readonly string _webRootPath;
+        public ManageFileService(IOptions<AppPaths> options)
         {
-            _environment = environment;
+            _webRootPath = options.Value.WebRootPath;
         }
         public async Task<ApiResponseModel<string>> UploadFile(IFormFile File, string OldFileName, ImageFiles FolderName)
         {
-            string FolderPath = Path.Combine(_environment.ContentRootPath, "wwwroot", FolderName.ToString());
+            string FolderPath = Path.Combine(_webRootPath, FolderName.ToString());
             if (!string.IsNullOrEmpty(OldFileName))
             {
                 DeleteFile(OldFileName, FolderName);
@@ -58,7 +52,7 @@ namespace ZayirAlkhayr.Services.Common
 
         public ApiResponseModel<string> DeleteFile(string FileName, ImageFiles FolderName)
         {
-            string DirectoryPath = Path.Combine(_environment.ContentRootPath, "wwwroot", FolderName.ToString());
+            string DirectoryPath = Path.Combine(_webRootPath, FolderName.ToString());
             string FullPath = Path.Combine(DirectoryPath, FileName);
             if (File.Exists(FullPath))
             {

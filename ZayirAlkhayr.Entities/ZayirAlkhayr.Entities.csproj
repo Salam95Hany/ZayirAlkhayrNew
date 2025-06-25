@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Specifications\ZAInstitution\Tasks\" />
+    <Folder Include="Specifications\ZAInstitution\GeneralServices\" />
   </ItemGroup>
 
 </Project>

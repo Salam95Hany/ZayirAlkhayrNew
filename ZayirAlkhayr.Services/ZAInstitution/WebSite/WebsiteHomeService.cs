@@ -69,7 +69,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Slider.Title = Model.Title;
                 Slider.IsVisible = Model.IsVisible;
                 Slider.InsertUser = Model.InsertUser;
-                Slider.InsertDate = DateTime.Now.AddHours(1);
+                Slider.InsertDate = DateTime.UtcNow;
 
                 var FileName = await _manageFileService.UploadFile(Model.Files, "", ImageFiles.SliderImages);
                 if (FileName.IsSuccess)
@@ -96,7 +96,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Slider.Title = Model.Title;
                 Slider.IsVisible = Model.IsVisible;
                 Slider.UpdateUser = Model.InsertUser;
-                Slider.UpdateDate = DateTime.Now.AddHours(1);
+                Slider.UpdateDate = DateTime.UtcNow;
 
                 if (Model.Files != null)
                 {
@@ -144,7 +144,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             try
             {
                 var sessionId = Guid.NewGuid().ToString();
-                var Visitor = new WebSiteVisitor { SessionId = sessionId, InsertDate = DateTime.Now.AddHours(1) };
+                var Visitor = new WebSiteVisitor { SessionId = sessionId, InsertDate = DateTime.UtcNow };
                 await _unitOfWork.Repository<WebSiteVisitor>().AddAsync(Visitor);
                 await _unitOfWork.CompleteAsync();
                 return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, sessionId);

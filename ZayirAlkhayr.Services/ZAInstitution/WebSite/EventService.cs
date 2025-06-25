@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.EventSpec;
@@ -20,16 +17,17 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IManageFileService _manageFileService;
-        private readonly IHostEnvironment _environment;
         private readonly ISQLHelper _sQLHelper;
         private readonly IAppSettings _appSettings;
+        private readonly string _webRootPath;
         private string ApiLocalUrl;
-        public EventService(ZADbContext Context, IManageFileService manageFileService, IHostEnvironment environment, ISQLHelper sQLHelper, IAppSettings appSettings)
+        public EventService(ZADbContext Context, IManageFileService manageFileService, ISQLHelper sQLHelper, IAppSettings appSettings, IOptions<AppPaths> options, IUnitOfWork unitOfWork)
         {
             _manageFileService = manageFileService;
-            _environment = environment;
             _sQLHelper = sQLHelper;
             _appSettings = appSettings;
+            _unitOfWork = unitOfWork;
+            _webRootPath = options.Value.WebRootPath;
             ApiLocalUrl = _appSettings.ApiUrlLocal;
         }
 
@@ -117,7 +115,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                     Event.Month = Model.FromDate.Value.ToString("MMMM", new CultureInfo("ar-AE")) + " إلى " + Model.ToDate.Value.ToString("MMMM", new CultureInfo("ar-AE"));
                 Event.IsVisible = Model.IsVisible;
                 Event.InsertUser = Model.InsertUser;
-                Event.InsertDate = DateTime.Now.AddHours(1);
+                Event.InsertDate = DateTime.UtcNow;
 
                 await _unitOfWork.Repository<Event>().AddAsync(Event);
                 await _unitOfWork.CompleteAsync();
@@ -147,7 +145,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                     Event.Month = Model.FromDate.Value.ToString("MMMM", new CultureInfo("ar-AE")) + " إلى " + Model.ToDate.Value.ToString("MMMM", new CultureInfo("ar-AE"));
                 Event.IsVisible = Model.IsVisible;
                 Event.UpdateUser = Model.InsertUser;
-                Event.UpdateDate = DateTime.Now.AddHours(1);
+                Event.UpdateDate = DateTime.UtcNow;
 
                 await _unitOfWork.CompleteAsync();
 
@@ -257,7 +255,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
         private void DeleteEventFiles(List<string> EventSliderImageNames)
         {
-            var EventSliderImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, "wwwroot", ImageFiles.EventSliderImages.ToString()));
+            var EventSliderImagePaths = Directory.GetFiles(Path.Combine(_webRootPath, ImageFiles.EventSliderImages.ToString()));
 
             if (EventSliderImagePaths.Count() > 0)
             {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
@@ -8,9 +7,8 @@ using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Services.Common;
-using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.ActivitySpec;
+using Microsoft.Extensions.Options;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
@@ -20,14 +18,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         private readonly IAppSettings _appSettings;
         private readonly ISQLHelper _sQLHelper;
         private readonly IManageFileService _manageFileService;
-        private readonly IHostEnvironment _environment;
+        private readonly string _webRootPath;
         private string ApiLocalUrl;
-        public ActivityService(IUnitOfWork unitOfWork, IAppSettings appSettings, ISQLHelper sQLHelper, IManageFileService manageFileService)
+        public ActivityService(IUnitOfWork unitOfWork, IAppSettings appSettings, ISQLHelper sQLHelper, IManageFileService manageFileService, IOptions<AppPaths> options)
         {
             _unitOfWork = unitOfWork;
             _appSettings = appSettings;
             _sQLHelper = sQLHelper;
             _manageFileService = manageFileService;
+            _webRootPath = options.Value.WebRootPath;
             ApiLocalUrl = _appSettings.ApiUrlLocal;
         }
 
@@ -228,8 +227,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
         private void DeleteActivityFiles(string ActivityImageName, List<string> ActivitySliderImageNames)
         {
-            var ActivityImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, ImageFiles.ActivityImages.ToString()));
-            var ActivitySliderImagePaths = Directory.GetFiles(Path.Combine(_environment.ContentRootPath, ImageFiles.ActivitySliderImages.ToString()));
+            var ActivityImagePaths = Directory.GetFiles(Path.Combine(_webRootPath, ImageFiles.ActivityImages.ToString()));
+            var ActivitySliderImagePaths = Directory.GetFiles(Path.Combine(_webRootPath, ImageFiles.ActivitySliderImages.ToString()));
 
             if (ActivityImagePaths.Count() > 0)
             {
