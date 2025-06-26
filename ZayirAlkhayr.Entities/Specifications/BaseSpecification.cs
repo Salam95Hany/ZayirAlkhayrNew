@@ -48,5 +48,7 @@ namespace ZayirAlkhayr.Entities.Specifications
         {
             OrderByDescending = orderByDescending;
         }
+
+    
     }
 }

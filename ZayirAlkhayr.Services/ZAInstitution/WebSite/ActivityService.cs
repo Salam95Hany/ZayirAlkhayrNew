@@ -262,7 +262,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 }
 
                 await _unitOfWork.CompleteAsync();
-
+                     
                 return ErrorResponseModel<string>.Success(GenericErrors.ApplySort);
             }
             catch (Exception)

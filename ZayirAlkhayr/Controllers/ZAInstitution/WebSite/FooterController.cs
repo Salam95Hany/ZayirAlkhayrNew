@@ -35,6 +35,34 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             return results;
 
         }
+        [HttpGet("GetFooterById")]
+        public async  Task<ErrorResponseModel<List<Footer>>> GetFooterById(int idNumber)
+        {
+
+            var results = await _footerService.GetFooterById(idNumber);
+
+            return results;
+
+        }
+        [HttpGet("OrderByFooter")]
+        public async Task<ErrorResponseModel<List<Footer>>> OrderByFooter(string phoneNumber, int dummy)
+        {
+
+            var results = await _footerService.OrderByFooter(phoneNumber, dummy);
+
+            return results;
+
+        }
+        [HttpGet("OrderByDescendingFooter")]
+        public async Task<ErrorResponseModel<List<Footer>>> OrderByDescendingFooter(string phoneNumber, bool orderByDescending)
+        {
+
+            var results = await _footerService.OrderByDescendingFooter(phoneNumber, orderByDescending);
+
+            return results;
+
+        }
+
 
         [HttpPost("AddNewFooter")]
         public async Task<ErrorResponseModel<string>> AddNewFooter([FromBody] Footer model)

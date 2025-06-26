@@ -12,5 +12,21 @@ namespace ZayirAlkhayr.Entities.Specifications.ActivitySpec
         public FooterSpecification(string phoneNumber)
          : base(f => f.Phones.StartsWith(phoneNumber)) { }
 
+        public FooterSpecification(int idNumber)
+        : base (i => i.Id == idNumber) { }
+
+        public FooterSpecification(string phoneNumber, int dummy)
+            : base(f => f.Phones.StartsWith(phoneNumber))
+        {
+            ApplyOrderBy(f => f.Id);
+        }
+
+        public FooterSpecification(string phoneNumber, bool orderByDescending)
+            : base(f => f.Phones.StartsWith(phoneNumber))
+        {
+            ApplyOrderByDescending(f => f.Id);
+        }
+
+
     }
 }

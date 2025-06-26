@@ -39,7 +39,36 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
             return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, entity);
         }
+        //
+        public async Task<ErrorResponseModel<List<Footer>>> OrderByFooter(string phoneNumber, int dummy)
+        {
+            FooterSpecification spec;            
+            spec = new FooterSpecification(phoneNumber, dummy); 
+           
+            var entity = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
 
+            return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, entity);
+        }
+
+        public async Task<ErrorResponseModel<List<Footer>>> OrderByDescendingFooter(string phoneNumber, bool orderByDescending)
+        {
+            FooterSpecification spec;
+
+             spec = new FooterSpecification(phoneNumber, true);  
+            var entity = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
+
+            return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, entity);
+        }
+
+
+        public async Task<ErrorResponseModel<List<Footer>>> GetFooterById(int idNumber)
+        {
+            var spec = new FooterSpecification(idNumber);
+
+            var entity = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
+
+            return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, entity);
+        }
 
         public async Task<ErrorResponseModel<string>> AddNewFooter(Footer model)
         {
