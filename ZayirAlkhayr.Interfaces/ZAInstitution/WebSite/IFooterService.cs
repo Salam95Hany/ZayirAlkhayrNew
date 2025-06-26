@@ -11,6 +11,7 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.WebSite
     public interface IFooterService
     {
         Task<ErrorResponseModel<List<Footer>>> GetAllFooter();
+        Task<ErrorResponseModel<List<Footer>>> GetByPhoneFooter(string phoneNumber);
         Task<ErrorResponseModel<string>> AddNewFooter(Footer model);
         Task<ErrorResponseModel<string>> UpdateFooter(Footer model);
         Task<ErrorResponseModel<string>> DeleteFooter(int footerId);

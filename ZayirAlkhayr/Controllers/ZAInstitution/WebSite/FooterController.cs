@@ -26,6 +26,15 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             return results;
 
         }
+        [HttpGet("GetByPhoneFooter")]
+        public async Task<ErrorResponseModel<List<Footer>>> GetByPhoneFooter(string phoneNumber)
+        {
+
+            var results = await _footerService.GetByPhoneFooter(phoneNumber);
+
+            return results;
+
+        }
 
         [HttpPost("AddNewFooter")]
         public async Task<ErrorResponseModel<string>> AddNewFooter([FromBody] Footer model)

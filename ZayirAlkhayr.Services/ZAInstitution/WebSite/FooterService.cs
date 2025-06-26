@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Entities.Specifications.ActivitySpec;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
@@ -29,6 +30,16 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             var footers = await _unitOfWork.Repository<Footer>().GetAllAsync();
             return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess , footers);
         }
+
+        public async Task<ErrorResponseModel<List<Footer>>> GetByPhoneFooter(string phoneNumber)
+        {
+            var spec = new FooterSpecification(phoneNumber);
+
+            var entity = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
+
+            return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, entity);
+        }
+
 
         public async Task<ErrorResponseModel<string>> AddNewFooter(Footer model)
         {

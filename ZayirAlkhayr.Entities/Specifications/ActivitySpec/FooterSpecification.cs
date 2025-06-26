@@ -7,10 +7,10 @@ using ZayirAlkhayr.Entities.Models;
 
 namespace ZayirAlkhayr.Entities.Specifications.ActivitySpec
 {
-    public class ActivitySpecification : BaseSpecification<Activity>
+    public class FooterSpecification : BaseSpecification<Footer>
     {
-        public ActivitySpecification() : base(p => p.IsVisible) { }
-        
+        public FooterSpecification(string phoneNumber)
+         : base(f => f.Phones.StartsWith(phoneNumber)) { }
 
     }
 }
