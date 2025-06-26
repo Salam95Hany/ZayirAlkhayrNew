@@ -18,5 +18,5 @@ public partial class PhotoDetail
 
     public int DisplayOrder { get; set; }
 
-    public virtual Photo Photo { get; set; }
+    public Photo Photo { get; set; }
 }

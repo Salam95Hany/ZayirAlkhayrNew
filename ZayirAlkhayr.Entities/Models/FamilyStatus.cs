@@ -33,13 +33,13 @@ public partial class FamilyStatus : AuditableEntity
     public string Jop { get; set; }
     public string MaritalStatus { get; set; }
     public string Relevance { get; set; }
-    public virtual FamilyCategory Category { get; set; }
-    public virtual ICollection<FamilyDetail> FamilyDetails { get; set; } = new List<FamilyDetail>();
-    public virtual ICollection<FamilyExpense> FamilyExpenses { get; set; } = new List<FamilyExpense>();
-    public virtual ICollection<FamilyExtraDetail> FamilyExtraDetails { get; set; } = new List<FamilyExtraDetail>();
-    public virtual ICollection<FamilyIncome> FamilyIncomes { get; set; } = new List<FamilyIncome>();
-    public virtual ICollection<FamilyNeed> FamilyNeeds { get; set; } = new List<FamilyNeed>();
-    public virtual ICollection<FamilyPatient> FamilyPatients { get; set; } = new List<FamilyPatient>();
-    public virtual FamilyNationality Nationality { get; set; }
-    public virtual FamilyStatusType StatusType { get; set; }
+    public FamilyCategory Category { get; set; }
+    public ICollection<FamilyDetail> FamilyDetails { get; set; } = new List<FamilyDetail>();
+    public ICollection<FamilyExpense> FamilyExpenses { get; set; } = new List<FamilyExpense>();
+    public ICollection<FamilyExtraDetail> FamilyExtraDetails { get; set; } = new List<FamilyExtraDetail>();
+    public ICollection<FamilyIncome> FamilyIncomes { get; set; } = new List<FamilyIncome>();
+    public ICollection<FamilyNeed> FamilyNeeds { get; set; } = new List<FamilyNeed>();
+    public ICollection<FamilyPatient> FamilyPatients { get; set; } = new List<FamilyPatient>();
+    public FamilyNationality Nationality { get; set; }
+    public FamilyStatusType StatusType { get; set; }
 }

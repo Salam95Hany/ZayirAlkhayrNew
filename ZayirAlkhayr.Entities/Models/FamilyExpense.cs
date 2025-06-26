@@ -42,5 +42,5 @@ public partial class FamilyExpense
 
     public int? Installment_debts { get; set; }
 
-    public virtual FamilyStatus FamilyStatus { get; set; }
+    public FamilyStatus FamilyStatus { get; set; }
 }

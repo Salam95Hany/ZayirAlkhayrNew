@@ -32,9 +32,9 @@ public partial class BeneFactor : AuditableEntity
 
     public string WelcomeMessage { get; set; }
 
-    public virtual ICollection<BeneFactorDetail> BeneFactorDetails { get; set; } = new List<BeneFactorDetail>();
+    public ICollection<BeneFactorDetail> BeneFactorDetails { get; set; } = new List<BeneFactorDetail>();
 
-    public virtual ICollection<BeneFactorNote> BeneFactorNotes { get; set; } = new List<BeneFactorNote>();
+    public ICollection<BeneFactorNote> BeneFactorNotes { get; set; } = new List<BeneFactorNote>();
 
-    public virtual BeneFactorNationality Nationality { get; set; }
+    public BeneFactorNationality Nationality { get; set; }
 }

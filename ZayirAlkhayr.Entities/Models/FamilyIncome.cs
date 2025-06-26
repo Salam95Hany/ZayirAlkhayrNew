@@ -36,5 +36,5 @@ public partial class FamilyIncome
 
     public int? TotalFamilyIncome { get; set; }
 
-    public virtual FamilyStatus FamilyStatus { get; set; }
+    public FamilyStatus FamilyStatus { get; set; }
 }

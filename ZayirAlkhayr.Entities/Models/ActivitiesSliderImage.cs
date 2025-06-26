@@ -17,5 +17,5 @@ public partial class ActivitiesSliderImage
 
     public int DisplayOrder { get; set; }
 
-    public virtual Activity Activity { get; set; }
+    public Activity Activity { get; set; }
 }

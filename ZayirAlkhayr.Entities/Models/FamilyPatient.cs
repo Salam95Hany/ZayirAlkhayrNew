@@ -26,7 +26,7 @@ public partial class FamilyPatient
 
     public int PatientTypeId { get; set; }
 
-    public virtual FamilyStatus FamilyStatus { get; set; }
+    public FamilyStatus FamilyStatus { get; set; }
 
-    public virtual FamilyPatientType PatientType { get; set; }
+    public FamilyPatientType PatientType { get; set; }
 }

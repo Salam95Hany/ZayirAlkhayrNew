@@ -13,5 +13,5 @@ public partial class TaskStatus
 
     public string Name { get; set; }
 
-    public virtual ICollection<GeneralTask> GeneralTasks { get; set; } = new List<GeneralTask>();
+    public ICollection<GeneralTask> GeneralTasks { get; set; } = new List<GeneralTask>();
 }

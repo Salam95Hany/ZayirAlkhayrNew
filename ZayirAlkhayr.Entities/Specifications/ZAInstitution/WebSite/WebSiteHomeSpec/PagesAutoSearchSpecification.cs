@@ -12,7 +12,7 @@ namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.WebSiteHome
         public PagesAutoSearchSpecification(string SearchText)
         {
             if (!string.IsNullOrEmpty(SearchText))
-                Criteria = x => x.Name.Contains(SearchText);
+                AddCriteria(x => x.Name.Contains(SearchText));
         }
     }
 }

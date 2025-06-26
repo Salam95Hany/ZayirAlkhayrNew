@@ -15,5 +15,5 @@ public partial class BeneFactorNationality : AuditableEntity
 
     public string Name { get; set; }
 
-    public virtual ICollection<BeneFactor> BeneFactors { get; set; } = new List<BeneFactor>();
+    public ICollection<BeneFactor> BeneFactors { get; set; } = new List<BeneFactor>();
 }

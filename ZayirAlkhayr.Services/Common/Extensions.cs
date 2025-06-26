@@ -60,13 +60,30 @@ namespace ZayirAlkhayr.Services.Common
                 .Select(group => new FilterModel
                 {
                     CategoryName = group.Key.CategoryName,
-                    IsVisible = group.FirstOrDefault().Field<bool>("IsVisible"),
                     FilterItems = group.Select(s => new FilterModel
                     {
                         CategoryName = s.Field<string>("CategoryName"),
                         ItemValue = s.Field<string>("ItemValue"),
                         ItemKey = s.Field<string>("ItemKey"),
                         ItemId = s.Field<string>("ItemId")
+                    }).ToList()
+                })
+                .ToList();
+        }
+
+        public static List<FilterModel> ToGroupedFilters(this List<FilterModel> filters)
+        {
+            return filters
+                .GroupBy(f => f.CategoryName)
+                .Select(group => new FilterModel
+                {
+                    CategoryName = group.Key,
+                    FilterItems = group.Select(f => new FilterModel
+                    {
+                        CategoryName = f.CategoryName,
+                        ItemId = f.ItemId,
+                        ItemKey = f.ItemKey,
+                        ItemValue = f.ItemValue
                     }).ToList()
                 })
                 .ToList();

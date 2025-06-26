@@ -14,5 +14,5 @@ public partial class BeneFactorType : AuditableEntity
 
     public string Name { get; set; }
 
-    public virtual ICollection<BeneFactorDetail> BeneFactorDetails { get; set; } = new List<BeneFactorDetail>();
+    public ICollection<BeneFactorDetail> BeneFactorDetails { get; set; } = new List<BeneFactorDetail>();
 }

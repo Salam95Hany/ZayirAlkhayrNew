@@ -32,5 +32,5 @@ public partial class Project : AuditableEntity
     [NotMapped]
     public List<string> Images { get; set; }
 
-    public virtual ICollection<ProjectDetail> ProjectDetails { get; set; } = new List<ProjectDetail>();
+    public ICollection<ProjectDetail> ProjectDetails { get; set; } = new List<ProjectDetail>();
 }

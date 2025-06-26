@@ -27,5 +27,5 @@ public partial class Photo : AuditableEntity
     [NotMapped]
     public IFormFile Files { get; set; }
 
-    public virtual ICollection<PhotoDetail> PhotoDetails { get; set; } = new List<PhotoDetail>();
+    public ICollection<PhotoDetail> PhotoDetails { get; set; } = new List<PhotoDetail>();
 }

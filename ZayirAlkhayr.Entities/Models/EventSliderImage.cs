@@ -18,5 +18,5 @@ public partial class EventSliderImage
 
     public int DisplayOrder { get; set; }
 
-    public virtual Event Event { get; set; }
+    public Event Event { get; set; }
 }

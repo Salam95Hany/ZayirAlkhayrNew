@@ -26,5 +26,5 @@ public partial class Activity : AuditableEntity
     [NotMapped]
     public IFormFile Files { get; set; }
 
-    public virtual ICollection<ActivitiesSliderImage> ActivitiesSliderImages { get; set; } = new List<ActivitiesSliderImage>();
+    public ICollection<ActivitiesSliderImage> ActivitiesSliderImages { get; set; } = new List<ActivitiesSliderImage>();
 }

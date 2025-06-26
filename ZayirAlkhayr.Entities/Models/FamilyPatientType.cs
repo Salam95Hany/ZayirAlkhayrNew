@@ -15,5 +15,5 @@ public partial class FamilyPatientType : AuditableEntity
 
     public string Name { get; set; }
 
-    public virtual ICollection<FamilyPatient> FamilyPatients { get; set; } = new List<FamilyPatient>();
+    public ICollection<FamilyPatient> FamilyPatients { get; set; } = new List<FamilyPatient>();
 }

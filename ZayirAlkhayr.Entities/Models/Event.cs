@@ -32,5 +32,5 @@ public partial class Event : AuditableEntity
     [NotMapped]
     public string ToDateStr { get; set; }
 
-    public virtual ICollection<EventSliderImage> EventSliderImages { get; set; } = new List<EventSliderImage>();
+    public ICollection<EventSliderImage> EventSliderImages { get; set; } = new List<EventSliderImage>();
 }

@@ -20,7 +20,7 @@ public partial class FamilyNeed
 
     public bool IsWaiting { get; set; }
 
-    public virtual FamilyNeedType NeedType { get; set; }
+    public FamilyNeedType NeedType { get; set; }
 
-    public virtual FamilyStatus Status { get; set; }
+    public FamilyStatus Status { get; set; }
 }

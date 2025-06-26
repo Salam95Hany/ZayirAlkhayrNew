@@ -21,5 +21,5 @@ public partial class GeneralTask : AuditableEntity
 
     public DateTime TaskAddedDate { get; set; }
 
-    public virtual TaskStatus Status { get; set; }
+    public TaskStatus Status { get; set; }
 }

@@ -19,5 +19,5 @@ public partial class BeneFactorNote
 
     public DateTime? InsertDate { get; set; }
 
-    public virtual BeneFactor BeneFactor { get; set; }
+    public BeneFactor BeneFactor { get; set; }
 }

@@ -60,6 +60,7 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<ISQLHelper, SQLHelper>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IManageFileService, ManageFileService>();
+            services.AddScoped<IGenerateFiltersService, GenerateFiltersService>();
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IPhotoService, PhotoService>();
@@ -71,6 +72,9 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IAddFamilyStatusService, AddFamilyStatusService>();
             services.AddScoped<IUpdateFamilyStatusService, UpdateFamilyStatusService>();
             services.AddScoped<IFamilyStatusService, FamilyStatusService>();
+            services.AddScoped<IFamilyCategoryService, FamilyCategoryService>();
+
+
 
             return services;
         }

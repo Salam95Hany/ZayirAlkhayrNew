@@ -16,5 +16,5 @@ public partial class ProjectDetail
 
     public string Image { get; set; }
 
-    public virtual Project Project { get; set; }
+    public Project Project { get; set; }
 }

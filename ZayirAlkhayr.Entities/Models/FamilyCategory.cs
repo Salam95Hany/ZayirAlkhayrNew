@@ -15,5 +15,5 @@ public partial class FamilyCategory : AuditableEntity
 
     public string Name { get; set; }
 
-    public virtual ICollection<FamilyStatus> FamilyStatuses { get; set; } = new List<FamilyStatus>();
+    public ICollection<FamilyStatus> FamilyStatuses { get; set; } = new List<FamilyStatus>();
 }

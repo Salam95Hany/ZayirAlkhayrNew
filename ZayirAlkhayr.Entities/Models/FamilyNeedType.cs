@@ -16,7 +16,7 @@ public partial class FamilyNeedType : AuditableEntity
 
     public int CategoryId { get; set; }
 
-    public virtual FamilyNeedCategory Category { get; set; }
+    public FamilyNeedCategory Category { get; set; }
 
-    public virtual ICollection<FamilyNeed> FamilyNeeds { get; set; } = new List<FamilyNeed>();
+    public ICollection<FamilyNeed> FamilyNeeds { get; set; } = new List<FamilyNeed>();
 }
