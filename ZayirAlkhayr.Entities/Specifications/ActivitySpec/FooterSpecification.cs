@@ -9,24 +9,16 @@ namespace ZayirAlkhayr.Entities.Specifications.ActivitySpec
 {
     public class FooterSpecification : BaseSpecification<Footer>
     {
-        public FooterSpecification(string phoneNumber)
-         : base(f => f.Phones.StartsWith(phoneNumber)) { }
+        public FooterSpecification(string phoneNumber) : base(f => f.Phones.StartsWith(phoneNumber)) { }
 
-        public FooterSpecification(int idNumber)
-        : base (i => i.Id == idNumber) { }
+        public FooterSpecification(int idNumber) : base(i => i.Id == idNumber) { }
 
-        public FooterSpecification(string phoneNumber, int dummy)
-            : base(f => f.Phones.StartsWith(phoneNumber))
+        public FooterSpecification(bool isAsc) : base()
         {
-            ApplyOrderBy(f => f.Id);
+            if (isAsc)
+                ApplyOrderBy(f => f.Phones);
+            else
+                ApplyOrderByDescending(f => f.Phones);
         }
-
-        public FooterSpecification(string phoneNumber, bool orderByDescending)
-            : base(f => f.Phones.StartsWith(phoneNumber))
-        {
-            ApplyOrderByDescending(f => f.Id);
-        }
-
-
     }
 }
