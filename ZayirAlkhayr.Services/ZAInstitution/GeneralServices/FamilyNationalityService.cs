@@ -13,21 +13,21 @@ using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
 {
-    public class FamilyCategoryService : IFamilyCategoryService
+    public class FamilyNationalityService: IFamilyNationalityService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IGenerateFiltersService _generateFiltersService;
-        public FamilyCategoryService(IUnitOfWork unitOfWork, IGenerateFiltersService generateFiltersService)
+        public FamilyNationalityService(IUnitOfWork unitOfWork, IGenerateFiltersService generateFiltersService)
         {
             _unitOfWork = unitOfWork;
             _generateFiltersService = generateFiltersService;
         }
 
-        public async Task<ApiResponseModel<List<FamilyDto>>> GetAllFamilyCategoryData(PagingFilterModel PagingFilter, CancellationToken cancellationToken = default)
+        public async Task<ApiResponseModel<List<FamilyDto>>> GetAllFamilyNationalitiesData(PagingFilterModel PagingFilter, CancellationToken cancellationToken = default)
         {
-            var DataSpec = new FamilyCategoryFilterSpecification(PagingFilter);
-            var CountSpec = new FamilyCategoryFilterSpecification(PagingFilter,false);
-            var Entity = _unitOfWork.Repository<FamilyCategory>();
+            var DataSpec = new FamilyNationalityFilterSpecification(PagingFilter);
+            var CountSpec = new FamilyNationalityFilterSpecification(PagingFilter, false);
+            var Entity = _unitOfWork.Repository<FamilyNationality>();
             var TotalCount = await Entity.GetCountAsync(CountSpec, cancellationToken);
             var Data = await Entity.GetAllWithSpecAsync(DataSpec, cancellationToken);
             var Results = Data.Select(fc => new FamilyDto
@@ -43,15 +43,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             return ApiResponseModel<List<FamilyDto>>.Success(GenericErrors.GetSuccess, Results, TotalCount);
         }
 
-        public async Task<ApiResponseModel<List<FilterModel>>> GetAllFamilyCategoryFilter(CancellationToken cancellationToken = default)
+        public async Task<ApiResponseModel<List<FilterModel>>> GetAllFamilyNationalitiesFilter(CancellationToken cancellationToken = default)
         {
-            var data = await _unitOfWork.Repository<FamilyCategory>().GetAllAsQueryable().Include(x => x.CreatedBy).Select(x => new FamilyCategory
+            var data = await _unitOfWork.Repository<FamilyNationality>().GetAllAsQueryable().Include(x => x.CreatedBy).Select(x => new FamilyNationality
             {
                 InsertUser = x.InsertUser,
                 CreatedBy = new AdminUser { UserName = x.CreatedBy.UserName }
             }).ToListAsync();
 
-            var filterRequests = new List<FilterRequest<FamilyCategory>>
+            var filterRequests = new List<FilterRequest<FamilyNationality>>
             {
                 new()
                 {
@@ -66,19 +66,20 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, results);
         }
 
-        public async Task<ApiResponseModel<string>> AddNewFamilyCategory(FamilyCategory Model)
+        public async Task<ApiResponseModel<string>> AddNewFamilyNationality(FamilyNationality Model)
         {
             try
             {
-                var CategoryObj = new FamilyCategory
+                var PatientObj = new FamilyNationality
                 {
                     Name = Model.Name,
                     InsertUser = Model.InsertUser,
                     InsertDate = DateTime.UtcNow
                 };
 
-               await _unitOfWork.Repository<FamilyCategory>().AddAsync(CategoryObj);
-               await _unitOfWork.CompleteAsync();
+
+                await _unitOfWork.Repository<FamilyNationality>().AddAsync(PatientObj);
+                await _unitOfWork.CompleteAsync();
 
                 return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
@@ -88,16 +89,16 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             }
         }
 
-        public async Task<ApiResponseModel<string>> UpdateFamilyCategory(FamilyCategory Model)
+        public async Task<ApiResponseModel<string>> UpdateFamilyNationality(FamilyNationality Model)
         {
             try
             {
-                var CategoryObj = await _unitOfWork.Repository<FamilyCategory>().GetByIdAsync(Model.Id);
-                if(CategoryObj != null)
+                var PatientObj = await _unitOfWork.Repository<FamilyNationality>().GetByIdAsync(Model.Id);
+                if (PatientObj != null)
                 {
-                    CategoryObj.Name = Model.Name;
-                    CategoryObj.UpdateUser = Model.InsertUser;
-                    CategoryObj.UpdateDate = DateTime.Now.AddHours(1);
+                    PatientObj.Name = Model.Name;
+                    PatientObj.UpdateUser = Model.InsertUser;
+                    PatientObj.UpdateDate = DateTime.UtcNow;
 
                    await _unitOfWork.CompleteAsync();
 
@@ -113,16 +114,16 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             }
         }
 
-        public async Task<ApiResponseModel<string>> DeleteFamilyCategory(int CategoryId)
+        public async Task<ApiResponseModel<string>> DeleteFamilyNationality(int NationalityId)
         {
             try
             {
-                var Category = await _unitOfWork.Repository<FamilyCategory>().GetByIdAsync(CategoryId);
-                if(Category != null)
+                var Patient = await _unitOfWork.Repository<FamilyNationality>().GetByIdAsync(NationalityId);
+                if (Patient != null)
                 {
-                    _unitOfWork.Repository<FamilyCategory>().Delete(Category);
+                    _unitOfWork.Repository<FamilyNationality>().Delete(Patient);
                     await _unitOfWork.CompleteAsync();
-                    return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+                    return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
                 }
 
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);

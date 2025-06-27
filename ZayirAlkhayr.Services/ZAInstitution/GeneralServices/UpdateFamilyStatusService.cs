@@ -1,5 +1,4 @@
-﻿using System;
-using ZayirAlkhayr.Entities.Common;
+﻿using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.GeneralServices;

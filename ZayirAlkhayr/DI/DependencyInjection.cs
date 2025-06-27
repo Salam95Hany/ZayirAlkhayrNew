@@ -55,6 +55,7 @@ namespace ZayirAlkhayr.DI
                 options.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
             }).AddNewtonsoftJson();
             services.AddAuthConfig(configuration);
+
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ISQLHelper, SQLHelper>();
@@ -73,9 +74,10 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IUpdateFamilyStatusService, UpdateFamilyStatusService>();
             services.AddScoped<IFamilyStatusService, FamilyStatusService>();
             services.AddScoped<IFamilyCategoryService, FamilyCategoryService>();
-
-
-
+            services.AddScoped<IFamilyNeedsService, FamilyNeedsService>();
+            services.AddScoped<IFamilyPatientService, FamilyPatientService>();
+            services.AddScoped<IFamilyNationalityService, FamilyNationalityService>();
+            
             return services;
         }
 

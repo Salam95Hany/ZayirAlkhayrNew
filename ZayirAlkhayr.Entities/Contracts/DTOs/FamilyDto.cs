@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ZayirAlkhayr.Entities.Contracts.DTOs
 {
-    public class FamilyCategoryDto
+    public class FamilyDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

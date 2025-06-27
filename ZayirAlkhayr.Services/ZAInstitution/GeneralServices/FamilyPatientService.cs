@@ -1,6 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs;
@@ -13,21 +21,21 @@ using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
 {
-    public class FamilyCategoryService : IFamilyCategoryService
+    public class FamilyPatientService : IFamilyPatientService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IGenerateFiltersService _generateFiltersService;
-        public FamilyCategoryService(IUnitOfWork unitOfWork, IGenerateFiltersService generateFiltersService)
+        public FamilyPatientService(IUnitOfWork unitOfWork, IGenerateFiltersService generateFiltersService)
         {
             _unitOfWork = unitOfWork;
             _generateFiltersService = generateFiltersService;
         }
 
-        public async Task<ApiResponseModel<List<FamilyDto>>> GetAllFamilyCategoryData(PagingFilterModel PagingFilter, CancellationToken cancellationToken = default)
+        public async Task<ApiResponseModel<List<FamilyDto>>> GetAllFamilyPatientData(PagingFilterModel PagingFilter, CancellationToken cancellationToken = default)
         {
-            var DataSpec = new FamilyCategoryFilterSpecification(PagingFilter);
-            var CountSpec = new FamilyCategoryFilterSpecification(PagingFilter,false);
-            var Entity = _unitOfWork.Repository<FamilyCategory>();
+            var DataSpec = new FamilyPatientFilterSpecification(PagingFilter);
+            var CountSpec = new FamilyPatientFilterSpecification(PagingFilter, false);
+            var Entity = _unitOfWork.Repository<FamilyPatientType>();
             var TotalCount = await Entity.GetCountAsync(CountSpec, cancellationToken);
             var Data = await Entity.GetAllWithSpecAsync(DataSpec, cancellationToken);
             var Results = Data.Select(fc => new FamilyDto
@@ -43,15 +51,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             return ApiResponseModel<List<FamilyDto>>.Success(GenericErrors.GetSuccess, Results, TotalCount);
         }
 
-        public async Task<ApiResponseModel<List<FilterModel>>> GetAllFamilyCategoryFilter(CancellationToken cancellationToken = default)
+        public async Task<ApiResponseModel<List<FilterModel>>> GetAllFamilyPatientFilter(CancellationToken cancellationToken = default)
         {
-            var data = await _unitOfWork.Repository<FamilyCategory>().GetAllAsQueryable().Include(x => x.CreatedBy).Select(x => new FamilyCategory
+            var data = await _unitOfWork.Repository<FamilyPatientType>().GetAllAsQueryable().Include(x => x.CreatedBy).Select(x => new FamilyPatientType
             {
                 InsertUser = x.InsertUser,
                 CreatedBy = new AdminUser { UserName = x.CreatedBy.UserName }
             }).ToListAsync();
 
-            var filterRequests = new List<FilterRequest<FamilyCategory>>
+            var filterRequests = new List<FilterRequest<FamilyPatientType>>
             {
                 new()
                 {
@@ -66,19 +74,20 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, results);
         }
 
-        public async Task<ApiResponseModel<string>> AddNewFamilyCategory(FamilyCategory Model)
+        public async Task<ApiResponseModel<string>> AddNewFamilyPatient(FamilyPatientType Model)
         {
             try
             {
-                var CategoryObj = new FamilyCategory
+                var PatientObj = new FamilyPatientType
                 {
                     Name = Model.Name,
                     InsertUser = Model.InsertUser,
                     InsertDate = DateTime.UtcNow
                 };
 
-               await _unitOfWork.Repository<FamilyCategory>().AddAsync(CategoryObj);
-               await _unitOfWork.CompleteAsync();
+
+                await _unitOfWork.Repository<FamilyPatientType>().AddAsync(PatientObj);
+                await _unitOfWork.CompleteAsync();
 
                 return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
@@ -88,18 +97,18 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             }
         }
 
-        public async Task<ApiResponseModel<string>> UpdateFamilyCategory(FamilyCategory Model)
+        public async Task<ApiResponseModel<string>> UpdateFamilyPatient(FamilyPatientType Model)
         {
             try
             {
-                var CategoryObj = await _unitOfWork.Repository<FamilyCategory>().GetByIdAsync(Model.Id);
-                if(CategoryObj != null)
+                var PatientObj = await _unitOfWork.Repository<FamilyPatientType>().GetByIdAsync(Model.Id);
+                if (PatientObj != null)
                 {
-                    CategoryObj.Name = Model.Name;
-                    CategoryObj.UpdateUser = Model.InsertUser;
-                    CategoryObj.UpdateDate = DateTime.Now.AddHours(1);
+                    PatientObj.Name = Model.Name;
+                    PatientObj.UpdateUser = Model.InsertUser;
+                    PatientObj.UpdateDate = DateTime.UtcNow;
 
-                   await _unitOfWork.CompleteAsync();
+                  await  _unitOfWork.CompleteAsync();
 
                     return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
                 }
@@ -113,16 +122,16 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             }
         }
 
-        public async Task<ApiResponseModel<string>> DeleteFamilyCategory(int CategoryId)
+        public async Task<ApiResponseModel<string>> DeleteFamilyPatient(int PatientId)
         {
             try
             {
-                var Category = await _unitOfWork.Repository<FamilyCategory>().GetByIdAsync(CategoryId);
-                if(Category != null)
+                var Patient = await _unitOfWork.Repository<FamilyPatientType>().GetByIdAsync(PatientId);
+                if (Patient != null)
                 {
-                    _unitOfWork.Repository<FamilyCategory>().Delete(Category);
+                    _unitOfWork.Repository<FamilyPatientType>().Delete(Patient);
                     await _unitOfWork.CompleteAsync();
-                    return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+                    return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
                 }
 
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
