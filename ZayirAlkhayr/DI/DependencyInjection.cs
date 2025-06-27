@@ -77,6 +77,7 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IFamilyNeedsService, FamilyNeedsService>();
             services.AddScoped<IFamilyPatientService, FamilyPatientService>();
             services.AddScoped<IFamilyNationalityService, FamilyNationalityService>();
+            services.AddScoped<IOrphansService, OrphansService>();
             
             return services;
         }

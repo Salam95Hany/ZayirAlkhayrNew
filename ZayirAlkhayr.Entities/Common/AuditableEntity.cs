@@ -15,7 +15,7 @@ namespace ZayirAlkhayr.Entities.Common
         public string? UpdateUser { get; set; }
         public DateTime? UpdateDate { get; set; }
         [ForeignKey(nameof(InsertUser))]
-        public AdminUser CreatedBy { get; set; } = default!;
+        public AdminUser? CreatedBy { get; set; } = default!;
         [ForeignKey(nameof(UpdateUser))]
         public AdminUser? UpdatedBy { get; set; }
     }
