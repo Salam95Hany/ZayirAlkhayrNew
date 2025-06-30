@@ -97,7 +97,20 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
         }
 
+        public async Task<ErrorResponseModel<List<Footer>>> GetAll0000(string containsText)
+        {
+            var spec = new FooterSpecification(containsText, 0);    
+            var footers = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
+            return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, footers);
+        }
 
+       
+        public async Task<ErrorResponseModel<List<Footer>>> GetAllEnd1(string endsWithText)
+        {
+            var spec = new FooterSpecification(endsWithText, true); 
+            var footers = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
+            return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, footers);
+        }
 
     }
 }

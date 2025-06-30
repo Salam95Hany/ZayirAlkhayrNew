@@ -84,6 +84,27 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             var results = await _footerService.DeleteFooter(footerId);
             return results;
         }
+
+
+
+        [HttpPost("GetAll0000")]
+        public async Task<ErrorResponseModel<List<Footer>>> GetAll0000(string containsText)
+        {
+            var results = await _footerService.GetAll0000(containsText );
+            return results;
+        }
+
+
+        [HttpPost("GetAllEnd1")]
+        public async Task<ErrorResponseModel<List<Footer>>> GetAllEnd1(string endsWithText )
+        {
+            var results = await _footerService.GetAllEnd1(endsWithText);
+            return results;
+        }
+
+
+
+   
     }
 
 }

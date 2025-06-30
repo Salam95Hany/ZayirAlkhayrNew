@@ -19,5 +19,10 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.WebSite
         Task<ErrorResponseModel<string>> AddNewFooter(Footer model);
         Task<ErrorResponseModel<string>> UpdateFooter(Footer model);
         Task<ErrorResponseModel<string>> DeleteFooter(int footerId);
+        Task<ErrorResponseModel<List<Footer>>> GetAll0000(string containsText);
+        Task<ErrorResponseModel<List<Footer>>> GetAllEnd1(string endsWithText);
+
+
+
     }
 }
