@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Data;
+using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Services.ZAInstitution.WebSite;
+using static ZayirAlkhayr.Entities.Specifications.ActivitySpec.FooterSpecification;
 
 namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
 {
@@ -17,6 +19,12 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             _footerService = footerService;
         }
 
+        [HttpGet("FilterFooters")]
+        public async Task<ErrorResponseModel<List<Footer>>> FilterFooters([FromQuery] string phoneNumber,[FromQuery] PhoneFilterMode mode)
+        {
+            return await _footerService.FilterFooters(phoneNumber, mode);
+        }
+
         [HttpGet("GetAllFooter")]
         public async Task<ErrorResponseModel<List<Footer>>> GetAllFooter()
         {
@@ -27,14 +35,14 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
 
         }
         [HttpGet("GetByPhoneFooter")]
-        public async Task<ErrorResponseModel<List<Footer>>> GetByPhoneFooter(string phoneNumber)
-        {
+        //public async Task<ErrorResponseModel<List<Footer>>> GetByPhoneFooter(string phoneNumber)
+        //{
 
-            var results = await _footerService.GetByPhoneFooter(phoneNumber);
+        //    var results = await _footerService.GetByPhoneFooter(phoneNumber);
 
-            return results;
+        //    return results;
 
-        }
+        //}
         [HttpGet("GetFooterById")]
         public async  Task<ErrorResponseModel<List<Footer>>> GetFooterById(int idNumber)
         {
@@ -87,24 +95,59 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
 
 
 
-        [HttpPost("GetAll0000")]
-        public async Task<ErrorResponseModel<List<Footer>>> GetAll0000(string containsText)
+        //[HttpPost("GetAll0000")]
+        //public async Task<ErrorResponseModel<List<Footer>>> GetAll0000(string containsText)
+        //{
+        //    var results = await _footerService.GetAll0000(containsText );
+        //    return results;
+        //}
+
+
+        //[HttpPost("GetAllEnd1")]
+        //public async Task<ErrorResponseModel<List<Footer>>> GetAllEnd1(string endsWithText )
+        //{
+        //    var results = await _footerService.GetAllEnd1(endsWithText);
+        //    return results;
+        //}
+
+
+        // هون الجديد
+
+        
+        [HttpGet("get-all")]
+        public async Task<ErrorResponseModel<DataTable>> GetAllFooters()
         {
-            var results = await _footerService.GetAll0000(containsText );
-            return results;
+            return await _footerService.GetAllFooters();
         }
 
-
-        [HttpPost("GetAllEnd1")]
-        public async Task<ErrorResponseModel<List<Footer>>> GetAllEnd1(string endsWithText )
+        
+        [HttpPost("insert")]
+        public async Task<ErrorResponseModel<int>> InsertFooters([FromBody] string phone)
         {
-            var results = await _footerService.GetAllEnd1(endsWithText);
-            return results;
+            return await _footerService.InsertFooters(phone);
         }
 
+        
+        [HttpPost("update")]
+        public async Task<ErrorResponseModel<int>> UpdateFooters([FromBody] Footer footer)
+        {
+            return await _footerService.UpdateFooters(footer);
+        }
 
+        
+        [HttpDelete("delete")]
+        public async Task<ErrorResponseModel<int>> DeleteFooters([FromQuery] int id)
+        {
+            return await _footerService.DeleteFooters(id);
+        }
 
-   
+        
+        [HttpGet("fixed-filters")]
+        public async Task<ErrorResponseModel<DataTable>> GetFootersWithFixedFilters()
+        {
+            return await _footerService.GetFootersWithFixedFilters();
+        }
+
     }
 
 }

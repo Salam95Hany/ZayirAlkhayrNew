@@ -1,20 +1,35 @@
 ﻿using System;
+using System.Data;
+using Microsoft.Data.SqlClient;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Specifications.ActivitySpec;
+using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Services.Common;
+using static ZayirAlkhayr.Entities.Specifications.ActivitySpec.FooterSpecification;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
     public class FooterService : IFooterService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ISQLHelper _sQLHelper;
 
-        public FooterService(IUnitOfWork unitOfWork)
+        public FooterService(IUnitOfWork unitOfWork, ISQLHelper sQLHelper)
         {
             _unitOfWork = unitOfWork;
+            _sQLHelper = sQLHelper;
+        }
+
+        public async Task<ErrorResponseModel<List<Footer>>> FilterFooters(string phoneNumber, PhoneFilterMode mode)
+        {
+            var spec = new FooterSpecification(phoneNumber, mode);
+
+            var footers = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
+
+            return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, footers);
         }
 
         public async Task<ErrorResponseModel<List<Footer>>> GetAllFooter()
@@ -24,13 +39,13 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, footers);
         }
 
-        public async Task<ErrorResponseModel<List<Footer>>> GetByPhoneFooter(string phoneNumber)
-        {
-            var spec = new FooterSpecification(phoneNumber);
-            var entity = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
+        //public async Task<ErrorResponseModel<List<Footer>>> GetByPhoneFooter(string phoneNumber)
+        //{
+        //    var spec = new FooterSpecification(phoneNumber);
+        //    var entity = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
 
-            return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, entity);
-        }
+        //    return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, entity);
+        //}
 
         public async Task<ErrorResponseModel<List<Footer>>> OrderByFooter(string phoneNumber, int dummy)
         {
@@ -97,20 +112,78 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
         }
 
-        public async Task<ErrorResponseModel<List<Footer>>> GetAll0000(string containsText)
+
+        //public async Task<ErrorResponseModel<List<Footer>>> GetAll0000(string containsText)
+        //{
+        //    var spec = new FooterSpecification(containsText, 0);    
+        //    var footers = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
+        //    return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, footers);
+        //}
+
+
+        //public async Task<ErrorResponseModel<List<Footer>>> GetAllEnd1(string endsWithText)
+        //{
+        //    var spec = new FooterSpecification(endsWithText, true); 
+        //    var footers = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
+        //    return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, footers);
+        //}
+        
+        public async Task<ErrorResponseModel<DataTable>> GetAllFooters()
         {
-            var spec = new FooterSpecification(containsText, 0);    
-            var footers = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
-            return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, footers);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("GetAllFooters", null);
+            return ErrorResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+        }
+
+        
+        public async Task<ErrorResponseModel<int>> InsertFooters(string phone)
+        {
+            var parameters = new[]
+            {
+            new SqlParameter("@Phones", phone)
+            
+        };
+
+            var result = await _sQLHelper.ExecuteScalarAsync("InsertFooters", parameters);
+            return ErrorResponseModel<int>.Success(GenericErrors.GetSuccess, result);
+        }
+
+        
+        public async Task<ErrorResponseModel<int>> UpdateFooters(Footer footer)
+        {
+            var parameters = new[]
+            {
+            new SqlParameter("@Id", footer.Id),
+            new SqlParameter("@Phones", footer.Phones)
+        };
+
+            var result = await _sQLHelper.ExecuteScalarAsync("UpdateFooters", parameters);
+            return ErrorResponseModel<int>.Success(GenericErrors.UpdateSuccess, result);
         }
 
        
-        public async Task<ErrorResponseModel<List<Footer>>> GetAllEnd1(string endsWithText)
+        public async Task<ErrorResponseModel<int>> DeleteFooters(int id)
         {
-            var spec = new FooterSpecification(endsWithText, true); 
-            var footers = await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec);
-            return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, footers);
+            var parameters = new[]
+            {
+            new SqlParameter("@Id", id)
+        };
+
+            var result = await _sQLHelper.ExecuteScalarAsync("DeleteFooters", parameters);
+            return ErrorResponseModel<int>.Success(GenericErrors.DeleteSuccess, result);
         }
 
+        
+        public async Task<ErrorResponseModel<DataTable>> GetFootersWithFixedFilters()
+        {
+            var dt = await _sQLHelper.ExecuteDataTableAsync("GetFootersWithFixedFilters", null);
+            return ErrorResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+        }
+
+       
     }
+
+
+
+
+
 }
