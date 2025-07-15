@@ -55,6 +55,7 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IManageFileService, ManageFileService>();
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<IFooterService, FooterService>();
+            services.AddScoped<IBeneFactorService, BeneFactorService>();
 
 
             return services;

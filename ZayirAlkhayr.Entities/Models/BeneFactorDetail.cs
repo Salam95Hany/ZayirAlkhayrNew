@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 using ZayirAlkhayr.Entities.Common;
 
 namespace ZayirAlkhayr.Entities.Models;
@@ -31,6 +32,7 @@ public partial class BeneFactorDetail : AuditableEntity
 
     public bool? IsParent { get; set; }
 
+    
     public virtual BeneFactor BeneFactor { get; set; }
 
     public virtual BeneFactorType BeneFactorType { get; set; }

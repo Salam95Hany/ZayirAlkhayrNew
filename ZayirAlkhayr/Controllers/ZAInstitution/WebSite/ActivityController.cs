@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Diagnostics;
 using ZayirAlkhayr.Entities.Common;

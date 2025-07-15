@@ -53,5 +53,14 @@ namespace ZayirAlkhayr.Entities.Specifications.ActivitySpec
         //{ }
 
         //public FooterSpecification(string phoneNumber) : base(f => f.Phones.StartsWith(phoneNumber)) { }
+
+        public class BeneFactorByIdWithDetailsSpecification : BaseSpecification<BeneFactor>
+        {
+            public BeneFactorByIdWithDetailsSpecification(int id)
+                : base(f => f.Id == id)
+            {
+                AddInclude(f => f.BeneFactorDetails);
+            }
+        }
     }
 }
