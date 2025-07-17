@@ -60,5 +60,23 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
         {
             return await _beneFactorService.GetBeneFactorWithDetailsById(id);
         }
+
+        [HttpGet("get-with-details-linq")]
+        public async Task<ErrorResponseModel<object>> GetBeneFactorWithDetails_join([FromQuery]  int id)
+        {
+            return await _beneFactorService.GetBeneFactorWithDetails_join(id);
+        }
+
+
+        [HttpGet("with-total-value")]
+        public async Task<ErrorResponseModel<object>> GetBeneFactorWithTotalValue(int id)
+        {
+            return await _beneFactorService.GetBeneFactorWithTotalValue(id);
+        }
+
+
+
+
+
     }
 }

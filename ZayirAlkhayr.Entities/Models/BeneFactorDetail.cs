@@ -32,7 +32,7 @@ public partial class BeneFactorDetail : AuditableEntity
 
     public bool? IsParent { get; set; }
 
-    
+    [JsonIgnore]
     public virtual BeneFactor BeneFactor { get; set; }
 
     public virtual BeneFactorType BeneFactorType { get; set; }

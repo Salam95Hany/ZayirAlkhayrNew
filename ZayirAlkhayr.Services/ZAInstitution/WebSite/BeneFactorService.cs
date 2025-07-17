@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Common;
@@ -128,6 +129,99 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
             return ErrorResponseModel<BeneFactor>.Success(GenericErrors.GetSuccess, result);
         }
+
+        public async Task<ErrorResponseModel<object>> GetBeneFactorWithDetails(int id)
+        {
+            var query = _unitOfWork.Repository<BeneFactor>().GetAllAsQueryable()
+                .Where(b => b.Id == id)
+                .Select(b => new
+                {
+                    b.Id,
+                    b.Code,
+                    b.Phone,
+                    b.Address,
+                    BeneFactorDetails = b.BeneFactorDetails
+                        .Select(d => new
+                        {
+                            d.Id,
+                            d.Details,
+                            d.TotalValue
+                        })
+                        .ToList()
+                });
+
+            var result = await query.FirstOrDefaultAsync();
+
+        
+
+            return ErrorResponseModel<object>.Success(GenericErrors.GetSuccess, result);
+        }
+
+        public async Task<ErrorResponseModel<object>> GetBeneFactorWithDetails_join(int id)
+        {
+            var query =
+                from b in _unitOfWork.Repository<BeneFactor>().GetAllAsQueryable()
+                join d in _unitOfWork.Repository<BeneFactorDetail>().GetAllAsQueryable()
+                    on b.Id equals d.BeneFactorId
+                where b.Id == id
+                group d by new
+                {
+                    b.Id,
+                    b.Code,
+                    b.Phone,
+                    b.Address
+                }
+                into g
+                select new
+                {
+                    Id = g.Key.Id,
+                    Code = g.Key.Code,
+                    Phone = g.Key.Phone,
+                    Address = g.Key.Address,
+                    BeneFactorDetails = g.Select(d => new
+                    {
+                        d.Id,
+                        d.Details,
+                        d.TotalValue
+                    }).ToList()
+                };
+
+            var result = await query.FirstOrDefaultAsync();
+
+            return ErrorResponseModel<object>.Success(GenericErrors.GetSuccess, result);
+        }
+
+        public async Task<ErrorResponseModel<object>> GetBeneFactorWithTotalValue(int id)
+        {
+            var query =
+                from b in _unitOfWork.Repository<BeneFactor>().GetAllAsQueryable()
+                join d in _unitOfWork.Repository<BeneFactorDetail>().GetAllAsQueryable()
+                    on b.Id equals d.BeneFactorId into detailsGroup
+                from d in detailsGroup.DefaultIfEmpty()
+                where b.Id == id
+                group d by new
+                {
+                    b.Id,
+                    b.Code,
+                    b.Phone,
+                    b.Address
+                }
+                into g
+                select new
+                {
+                    Id = g.Key.Id,
+                    Code = g.Key.Code,
+                    Phone = g.Key.Phone,
+                    Address = g.Key.Address,
+                    TotalValue = g.Sum(x => x != null ? x.TotalValue ?? 0 : 0)
+                };
+
+            var result = await query.FirstOrDefaultAsync();
+
+            return ErrorResponseModel<object>.Success(GenericErrors.GetSuccess, result);
+        }
+
+
 
     }
 }
