@@ -7,6 +7,7 @@ using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Entities.Specifications.ActivitySpec;
+using ZayirAlkhayr.Entities.Specifications.FooterSpecification;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
@@ -51,5 +52,34 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 await _unitOfWork.CompleteAsync(cancellationToken);
             }
         }
+        public async Task<List<Footer>> GetPhonesContaining00Async(CancellationToken cancellationToken = default)
+        {
+            var spec = new FooterPhoneSpecification();
+            return await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec, cancellationToken);
+        }
+
+        public async Task<List<Footer>> GetPhonesStartingWith093Async(CancellationToken cancellationToken = default)
+        {
+            var spec = new FooterPhoneStartsWith093Specification();
+            return await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec, cancellationToken);
+        }
+
+        public async Task<List<Footer>> GetPhonesEndingWith00Async(CancellationToken cancellationToken = default)
+        {
+            var spec = new FooterPhoneEndsWith00Specification();
+            return await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec, cancellationToken);
+        }
+
+        public async Task<List<Footer>> GetPhonesOrderedAsync(bool descending = false, CancellationToken cancellationToken = default)
+        {
+            var spec = new FooterPhoneOrderBySpecification(descending);
+            return await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec, cancellationToken);
+        }
+        public async Task<List<Footer>> GetPhonesWithCombinedRulesAsync(CancellationToken cancellationToken = default)
+        {
+            var spec = new FooterPhoneCombinedSpecification();
+            return await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec, cancellationToken);
+        }
+
     }
 }

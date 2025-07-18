@@ -14,6 +14,11 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.WebSite
         Task AddAsync(Footer footer,CancellationToken cancellationToken=default);
         Task UpdateAsync(Footer footer);
         Task DeleteAsync(int id ,CancellationToken cancellationToken=default);
+        Task <List<Footer>> GetPhonesContaining00Async(CancellationToken cancellationToken=default);
+        Task<List<Footer>> GetPhonesStartingWith093Async(CancellationToken cancellationToken = default);
+        Task<List<Footer>> GetPhonesEndingWith00Async(CancellationToken cancellationToken = default);
+        Task<List<Footer>> GetPhonesOrderedAsync(bool descending=false,CancellationToken cancellationToken = default);
+        Task<List<Footer>> GetPhonesWithCombinedRulesAsync(CancellationToken cancellationToken = default);
 
     }
 }

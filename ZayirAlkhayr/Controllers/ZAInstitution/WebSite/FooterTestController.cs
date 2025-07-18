@@ -50,5 +50,38 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             await _footerTestServices.DeleteAsync(id); 
             return NoContent();
         }
+        [HttpGet("contains-00")]
+        public async Task<IActionResult> GetPhonesContaining00(CancellationToken cancellationToken)
+        {
+            var result = await _footerTestServices.GetPhonesContaining00Async(cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet("starts-with-093")]
+        public async Task<IActionResult> GetPhonesStartingWith093(CancellationToken cancellationToken)
+        {
+            var result = await _footerTestServices.GetPhonesStartingWith093Async(cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet("ends-with-00")]
+        public async Task<IActionResult> GetPhonesEndingWith00(CancellationToken cancellationToken)
+        {
+            var result = await _footerTestServices.GetPhonesEndingWith00Async(cancellationToken);
+            return Ok(result);
+        }
+
+        [HttpGet("ordered")]
+        public async Task<IActionResult> GetPhonesOrdered([FromQuery] bool desc = false, CancellationToken cancellationToken = default)
+        {
+            var result = await _footerTestServices.GetPhonesOrderedAsync(desc, cancellationToken);
+            return Ok(result);
+        }
+        [HttpGet("combined-phones")]
+        public async Task<IActionResult> GetPhonesWithCombinedRules(CancellationToken cancellationToken)
+        {
+            var result = await _footerTestServices.GetPhonesWithCombinedRulesAsync(cancellationToken);
+            return Ok(result);
+        }
     }
 }
