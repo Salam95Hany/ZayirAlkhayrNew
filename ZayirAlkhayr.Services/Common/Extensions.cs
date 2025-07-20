@@ -131,5 +131,31 @@ namespace ZayirAlkhayr.Services.Common
 
             return true;
         }
+
+        public static Task<List<FilterModel>> GenerateManyAsync<T>(this List<FilterRequest<T>> filterRequests, CancellationToken cancellationToken = default)
+        {
+            var allFilters = new List<FilterModel>();
+
+            foreach (var request in filterRequests)
+            {
+                var data = request.Source.Where(x => !string.IsNullOrEmpty(request.ItemIdSelector(x)) && !string.IsNullOrEmpty(request.ItemKeySelector(x)))
+                    .GroupBy(x => new
+                    {
+                        ItemId = request.ItemIdSelector(x),
+                        ItemKey = request.ItemKeySelector(x)
+                    })
+                    .Select(g => new FilterModel
+                    {
+                        CategoryName = request.CategoryName,
+                        ItemId = g.Key.ItemId,
+                        ItemKey = g.Key.ItemKey,
+                        ItemValue = g.Count().ToString(),
+                    }).ToList();
+
+                allFilters.AddRange(data);
+            }
+
+            return Task.FromResult(allFilters.ToGroupedFilters());
+        }
     }
 }

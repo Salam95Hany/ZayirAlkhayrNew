@@ -16,11 +16,9 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
     public class FamilyNationalityService: IFamilyNationalityService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IGenerateFiltersService _generateFiltersService;
-        public FamilyNationalityService(IUnitOfWork unitOfWork, IGenerateFiltersService generateFiltersService)
+        public FamilyNationalityService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _generateFiltersService = generateFiltersService;
         }
 
         public async Task<ApiResponseModel<List<FamilyDto>>> GetAllFamilyNationalitiesData(PagingFilterModel PagingFilter, CancellationToken cancellationToken = default)
@@ -62,7 +60,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 }
             };
 
-            var results = await _generateFiltersService.GenerateManyAsync(filterRequests, cancellationToken);
+            var results = await filterRequests.GenerateManyAsync(cancellationToken);
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, results);
         }
 

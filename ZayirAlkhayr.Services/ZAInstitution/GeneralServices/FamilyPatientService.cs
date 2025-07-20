@@ -14,7 +14,6 @@ using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.GeneralServices;
-using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Services.Common;
@@ -24,11 +23,9 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
     public class FamilyPatientService : IFamilyPatientService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IGenerateFiltersService _generateFiltersService;
-        public FamilyPatientService(IUnitOfWork unitOfWork, IGenerateFiltersService generateFiltersService)
+        public FamilyPatientService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _generateFiltersService = generateFiltersService;
         }
 
         public async Task<ApiResponseModel<List<FamilyDto>>> GetAllFamilyPatientData(PagingFilterModel PagingFilter, CancellationToken cancellationToken = default)
@@ -70,7 +67,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 }
             };
 
-            var results = await _generateFiltersService.GenerateManyAsync(filterRequests, cancellationToken);
+            var results = await filterRequests.GenerateManyAsync(cancellationToken);
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, results);
         }
 

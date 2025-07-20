@@ -16,17 +16,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
     public class FamilyCategoryService : IFamilyCategoryService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IGenerateFiltersService _generateFiltersService;
-        public FamilyCategoryService(IUnitOfWork unitOfWork, IGenerateFiltersService generateFiltersService)
+        public FamilyCategoryService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _generateFiltersService = generateFiltersService;
         }
 
         public async Task<ApiResponseModel<List<FamilyDto>>> GetAllFamilyCategoryData(PagingFilterModel PagingFilter, CancellationToken cancellationToken = default)
         {
             var DataSpec = new FamilyCategoryFilterSpecification(PagingFilter);
-            var CountSpec = new FamilyCategoryFilterSpecification(PagingFilter,false);
+            var CountSpec = new FamilyCategoryFilterSpecification(PagingFilter, false);
             var Entity = _unitOfWork.Repository<FamilyCategory>();
             var TotalCount = await Entity.GetCountAsync(CountSpec, cancellationToken);
             var Data = await Entity.GetAllWithSpecAsync(DataSpec, cancellationToken);
@@ -62,7 +60,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 }
             };
 
-            var results = await _generateFiltersService.GenerateManyAsync(filterRequests, cancellationToken);
+            var results = await filterRequests.GenerateManyAsync(cancellationToken);
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, results);
         }
 
@@ -77,8 +75,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                     InsertDate = DateTime.UtcNow
                 };
 
-               await _unitOfWork.Repository<FamilyCategory>().AddAsync(CategoryObj);
-               await _unitOfWork.CompleteAsync();
+                await _unitOfWork.Repository<FamilyCategory>().AddAsync(CategoryObj);
+                await _unitOfWork.CompleteAsync();
 
                 return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
@@ -93,13 +91,13 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             try
             {
                 var CategoryObj = await _unitOfWork.Repository<FamilyCategory>().GetByIdAsync(Model.Id);
-                if(CategoryObj != null)
+                if (CategoryObj != null)
                 {
                     CategoryObj.Name = Model.Name;
                     CategoryObj.UpdateUser = Model.InsertUser;
                     CategoryObj.UpdateDate = DateTime.Now.AddHours(1);
 
-                   await _unitOfWork.CompleteAsync();
+                    await _unitOfWork.CompleteAsync();
 
                     return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
                 }
@@ -118,7 +116,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             try
             {
                 var Category = await _unitOfWork.Repository<FamilyCategory>().GetByIdAsync(CategoryId);
-                if(Category != null)
+                if (Category != null)
                 {
                     _unitOfWork.Repository<FamilyCategory>().Delete(Category);
                     await _unitOfWork.CompleteAsync();
