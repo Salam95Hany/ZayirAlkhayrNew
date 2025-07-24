@@ -64,21 +64,9 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 await _unitOfWork.CompleteAsync(cancellationToken);
             }
         }
-        public async Task<List<Footer>> GetPhonesContainingAsync(string SearchText,CancellationToken cancellationToken = default)
+        public async Task<List<Footer>> GetPhonesContainingAsync(string SearchText, PhoneSearch FilterType, CancellationToken cancellationToken = default)
         {
-            var spec = new FooterPhoneSpecification(SearchText);
-            return await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec, cancellationToken);
-        }
-
-        public async Task<List<Footer>> GetPhonesStartingWith093Async(CancellationToken cancellationToken = default)
-        {
-            var spec = new FooterPhoneStartsWith093Specification();
-            return await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec, cancellationToken);
-        }
-
-        public async Task<List<Footer>> GetPhonesEndingWith00Async(CancellationToken cancellationToken = default)
-        {
-            var spec = new FooterPhoneEndsWith00Specification();
+            var spec = new FooterPhoneSpecification(SearchText, FilterType);
             return await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec, cancellationToken);
         }
 

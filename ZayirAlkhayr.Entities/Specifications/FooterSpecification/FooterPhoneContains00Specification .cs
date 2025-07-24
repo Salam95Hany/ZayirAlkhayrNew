@@ -12,8 +12,11 @@ namespace ZayirAlkhayr.Entities.Specifications.FooterSpecification
         public FooterPhoneSpecification(string SearchText, PhoneSearch FilterType) : base()
         {
             if (FilterType == PhoneSearch.StartWith)
-                f => f.Phones.Contains(SearchText);
-
+                AddCriteria(f => f.Phones.StartsWith(SearchText));
+            if (FilterType == PhoneSearch.Conyain)
+                AddCriteria(f => f.Phones.Contains(SearchText));
+            if (FilterType == PhoneSearch.EndWith)
+                AddCriteria(f => f.Phones.EndsWith(SearchText));
         }
     }
 

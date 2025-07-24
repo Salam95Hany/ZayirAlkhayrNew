@@ -10,7 +10,9 @@ namespace ZayirAlkhayr.Entities.Specifications
 {
     public class BaseSpecification<T> : ISpecification<T> where T : class
     {
-        public Expression<Func<T, bool>> Criteria { get; set; }
+        private readonly ExpressionStarter<T> _criteria = PredicateBuilder.New<T>(true);
+
+        public Expression<Func<T, bool>> Criteria => _criteria;
         public List<Expression<Func<T, object>>> Includes { get; set; } = new();
         public Expression<Func<T, object>> OrderBy { get; set; }
         public Expression<Func<T, object>> OrderByDescending { get; set; }
@@ -24,7 +26,12 @@ namespace ZayirAlkhayr.Entities.Specifications
 
         public BaseSpecification(Expression<Func<T, bool>> criteria)
         {
-            Criteria = criteria;
+            _criteria = criteria;
+        }
+
+        protected void AddCriteria(Expression<Func<T, bool>> newCriteria)
+        {
+            _criteria.And(newCriteria);
         }
 
         protected void AddInclude(Expression<Func<T, object>> include)
