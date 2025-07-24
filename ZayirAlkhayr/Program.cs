@@ -8,9 +8,6 @@ using ZayirAlkhayr.Services.Repositories;
 using ZayirAlkhayr.Services.ZAInstitution.WebSite;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddScoped<IGenericRepository<Footer>, GenericRepository<Footer>>();
-builder.Services.AddScoped<IFooterTestServices, FooterTestServices>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddDependencies(builder.Configuration);
 builder.Services.AddControllers();

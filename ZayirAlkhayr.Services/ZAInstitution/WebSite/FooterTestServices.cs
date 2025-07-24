@@ -8,38 +8,50 @@ using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Entities.Specifications.ActivitySpec;
 using ZayirAlkhayr.Entities.Specifications.FooterSpecification;
+using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
     public class FooterTestServices: IFooterTestServices
     {
-        private readonly IGenericRepository<Footer> _footerRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public FooterTestServices(IGenericRepository<Footer> footerRepository, IUnitOfWork unitOfWork)
+        public FooterTestServices(IUnitOfWork unitOfWork)
         {
-            _footerRepository = footerRepository;
             _unitOfWork = unitOfWork;
         }
-        public async Task<List<Footer>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<ErrorResponseModel<List<Footer>>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return await _footerRepository.GetAllAsync(cancellationToken);
+            var results = await _unitOfWork.Repository<Footer>().GetAllAsync(cancellationToken);
+            return ErrorResponseModel<List<Footer>>.Success(GenericErrors.GetSuccess, results);
         }
 
         public async Task<Footer?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             var spec = new FooterSpecification(id);
-            return await _footerRepository.GetByIdWithSpecAsync(spec, cancellationToken);
+            return await _unitOfWork.Repository<Footer>().GetByIdWithSpecAsync(spec, cancellationToken);
         }
 
-        public async Task AddAsync(Footer footer, CancellationToken cancellationToken = default)
+        public async Task<ErrorResponseModel<string>> AddAsync(Footer footer, CancellationToken cancellationToken = default)
         {
-            await _footerRepository.AddAsync(footer, cancellationToken);
-            await _unitOfWork.CompleteAsync(cancellationToken);
+            try
+            {
+                await _unitOfWork.Repository<Footer>().AddAsync(footer, cancellationToken);
+                await _unitOfWork.CompleteAsync(cancellationToken);
+                return ErrorResponseModel<string>.Success(GenericErrors.AddSuccess);
+            }
+            catch (Exception)
+            {
+               return ErrorResponseModel<string>.Failure(GenericErrors.TransFailed);
+            }
         }
 
         public async Task UpdateAsync(Footer footer)
         {
-            _footerRepository.Update(footer);
+            var footerObj = await _unitOfWork.Repository<Footer>().GetByIdAsync(footer.Id);
+
+            footerObj.Phones = footer.Phones;
+
             await _unitOfWork.CompleteAsync();
         }
 
@@ -48,13 +60,13 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             var footer = await GetByIdAsync(id, cancellationToken);
             if (footer is not null)
             {
-                _footerRepository.Delete(footer);
+                _unitOfWork.Repository<Footer>().Delete(footer);
                 await _unitOfWork.CompleteAsync(cancellationToken);
             }
         }
-        public async Task<List<Footer>> GetPhonesContaining00Async(CancellationToken cancellationToken = default)
+        public async Task<List<Footer>> GetPhonesContainingAsync(string SearchText,CancellationToken cancellationToken = default)
         {
-            var spec = new FooterPhoneSpecification();
+            var spec = new FooterPhoneSpecification(SearchText);
             return await _unitOfWork.Repository<Footer>().GetAllWithSpecAsync(spec, cancellationToken);
         }
 

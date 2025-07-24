@@ -9,8 +9,18 @@ namespace ZayirAlkhayr.Entities.Specifications.FooterSpecification
 {
     public class FooterPhoneSpecification : BaseSpecification<Footer>
     {
-        public FooterPhoneSpecification() : base(f => f.Phones.Contains("00"))
+        public FooterPhoneSpecification(string SearchText, PhoneSearch FilterType) : base()
         {
+            if (FilterType == PhoneSearch.StartWith)
+                f => f.Phones.Contains(SearchText);
+
         }
+    }
+
+    public enum PhoneSearch
+    {
+        StartWith,
+        Conyain,
+        EndWith
     }
 }
