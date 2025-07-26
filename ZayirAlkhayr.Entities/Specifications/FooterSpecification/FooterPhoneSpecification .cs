@@ -13,7 +13,7 @@ namespace ZayirAlkhayr.Entities.Specifications.FooterSpecification
         {
             if (FilterType == PhoneSearch.StartWith)
                 AddCriteria(f => f.Phones.StartsWith(SearchText));
-            if (FilterType == PhoneSearch.Conyain)
+            if (FilterType == PhoneSearch.Contain)
                 AddCriteria(f => f.Phones.Contains(SearchText));
             if (FilterType == PhoneSearch.EndWith)
                 AddCriteria(f => f.Phones.EndsWith(SearchText));
@@ -23,7 +23,7 @@ namespace ZayirAlkhayr.Entities.Specifications.FooterSpecification
     public enum PhoneSearch
     {
         StartWith,
-        Conyain,
+        Contain,
         EndWith
     }
 }
