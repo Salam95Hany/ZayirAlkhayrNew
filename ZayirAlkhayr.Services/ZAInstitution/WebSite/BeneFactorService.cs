@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
@@ -10,7 +13,6 @@ using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Services.Common;
-using static ZayirAlkhayr.Entities.Specifications.ActivitySpec.FooterSpecification;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
@@ -123,17 +125,19 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
         public async Task<ErrorResponseModel<BeneFactor>> GetBeneFactorWithDetailsById(int id)
         {
-            var spec = new BeneFactorByIdWithDetailsSpecification(id);
+            var spec = new Entities.Specifications.ActivitySpec.FooterSpecification.BeneFactorByIdWithDetailsSpecification(id);
             var result = await _unitOfWork.Repository<BeneFactor>().GetByIdWithSpecAsync(spec);
 
 
             return ErrorResponseModel<BeneFactor>.Success(GenericErrors.GetSuccess, result);
         }
 
-        public async Task<ErrorResponseModel<object>> GetBeneFactorWithDetails(int id)
+        public async Task<ErrorResponseModel<object>> GetBeneFactorWithDetails(int code, string phone) //  Method Syntax
         {
-            var query = _unitOfWork.Repository<BeneFactor>().GetAllAsQueryable()
-                .Where(b => b.Id == id)
+
+            var result = await _unitOfWork.Repository<BeneFactor>().GetAllAsQueryable()
+                .Where(i => i.Code == code && i.Phone == phone)
+                .Include(i => i.BeneFactorDetails)
                 .Select(b => new
                 {
                     b.Id,
@@ -148,79 +152,216 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                             d.TotalValue
                         })
                         .ToList()
-                });
-
-            var result = await query.FirstOrDefaultAsync();
+                }).ToListAsync();
 
         
 
             return ErrorResponseModel<object>.Success(GenericErrors.GetSuccess, result);
         }
 
-        public async Task<ErrorResponseModel<object>> GetBeneFactorWithDetails_join(int id)
+        public async Task<ErrorResponseModel<List<BeneFactor>>> GetBeneFactorWithDetails_join(int code, string phone) // Query Syntax
         {
-            var query =
-                from b in _unitOfWork.Repository<BeneFactor>().GetAllAsQueryable()
-                join d in _unitOfWork.Repository<BeneFactorDetail>().GetAllAsQueryable()
-                    on b.Id equals d.BeneFactorId
-                where b.Id == id
-                group d by new
-                {
-                    b.Id,
-                    b.Code,
-                    b.Phone,
-                    b.Address
-                }
-                into g
-                select new
-                {
-                    Id = g.Key.Id,
-                    Code = g.Key.Code,
-                    Phone = g.Key.Phone,
-                    Address = g.Key.Address,
-                    BeneFactorDetails = g.Select(d => new
-                    {
-                        d.Id,
-                        d.Details,
-                        d.TotalValue
-                    }).ToList()
-                };
 
-            var result = await query.FirstOrDefaultAsync();
+            var query = await (from benefactor in _unitOfWork.Repository<BeneFactor>().GetAllAsQueryable()
+                        join detail in _unitOfWork.Repository<BeneFactorDetail>().GetAllAsQueryable() on benefactor.Id equals detail.BeneFactorId
+                         where benefactor.Code == code && benefactor.Phone == phone
+                         select new
+                        {
+                            benefactor.Id,
+                            benefactor.Code,
+                            benefactor.Phone,
+                            benefactor.Address,
+                            DetalsId = detail.Id,
+                            detail.BeneFactorId,
+                            detail.Details,
+                            detail.TotalValue
+                        }).ToListAsync();
 
+            var results = query.GroupBy(i => new { i.Id, i.Code, i.Phone, i.Address }).Select(i => new BeneFactor
+            {
+                Id = i.Key.Id,
+                Code = i.Key.Code,
+                Address = i.Key.Address,
+                Phone = i.Key.Phone,
+                BeneFactorDetails = i.Select(x => new BeneFactorDetail
+                {
+                    BeneFactorId = x.BeneFactorId,
+                    Details = x.Details,
+                    TotalValue = x.TotalValue,
+                }).ToList()
+            }).ToList();
+
+            return ErrorResponseModel<List<BeneFactor>>.Success(GenericErrors.GetSuccess, results);
+        }
+
+        public async Task<ErrorResponseModel<List<BenefactorWithTotalValue>>> GetBeneFactorWithTotalValue(int code, string phone) // add filter with code and phone
+        {
+            var query = await (from benefactor in _unitOfWork.Repository<BeneFactor>().GetAllAsQueryable()
+                               join detail in _unitOfWork.Repository<BeneFactorDetail>().GetAllAsQueryable() on benefactor.Id equals detail.BeneFactorId
+                               where benefactor.Code == code && benefactor.Phone == phone
+                               select new
+                               {
+                                   benefactor.Id,
+                                   benefactor.Code,
+                                   benefactor.Phone,
+                                   benefactor.Address,
+                                   detail.TotalValue
+                               }).ToListAsync();
+
+            var results = query.GroupBy(i => new { i.Id, i.Code, i.Phone, i.Address }).Select(i => new BenefactorWithTotalValue
+            {
+                Id = i.Key.Id,
+                Code = i.Key.Code,
+                Address = i.Key.Address,
+                Phone = i.Key.Phone,
+                TotalValue = i.Where(x => x.TotalValue != null).Sum(x => x.TotalValue)
+            }).ToList();
+
+            return ErrorResponseModel<List<BenefactorWithTotalValue>>.Success(GenericErrors.GetSuccess, results);
+        }
+
+        //
+
+        public async Task<ErrorResponseModel<object>> AddBeneFactorSp(BeneFactor model)
+        {
+            var parameters = new[]
+            {
+            new SqlParameter("@Phone", model.Phone),
+            new SqlParameter("@Address", model.Address),
+            new SqlParameter("@NationalityId", model.NationalityId)
+        };
+
+            var result = await _sQLHelper.ExecuteDataTableAsync("sp_Add_BeneFactor", parameters);
             return ErrorResponseModel<object>.Success(GenericErrors.GetSuccess, result);
         }
 
-        public async Task<ErrorResponseModel<object>> GetBeneFactorWithTotalValue(int id)
+        public async Task<ErrorResponseModel<object>> EditBeneFactorSp(int id, BeneFactor model)
         {
-            var query =
-                from b in _unitOfWork.Repository<BeneFactor>().GetAllAsQueryable()
-                join d in _unitOfWork.Repository<BeneFactorDetail>().GetAllAsQueryable()
-                    on b.Id equals d.BeneFactorId into detailsGroup
-                from d in detailsGroup.DefaultIfEmpty()
-                where b.Id == id
-                group d by new
-                {
-                    b.Id,
-                    b.Code,
-                    b.Phone,
-                    b.Address
-                }
-                into g
-                select new
-                {
-                    Id = g.Key.Id,
-                    Code = g.Key.Code,
-                    Phone = g.Key.Phone,
-                    Address = g.Key.Address,
-                    TotalValue = g.Sum(x => x != null ? x.TotalValue ?? 0 : 0)
-                };
+            var parameters = new[]
+            {
+            new SqlParameter("@Id", id),
+            new SqlParameter("@Phone", model.Phone),
+            new SqlParameter("@Address", model.Address),
+            new SqlParameter("@NationalityId", model.NationalityId)
+        };
 
-            var result = await query.FirstOrDefaultAsync();
+            var result = await _sQLHelper.ExecuteDataTableAsync("sp_Edit_BeneFactor", parameters);
+            return ErrorResponseModel<object>.Success(GenericErrors.UpdateSuccess, result);
+        }
 
+        public async Task<ErrorResponseModel<string>> DeleteBeneFactorSp(int id)
+        {
+            var parameters = new[]
+            {
+            new SqlParameter("@Id", id)
+        };
+
+            await _sQLHelper.ExecuteScalarAsync("sp_Delete_BeneFactor", parameters);
+            return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+        }
+
+        public async Task<ErrorResponseModel<object>> AddBeneFactorDetailSp(BeneFactorDetail model)
+        {
+            var parameters = new[]
+            {
+            new SqlParameter("@TotalValue", model.TotalValue),
+            new SqlParameter("@PaymentDate", model.PaymentDate),
+            new SqlParameter("@Details", model.Details),
+            new SqlParameter("@BeneFactorId", model.BeneFactorId),
+            new SqlParameter("@BeneFactorTypeId", model.BeneFactorTypeId)
+        };
+
+            var result = await _sQLHelper.ExecuteDataTableAsync("sp_Add_BeneFactorDetail", parameters);
             return ErrorResponseModel<object>.Success(GenericErrors.GetSuccess, result);
         }
 
+        public async Task<ErrorResponseModel<object>> EditBeneFactorDetailSp(int id, BeneFactorDetail model)
+        {
+            var parameters = new[]
+            {
+            new SqlParameter("@Id", id),
+            new SqlParameter("@TotalValue", model.TotalValue),
+            new SqlParameter("@PaymentDate", model.PaymentDate),
+            new SqlParameter("@Details", model.Details)
+        };
+
+            var result = await _sQLHelper.ExecuteDataTableAsync("sp_Edit_BeneFactorDetail", parameters);
+            return ErrorResponseModel<object>.Success(GenericErrors.UpdateSuccess, result);
+        }
+
+        public async Task<ErrorResponseModel<string>> DeleteBeneFactorDetailSp(int id)
+        {
+            var parameters = new[]
+            {
+            new SqlParameter("@Id", id)
+        };
+
+            await _sQLHelper.ExecuteScalarAsync("sp_Delete_BeneFactorDetail", parameters);
+            return ErrorResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+        }
+
+        public async Task<ErrorResponseModel<List<BeneFactor>>> GetBeneFactorDetailSp(int code, string phone) // add filter with code and phone
+        {
+            var parametars = new[]
+            {
+                new SqlParameter("@Code",code),
+                new SqlParameter("@Phone",phone)
+            };
+
+            var data = await _sQLHelper.SQLQueryAsync<BenefactorWithTotalValue>("[dbo].[SP_GetBeneFactorWithDetails]", Array.Empty<SqlParameter>());
+
+            var results = data.GroupBy(i => new { i.Id, i.Code, i.Phone, i.Address }).Select(i => new BeneFactor
+            {
+                Id = i.Key.Id,
+                Code = i.Key.Code,
+                Address = i.Key.Address,
+                Phone = i.Key.Phone,
+                BeneFactorDetails = i.Select(x => new BeneFactorDetail
+                {
+                    BeneFactorId = x.BeneFactorId.Value,
+                    Details = x.Details,
+                    TotalValue = x.TotalValue,
+                }).ToList()
+            }).ToList();
+            return ErrorResponseModel<List<BeneFactor>>.Success(GenericErrors.GetSuccess, results);
+        }
+
+        public async Task<ErrorResponseModel<List<BeneFactor>>> GetBeneFactorDetailSpWithDataTable()
+        {
+            var data = await _sQLHelper.ExecuteDataTableAsync("[dbo].[SP_GetBeneFactorWithDetails]", Array.Empty<SqlParameter>());
+
+            var results = data.AsEnumerable().GroupBy(i => new 
+            {
+                Id = i.Field<int>("Id"),
+                Code = i.Field<int>("Code"), 
+                Phone = i.Field<string>("Phone"),
+                Address = i.Field<string>("Address"),
+            }).Select(i => new BeneFactor
+            {
+                Id = i.Key.Id,
+                Code = i.Key.Code,
+                Address = i.Key.Address,
+                Phone = i.Key.Phone,
+                BeneFactorDetails = i.Select(x => new BeneFactorDetail
+                {
+                    BeneFactorId = x.Field<int>("BeneFactorId"),
+                    Details = x.Field<string>("Details"),
+                    TotalValue = x.Field<double>("TotalValue"),
+                }).ToList()
+            }).ToList();
+            return ErrorResponseModel<List<BeneFactor>>.Success(GenericErrors.GetSuccess, results);
+        }
+
+        public async Task<ErrorResponseModel<DataTable>> GetBeneFactorWithTotalCount(int code, string phone) // add filter with code and phone
+        {
+            var parametars = new[]
+          {
+                new SqlParameter("@Code",code),
+                new SqlParameter("@Phone",phone)
+            };
+            var results = await _sQLHelper.ExecuteDataTableAsync("[dbo].[SP_GetBeneFactorWithTotalCount]", Array.Empty<SqlParameter>());
+            return ErrorResponseModel<DataTable>.Success(GenericErrors.GetSuccess, results);
+        }
 
 
     }

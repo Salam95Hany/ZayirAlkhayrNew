@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Data;
+using System.Numerics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
+using ZayirAlkhayr.Services.ZAInstitution.WebSite;
 
 namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
 {
@@ -61,22 +64,80 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             return await _beneFactorService.GetBeneFactorWithDetailsById(id);
         }
 
-        [HttpGet("get-with-details-linq")]
-        public async Task<ErrorResponseModel<object>> GetBeneFactorWithDetails_join([FromQuery]  int id)
+        [HttpGet("GetBeneFactorWithDetails_join")]
+        public async Task<ErrorResponseModel<List<BeneFactor>>> GetBeneFactorWithDetails_join(int code, string phone)
         {
-            return await _beneFactorService.GetBeneFactorWithDetails_join(id);
+            return await _beneFactorService.GetBeneFactorWithDetails_join(code,phone);
         }
 
 
         [HttpGet("with-total-value")]
-        public async Task<ErrorResponseModel<object>> GetBeneFactorWithTotalValue(int id)
+        public async Task<ErrorResponseModel<List<BenefactorWithTotalValue>>> GetBeneFactorWithTotalValue(int code, string phone)
         {
-            return await _beneFactorService.GetBeneFactorWithTotalValue(id);
+            return await _beneFactorService.GetBeneFactorWithTotalValue(code, phone);
         }
 
+        [HttpGet("GetBeneFactorWithDetails")]
+        public async Task<ErrorResponseModel<object>> GetBeneFactorWithDetails(int code, string phone)
+        {
+            return await _beneFactorService.GetBeneFactorWithDetails(code,phone);
+        }
 
+        //
 
+        [HttpPost("AddBeneFactorSp")]
+        public async Task<ErrorResponseModel<object>> AddBeneFactorSp([FromBody] BeneFactor model)
+        {
+            return await _beneFactorService.AddBeneFactorSp(model);
+        }
 
+        [HttpPut("EditBeneFactorSp/{id}")]
+        public async Task<ErrorResponseModel<object>> EditBeneFactorSp(int id, [FromBody] BeneFactor model)
+        {
+            return await _beneFactorService.EditBeneFactorSp(id, model);
+        }
+
+        [HttpDelete("DeleteBeneFactorSp/{id}")]
+        public async Task<ErrorResponseModel<string>> DeleteBeneFactorSp(int id)
+        {
+            return await _beneFactorService.DeleteBeneFactorSp(id);
+        }
+
+        [HttpPost("AddBeneFactorDetailSp")]
+        public async Task<ErrorResponseModel<object>> AddBeneFactorDetailSp([FromBody] BeneFactorDetail model)
+        {
+            return await _beneFactorService.AddBeneFactorDetailSp(model);
+        }
+
+        [HttpPut("EditBeneFactorDetailSp/{id}")]
+        public async Task<ErrorResponseModel<object>> EditBeneFactorDetailSp(int id, [FromBody] BeneFactorDetail model)
+        {
+            return await _beneFactorService.EditBeneFactorDetailSp(id, model);
+        }
+
+        [HttpDelete("DeleteBeneFactorDetailSp/{id}")]
+        public async Task<ErrorResponseModel<string>> DeleteBeneFactorDetailSp(int id)
+        {
+            return await _beneFactorService.DeleteBeneFactorDetailSp(id);
+        }
+
+        [HttpGet("GetBeneFactorDetailSp")]
+        public async Task<ErrorResponseModel<List<BeneFactor>>> GetBeneFactorDetailSp(int code, string phone)
+        {
+            return await _beneFactorService.GetBeneFactorDetailSp(code, phone);
+        }
+
+        [HttpGet("GetBeneFactorDetailSpWithDataTable")]
+        public async Task<ErrorResponseModel<List<BeneFactor>>> GetBeneFactorDetailSpWithDataTable()
+        {
+            return await _beneFactorService.GetBeneFactorDetailSpWithDataTable();
+        }
+
+        [HttpGet("GetBeneFactorWithTotalCount")]
+        public async Task<ErrorResponseModel<DataTable>> GetBeneFactorWithTotalCount(int code, string phone)
+        {
+            return await _beneFactorService.GetBeneFactorWithTotalCount(code, phone);
+        }
 
     }
 }
