@@ -7,10 +7,12 @@ import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel '
 import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
 import { CommonModule } from '@angular/common';
 import { ZaDropDownFormControlComponent } from "../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component";
 import { BenefactorService } from '../../../../Services/zainstitution/benefactor.service';
+import { FormService } from '../../../../Services/shared/form.service';
+import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
+import { FileService } from '../../../../Services/shared/file.service';
 
 @Component({
   selector: 'app-benefactor-details',
@@ -64,7 +66,7 @@ export class BenefactorDetailsComponent implements OnInit {
   };
 
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
-    private formService: ValidationFormService, private benefactorService: BenefactorService
+    private formService: FormService, private benefactorService: BenefactorService, private fileService: FileService
   ) { }
 
   ngOnInit(): void {
@@ -80,7 +82,7 @@ export class BenefactorDetailsComponent implements OnInit {
       beneFactorId: null,
       beneFactorTypeId: null,
       parentId: null,
-      details: ['', this.formService.noSpaceValidator],
+      details: ['', CustomValidators.regexPattern(RegexType.noSpace)],
       totalValue: ['', Validators.required],
       paymentDate: ['', Validators.required],
       insertUser: null,
@@ -149,7 +151,7 @@ export class BenefactorDetailsComponent implements OnInit {
   }
 
   onFileChange(event: any) {
-    let fileSize = this.formService.getFileSize(event.target.files[0]);
+    let fileSize = this.fileService.getFileSize(event.target.files[0]);
     if (fileSize > 1) {
       this.toaster.warning(`هذا الملف ${event.target.files[0].name} حجمه أكبر من 1 ميجا`);
       return;
@@ -157,7 +159,7 @@ export class BenefactorDetailsComponent implements OnInit {
 
     this.fileURL = [];
     this.ImageFile = null;
-    this.formService.onSelectedFile(event.target.files).then(data => {
+    this.fileService.onSelectedFile(event.target.files).then(data => {
       this.fileURL.push(data[0]);
       this.ImageFile = data[1][0];
       this.isFileExist = false;
@@ -172,20 +174,20 @@ export class BenefactorDetailsComponent implements OnInit {
 
   GetAllBeneFactorData() {
     this.benefactorService.GetAllBeneFactorData(this.BeneFactorPagingFilter).subscribe(data => {
-      this.BeneFactorData = data.table;
+      this.BeneFactorData = data.results.table;
     });
   }
 
   GetAllBeneFactorParentById() {
     this.benefactorService.GetAllBeneFactorParentById(this.BeneFactorId).subscribe(data => {
-      this.BeneFactorValuesData = data.filter(i => !i.isActive);
+      this.BeneFactorValuesData = data.results.filter(i => !i.isActive);
     });
   }
 
   GetAllBeneFactorDetails() {
     this.benefactorService.GetAllBeneFactorDetails(this.PagingFilter, this.BeneFactorId).subscribe(data => {
-      this.BeneFactorDetailsData = data;
-      this.TotalCount = data && data.length > 0 ? data[0].totalCount : 0;
+      this.BeneFactorDetailsData = data.results;
+      this.TotalCount = data.totalCount
     });
   }
 
@@ -196,7 +198,7 @@ export class BenefactorDetailsComponent implements OnInit {
 
   GetAllBeneFactorDetailsByValueId() {
     this.benefactorService.GetAllBeneFactorCashDetails(this.BeneFactorId, this.BeneFactorValueId).subscribe(data => {
-      this.BeneFactorDetailsData = data;
+      this.BeneFactorDetailsData = data.results;
       let detailsTotalValue = 0;
       this.BeneFactorDetailsData.filter(i => i.beneFactorTypeId == 1).forEach(i => {
         detailsTotalValue += Number(i.totalValue);
@@ -228,10 +230,9 @@ export class BenefactorDetailsComponent implements OnInit {
     }
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
     let isValid = this.ItemForm.valid;
-    if (!isValid) {
-      this.formService.validateAllFormFields(this.ItemForm);
+    if (!isValid)
       return;
-    }
+
 
     if (isFinalSubscribe == 0)
       this.ItemForm.get('isFinalSubscribe').setValue(true);
@@ -244,7 +245,7 @@ export class BenefactorDetailsComponent implements OnInit {
     this.formService.buildFormData(formData, this.ItemForm.value);
     this.showLoader = true;
     this.benefactorService.AddNewBeneFactorDetails(formData).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.toaster.success(data.message);
         if (this.BenefactorType == 'Cash')
           this.GetAllBeneFactorDetailsByValueId();
@@ -266,7 +267,7 @@ export class BenefactorDetailsComponent implements OnInit {
   DeleteItem() {
     this.showLoader = true;
     this.benefactorService.DeleteBeneFactorDetails(this.DetailsId).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.toaster.success(data.message);
         if (this.BenefactorType == 'Cash')
           this.GetAllBeneFactorDetailsByValueId();

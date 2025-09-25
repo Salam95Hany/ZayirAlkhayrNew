@@ -1,6 +1,6 @@
-export interface ErrorResponseModel<T> {
+export interface ApiResponseModel<T> {
     isSuccess: boolean;
     message: string;
-    errorCode: number;
+    totalCount: number;
     results: T;
 }

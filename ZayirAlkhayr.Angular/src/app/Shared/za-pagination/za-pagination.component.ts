@@ -28,10 +28,10 @@ export class ZaPaginationComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: any) {
     this.resetShowingStr();
-    if (changes.totalCount?.firstChange) {
-      this.totalPages = Math.ceil(this.totalCount / this.pageSize);
-      this.generatePages();
-    }
+    // if (changes.totalCount?.firstChange) {
+    this.totalPages = Math.ceil(this.totalCount / this.pageSize);
+    this.generatePages();
+    // }
   }
 
   resetShowingStr() {

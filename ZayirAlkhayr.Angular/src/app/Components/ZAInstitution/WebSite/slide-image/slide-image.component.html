@@ -66,11 +66,11 @@
                             <td>{{item.insertDate}}</td>
                             <td class="text-center">
                                 <label class="jtoggler-wrapper m-0 mx-0">
-                                <input type="checkbox" [(ngModel)]="item.isVisible" class="jtoggler" disabled>
-                                <div class="jtoggler-control">
-                                <div class="jtoggler-handle"></div>
-                                </div>
-                            </label>
+                                    <input type="checkbox" [(ngModel)]="item.isVisible" class="jtoggler" disabled>
+                                    <div class="jtoggler-control">
+                                        <div class="jtoggler-handle"></div>
+                                    </div>
+                                </label>
                             </td>
                             <td>
                                 <div class="w-100 d-flex align-items-center justify-content-center">
@@ -79,9 +79,9 @@
                                         <span>تعديل</span>
                                     </button>
                                     <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item)">
-                                    <i class="uil uil-trash-alt"></i>
-                                    <span>حذف</span>
-                                </button>
+                                        <i class="uil uil-trash-alt"></i>
+                                        <span>حذف</span>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -194,10 +194,9 @@
                     <tr>
                         <td class="table-feature">عنوان السلايدر</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="title" placeholder="عنوان السلايدر...">
-                            <div *ngIf="ItemForm.controls['title']?.invalid && (ItemForm.controls['title']?.dirty || ItemForm.controls['title']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['title'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['title'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="title" placeholder="عنوان السلايدر..." [class.error]="formErrors.title">
+                            <div *ngIf="formErrors.title" class="error-message">
+                                {{formErrors.title}}
                             </div>
                         </td>
                     </tr>
@@ -207,11 +206,11 @@
                             <div class="d-flex align-items-center">
                                 <div class="me-2">مرئي</div>
                                 <label class="jtoggler-wrapper m-0 mx-0">
-                                <input type="checkbox" formControlName="isVisible" class="jtoggler">
-                                <div class="jtoggler-control">
-                                    <div class="jtoggler-handle"></div>
-                                </div>
-                            </label>
+                                    <input type="checkbox" formControlName="isVisible" class="jtoggler">
+                                    <div class="jtoggler-control">
+                                        <div class="jtoggler-handle"></div>
+                                    </div>
+                                </label>
                                 <div class="ms-2">غير مرئي</div>
                             </div>
                         </td>
@@ -219,7 +218,7 @@
                     <tr>
                         <td class="table-feature">تحميل صورة</td>
                         <td class="table-value">
-                            <div class="choose-file-box position-relative border rounded h-58" (click)="InputFile.click()">
+                            <div class="choose-file-box position-relative border rounded h-58 input-box" (click)="InputFile.click()" [class.error]="isFileExist">
                                 <div class="choose-file-btn">تحميل صورة</div>
                             </div>
                             <div class="error-message" *ngIf="isFileExist">

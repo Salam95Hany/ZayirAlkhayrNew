@@ -1,9 +1,11 @@
 export interface FilterModel {
     categoryDisplayName?: string;
     categoryName?: string;
+    itemId?: string;
     itemKey?: string;
-    itemFlag?: string;
     itemValue?: string;
+    from?: string;
+    to?: string;
     isChecked?: boolean;
     filterItems?: FilterModel[];
 }

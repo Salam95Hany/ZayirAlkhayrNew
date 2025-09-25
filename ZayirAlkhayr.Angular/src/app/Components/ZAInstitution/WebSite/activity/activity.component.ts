@@ -11,8 +11,10 @@ import { FilterModel } from '../../../../Models/shared/FilterModel';
 import { FileSortingModel, UploadFileModel } from '../../../../Models/shared/FileModel';
 import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
 import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
-import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
 import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.service';
+import { FileService } from '../../../../Services/shared/file.service';
+import { FormService } from '../../../../Services/shared/form.service';
+import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 
 @Component({
   selector: 'app-activity',
@@ -33,7 +35,7 @@ export class ActivityComponent implements OnInit {
   FileSotingModel: FileSortingModel[] = [];
   ItemForm: FormGroup;
   showLoader: boolean = false;
-  isFilter = false;
+  isFilter = true;
   isFileExist = false;
   ActivityId: any;
   ImageFile: any;
@@ -52,8 +54,13 @@ export class ActivityComponent implements OnInit {
     results: [],
   };
 
+  formErrors = {
+    name: '',
+    description: ''
+  };
+
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
-    private formService: ValidationFormService, private websiteService: ZaWebsiteService
+    private fileService: FileService, private websiteService: ZaWebsiteService, private formService: FormService
   ) { }
 
   ngOnInit(): void {
@@ -66,12 +73,16 @@ export class ActivityComponent implements OnInit {
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
-      name: ['', [Validators.required, this.formService.noSpaceValidator]],
-      description: ['', [Validators.required, this.formService.noSpaceValidator]],
+      name: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      description: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       isVisible: true,
       InsertUser: null,
       oldFileName: null,
       file: null,
+    });
+
+    this.ItemForm.valueChanges.subscribe((data) => {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
     });
   }
 
@@ -121,7 +132,7 @@ export class ActivityComponent implements OnInit {
     this.ActivityId = item.id;
     this.InputMultiFile.nativeElement.value = '';
     this.websiteService.GetActivitySliderImagesById(item.id).subscribe(data => {
-      this.multiFileURL = data;
+      this.multiFileURL = data.results;
       this.modalService.open(content, {
         size: 'xl',
         scrollable: true,
@@ -153,7 +164,7 @@ export class ActivityComponent implements OnInit {
 
   GetWebsiteAdminFilters() {
     this.websiteService.GetAllWebPagesFilters('Activity').subscribe(data => {
-      this.filterList = data;
+      this.filterList = data.results;
     });
   }
 
@@ -163,7 +174,7 @@ export class ActivityComponent implements OnInit {
   }
 
   onFileChange(event: any) {
-    let fileSize = this.formService.getFileSize(event.target.files[0]);
+    let fileSize = this.fileService.getFileSize(event.target.files[0]);
     if (fileSize > 1) {
       this.toaster.warning(`هذا الملف ${event.target.files[0].name} حجمه أكبر من 1 ميجا`);
       return;
@@ -171,7 +182,7 @@ export class ActivityComponent implements OnInit {
 
     this.fileURL = [];
     this.ImageFile = null;
-    this.formService.onSelectedFile(event.target.files).then(data => {
+    this.fileService.onSelectedFile(event.target.files).then(data => {
       this.fileURL.push(data[0]);
       this.ImageFile = data[1][0];
       this.isFileExist = false;
@@ -181,7 +192,7 @@ export class ActivityComponent implements OnInit {
   onMultiFileChange(event: any) {
     let fileSizeValidate = false;
     [...event.target.files].forEach(element => {
-      let fileSize = this.formService.getFileSize(element);
+      let fileSize = this.fileService.getFileSize(element);
       if (fileSize > 1) {
         this.toaster.warning(`هذا الملف ${element.name} حجمه أكبر من 1 ميجا`);
         fileSizeValidate = true;
@@ -191,9 +202,10 @@ export class ActivityComponent implements OnInit {
     if (fileSizeValidate)
       return;
 
-    this.formService.onSelectedMultiFile([...event.target.files]).then(data => {
+    this.fileService.onSelectedMultiFile([...event.target.files]).then(data => {
       this.multiFileURL.push(...data?.urls);
       this.multiImagesFile.push(...data?.fileContents);
+      this.isFileExist = false;
     });
   }
 
@@ -225,7 +237,7 @@ export class ActivityComponent implements OnInit {
     this.formService.buildFormData(formData, this.FileModel);
     this.showLoader = true;
     this.websiteService.AddActivitySliderImage(formData).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);
       }
@@ -235,22 +247,31 @@ export class ActivityComponent implements OnInit {
     });
   }
 
+  validateForm(): boolean {
+    this.formService.markFormGroupTouched(this.ItemForm);
+    if (this.ItemForm.valid) {
+      return true;
+    } else {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, false)
+      return false;
+    }
+  }
+
   AddNewActivity() {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
-    let isValid = this.ItemForm.valid;
+    let isValid = this.validateForm();
     this.isFileExist = this.fileURL.length == 0;
 
-    if (!isValid || this.isFileExist) {
-      this.formService.validateAllFormFields(this.ItemForm);
+    if (!isValid || this.isFileExist)
       return;
-    }
+
     this.ItemForm.patchValue({ file: this.ImageFile });
     const formData = new FormData();
     this.formService.buildFormData(formData, this.ItemForm.value);
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
       this.websiteService.AddNewActivity(formData).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllActivities();
           this.GetWebsiteAdminFilters();
@@ -262,7 +283,7 @@ export class ActivityComponent implements OnInit {
       });
     } else {
       this.websiteService.UpdateActivity(formData).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllActivities();
           this.modalService.dismissAll();
@@ -277,7 +298,7 @@ export class ActivityComponent implements OnInit {
   DeleteItem() {
     this.showLoader = true;
     this.websiteService.DeleteActivity(this.ActivityId).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllActivities();
         this.GetWebsiteAdminFilters();
@@ -299,7 +320,7 @@ export class ActivityComponent implements OnInit {
     this.FileSotingModel = this.multiFileURL.map<FileSortingModel>(i => { return { fileId: i.id, displayOrder: i.displayOrder } });
     this.showLoader = true;
     this.websiteService.ApplyFilesSorting(this.FileSotingModel, this.ActivityId).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);
       }

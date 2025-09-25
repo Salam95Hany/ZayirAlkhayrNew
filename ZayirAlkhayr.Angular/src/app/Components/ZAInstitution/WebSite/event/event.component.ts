@@ -11,8 +11,10 @@ import { FilterModel } from '../../../../Models/shared/FilterModel';
 import { FileSortingModel, UploadFileModel } from '../../../../Models/shared/FileModel';
 import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
 import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
-import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
 import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.service';
+import { FileService } from '../../../../Services/shared/file.service';
+import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
+import { FormService } from '../../../../Services/shared/form.service';
 
 @Component({
   selector: 'app-event',
@@ -32,7 +34,7 @@ export class EventComponent implements OnInit {
   FileSotingModel: FileSortingModel[] = [];
   ItemForm: FormGroup;
   showLoader: boolean = false;
-  isFilter = false;
+  isFilter = true;
   isFileExist = false;
   EventId: any;
   UserModel: any;
@@ -50,8 +52,15 @@ export class EventComponent implements OnInit {
     results: [],
   };
 
+  formErrors = {
+    title: '',
+    description: '',
+    fromDate: '',
+    toDate: ''
+  };
+
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
-    private formService: ValidationFormService, private websiteService: ZaWebsiteService
+    private fileService: FileService, private websiteService: ZaWebsiteService, private formService: FormService
   ) { }
 
   ngOnInit(): void {
@@ -64,12 +73,16 @@ export class EventComponent implements OnInit {
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
-      title: ['', [Validators.required, this.formService.noSpaceValidator]],
-      description: ['', [Validators.required, this.formService.noSpaceValidator]],
+      title: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      description: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       fromDate: ['', Validators.required],
       toDate: ['', Validators.required],
       isVisible: true,
       insertUser: null
+    });
+
+    this.ItemForm.valueChanges.subscribe((data) => {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
     });
   }
 
@@ -112,7 +125,7 @@ export class EventComponent implements OnInit {
     this.EventId = item.id;
     this.InputMultiFile.nativeElement.value = '';
     this.websiteService.GetEventSliderImagesById(item.id).subscribe(data => {
-      this.multiFileURL = data;
+      this.multiFileURL = data.results;
       this.modalService.open(content, {
         size: 'xl',
         scrollable: true,
@@ -144,7 +157,7 @@ export class EventComponent implements OnInit {
 
   GetWebsiteAdminFilters() {
     this.websiteService.GetAllWebPagesFilters('Event').subscribe(data => {
-      this.filterList = data;
+      this.filterList = data.results;
     });
   }
 
@@ -156,7 +169,7 @@ export class EventComponent implements OnInit {
   onMultiFileChange(event: any) {
     let fileSizeValidate = false;
     [...event.target.files].forEach(element => {
-      let fileSize = this.formService.getFileSize(element);
+      let fileSize = this.fileService.getFileSize(element);
       if (fileSize > 1) {
         this.toaster.warning(`هذا الملف ${element.name} حجمه أكبر من 1 ميجا`);
         fileSizeValidate = true;
@@ -166,7 +179,7 @@ export class EventComponent implements OnInit {
     if (fileSizeValidate)
       return;
 
-    this.formService.onSelectedMultiFile([...event.target.files]).then(data => {
+    this.fileService.onSelectedMultiFile([...event.target.files]).then(data => {
       this.multiFileURL.push(...data?.urls);
       this.multiImagesFile.push(...data?.fileContents);
     });
@@ -194,7 +207,7 @@ export class EventComponent implements OnInit {
     this.formService.buildFormData(formData, this.FileModel);
     this.showLoader = true;
     this.websiteService.AddEventSliderImage(formData).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);
       }
@@ -204,18 +217,28 @@ export class EventComponent implements OnInit {
     });
   }
 
+  validateForm(): boolean {
+    this.formService.markFormGroupTouched(this.ItemForm);
+    if (this.ItemForm.valid) {
+      return true;
+    } else {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, false)
+      return false;
+    }
+  }
+
   AddNewEvent() {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
-    let isValid = this.ItemForm.valid;
+    let isValid = this.validateForm();
 
     if (!isValid) {
-      this.formService.validateAllFormFields(this.ItemForm);
       return;
     }
+
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
       this.websiteService.AddNewEvent(this.ItemForm.value).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllEvents();
           this.GetWebsiteAdminFilters();
@@ -227,7 +250,7 @@ export class EventComponent implements OnInit {
       });
     } else {
       this.websiteService.UpdateEvent(this.ItemForm.value).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllEvents();
           this.modalService.dismissAll();
@@ -242,7 +265,7 @@ export class EventComponent implements OnInit {
   DeleteItem() {
     this.showLoader = true;
     this.websiteService.DeleteEvent(this.EventId).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllEvents();
         this.GetWebsiteAdminFilters();
@@ -264,7 +287,7 @@ export class EventComponent implements OnInit {
     let FileSotingModel = this.multiFileURL.map<FileSortingModel>(i => { return { fileId: i.id, displayOrder: i.displayOrder } });
     this.showLoader = true;
     this.websiteService.ApplyEventFilesSorting(FileSotingModel, this.EventId).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);
       }

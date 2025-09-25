@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -13,17 +14,16 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   isLoading = signal(false);
   showError = signal(false);
-  loginSuccess = signal(false);
   showPassword = signal(false);
   shapes = signal(this.generateShapes());
 
   loginForm: FormGroup = this.fb.group({
-    email: ['', [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    rememberMe: [false]
+    userName: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
   constructor() {
@@ -45,56 +45,21 @@ export class LoginComponent {
     this.showPassword.update(show => !show);
   }
 
-  forgotPassword(event: Event) {
-    event.preventDefault();
-    console.log('Forgot password clicked');
-  }
-
-  goToSignup(event: Event) {
-    event.preventDefault();
-    console.log('Go to signup clicked');
-  }
-
-  async onSubmit() {
+  onSubmit() {
     if (this.loginForm.valid) {
       this.isLoading.set(true);
       this.showError.set(false);
-
-      try {
-        await this.simulateLogin();
-
-        this.loginSuccess.set(true);
-
-        setTimeout(() => {
-          console.log('تم تسجيل الدخول بنجاح');
-          // this.router.navigate(['/dashboard']);
-        }, 1500);
-
-      } catch (error) {
-        this.showError.set(true);
-        setTimeout(() => this.showError.set(false), 3000);
-      } finally {
-        this.isLoading.set(false);
-      }
-    } else {
-      Object.keys(this.loginForm.controls).forEach(key => {
-        const control = this.loginForm.get(key);
-        if (control?.invalid) {
-          control.markAsTouched();
+      this.authService.AdminLogin(this.loginForm.value).subscribe(data => {
+        if (data.isSuccess) {
+          this.showError.set(false);
+          this.isLoading.set(false);
+          localStorage.setItem('UserModel', JSON.stringify(data.results));
+          this.router.navigateByUrl('/home');
+        } else {
+          this.showError.set(true);
+          this.isLoading.set(false);
         }
       });
     }
-  }
-
-  private simulateLogin(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (Math.random() > 0.2) {
-          resolve();
-        } else {
-          reject(new Error('خطأ في تسجيل الدخول'));
-        }
-      }, 2000);
-    });
   }
 }

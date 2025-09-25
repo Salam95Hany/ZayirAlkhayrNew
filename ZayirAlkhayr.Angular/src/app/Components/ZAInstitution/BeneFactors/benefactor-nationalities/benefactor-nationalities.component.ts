@@ -10,8 +10,9 @@ import { FilterModel } from '../../../../Models/shared/FilterModel';
 import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
 import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
 import { ToastrService } from 'ngx-toastr';
-import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
 import { BenefactorService } from '../../../../Services/zainstitution/benefactor.service';
+import { FormService } from '../../../../Services/shared/form.service';
+import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 
 @Component({
   selector: 'app-benefactor-nationalities',
@@ -40,8 +41,8 @@ export class BenefactorNationalitiesComponent implements OnInit {
   };
 
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
-      private formService: ValidationFormService, private benefactorService: BenefactorService) {
-    
+    private formService: FormService, private benefactorService: BenefactorService) {
+
   }
 
   ngOnInit(): void {
@@ -52,13 +53,13 @@ export class BenefactorNationalitiesComponent implements OnInit {
 
   FormInit() {
     this.ItemForm = this.fb.group({
-      id:0,
-      name: ['', [Validators.required, this.formService.noSpaceValidator]],
+      id: 0,
+      name: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       InsertUser: null
     });
   }
 
- FillEditForm(item: any) {
+  FillEditForm(item: any) {
     this.ItemForm.setValue({
       id: item.id,
       name: item?.name,
@@ -114,13 +115,12 @@ export class BenefactorNationalitiesComponent implements OnInit {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
     let isValid = this.ItemForm.valid;
 
-    if (!isValid) {
-      this.formService.validateAllFormFields(this.ItemForm);
+    if (!isValid)
       return;
-    }
+    
     this.showLoader = true;
     this.benefactorService.AddNewBeneFactorNationality(this.ItemForm.value).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllBeneFactorNationalities();
         this.modalService.dismissAll();

@@ -11,8 +11,10 @@ import { FilterModel } from '../../../../Models/shared/FilterModel';
 import { FileSortingModel, UploadFileModel } from '../../../../Models/shared/FileModel';
 import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
 import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
-import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
 import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.service';
+import { FileService } from '../../../../Services/shared/file.service';
+import { FormService } from '../../../../Services/shared/form.service';
+import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 
 @Component({
   selector: 'app-photo',
@@ -33,7 +35,7 @@ export class PhotoComponent implements OnInit {
   FileSotingModel: FileSortingModel[] = [];
   ItemForm: FormGroup;
   showLoader: boolean = false;
-  isFilter = false;
+  isFilter = true;
   isFileExist = false;
   PhotoId: any;
   ImageFile: any;
@@ -52,8 +54,13 @@ export class PhotoComponent implements OnInit {
     results: [],
   };
 
+  formErrors = {
+    title: '',
+    description: ''
+  };
+
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
-    private formService: ValidationFormService, private websiteService: ZaWebsiteService
+    private fileService: FileService, private websiteService: ZaWebsiteService, private formService: FormService
   ) { }
 
   ngOnInit(): void {
@@ -66,12 +73,16 @@ export class PhotoComponent implements OnInit {
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
-      title: ['', [Validators.required, this.formService.noSpaceValidator]],
-      description: ['', [Validators.required, this.formService.noSpaceValidator]],
+      title: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      description: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       isVisible: true,
       InsertUser: null,
       oldFileName: null,
       file: null,
+    });
+
+     this.ItemForm.valueChanges.subscribe((data) => {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
     });
   }
 
@@ -121,7 +132,7 @@ export class PhotoComponent implements OnInit {
     this.PhotoId = item.id;
     this.InputMultiFile.nativeElement.value = '';
     this.websiteService.GetPhotoDetails(item.id).subscribe(data => {
-      this.multiFileURL = data;
+      this.multiFileURL = data.results;
       this.modalService.open(content, {
         size: 'xl',
         scrollable: true,
@@ -153,7 +164,7 @@ export class PhotoComponent implements OnInit {
 
   GetWebsiteAdminFilters() {
     this.websiteService.GetAllWebPagesFilters('Photo').subscribe(data => {
-      this.filterList = data;
+      this.filterList = data.results;
 
     });
   }
@@ -164,7 +175,7 @@ export class PhotoComponent implements OnInit {
   }
 
   onFileChange(event: any) {
-    let fileSize = this.formService.getFileSize(event.target.files[0]);
+    let fileSize = this.fileService.getFileSize(event.target.files[0]);
     if (fileSize > 1) {
       this.toaster.warning(`هذا الملف ${event.target.files[0].name} حجمه أكبر من 1 ميجا`);
       return;
@@ -172,7 +183,7 @@ export class PhotoComponent implements OnInit {
 
     this.fileURL = [];
     this.ImageFile = null;
-    this.formService.onSelectedFile(event.target.files).then(data => {
+    this.fileService.onSelectedFile(event.target.files).then(data => {
       this.fileURL.push(data[0]);
       this.ImageFile = data[1][0];
       this.isFileExist = false;
@@ -182,7 +193,7 @@ export class PhotoComponent implements OnInit {
   onMultiFileChange(event: any) {
     let fileSizeValidate = false;
     [...event.target.files].forEach(element => {
-      let fileSize = this.formService.getFileSize(element);
+      let fileSize = this.fileService.getFileSize(element);
       if (fileSize > 1) {
         this.toaster.warning(`هذا الملف ${element.name} حجمه أكبر من 1 ميجا`);
         fileSizeValidate = true;
@@ -193,7 +204,7 @@ export class PhotoComponent implements OnInit {
       return;
 
 
-    this.formService.onSelectedMultiFile([...event.target.files]).then(data => {
+    this.fileService.onSelectedMultiFile([...event.target.files]).then(data => {
       this.multiFileURL.push(...data?.urls);
       this.multiImagesFile.push(...data?.fileContents);
     });
@@ -227,7 +238,7 @@ export class PhotoComponent implements OnInit {
     this.formService.buildFormData(formData, this.FileModel);
     this.showLoader = true;
     this.websiteService.AddPhotoDetailsImage(formData).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);
       }
@@ -237,22 +248,31 @@ export class PhotoComponent implements OnInit {
     });
   }
 
+   validateForm(): boolean {
+    this.formService.markFormGroupTouched(this.ItemForm);
+    if (this.ItemForm.valid) {
+      return true;
+    } else {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, false)
+      return false;
+    }
+  }
+
   AddNewPhoto() {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
-    let isValid = this.ItemForm.valid;
+    let isValid = this.validateForm();
     this.isFileExist = this.fileURL.length == 0;
 
-    if (!isValid || this.isFileExist) {
-      this.formService.validateAllFormFields(this.ItemForm);
+    if (!isValid || this.isFileExist)
       return;
-    }
+    
     this.ItemForm.patchValue({ file: this.ImageFile });
     const formData = new FormData();
     this.formService.buildFormData(formData, this.ItemForm.value);
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
       this.websiteService.AddNewPhoto(formData).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllPhotos();
           this.GetWebsiteAdminFilters();
@@ -264,7 +284,7 @@ export class PhotoComponent implements OnInit {
       });
     } else {
       this.websiteService.UpdatePhoto(formData).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllPhotos();
           this.modalService.dismissAll();
@@ -279,7 +299,7 @@ export class PhotoComponent implements OnInit {
   DeletePhoto() {
     this.showLoader = true;
     this.websiteService.DeletePhoto(this.PhotoId).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllPhotos();
         this.GetWebsiteAdminFilters();
@@ -301,7 +321,7 @@ export class PhotoComponent implements OnInit {
     let FileSotingModel = this.multiFileURL.map<FileSortingModel>(i => { return { fileId: i.id, displayOrder: i.displayOrder } });
     this.showLoader = true;
     this.websiteService.ApplyPhotoFilesSorting(FileSotingModel, this.PhotoId).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);
       }

@@ -9,6 +9,7 @@ using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
+using ZayirAlkhayr.Interfaces.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Interfaces.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Settings;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Tasks;
@@ -16,6 +17,7 @@ using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
+using ZayirAlkhayr.Services.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Services.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Services.ZAInstitution.Settings;
 using ZayirAlkhayr.Services.ZAInstitution.Tasks;
@@ -77,7 +79,8 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IFamilyPatientService, FamilyPatientService>();
             services.AddScoped<IFamilyNationalityService, FamilyNationalityService>();
             services.AddScoped<IOrphansService, OrphansService>();
-            
+            services.AddScoped<IBeneFactorService, BeneFactorService>();
+
             return services;
         }
 

@@ -105,38 +105,36 @@
                     <tr>
                         <td class="table-feature">العنوان</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="title" placeholder="العنوان...">
-                            <div *ngIf="ItemForm.controls['title']?.invalid && (ItemForm.controls['title']?.dirty || ItemForm.controls['title']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['title'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['title'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="title" placeholder="العنوان..." [class.error]="formErrors.title">
+                            <div *ngIf="formErrors.title" class="error-message">
+                                {{ formErrors.title }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">الوصف</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="description" placeholder="الوصف...">
-                            <div *ngIf="ItemForm.controls['description']?.invalid && (ItemForm.controls['description']?.dirty || ItemForm.controls['description']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['description'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['description'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="description" placeholder="الوصف..." [class.error]="formErrors.description">
+                            <div *ngIf="formErrors.description" class="error-message">
+                                {{ formErrors.description }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">التاريخ من</td>
                         <td class="table-value">
-                            <input type="datetime-local" class="form-control form-control-lg" formControlName="fromDate" placeholder="التاريخ من...">
-                            <div *ngIf="ItemForm.controls['fromDate']?.invalid && (ItemForm.controls['fromDate']?.dirty || ItemForm.controls['fromDate']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['fromDate'].errors?.['required']"> هذا الحقل مطلوب</span>
+                            <input type="datetime-local" class="form-control form-control-lg input-box" formControlName="fromDate" placeholder="التاريخ من..." [class.error]="formErrors.fromDate">
+                            <div *ngIf="formErrors.fromDate" class="error-message">
+                                {{ formErrors.fromDate }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">التاريخ الى</td>
                         <td class="table-value">
-                            <input type="datetime-local" class="form-control form-control-lg" formControlName="toDate" placeholder="التاريخ الى...">
-                            <div *ngIf="ItemForm.controls['toDate']?.invalid && (ItemForm.controls['toDate']?.dirty || ItemForm.controls['toDate']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['toDate'].errors?.['required']"> هذا الحقل مطلوب</span>
+                            <input type="datetime-local" class="form-control form-control-lg input-box" formControlName="toDate" placeholder="التاريخ الى..." [class.error]="formErrors.toDate">
+                            <div *ngIf="formErrors.toDate" class="error-message">
+                                {{ formErrors.toDate }}
                             </div>
                         </td>
                     </tr>
@@ -187,7 +185,7 @@
                 <tr>
                     <td class="table-feature">تحميل صورة</td>
                     <td class="table-value">
-                        <div class="choose-file-box position-relative border rounded h-58" (click)="InputMultiFile.click()">
+                        <div class="choose-file-box position-relative border rounded h-58 input-box" (click)="InputMultiFile.click()">
                             <div class="choose-file-btn">تحميل صورة</div>
                         </div>
                         <div class="error-message" *ngIf="isFileExist">

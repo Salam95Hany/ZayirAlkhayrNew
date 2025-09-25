@@ -39,7 +39,11 @@ namespace ZayirAlkhayr.Entities.Common
         private static int GetCount(T? value)
         {
             if (value is System.Data.DataTable dt)
-                return dt.Rows.Count;
+            {
+                if (dt.Rows.Count > 0 && dt.Columns.Contains("TotalCount"))
+                    return int.TryParse(dt.Rows[0]["TotalCount"]?.ToString(), out var totalCount) ? totalCount : 0;
+                return 0;
+            }
             if (value is ICollection collection)
                 return collection.Count;
             if (value is IEnumerable<object> enumerable)

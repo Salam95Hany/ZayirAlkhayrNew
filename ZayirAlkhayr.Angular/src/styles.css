@@ -49,7 +49,7 @@ body {
     margin: 0;
     font-family: "Roboto", sans-serif;
     font-family: "Cairo", sans-serif;
-    font-size: 12px;
+    font-size: 15px;
     background-color: var(--gray-color);
     perspective: 2000;
 }
@@ -2285,4 +2285,19 @@ td {
     -moz-border-radius: 5px;
     -ms-border-radius: 5px;
     -o-border-radius: 5px;
+}
+
+.table-image {
+    width: 100px;
+    height: 100px;
+}
+
+.input-box.error {
+    border-color: #ef4444 !important;
+    background: #fef2f2;
+}
+
+.input-box.error:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }

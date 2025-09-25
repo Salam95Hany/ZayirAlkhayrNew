@@ -10,11 +10,13 @@ import { FilterModel } from '../../../../Models/shared/FilterModel';
 import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
 import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
 import { ToastrService } from 'ngx-toastr';
-import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
 import { BenefactorService } from '../../../../Services/zainstitution/benefactor.service';
 import { PdfDownloadService } from '../../../../Services/shared/pdf-download.service';
 import { BeneFactorDetails } from '../../../../Models/zainstitution/BeneFactorModel';
 import { PDFHeaderSelectedModel, PDFModel } from '../../../../Models/shared/PDFHeaderSelected';
+import { FileService } from '../../../../Services/shared/file.service';
+import { FormService } from '../../../../Services/shared/form.service';
+import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 
 @Component({
   selector: 'app-benefactor',
@@ -59,8 +61,8 @@ export class BenefactorComponent {
   };
 
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
-    private formService: ValidationFormService, private benefactorService: BenefactorService, private pdfService: PdfDownloadService,
-    private offcanvasService: NgbOffcanvas,private datePipe: DatePipe
+    private fileService: FileService, private benefactorService: BenefactorService, private pdfService: PdfDownloadService,
+    private offcanvasService: NgbOffcanvas, private datePipe: DatePipe, private formService: FormService
   ) { }
 
   ngOnInit(): void {
@@ -74,14 +76,14 @@ export class BenefactorComponent {
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
-      fullName: ['', [Validators.required, this.formService.noSpaceValidator]],
-      description: ['', this.formService.noSpaceValidator],
-      phone: ['', [Validators.required, Validators.pattern("[0-9]+")]],
-      phone2: ['', Validators.pattern("[0-9]+")],
-      address: ['', this.formService.noSpaceValidator],
+      fullName: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      description: ['', CustomValidators.regexPattern(RegexType.noSpace)],
+      phone: ['', [Validators.required, CustomValidators.regexPattern(RegexType.number)]],
+      phone2: ['', CustomValidators.regexPattern(RegexType.number)],
+      address: ['', CustomValidators.regexPattern(RegexType.noSpace)],
       nationalityId: null,
-      faceBook: ['', this.formService.noSpaceValidator],
-      welcomeMessage: ['', this.formService.noSpaceValidator],
+      faceBook: ['', CustomValidators.regexPattern(RegexType.noSpace)],
+      welcomeMessage: ['', CustomValidators.regexPattern(RegexType.noSpace)],
       InsertUser: null,
       oldFileName: null,
       file: null,
@@ -176,16 +178,16 @@ export class BenefactorComponent {
 
   GetAllBeneFactorParentById() {
     this.benefactorService.GetAllBeneFactorParentById(this.BeneFactorValues.beneFactorId).subscribe(data => {
-      this.BeneFactorValuesData = data;
+      this.BeneFactorValuesData = data.results;
       this.BeneFactorValuesData.forEach(i => i.isCollapsed = false);
     });
   }
 
   GetAllBeneFactorData() {
     this.benefactorService.GetAllBeneFactorData(this.pagingFilterModel).subscribe(data => {
-      this.pagedResponseModel.results = data.table;
-      this.BeneFactorHeaders = data.table1;
-      this.pagedResponseModel.totalCount = data.table && data.table.length > 0 ? data.table[0].totalCount : 0;
+      this.pagedResponseModel.results = data.results.table;
+      this.BeneFactorHeaders = data.results.table1;
+      this.pagedResponseModel.totalCount = data.totalCount;
     });
   }
 
@@ -202,7 +204,7 @@ export class BenefactorComponent {
 
   GetAllBeneFactorFilters() {
     this.benefactorService.GetAllBeneFactorFilters(this.pagingFilterModel).subscribe(data => {
-      this.filterList = data;
+      this.filterList = data.results;
     });
   }
 
@@ -213,7 +215,7 @@ export class BenefactorComponent {
   }
 
   onFileChange(event: any) {
-    let fileSize = this.formService.getFileSize(event.target.files[0]);
+    let fileSize = this.fileService.getFileSize(event.target.files[0]);
     if (fileSize > 1) {
       this.toaster.warning(`هذا الملف ${event.target.files[0].name} حجمه أكبر من 1 ميجا`);
       return;
@@ -221,7 +223,7 @@ export class BenefactorComponent {
 
     this.fileURL = [];
     this.ImageFile = null;
-    this.formService.onSelectedFile(event.target.files).then(data => {
+    this.fileService.onSelectedFile(event.target.files).then(data => {
       this.fileURL.push(data[0]);
       this.ImageFile = data[1][0];
       this.isFileExist = false;
@@ -238,10 +240,9 @@ export class BenefactorComponent {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
     let isValid = this.ItemForm.valid;
 
-    if (!isValid) {
-      this.formService.validateAllFormFields(this.ItemForm);
+    if (!isValid)
       return;
-    }
+
 
     this.ItemForm.patchValue({ file: this.ImageFile });
     const formData = new FormData();
@@ -249,7 +250,7 @@ export class BenefactorComponent {
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
       this.benefactorService.AddNewBeneFactor(formData).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllBeneFactorData();
           this.GetAllBeneFactorFilters();
@@ -261,7 +262,7 @@ export class BenefactorComponent {
       });
     } else {
       this.benefactorService.UpdateBeneFactor(formData).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllBeneFactorData();
           this.modalService.dismissAll();
@@ -297,7 +298,7 @@ export class BenefactorComponent {
     this.formService.buildFormData(formData, this.BeneFactorValues);
     this.showLoader = true;
     this.benefactorService.AddNewBeneFactorDetails(formData).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.toaster.success(data.message);
         this.BeneFactorValues.totalValue = null;
         this.BeneFactorValues.paymentDate = '';
@@ -313,7 +314,7 @@ export class BenefactorComponent {
   DeleteItem() {
     this.showLoader = true;
     this.benefactorService.DeleteBeneFactor(this.BeneFactorId).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllBeneFactorData();
         this.GetAllBeneFactorFilters();

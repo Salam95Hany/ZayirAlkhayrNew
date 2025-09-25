@@ -39,7 +39,7 @@ export class ZaFiltersComponent {
         categoryDisplayName: 'بحث بالنص',
         categoryName: 'SearchText',
         itemKey: this.SearchText,
-        itemFlag: this.SearchText,
+        itemId: this.SearchText,
         itemValue: this.SearchText,
         isChecked: true
       }

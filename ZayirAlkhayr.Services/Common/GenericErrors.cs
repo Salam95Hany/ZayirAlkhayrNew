@@ -25,13 +25,9 @@ namespace ZayirAlkhayr.Services.Common
 
         public static Error InvalidType = new("هذا النوع غير صالح");
 
-        public static Error InvalidGender = new("هذا الجنس غير صالح");
-
-        public static Error InvalidMaritalStatus = new("هذه الحالة الاجتماعية غير صالحة");
-
-        public static Error NotEmergency = new("هذا الإجراء مسموح به فقط لنوع الطوارئ");
-
         public static Error InvalidCredentials = new("اسم المستخدم او كلمة المرور غير صالح");
+
+        public static Error InvalidBeneFactorCredentials = new("اسم المستخدم او الكود غير صالح");
 
         public static Error DuplicateEmail = new("البريد الإلكتروني مسجل مسبقاً");
 

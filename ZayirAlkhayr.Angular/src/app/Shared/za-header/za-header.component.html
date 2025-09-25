@@ -23,7 +23,7 @@
                 <li ngbDropdown class="nav-item nw-dropdown" display="dynamic">
                     <a class="nav-link justify-content-center d-inline-flex align-items-center gap-2" ngbDropdownToggle>
                         <img src="user.svg" class="nw-header-icon-link-img" class="nw-user-img-header" alt="UserImage" loading="lazy" />
-                        <span>سلام هاني البدوي</span>
+                        <span>{{UserModel?.userName}}</span>
                         <i class="fa-solid fa-chevron-down dropdown-arrow fs-13"></i>
                     </a>
                     <ul class="border shadow-lg" ngbDropdownMenu aria-labelledby="user-settings">
@@ -33,31 +33,14 @@
                                 <span class="ms-2">تسجيل الخروج</span>
                             </a>
                         </li>
-                        <li>
+                        <!-- <li>
                             <a class="dropdown-item cursor-pointer d-flex align-items-center">
                                 <i class="fa-solid fa-user-gear"></i>
                                 <span class="ms-2">الحساب</span>
                             </a>
-                        </li>
+                        </li> -->
                     </ul>
                 </li>
-                <!-- <li ngbDropdown class="nav-item nw-dropdown" display="dynamic">
-                    <a class="nav-link justify-content-center d-inline-flex align-items-center gap-2 bg-white my-2 py-2 px-3 h-auto radius-15" ngbDropdownToggle>
-                        <div class="dropdown-header-icon">
-                            <i class="fa-solid fa-building-columns"></i>
-                        </div>
-                        <span style="min-width: 100px;" class="dropdown-header-text text-nowrap">{{selectedModuleName}}</span>
-                        <i class="fa-solid fa-chevron-down dropdown-arrow fs-13"></i>
-                    </a>
-                    <ul class="border shadow-lg min-width-300" ngbDropdownMenu aria-labelledby="user-settings">
-
-                        <li *ngFor="let module of modulesMenu">
-                            <a [routerLink]="module.route" routerLinkActive="active" class="dropdown-item cursor-pointer d-flex align-items-center gap-2 fs-11">
-                                <i class="dropdown-header-icon sm-icon-size" [class]="module.icon"></i> {{module.displayName}}
-                            </a>
-                        </li>
-                    </ul>
-                </li> -->
             </ul>
         </div>
     </div>

@@ -11,19 +11,21 @@ import { FilterModel } from '../../../../Models/shared/FilterModel';
 import { FileSortingModel, UploadFileModel } from '../../../../Models/shared/FileModel';
 import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
 import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
-import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
 import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.service';
+import { FileService } from '../../../../Services/shared/file.service';
+import { FormService } from '../../../../Services/shared/form.service';
+import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 
 @Component({
   selector: 'app-project',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-      ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
   templateUrl: './project.component.html',
   styleUrl: './project.component.css'
 })
 export class ProjectComponent implements OnInit {
- @ViewChild('InputMultiFile') InputMultiFile: ElementRef;
+  @ViewChild('InputMultiFile') InputMultiFile: ElementRef;
   TitleList = ['مؤسسة زائر الخير', 'موقع زائر الخير', 'المشاريع'];
   filterList: FilterModel[] = [];
   fileURL: any[] = [];
@@ -32,7 +34,7 @@ export class ProjectComponent implements OnInit {
   FileSotingModel: FileSortingModel[] = [];
   ItemForm: FormGroup;
   showLoader: boolean = false;
-  isFilter = false;
+  isFilter = true;
   isFileExist = false;
   ProjectId: any;
   UserModel: any;
@@ -50,12 +52,21 @@ export class ProjectComponent implements OnInit {
     results: [],
   };
 
+   formErrors = {
+    title: '',
+    description: '',
+    totalDonationAmount: '',
+    benefactorCount: '',
+    totalAmount: '',
+    remainingAmount: ''
+  };
+
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
-    private formService: ValidationFormService, private websiteService: ZaWebsiteService
+    private fileService: FileService, private websiteService: ZaWebsiteService, private formService: FormService
   ) { }
 
   ngOnInit(): void {
-    this.UserModel = JSON.parse(localStorage.getItem('UserModel'));;
+    this.UserModel = JSON.parse(localStorage.getItem('UserModel'));
     this.FormInit();
     this.GetAllProjects();
     this.GetWebsiteAdminFilters();
@@ -64,14 +75,18 @@ export class ProjectComponent implements OnInit {
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
-      title: ['', [Validators.required, this.formService.noSpaceValidator]],
-      description: ['', [Validators.required, this.formService.noSpaceValidator]],
-      totalDonationAmount: ['', [Validators.required, this.formService.noSpaceValidator,Validators.pattern("[0-9]+")]],
-      benefactorCount: ['', [Validators.required, this.formService.noSpaceValidator,Validators.pattern("[0-9]+")]],
-      totalAmount: ['', [Validators.required, this.formService.noSpaceValidator,Validators.pattern("[0-9]+")]],
-      remainingAmount: ['', [Validators.required, this.formService.noSpaceValidator,Validators.pattern("[0-9]+")]],
+      title: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      description: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      totalDonationAmount: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace), CustomValidators.regexPattern(RegexType.number)]],
+      benefactorCount: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace), CustomValidators.regexPattern(RegexType.number)]],
+      totalAmount: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace), CustomValidators.regexPattern(RegexType.number)]],
+      remainingAmount: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace), CustomValidators.regexPattern(RegexType.number)]],
       isVisible: true,
       insertUser: null
+    });
+
+    this.ItemForm.valueChanges.subscribe((data) => {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
     });
   }
 
@@ -98,7 +113,7 @@ export class ProjectComponent implements OnInit {
   }
 
   openItemModal(content: any, item: any) {
-   this.ResetForm();
+    this.ResetForm();
     if (item)
       this.FillEditForm(item);
 
@@ -110,13 +125,13 @@ export class ProjectComponent implements OnInit {
   }
 
   openAddImagesModal(content: any, item: any) {
-  this.multiFileURL = [];
+    this.multiFileURL = [];
     this.multiImagesFile = [];
     this.FileModel = { files: [], deletedFiles: [] };
     this.ProjectId = item.id;
     this.InputMultiFile.nativeElement.value = '';
     this.websiteService.GetProjectsSliderImagesById(item.id).subscribe(data => {
-      this.multiFileURL = data;
+      this.multiFileURL = data.results;
       this.modalService.open(content, {
         size: 'xl',
         scrollable: true,
@@ -143,12 +158,12 @@ export class ProjectComponent implements OnInit {
 
   pageChanged(obj: any) {
     this.pagingFilterModel.currentPage = obj.page;
-     this.GetAllProjects();
+    this.GetAllProjects();
   }
 
- GetWebsiteAdminFilters() {
+  GetWebsiteAdminFilters() {
     this.websiteService.GetAllWebPagesFilters('Project').subscribe(data => {
-      this.filterList = data;
+      this.filterList = data.results;
 
     });
   }
@@ -161,7 +176,7 @@ export class ProjectComponent implements OnInit {
   onMultiFileChange(event: any) {
     let fileSizeValidate = false;
     [...event.target.files].forEach(element => {
-      let fileSize = this.formService.getFileSize(element);
+      let fileSize = this.fileService.getFileSize(element);
       if (fileSize > 1) {
         this.toaster.warning(`هذا الملف ${element.name} حجمه أكبر من 1 ميجا`);
         fileSizeValidate = true;
@@ -170,8 +185,8 @@ export class ProjectComponent implements OnInit {
 
     if (fileSizeValidate)
       return;
-    
-    this.formService.onSelectedMultiFile([...event.target.files]).then(data => {
+
+    this.fileService.onSelectedMultiFile([...event.target.files]).then(data => {
       this.multiFileURL.push(...data?.urls);
       this.multiImagesFile.push(...data?.fileContents);
     });
@@ -199,7 +214,7 @@ export class ProjectComponent implements OnInit {
     this.formService.buildFormData(formData, this.FileModel);
     this.showLoader = true;
     this.websiteService.AddProjectsSliderImage(formData).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.modalService.dismissAll();
         this.toaster.success(data.message);
       }
@@ -209,18 +224,27 @@ export class ProjectComponent implements OnInit {
     });
   }
 
+   validateForm(): boolean {
+    this.formService.markFormGroupTouched(this.ItemForm);
+    if (this.ItemForm.valid) {
+      return true;
+    } else {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, false)
+      return false;
+    }
+  }
+
   AddNewProject() {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
-    let isValid = this.ItemForm.valid;
+    let isValid = this.validateForm();
 
-    if (!isValid) {
-      this.formService.validateAllFormFields(this.ItemForm);
+    if (!isValid)
       return;
-    }
+
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
       this.websiteService.AddNewProjects(this.ItemForm.value).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllProjects();
           this.GetWebsiteAdminFilters();
@@ -232,7 +256,7 @@ export class ProjectComponent implements OnInit {
       });
     } else {
       this.websiteService.UpdateProjects(this.ItemForm.value).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllProjects();
           this.modalService.dismissAll();
@@ -247,7 +271,7 @@ export class ProjectComponent implements OnInit {
   DeleteItem() {
     this.showLoader = true;
     this.websiteService.DeleteProjects(this.ProjectId).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllProjects();
         this.GetWebsiteAdminFilters();
@@ -255,7 +279,7 @@ export class ProjectComponent implements OnInit {
       }
       else
         this.toaster.error(data.message);
-        this.showLoader = false;
+      this.showLoader = false;
     });
   }
 }

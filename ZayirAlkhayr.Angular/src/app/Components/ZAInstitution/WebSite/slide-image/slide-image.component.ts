@@ -10,8 +10,10 @@ import { ZaEmptyDataComponent } from '../../../../Shared/za-empty-data/za-empty-
 import { FilterModel } from '../../../../Models/shared/FilterModel';
 import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
 import { PagedResponseModel } from '../../../../Models/shared/PagedResponseModel';
-import { ValidationFormService } from '../../../../Services/shared/validation-form.service';
 import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.service';
+import { FileService } from '../../../../Services/shared/file.service';
+import { FormService } from '../../../../Services/shared/form.service';
+import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 
 @Component({
   selector: 'app-slide-image',
@@ -29,7 +31,7 @@ export class SlideImageComponent implements OnInit {
   fileURL: any[] = [];
   ItemForm: FormGroup;
   showLoader: boolean = false;
-  isFilter = false;
+  isFilter = true;
   isFileExist = false;
   ImageFile: any;
   UserModel: any;
@@ -44,8 +46,12 @@ export class SlideImageComponent implements OnInit {
     results: [],
   };
 
+  formErrors = {
+    title: ''
+  };
+
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
-    private formService: ValidationFormService, private websiteService: ZaWebsiteService
+    private fileService: FileService, private websiteService: ZaWebsiteService, private formService: FormService
   ) { }
 
   ngOnInit(): void {
@@ -58,11 +64,15 @@ export class SlideImageComponent implements OnInit {
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
-      title: ['', [Validators.required, this.formService.noSpaceValidator]],
+      title: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       isVisible: true,
       InsertUser: null,
       oldFileName: null,
       file: null,
+    });
+
+    this.ItemForm.valueChanges.subscribe((data) => {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
     });
   }
 
@@ -130,7 +140,7 @@ export class SlideImageComponent implements OnInit {
 
   GetWebsiteAdminFilters() {
     this.websiteService.GetAllWebPagesFilters('Home').subscribe(data => {
-      this.filterList = data;
+      this.filterList = data.results;
     });
   }
 
@@ -140,15 +150,15 @@ export class SlideImageComponent implements OnInit {
   }
 
   onFileChange(event: any) {
-    let fileSize = this.formService.getFileSize(event.target.files[0]);
+    let fileSize = this.fileService.getFileSize(event.target.files[0]);
     if (fileSize > 1) {
       this.toaster.warning(`هذا الملف ${event.target.files[0].name} حجمه أكبر من 1 ميجا`);
       return;
     }
-    
+
     this.fileURL = [];
     this.ImageFile = null;
-    this.formService.onSelectedFile(event.target.files).then(data => {
+    this.fileService.onSelectedFile(event.target.files).then(data => {
       this.fileURL.push(data[0]);
       this.ImageFile = data[1][0];
       this.isFileExist = false;
@@ -161,24 +171,33 @@ export class SlideImageComponent implements OnInit {
     this.InputFile.nativeElement.value = '';
   }
 
+   validateForm(): boolean {
+    this.formService.markFormGroupTouched(this.ItemForm);
+    if (this.ItemForm.valid) {
+      return true;
+    } else {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, false)
+      return false;
+    }
+  }
+
   AddNewSlider() {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
-    let isValid = this.ItemForm.valid;
+    let isValid = this.validateForm();
     this.isFileExist = this.fileURL.length == 0;
     if (this.isFileExist)
       return;
 
-    if (!isValid) {
-      this.formService.validateAllFormFields(this.ItemForm);
+    if (!isValid)
       return;
-    }
+
     this.ItemForm.patchValue({ file: this.ImageFile });
     const formData = new FormData();
     this.formService.buildFormData(formData, this.ItemForm.value);
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
       this.websiteService.AddNewSliderImage(formData).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetHomeSliderImages();
           this.GetWebsiteAdminFilters();
@@ -190,7 +209,7 @@ export class SlideImageComponent implements OnInit {
       });
     } else {
       this.websiteService.UpdateSliderImage(formData).subscribe(data => {
-        if (data.done) {
+        if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetHomeSliderImages();
           this.modalService.dismissAll();
@@ -205,7 +224,7 @@ export class SlideImageComponent implements OnInit {
   DeleteSlider() {
     this.showLoader = true;
     this.websiteService.DeleteSliderImage(this.SliderId).subscribe(data => {
-      if (data.done) {
+      if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetHomeSliderImages();
         this.GetWebsiteAdminFilters();

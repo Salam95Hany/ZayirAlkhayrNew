@@ -103,20 +103,18 @@
                     <tr>
                         <td class="table-feature">الاسم</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="name" placeholder="الاسم...">
-                            <div *ngIf="ItemForm.controls['name']?.invalid && (ItemForm.controls['name']?.dirty || ItemForm.controls['name']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['name'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['name'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="name" placeholder="الاسم..." [class.error]="formErrors.name">
+                            <div class="error-message" *ngIf="formErrors.name">
+                                {{ formErrors.name }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">الوصف</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="description" placeholder="الوصف...">
-                            <div *ngIf="ItemForm.controls['description']?.invalid && (ItemForm.controls['description']?.dirty || ItemForm.controls['description']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['description'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['description'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="description" placeholder="الوصف..." [class.error]="formErrors.description">
+                            <div class="error-message" *ngIf="formErrors.description">
+                                {{ formErrors.description }}
                             </div>
                         </td>
                     </tr>
@@ -138,7 +136,7 @@
                     <tr>
                         <td class="table-feature">تحميل صورة</td>
                         <td class="table-value">
-                            <div class="choose-file-box position-relative border rounded h-58" (click)="InputFile.click()">
+                            <div class="choose-file-box position-relative border rounded h-58 input-box" (click)="InputFile.click()" [class.error]="isFileExist">
                                 <div class="choose-file-btn">تحميل صورة</div>
                             </div>
                             <div class="error-message" *ngIf="isFileExist">

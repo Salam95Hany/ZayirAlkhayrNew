@@ -50,6 +50,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
             {
                 Id = i.Id,
                 ActivityId = i.ActivityId,
+                DisplayOrder = i.DisplayOrder,
                 Image = Path.Combine(ApiLocalUrl, ImageFiles.ActivitySliderImages.ToString(), i.Image)
             }).ToList();
             return ApiResponseModel<List<ActivitiesSliderImage>>.Success(GenericErrors.GetSuccess, results);
@@ -200,7 +201,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                         }
                     }
 
-                return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
             catch (Exception)
             {

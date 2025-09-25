@@ -111,64 +111,54 @@
                     <tr>
                         <td class="table-feature">العنوان</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="title" placeholder="العنوان...">
-                            <div *ngIf="ItemForm.controls['title']?.invalid && (ItemForm.controls['title']?.dirty || ItemForm.controls['title']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['title'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['title'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="title" placeholder="العنوان..." [class.error]="formErrors.title">
+                            <div *ngIf="formErrors.title" class="error-message">
+                                {{ formErrors.title }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">التفاصيل</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="description" placeholder="التفاصيل...">
-                            <div *ngIf="ItemForm.controls['description']?.invalid && (ItemForm.controls['description']?.dirty || ItemForm.controls['description']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['description'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['description'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="description" placeholder="التفاصيل..." [class.error]="formErrors.description">
+                            <div *ngIf="formErrors.description" class="error-message">
+                                {{ formErrors.description }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">اجمالي مبلغ التبرع</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="totalDonationAmount" placeholder="اجمالي مبلغ التبرع...">
-                            <div *ngIf="ItemForm.controls['totalDonationAmount']?.invalid && (ItemForm.controls['totalDonationAmount']?.dirty || ItemForm.controls['totalDonationAmount']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['totalDonationAmount'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['totalDonationAmount'].errors?.['noSpace']">لا يمكن ان يحتوي الحقل على مسافات فقط</span>
-                                <span *ngIf="ItemForm.controls['totalDonationAmount'].errors?.['pattern']">أدخل أرقام فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="totalDonationAmount" placeholder="اجمالي مبلغ التبرع..." [class.error]="formErrors.totalDonationAmount">
+                            <div *ngIf="formErrors.totalDonationAmount" class="error-message">
+                                {{ formErrors.totalDonationAmount }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">عدد المتبرعين</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="benefactorCount" placeholder="عدد المتبرعين...">
-                            <div *ngIf="ItemForm.controls['benefactorCount']?.invalid && (ItemForm.controls['benefactorCount']?.dirty || ItemForm.controls['benefactorCount']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['benefactorCount'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['benefactorCount'].errors?.['noSpace']">لا يمكن ان يحتوي الحقل على مسافات فقط</span>
-                                <span *ngIf="ItemForm.controls['benefactorCount'].errors?.['pattern']">أدخل أرقام فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="benefactorCount" placeholder="عدد المتبرعين..." [class.error]="formErrors.benefactorCount">
+                            <div *ngIf="formErrors.benefactorCount" class="error-message">
+                                {{ formErrors.benefactorCount }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">اجمالي المبلغ</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="totalAmount" placeholder="اجمالي المبلغ...">
-                            <div *ngIf="ItemForm.controls['totalAmount']?.invalid && (ItemForm.controls['totalAmount']?.dirty || ItemForm.controls['totalAmount']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['totalAmount'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['totalAmount'].errors?.['noSpace']">لا يمكن ان يحتوي الحقل على مسافات فقط</span>
-                                <span *ngIf="ItemForm.controls['totalAmount'].errors?.['pattern']">أدخل أرقام فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="totalAmount" placeholder="اجمالي المبلغ..." [class.error]="formErrors.totalAmount">
+                            <div *ngIf="formErrors.totalAmount" class="error-message">
+                                {{ formErrors.totalAmount }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">باق المبلغ</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="remainingAmount" placeholder="باق المبلغ...">
-                            <div *ngIf="ItemForm.controls['remainingAmount']?.invalid && (ItemForm.controls['remainingAmount']?.dirty || ItemForm.controls['remainingAmount']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['remainingAmount'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['remainingAmount'].errors?.['noSpace']">لا يمكن ان يحتوي الحقل على مسافات فقط</span>
-                                <span *ngIf="ItemForm.controls['remainingAmount'].errors?.['pattern']">أدخل أرقام فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="remainingAmount" placeholder="باق المبلغ..." [class.error]="formErrors.remainingAmount">
+                            <div *ngIf="formErrors.remainingAmount" class="error-message">
+                                {{ formErrors.remainingAmount }}
                             </div>
                         </td>
                     </tr>

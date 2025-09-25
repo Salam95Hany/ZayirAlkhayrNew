@@ -18,10 +18,10 @@
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
                 <div class="input-wrapper">
-                    <input type="email" class="input-field" placeholder="اسم المستخدم" formControlName="email" [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                    <input type="text" class="input-field" placeholder="اسم المستخدم" formControlName="userName" [class.error]="loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched">
                     <span class="input-icon">📧</span>
                 </div>
-                @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                @if (loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched) {
                 <div class="error-message">اسم المستخدم مطلوب</div>
                 }
             </div>
@@ -30,8 +30,8 @@
                 <div class="input-wrapper">
                     <input [type]="showPassword() ? 'text' : 'password'" class="input-field" placeholder="كلمة المرور" formControlName="password" [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
                     <button type="button" class="password-toggle" (click)="togglePassword()">
-                {{ showPassword() ? '🙈' : '👁️' }}
-              </button>
+            {{ showPassword() ? '🙈' : '👁️' }}
+          </button>
                 </div>
                 @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
                 <div class="error-message">كلمة المرور مطلوبة (6 أحرف على الأقل)</div>
@@ -45,19 +45,17 @@
             }
 
             <button type="submit" class="login-button" [disabled]="isLoading() || loginForm.invalid" [class.loading]="isLoading()">
-            @if (isLoading()) {
-              <div class="spinner"></div>
-            }
-            <span class="button-text">
-              @if (isLoading()) {
-                جارٍ تسجيل الدخول...
-              } @else if (loginSuccess()) {
-                تم بنجاح! ✓
-              } @else {
-                تسجيل الدخول
-              }
-            </span>
-          </button>
+        @if (isLoading()) {
+        <div class="spinner"></div>
+        }
+        <span class="button-text">
+          @if (isLoading()) {
+          جارٍ تسجيل الدخول...
+          } @else {
+          تسجيل الدخول
+          }
+        </span>
+      </button>
         </form>
     </div>
 </div>

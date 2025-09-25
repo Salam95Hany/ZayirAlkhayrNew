@@ -1,0 +1,9 @@
+.choose-file-box.error {
+    border-color: #ef4444 !important;
+    background: #fef2f2;
+}
+
+.choose-file-box.error:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}

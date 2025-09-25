@@ -75,3 +75,8 @@
     height: var(--dim);
     min-height: var(--dim);
 }
+
+.nw-dropdown .dropdown-menu {
+    width: 102% !important;
+    min-width: unset !important;
+}
