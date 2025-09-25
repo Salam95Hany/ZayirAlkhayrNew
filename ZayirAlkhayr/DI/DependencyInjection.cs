@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RazorLight;
 using System.Text;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Models;
@@ -14,6 +15,8 @@ using ZayirAlkhayr.Interfaces.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Settings;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Tasks;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
+using ZayirAlkhayr.Reports.Interface;
+using ZayirAlkhayr.Reports.Service;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
@@ -80,6 +83,24 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IFamilyNationalityService, FamilyNationalityService>();
             services.AddScoped<IOrphansService, OrphansService>();
             services.AddScoped<IBeneFactorService, BeneFactorService>();
+
+            #region ReportsDI
+            services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(c => c.AssignableTo<IReportGenerator>()).AsImplementedInterfaces().WithTransientLifetime());
+            services.AddSingleton<IRazorLightEngine>(serviceProvider =>
+            {
+                var env = serviceProvider.GetRequiredService<IWebHostEnvironment>();
+                var templatePath = Path.Combine(env.WebRootPath, "TemplatesHTML");
+                return new RazorLightEngineBuilder()
+                    .UseFileSystemProject(templatePath)
+                    .UseMemoryCachingProvider()
+                    .Build();
+            });
+
+            services.AddScoped<IReportGeneratorFactory, ReportGeneratorFactory>();
+            services.AddScoped<IPDFHelper, PDFHelper>();
+            #endregion
 
             return services;
         }
