@@ -2,6 +2,7 @@
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Entities.Reports;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
@@ -45,31 +46,31 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
-        public async Task<ApiResponseModel<DataTable>> ExportFamilyStatusData(PDFModel Model)
-        {
-            var FilterDt = Model.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[1];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_ExportFamilyStatusData", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
-        }
+        //public async Task<ApiResponseModel<DataTable>> ExportFamilyStatusData(PDFModel Model)
+        //{
+        //    var FilterDt = Model.FilterList.ToDataTableFromFilterModel();
+        //    var Params = new SqlParameter[1];
+        //    Params[0] = new SqlParameter("@FilterList", FilterDt);
+        //    var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_ExportFamilyStatusData", Params);
+        //    return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+        //}
 
-        public async Task<ApiResponseModel<string>> ExportFamilyStatusDataPDFFile(PDFModel Model, int RowCount)
-        {
-            var Dt = await ExportFamilyStatusData(Model);
-            var DtBatches = Dt.Results.ToDataTableBatches(RowCount);
-            Model.Headers = Model.Headers.OrderBy(i => i.DisplayOrder).ToList();
-            //var File = _createPdfFileService.CreatePdfFile(DtBatches, Model.Headers, ImageFiles.ExportFiles.ToString(), "الحالات");
-            return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, "");
-        }
+        //public async Task<ApiResponseModel<string>> ExportFamilyStatusDataPDFFile(PDFModel Model, int RowCount)
+        //{
+        //    var Dt = await ExportFamilyStatusData(Model);
+        //    var DtBatches = Dt.Results.ToDataTableBatches(RowCount);
+        //    Model.Headers = Model.Headers.OrderBy(i => i.DisplayOrder).ToList();
+        //    //var File = _createPdfFileService.CreatePdfFile(DtBatches, Model.Headers, ImageFiles.ExportFiles.ToString(), "الحالات");
+        //    return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, "");
+        //}
 
-        public async Task<ApiResponseModel<string>> ExportFamilyStatusDataExcelFile(PDFModel Model, string UserName)
-        {
-            var Dt = await ExportFamilyStatusData(Model);
-            //var ExportTemplate = new ExportTemplateBase { Name = "الحالات", SheetName = "الحالات", TemplateName = "الحالات", UserName = UserName, Header = new ExportHeaders { ListHeaders = Model.Headers } };
-            //var File = _exportManagerService.Export(ExportTemplate, Dt);
-            return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, "");
-        }
+        //public async Task<ApiResponseModel<string>> ExportFamilyStatusDataExcelFile(PDFModel Model, string UserName)
+        //{
+        //    var Dt = await ExportFamilyStatusData(Model);
+        //    //var ExportTemplate = new ExportTemplateBase { Name = "الحالات", SheetName = "الحالات", TemplateName = "الحالات", UserName = UserName, Header = new ExportHeaders { ListHeaders = Model.Headers } };
+        //    //var File = _exportManagerService.Export(ExportTemplate, Dt);
+        //    return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, "");
+        //}
 
         public async Task<ApiResponseModel<FamilyStatusLookups>> GetFamilyStatusLookups()
         {

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Reports;
 using ZayirAlkhayr.Interfaces.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.ZAInstitution.GeneralServices;
@@ -72,18 +73,18 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.GeneralServices
             return results;
         }
 
-        [HttpPost("ExportFamilyStatusDataPDFFile")]
-        public async Task<IActionResult> ExportFamilyStatusDataPDFFile(PDFModel Model, int RowCount)
-        {
-            var FullPath = await _familyStatusService.ExportFamilyStatusDataPDFFile(Model, RowCount);
-            return new TempPhysicalFileResult(FullPath.Results, "application/pdf");
-        }
+        //[HttpPost("ExportFamilyStatusDataPDFFile")]
+        //public async Task<IActionResult> ExportFamilyStatusDataPDFFile(PDFModel Model, int RowCount)
+        //{
+        //    var FullPath = await _familyStatusService.ExportFamilyStatusDataPDFFile(Model, RowCount);
+        //    return new TempPhysicalFileResult(FullPath.Results, "application/pdf");
+        //}
 
-        [HttpPost("ExportFamilyStatusDataExcelFile")]
-        public async Task<IActionResult> ExportFamilyStatusDataExcelFile(PDFModel Model, string UserName)
-        {
-            var FullPath = await _familyStatusService.ExportFamilyStatusDataExcelFile(Model, UserName);
-            return new TempPhysicalFileResult(FullPath.Results, "application/xlsx");
-        }
+        //[HttpPost("ExportFamilyStatusDataExcelFile")]
+        //public async Task<IActionResult> ExportFamilyStatusDataExcelFile(PDFModel Model, string UserName)
+        //{
+        //    var FullPath = await _familyStatusService.ExportFamilyStatusDataExcelFile(Model, UserName);
+        //    return new TempPhysicalFileResult(FullPath.Results, "application/xlsx");
+        //}
     }
 }

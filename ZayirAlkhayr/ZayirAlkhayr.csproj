@@ -2,7 +2,6 @@
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
-		<PreserveCompilationContext>true</PreserveCompilationContext>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
@@ -29,8 +28,8 @@
 		<Folder Include="wwwroot\EventSliderImages\" />
 		<Folder Include="wwwroot\BeneFactorImages\" />
 		<Folder Include="wwwroot\BeneFactorDetailsImages\" />
-		<Folder Include="wwwroot\Logs\" />
-		<Folder Include="wwwroot\Fonts\" />
+		<Folder Include="wwwroot\ExportFiles\" />
+		<Folder Include="wwwroot\Template\" />
 		<Folder Include="wwwroot\ProjectSliderImages\" />
 		<Folder Include="wwwroot\PhotoDetailImages\" />
 		<Folder Include="wwwroot\PhotoImages\" />

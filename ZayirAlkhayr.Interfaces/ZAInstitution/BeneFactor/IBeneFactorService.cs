@@ -31,6 +31,7 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.BeneFactor
         Task<ApiResponseModel<string>> UpdateBeneFactor(ZayirAlkhayr.Entities.Models.BeneFactor Model);
         Task<ApiResponseModel<string>> DeleteBeneFactor(int BeneFactorId);
         Task<ApiResponseModel<string>> DeleteBeneFactorDetails(int DetailsId);
+        Task<ApiResponseModel<DataTable>> GetExportBeneFactorsData(List<FilterModel> FilterList);
 
     }
 }

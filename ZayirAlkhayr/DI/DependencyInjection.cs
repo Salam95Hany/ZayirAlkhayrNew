@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using RazorLight;
+using QuestPDF.Infrastructure;
 using System.Text;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Models;
@@ -41,7 +41,7 @@ namespace ZayirAlkhayr.DI
                 var appSettings = serviceProvider.GetRequiredService<IAppSettings>();
                 options.UseSqlServer(appSettings.ConnectionStrings.DBConnection);
             });
-
+           
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins, builder =>
@@ -85,21 +85,14 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IBeneFactorService, BeneFactorService>();
 
             #region ReportsDI
+
             services.Scan(scan => scan
             .FromApplicationDependencies()
             .AddClasses(c => c.AssignableTo<IReportGenerator>()).AsImplementedInterfaces().WithTransientLifetime());
-            services.AddSingleton<IRazorLightEngine>(serviceProvider =>
-            {
-                var env = serviceProvider.GetRequiredService<IWebHostEnvironment>();
-                var templatePath = Path.Combine(env.WebRootPath, "TemplatesHTML");
-                return new RazorLightEngineBuilder()
-                    .UseFileSystemProject(templatePath)
-                    .UseMemoryCachingProvider()
-                    .Build();
-            });
-
+            QuestPDF.Settings.License = LicenseType.Community;
             services.AddScoped<IReportGeneratorFactory, ReportGeneratorFactory>();
-            services.AddScoped<IPDFHelper, PDFHelper>();
+            services.AddScoped<IExportManagerService, ExportManagerService>();
+            
             #endregion
 
             return services;

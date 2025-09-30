@@ -8,7 +8,9 @@ namespace ZayirAlkhayr.Reports.Model
 {
     public enum ReportType
     {
-        BeneFactor,
-        FamilyStatus
+        BeneFactorPdf,
+        FamilyStatusPdf,
+        BeneFactorExcel,
+        FamilyStatusExcel,
     }
 }

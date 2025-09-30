@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Entities.Reports;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Tasks;
 using ZayirAlkhayr.Services.Common;
 
@@ -95,18 +96,18 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.Tasks
             return results;
         }
 
-        [HttpPost("ExportAccountsImportMonyExcelFile")]
-        public async Task<IActionResult> ExportAccountsImportMonyExcelFile(PDFModel Model, string UserName)
-        {
-            var FullPath = await _accountsMonyService.ExportAccountsImportMonyExcelFile(Model, UserName);
-            return new TempPhysicalFileResult(FullPath.Results, "application/xlsx");
-        }
+        //[HttpPost("ExportAccountsImportMonyExcelFile")]
+        //public async Task<IActionResult> ExportAccountsImportMonyExcelFile(PDFModel Model, string UserName)
+        //{
+        //    var FullPath = await _accountsMonyService.ExportAccountsImportMonyExcelFile(Model, UserName);
+        //    return new TempPhysicalFileResult(FullPath.Results, "application/xlsx");
+        //}
 
-        [HttpPost("ExportAccountsExportMonyExcelFile")]
-        public async Task<IActionResult> ExportAccountsExportMonyExcelFile(PDFModel Model, string UserName)
-        {
-            var FullPath = await _accountsMonyService.ExportAccountsExportMonyExcelFile(Model, UserName);
-            return new TempPhysicalFileResult(FullPath.Results, "application/xlsx");
-        }
+        //[HttpPost("ExportAccountsExportMonyExcelFile")]
+        //public async Task<IActionResult> ExportAccountsExportMonyExcelFile(PDFModel Model, string UserName)
+        //{
+        //    var FullPath = await _accountsMonyService.ExportAccountsExportMonyExcelFile(Model, UserName);
+        //    return new TempPhysicalFileResult(FullPath.Results, "application/xlsx");
+        //}
     }
 }

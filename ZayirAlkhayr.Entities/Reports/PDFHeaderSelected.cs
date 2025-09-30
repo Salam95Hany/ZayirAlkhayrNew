@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZayirAlkhayr.Entities.Common;
 
-namespace ZayirAlkhayr.Entities.Common
+namespace ZayirAlkhayr.Entities.Reports
 {
     public class PDFHeaderSelected
     {
@@ -13,11 +14,5 @@ namespace ZayirAlkhayr.Entities.Common
         public bool IsAllowSummation { get; set; }
         public string ValueType { get; set; }
         public int DisplayOrder { get; set; }
-    }
-
-    public class PDFModel
-    {
-        public List<PDFHeaderSelected> Headers { get; set; }
-        public List<FilterModel> FilterList { get; set; }
     }
 }

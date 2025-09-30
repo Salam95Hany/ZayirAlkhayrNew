@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Entities.Reports;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
@@ -19,7 +20,7 @@ using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
 {
-    public class BeneFactorService: IBeneFactorService
+    public class BeneFactorService : IBeneFactorService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAppSettings _appSettings;
@@ -423,6 +424,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
             {
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
+        }
+
+        public async Task<ApiResponseModel<DataTable>> GetExportBeneFactorsData(List<FilterModel> FilterList)
+        {
+            var FilterDt = FilterList.ToDataTableFromFilterModel();
+            var Params = new SqlParameter[1];
+            Params[0] = new SqlParameter("@FilterList", FilterDt);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_ExportBeneFactorsData", Params);
+            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
     }
 }

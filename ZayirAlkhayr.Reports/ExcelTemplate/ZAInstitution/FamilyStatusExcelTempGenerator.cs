@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZayirAlkhayr.Reports.Model
+namespace ZayirAlkhayr.Reports.ExcelTemplate.ZAInstitution
 {
-    public class BeneFactorReportModel
+    public class FamilyStatusExcelTempGenerator
     {
-        public string ImgSrc { get; set; }
     }
 }

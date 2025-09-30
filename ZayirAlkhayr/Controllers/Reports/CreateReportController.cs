@@ -4,6 +4,7 @@ using ZayirAlkhayr.Entities.Reports;
 using ZayirAlkhayr.Reports.Interface;
 using ZayirAlkhayr.Reports.Model;
 using ZayirAlkhayr.Reports.Service;
+using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Controllers.Reports
 {
@@ -12,10 +13,8 @@ namespace ZayirAlkhayr.Controllers.Reports
     public class CreateReportController : ControllerBase
     {
         private readonly IReportGeneratorFactory _factory;
-        private readonly IWebHostEnvironment _environment;
-        public CreateReportController(IWebHostEnvironment environment, IReportGeneratorFactory factory)
+        public CreateReportController(IReportGeneratorFactory factory)
         {
-            _environment = environment;
             _factory = factory;
         }
 
@@ -24,7 +23,6 @@ namespace ZayirAlkhayr.Controllers.Reports
         {
             if (!Enum.TryParse<ReportType>(Model.ReportType, true, out var reportType))
             {
-                ReportFileLogger.Log($"Report Type Is Incorrect: {reportType}");
                 return BadRequest("Report Type Is Incorrect.");
             }
 
@@ -35,9 +33,8 @@ namespace ZayirAlkhayr.Controllers.Reports
                 return null;
             }
 
-            string fileUrl = $"{Request.Scheme}://{Request.Host}/Reports/{Path.GetFileName(FilePath)}";
-            ReportFileLogger.Log($"PDF created successfully: {fileUrl}");
-            return Ok(new { FilePath = fileUrl });
+            var FileExtenstion = Path.GetExtension(FilePath);
+            return new TempPhysicalFileResult(FilePath, $"application/{FileExtenstion}");
         }
     }
 }

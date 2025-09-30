@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Entities.Reports;
 
 namespace ZayirAlkhayr.Interfaces.ZAInstitution.Tasks
 {
@@ -16,8 +17,8 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.Tasks
         Task<ApiResponseModel<DataTable>> GetAllAccountsImportMonyData(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<List<FilterModel>>> GetAllAccountsImportMonyFilters(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<DataTable>> GetAllImportExportMonyStatistics(PagingFilterModel PagingFilter);
-        Task<ApiResponseModel<string>> ExportAccountsImportMonyExcelFile(PDFModel Model, string UserName);
-        Task<ApiResponseModel<string>> ExportAccountsExportMonyExcelFile(PDFModel Model, string UserName);
+        //Task<ApiResponseModel<string>> ExportAccountsImportMonyExcelFile(PDFModel Model, string UserName);
+        //Task<ApiResponseModel<string>> ExportAccountsExportMonyExcelFile(PDFModel Model, string UserName);
         Task<ApiResponseModel<string>> AddNewAccountsImportMony(AccountsImportMony Model);
         Task<ApiResponseModel<string>> UpdateAccountsImportMony(AccountsImportMony Model);
         Task<ApiResponseModel<string>> DeleteAccountsImportMony(int AccountId);
