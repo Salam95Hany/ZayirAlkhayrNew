@@ -408,6 +408,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
                 var DetailObj = await _unitOfWork.Repository<BeneFactorDetail>().GetByIdAsync(i => i.Id == DetailsId);
                 if (DetailObj != null)
                 {
+                    var ParentObj = await _unitOfWork.Repository<BeneFactorDetail>().GetByIdAsync(i => i.Id == DetailObj.ParentId);
+                    if (ParentObj != null)
+                        ParentObj.IsActive = false;
+
                     if (!string.IsNullOrEmpty(DetailObj.Image))
                         _manageFileService.DeleteFile(DetailObj.Image, ImageFiles.BeneFactorDetailsImages);
                     _unitOfWork.Repository<BeneFactorDetail>().Delete(DetailObj);

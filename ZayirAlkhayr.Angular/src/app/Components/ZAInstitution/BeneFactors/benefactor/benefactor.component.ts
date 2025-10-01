@@ -17,12 +17,14 @@ import { PDFHeaderSelectedModel, PDFModel } from '../../../../Models/shared/PDFH
 import { FileService } from '../../../../Services/shared/file.service';
 import { FormService } from '../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
+import { SharedService } from '../../../../Services/shared/shared.service';
+import { ZaDropDownFormControlComponent } from '../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 
 @Component({
   selector: 'app-benefactor',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule,ZaDropDownFormControlComponent],
   providers: [DatePipe],
   templateUrl: './benefactor.component.html',
   styleUrl: './benefactor.component.css'
@@ -60,15 +62,26 @@ export class BenefactorComponent {
     results: [],
   };
 
+  formErrors = {
+    fullName: '',
+    description: '',
+    phone: '',
+    phone2: '',
+    address: '',
+    nationalityId: '',
+    faceBook: '',
+    welcomeMessage: ''
+  };
+
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
     private fileService: FileService, private benefactorService: BenefactorService, private pdfService: PdfDownloadService,
-    private offcanvasService: NgbOffcanvas, private datePipe: DatePipe, private formService: FormService
+    private offcanvasService: NgbOffcanvas, private datePipe: DatePipe, private formService: FormService, private sharedService: SharedService
   ) { }
 
   ngOnInit(): void {
     this.UserModel = JSON.parse(localStorage.getItem('UserModel'));
     this.FormInit();
-    this.GetAllBeneFactorNationalities();
+    this.GetAllBeneFactorNationalitiesSelector();
     this.GetAllBeneFactorData();
     this.GetAllBeneFactorFilters();
   }
@@ -78,15 +91,19 @@ export class BenefactorComponent {
       id: 0,
       fullName: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       description: ['', CustomValidators.regexPattern(RegexType.noSpace)],
-      phone: ['', [Validators.required, CustomValidators.regexPattern(RegexType.number)]],
-      phone2: ['', CustomValidators.regexPattern(RegexType.number)],
+      phone: ['', [Validators.required, CustomValidators.regexPattern(RegexType.phoneNumber)]],
+      phone2: ['', CustomValidators.regexPattern(RegexType.phoneNumber)],
       address: ['', CustomValidators.regexPattern(RegexType.noSpace)],
-      nationalityId: null,
+      nationalityId: ['', Validators.required],
       faceBook: ['', CustomValidators.regexPattern(RegexType.noSpace)],
       welcomeMessage: ['', CustomValidators.regexPattern(RegexType.noSpace)],
       InsertUser: null,
       oldFileName: null,
       file: null,
+    });
+
+    this.ItemForm.valueChanges.subscribe((data) => {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
     });
   }
 
@@ -94,7 +111,7 @@ export class BenefactorComponent {
     this.fileURL = [];
     this.fileURL.push(item);
     let fileName = item.image.split('/');
-    this.ItemForm.setValue({
+    this.ItemForm.patchValue({
       id: item.id,
       fullName: item.fullName,
       description: item?.description,
@@ -163,6 +180,7 @@ export class BenefactorComponent {
   }
 
   BeneFactorValueCollapseClick(item: any) {
+    debugger;
     item.isCollapsed = !item.isCollapsed;
     this.BeneFactorValuesData.filter(i => i.id != item.id).forEach(item => {
       item.isCollapsed = false;
@@ -172,7 +190,7 @@ export class BenefactorComponent {
       this.benefactorService.GetAllBeneFactorCashDetails(this.BeneFactorValues.beneFactorId, item.id).subscribe(data => {
         let obj = this.BeneFactorValuesData.find(i => i.id == item.id);
         if (obj)
-          obj.values = data;
+          obj.values = data.results;
       });
   }
 
@@ -191,8 +209,8 @@ export class BenefactorComponent {
     });
   }
 
-  GetAllBeneFactorNationalities() {
-    this.benefactorService.GetAllBeneFactorNationalities(this.pagingFilterModel).subscribe(data => {
+  GetAllBeneFactorNationalitiesSelector() {
+    this.sharedService.GetAllBeneFactorNationalitiesSelector().subscribe(data => {
       this.NationalityList = data.results;
     });
   }
@@ -236,9 +254,19 @@ export class BenefactorComponent {
     this.InputFile.nativeElement.value = '';
   }
 
+  validateForm(): boolean {
+    this.formService.markFormGroupTouched(this.ItemForm);
+    if (this.ItemForm.valid) {
+      return true;
+    } else {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, false)
+      return false;
+    }
+  }
+
   AddNewItem() {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
-    let isValid = this.ItemForm.valid;
+    let isValid = this.validateForm();
 
     if (!isValid)
       return;

@@ -13,6 +13,7 @@ import { BenefactorService } from '../../../../Services/zainstitution/benefactor
 import { FormService } from '../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 import { FileService } from '../../../../Services/shared/file.service';
+import { SharedService } from '../../../../Services/shared/shared.service';
 
 @Component({
   selector: 'app-benefactor-details',
@@ -34,7 +35,7 @@ export class BenefactorDetailsComponent implements OnInit {
   BeneFactorTypesData: any[] = [];
   BeneFactorId: any;
   BeneFactorValueId: any;
-  DefaultImage = '../../../../assets/logo-2.png';
+  DefaultImage = 'logo-2.png';
   BeneFactorTypeId: any;
   UserModel: any;
   Code: any;
@@ -55,34 +56,36 @@ export class BenefactorDetailsComponent implements OnInit {
     currentPage: 1,
     pageSize: 10
   }
-  BeneFactorPagingFilter: PagingFilterModel = {
-    filterList: [],
-    currentPage: 1,
-    pageSize: 200
-  }
   pagedResponseModel: PagedResponseModel<any[]> = {
     totalCount: 0,
     results: [],
   };
 
-  constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
+  formErrors = {
+    totalValue: '',
+    paymentDate: '',
+    details: '',
+    beneFactorTypeId: ''
+  };
+
+  constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private sharedService: SharedService,
     private formService: FormService, private benefactorService: BenefactorService, private fileService: FileService
   ) { }
 
   ngOnInit(): void {
     this.UserModel = JSON.parse(localStorage.getItem('UserModel'));
     this.FormInit();
-    this.GetAllBeneFactorData();
-    this.GetAllBeneFactorTypes();
+    this.GetAllBeneFactorsSelector();
+    this.GetAllBeneFactorTypesSelector();
   }
 
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
       beneFactorId: null,
-      beneFactorTypeId: null,
+      beneFactorTypeId: ['', Validators.required],
       parentId: null,
-      details: ['', CustomValidators.regexPattern(RegexType.noSpace)],
+      details: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       totalValue: ['', Validators.required],
       paymentDate: ['', Validators.required],
       insertUser: null,
@@ -91,6 +94,12 @@ export class BenefactorDetailsComponent implements OnInit {
       oldFileName: null,
       file: null,
     });
+
+    this.ItemForm.valueChanges.subscribe((data) => {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
+    });
+
+    this.formService.updateFieldsRequiredValidation(this.ItemForm, 'totalValue', false);
   }
 
   ResetForm() {
@@ -102,7 +111,6 @@ export class BenefactorDetailsComponent implements OnInit {
     this.InputFile.nativeElement.value = '';
     this.BeneFactorTypeId = this.BenefactorType == 'Cash' ? 1 : null;;
     this.ItemForm.get('id').setValue(0);
-    this.ItemForm.get('totalValue').setValue(0);
     this.ItemForm.get('isFinalSubscribe').setValue(false);
     this.ItemForm.get('isParent').setValue(false);
     this.ItemForm.get('insertUser').setValue(this.UserModel?.userId);
@@ -129,6 +137,7 @@ export class BenefactorDetailsComponent implements OnInit {
   }
 
   openDeleteItemModal(content: any, detailsId: any) {
+    debugger;
     this.DetailsId = detailsId;
     this.modalService.open(content, {
       size: 'md',
@@ -137,11 +146,40 @@ export class BenefactorDetailsComponent implements OnInit {
     });
   }
 
+  OnChangeBeneFactor(beneFactorId: any) {
+    let obj = this.BeneFactorData.find(i => i.value == beneFactorId);
+    if (obj)
+      this.Code = obj.extraData['code'] ?? '';
+    this.BeneFactorValueId = null;
+    this.BeneFactorTypeId = null;
+    this.BenefactorType = 'All';
+    this.TypeSwitcher = false;
+    this.TotalValue = 0;
+    this.GetAllBeneFactorParentSelectorById();
+    this.GetAllBeneFactorDetails();
+  }
+
+  OnChangeBeneFactorValue(beneFactorValueId: number) {
+    this.TotalValue = 0;
+    this.BeneFactorValueId = beneFactorValueId;
+    let obj = this.BeneFactorValuesData.find(i => i.value == beneFactorValueId);
+    if (obj) {
+      this.TotalValue = obj.extraData['totalValue'] ?? 0;
+      this.BeneFactorTotalValue = obj.extraData['totalValue'] ?? 0;
+    }
+
+    this.GetAllBeneFactorDetailsByValueId();
+  }
+
   GetBenefactorType(isSelected: boolean) {
     this.BenefactorType = isSelected ? 'Cash' : 'All';
     if (this.BenefactorType == 'Cash') {
+      this.formService.updateFieldsRequiredValidation(this.ItemForm, 'beneFactorTypeId', false);
+      this.formService.updateFieldsRequiredValidation(this.ItemForm, 'totalValue', true);
       this.BeneFactorTypeId = 1;
     } else {
+      this.formService.updateFieldsRequiredValidation(this.ItemForm, 'beneFactorTypeId', true);
+      this.formService.updateFieldsRequiredValidation(this.ItemForm, 'totalValue', false);
       this.BeneFactorTypeId = null;
       this.BeneFactorValueId = null;
       this.TotalValue = 0;
@@ -172,15 +210,15 @@ export class BenefactorDetailsComponent implements OnInit {
     this.InputFile.nativeElement.value = '';
   }
 
-  GetAllBeneFactorData() {
-    this.benefactorService.GetAllBeneFactorData(this.BeneFactorPagingFilter).subscribe(data => {
-      this.BeneFactorData = data.results.table;
+  GetAllBeneFactorsSelector() {
+    this.sharedService.GetAllBeneFactorsSelector().subscribe(data => {
+      this.BeneFactorData = data.results;
     });
   }
 
-  GetAllBeneFactorParentById() {
-    this.benefactorService.GetAllBeneFactorParentById(this.BeneFactorId).subscribe(data => {
-      this.BeneFactorValuesData = data.results.filter(i => !i.isActive);
+  GetAllBeneFactorParentSelectorById() {
+    this.sharedService.GetAllBeneFactorParentSelectorById(this.BeneFactorId).subscribe(data => {
+      this.BeneFactorValuesData = data.results;
     });
   }
 
@@ -207,16 +245,27 @@ export class BenefactorDetailsComponent implements OnInit {
     });
   }
 
-  GetAllBeneFactorTypes() {
-    this.benefactorService.GetAllBeneFactorTypes(this.BeneFactorPagingFilter).subscribe(data => {
-      this.BeneFactorTypesData = data.results.filter(i => i.id != 1);
+  GetAllBeneFactorTypesSelector() {
+    this.sharedService.GetAllBeneFactorTypesSelector().subscribe(data => {
+      this.BeneFactorTypesData = data.results;
     });
+  }
+
+  validateForm(): boolean {
+    this.formService.markFormGroupTouched(this.ItemForm);
+    if (this.ItemForm.valid) {
+      return true;
+    } else {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, false)
+      return false;
+    }
   }
 
   AddNewItem() {
     let num = Number(this.ItemForm.controls['totalValue'].value);
     let isFinalSubscribe = this.TotalValue - num;
     if (this.BenefactorType == 'Cash') {
+      this.ItemForm.get('beneFactorTypeId').setValue(this.BeneFactorTypeId);
       this.ItemForm.get('parentId').setValue(this.BeneFactorValueId);
       if (this.TotalValue == 0) {
         this.toaster.warning('لا يمكن اضافة تبرع جديد لقد نفذ مبلغ التبرع');
@@ -229,7 +278,7 @@ export class BenefactorDetailsComponent implements OnInit {
       }
     }
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
-    let isValid = this.ItemForm.valid;
+    let isValid = this.validateForm();
     if (!isValid)
       return;
 
@@ -238,9 +287,8 @@ export class BenefactorDetailsComponent implements OnInit {
       this.ItemForm.get('isFinalSubscribe').setValue(true);
 
     this.ItemForm.get('beneFactorId').setValue(this.BeneFactorId);
-
-    this.ItemForm.get('beneFactorTypeId').setValue(this.BeneFactorTypeId);
     this.ItemForm.get('file').setValue(this.ImageFile);
+
     const formData = new FormData();
     this.formService.buildFormData(formData, this.ItemForm.value);
     this.showLoader = true;
@@ -265,6 +313,7 @@ export class BenefactorDetailsComponent implements OnInit {
   }
 
   DeleteItem() {
+    debugger;
     this.showLoader = true;
     this.benefactorService.DeleteBeneFactorDetails(this.DetailsId).subscribe(data => {
       if (data.isSuccess) {

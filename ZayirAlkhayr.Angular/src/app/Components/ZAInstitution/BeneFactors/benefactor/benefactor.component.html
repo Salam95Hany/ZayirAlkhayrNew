@@ -36,7 +36,7 @@
         <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
             <div class="d-flex align-items-center">
                 <ng-container>
-                    <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)" [searchPlaceholder]="'البحث بالوصف ...'"></app-za-filters>
+                    <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)" [searchPlaceholder]="'البحث بالاسم ...'"></app-za-filters>
                 </ng-container>
             </div>
         </div>
@@ -65,7 +65,7 @@
                     <ng-container>
                         <tr *ngFor="let item of pagedResponseModel.results">
                             <td>
-                                <img src="{{item.image}}" class="table-image" (error)="$event.target.src = DefaultImage">
+                                <img src="{{item.image}}" class="table-image" (error)="$event.target.src = 'logo-2.png'">
                             </td>
                             <td>{{item.code}}</td>
                             <td>{{item.fullName}}</td>
@@ -86,11 +86,11 @@
                                         <i class="uil uil-pen"></i>
                                         <span>تعديل</span>
                                     </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item)">
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" (click)="openDeleteItemModal(deleteItemModal,item)">
                                         <i class="uil uil-trash-alt"></i>
                                         <span>حذف</span>
                                     </button>
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2" (click)="openCashSidePanel(CashSidePanel,item)">
+                                    <button class="button-table-action btn-details d-flex align-items-center justify-content-center gap-2" (click)="openCashSidePanel(CashSidePanel,item)">
                                         <i class="uil uil-document-info"></i>
                                         <span>معاينة</span>
                                     </button>
@@ -98,7 +98,7 @@
                             </td>
                         </tr>
                         <tr *ngIf="!pagedResponseModel.results.length">
-                            <td colspan="12" class="text-right">
+                            <td colspan="13" class="text-right">
                                 <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
                             </td>
                         </tr>
@@ -126,56 +126,54 @@
                     <tr>
                         <td class="table-feature">اسم المتبرع</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="fullName" placeholder="اسم المتبرع...">
-                            <div *ngIf="ItemForm.controls['fullName']?.invalid && (ItemForm.controls['fullName']?.dirty || ItemForm.controls['fullName']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['fullName'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['fullName'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="fullName" placeholder="اسم المتبرع..." [class.error]="formErrors.fullName">
+                            <div class="error-message" *ngIf="formErrors.fullName">
+                                {{ formErrors.fullName }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">الوصف</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="description" placeholder="الوصف...">
-                            <div class="error-message">
-                                <span *ngIf="ItemForm.controls['description'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="description" placeholder="الوصف..." [class.error]="formErrors.description">
+                            <div class="error-message" *ngIf="formErrors.description">
+                                {{ formErrors.description }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">رقم التلفون</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="phone" placeholder="رقم التلفون...">
-                            <div *ngIf="ItemForm.controls['phone']?.invalid && (ItemForm.controls['phone']?.dirty || ItemForm.controls['phone']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['phone'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['phone'].errors?.['pattern']">أدخل أرقام فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="phone" placeholder="رقم التلفون..." [class.error]="formErrors.phone">
+                            <div class="error-message" *ngIf="formErrors.phone">
+                                {{ formErrors.phone }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">رقم التلفون 2</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="phone2" placeholder="رقم التلفون 2...">
-                            <div class="error-message">
-                                <span *ngIf="ItemForm.controls['phone2'].errors?.['pattern']"> أدخل أرقام فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="phone2" placeholder="رقم التلفون 2..." [class.error]="formErrors.phone2">
+                            <div class="error-message" *ngIf="formErrors.phone2">
+                                {{ formErrors.phone2 }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">العنوان</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="address" placeholder="العنوان...">
-                            <div class="error-message">
-                                <span *ngIf="ItemForm.controls['address'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="address" placeholder="العنوان..." [class.error]="formErrors.address">
+                            <div class="error-message" *ngIf="formErrors.address">
+                                {{ formErrors.address }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">صفحة الفيس بوك</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="faceBook" placeholder="صفحة الفيس بوك...">
-                            <div class="error-message">
-                                <span *ngIf="ItemForm.controls['faceBook'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="faceBook" placeholder="صفحة الفيس بوك..." [class.error]="formErrors.faceBook">
+                            <div class="error-message" *ngIf="formErrors.faceBook">
+                                {{ formErrors.faceBook }}
                             </div>
                         </td>
                     </tr>
@@ -183,32 +181,17 @@
                         <td class="table-feature">الجنسية</td>
                         <td class="table-value">
                             <div class="form-floating">
-                                <app-za-drop-down-form-control [showSearch]="true" [placeholder]="'الجنسية'" formControlName="nationalityId"></app-za-drop-down-form-control>
+                                <app-za-drop-down-form-control [data]="NationalityList" [showSearch]="true" [placeholder]="'الجنسية'" formControlName="nationalityId" [hasError]="formErrors.nationalityId"></app-za-drop-down-form-control>
                             </div>
-                            <div *ngIf="ItemForm.controls['nationalityId']?.invalid && (ItemForm.controls['nationalityId']?.dirty || ItemForm.controls['nationalityId']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['nationalityId'].errors?.['required']"> هذا الحقل مطلوب</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الحالة</td>
-                        <td class="table-value">
-                            <div class="d-flex align-items-center">
-                                <div class="me-2">مرئي</div>
-                                <label class="jtoggler-wrapper m-0 mx-0">
-                                <input type="checkbox" formControlName="isVisible" class="jtoggler">
-                                <div class="jtoggler-control">
-                                    <div class="jtoggler-handle"></div>
-                                </div>
-                            </label>
-                                <div class="ms-2">غير مرئي</div>
+                            <div class="error-message" *ngIf="formErrors.nationalityId">
+                                {{ formErrors.nationalityId }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">تحميل صورة</td>
                         <td class="table-value">
-                            <div class="choose-file-box position-relative border rounded h-58" (click)="InputFile.click()">
+                            <div class="choose-file-box position-relative border rounded h-58 input-box" (click)="InputFile.click()" [class.error]="isFileExist">
                                 <div class="choose-file-btn">تحميل صورة</div>
                             </div>
                             <div class="error-message" *ngIf="isFileExist">
@@ -273,7 +256,7 @@
                         <div class="col-lg-6">
                             <div class="mb-2">
                                 <label class="form-label d-flex align-items-center gap-2">تاريخ التبرع</label>
-                                <input type="text" disabled class="form-control nw-form-input" [(ngModel)]="BeneFactorValues.paymentDate" />
+                                <input type="date" class="form-control nw-form-input" [(ngModel)]="BeneFactorValues.paymentDate" />
                             </div>
                         </div>
                     </div>
@@ -290,7 +273,7 @@
         <div class="inputs-wrapper border rounded bg-white mb-3">
             <div class="inputs-sec-title fw-semibold fs-16 px-3 py-2 border-bottom mb-2">الحسابات</div>
             <div class="inputs-sec-content px-3 py-2 table-responsive table-vp-height small-scroll">
-                <table class="table table-bordered table-middle text-center table-actions m-0">
+                <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
                     <thead>
                         <tr>
                             <th class="width-30-per">مبلغ التبرع</th>

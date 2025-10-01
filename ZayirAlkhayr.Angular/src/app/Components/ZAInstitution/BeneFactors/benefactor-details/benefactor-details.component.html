@@ -6,7 +6,7 @@
     <div class="inputs-sec-content px-3 py-2">
         <div class="row gy-3">
             <div class="col-lg-3">
-                <app-za-drop-down-form-control [data]="BeneFactorData" [showSearch]="true" [placeholder]="'متبرع'" [(ngModel)]="BeneFactorId"></app-za-drop-down-form-control>
+                <app-za-drop-down-form-control [data]="BeneFactorData" [showSearch]="true" [placeholder]="'متبرع'" [(ngModel)]="BeneFactorId" (valueChanged)="OnChangeBeneFactor($event)"></app-za-drop-down-form-control>
             </div>
             <div class="col-lg-1 d-flex align-items-center">
                 <div class="d-flex align-items-center" *ngIf="BeneFactorId">
@@ -22,11 +22,11 @@
                 </div>
             </div>
             <div class="col-lg-3" *ngIf="BenefactorType == 'Cash'">
-                <app-za-drop-down-form-control [data]="BeneFactorValuesData" [showSearch]="true" [placeholder]="'قيم التبرع'" [(ngModel)]="BeneFactorValueId"></app-za-drop-down-form-control>
+                <app-za-drop-down-form-control [data]="BeneFactorValuesData" [showSearch]="true" [placeholder]="'قيم التبرع'" [(ngModel)]="BeneFactorValueId" (valueChanged)="OnChangeBeneFactorValue($event)"></app-za-drop-down-form-control>
             </div>
             <div class="col-lg-1" *ngIf="BenefactorType == 'Cash'">
                 <div class="form-floating">
-                    <input type="text" class="form-control" [value]="TotalValue" id="floatingInput_1" disabled placeholder="new-user">
+                    <input type="text" class="form-control" [value]="TotalValue" id="floatingInput_1" placeholder="new-user" disabled>
                     <label for="floatingInput_1">مبلغ التبرع</label>
                 </div>
             </div>
@@ -45,7 +45,7 @@
             </div>
         </div>
         <div class="col-md-4 mb-2">
-            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="pagedResponseModel.totalCount"></app-za-pagination>
+            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
         </div>
     </div>
     <div class="p-3 bg-white">
@@ -66,7 +66,7 @@
                 </thead>
                 <tbody>
                     <ng-container>
-                        <tr *ngFor="let item of pagedResponseModel.results">
+                        <tr *ngFor="let item of BeneFactorDetailsData">
                             <td>
                                 <img src="{{item.image}}" class="table-image" (error)="$event.target.src = DefaultImage">
                             </td>
@@ -78,21 +78,17 @@
                             <td>{{item.insertUser}}</td>
                             <td>{{item.insertDate}}</td>
                             <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
-                                        <i class="uil uil-pen"></i>
-                                        <span>تعديل</span>
+                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="item.beneFactorTypeId != 1 || (BeneFactorValueId && BenefactorType == 'Cash')">
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item.id)">
+                                        <i class="uil uil-trash-alt"></i>
+                                        <span>حذف</span>
                                     </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item)">
-                                    <i class="uil uil-trash-alt"></i>
-                                    <span>حذف</span>
-                                </button>
                                 </div>
                             </td>
                         </tr>
-                        <tr *ngIf="!pagedResponseModel.results.length">
+                        <tr *ngIf="!BeneFactorDetailsData.length">
                             <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
+                                <app-za-empty-data [showEmptyData]="!BeneFactorDetailsData.length"></app-za-empty-data>
                             </td>
                         </tr>
                     </ng-container>
@@ -116,64 +112,61 @@
         <form [formGroup]="ItemForm" autocomplete="off">
             <table class="table table-bordered table-feature-value align-middle border m-0">
                 <tbody>
-                    <tr *ngIf="BenefactorType == 'Cash'">
-                        <td class="table-feature">باق المبلغ</td>
-                        <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="title" placeholder="الكود..." [value]="TotalValue" disabled>
-                        </td>
-                    </tr>
                     <tr>
                         <td class="table-feature">الكود</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="title" placeholder="الكود..." [value]="Code" disabled>
+                            <input type="text" class="form-control form-control-lg" [value]="Code" placeholder="الكود..." [value]="Code" disabled>
                         </td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="BenefactorType == 'Cash'">
+                        <td class="table-feature">باق المبلغ</td>
+                        <td class="table-value">
+                            <input type="text" class="form-control form-control-lg" [value]="TotalValue" placeholder="باق المبلغ..." [value]="TotalValue" disabled>
+                        </td>
+                    </tr>
+                    <tr *ngIf="BenefactorType == 'All'">
                         <td class="table-feature">نوع التبرع</td>
                         <td class="table-value">
                             <div class="form-floating">
-                                <app-za-drop-down-form-control [data]="BeneFactorTypesData" [showSearch]="true" [placeholder]="'نوع التبرع'"></app-za-drop-down-form-control>
+                                <app-za-drop-down-form-control [data]="BeneFactorTypesData" [showSearch]="true" [placeholder]="'نوع التبرع'" formControlName="beneFactorTypeId" [hasError]="formErrors.beneFactorTypeId"></app-za-drop-down-form-control>
                             </div>
-                            <span *ngIf="ItemForm.controls['totalValue'].errors?.['required']"> هذا الحقل مطلوب</span>
+                            <div class="error-message" *ngIf="formErrors.beneFactorTypeId">
+                                {{ formErrors.beneFactorTypeId }}
+                            </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">تاريخ التبرع</td>
                         <td class="table-value">
-                            <input type="datetime-local" class="form-control form-control-lg" formControlName="paymentDate" placeholder="تاريخ التبرع...">
-                            <div *ngIf="ItemForm.controls['paymentDate']?.invalid && (ItemForm.controls['paymentDate']?.dirty || ItemForm.controls['paymentDate']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['paymentDate'].errors?.['required']"> هذا الحقل مطلوب</span>
+                            <input type="datetime-local" class="form-control form-control-lg input-box" formControlName="paymentDate" placeholder="تاريخ التبرع..." [class.error]="formErrors.paymentDate">
+                            <div class="error-message" *ngIf="formErrors.paymentDate">
+                                {{ formErrors.paymentDate }}
                             </div>
                         </td>
                     </tr>
                     <tr *ngIf="BenefactorType == 'Cash'">
                         <td class="table-feature">قيمة التبرع</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="totalValue" placeholder="قيمة التبرع..." (copy)="false" (paste)="false" (cut)="false" (keypress)="NumbersOnly($event.key)">
-                            <div *ngIf="ItemForm.controls['totalValue']?.invalid && (ItemForm.controls['totalValue']?.dirty || ItemForm.controls['totalValue']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['totalValue'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['totalValue'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="totalValue" placeholder="قيمة التبرع..." (copy)="false" (paste)="false" (cut)="false" (keypress)="NumbersOnly($event.key)" [class.error]="formErrors.totalValue">
+                            <div class="error-message" *ngIf="formErrors.totalValue">
+                                {{ formErrors.totalValue }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">تفاصيل التبرع</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="details" placeholder="تفاصيل التبرع...">
-                            <div *ngIf="ItemForm.controls['details']?.invalid && (ItemForm.controls['details']?.dirty || ItemForm.controls['details']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['details'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['details'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="details" placeholder="تفاصيل التبرع..." [class.error]="formErrors.details">
+                            <div class="error-message" *ngIf="formErrors.details">
+                                {{ formErrors.details }}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">تحميل صورة</td>
                         <td class="table-value">
-                            <div class="choose-file-box position-relative border rounded h-58" (click)="InputFile.click()">
+                            <div class="choose-file-box position-relative border rounded h-58 input-box" (click)="InputFile.click()">
                                 <div class="choose-file-btn">تحميل صورة</div>
-                            </div>
-                            <div class="error-message" *ngIf="isFileExist">
-                                <span>هذا الحقل مطلوب</span>
                             </div>
                         </td>
                     </tr>

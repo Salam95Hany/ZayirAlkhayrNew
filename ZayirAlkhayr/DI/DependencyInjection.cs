@@ -10,6 +10,7 @@ using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
+using ZayirAlkhayr.Interfaces.Shared;
 using ZayirAlkhayr.Interfaces.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Interfaces.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Settings;
@@ -20,6 +21,7 @@ using ZayirAlkhayr.Reports.Service;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
+using ZayirAlkhayr.Services.Shared;
 using ZayirAlkhayr.Services.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Services.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Services.ZAInstitution.Settings;
@@ -83,6 +85,7 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IFamilyNationalityService, FamilyNationalityService>();
             services.AddScoped<IOrphansService, OrphansService>();
             services.AddScoped<IBeneFactorService, BeneFactorService>();
+            services.AddScoped<ISharedService, SharedService>();
 
             #region ReportsDI
 

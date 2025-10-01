@@ -42,7 +42,8 @@ export enum RegexType {
     numeric,
     currency,
     addressLine,
-    noSpace
+    noSpace,
+    phoneNumber
 
 }
 export const regexList: RegexModel[] = [
@@ -125,5 +126,10 @@ export const regexList: RegexModel[] = [
         pattern: /^(?!\s*$).+/,
         message: "لا يمكن ان يحتوي الحقل على مسافات فقط.",
         type: RegexType.noSpace
+    },
+    {
+        pattern: /^(?:01[0125]\d{8}|00[1-9]\d{5,13})$/,
+        message: "رقم التلفون غير صحيح.",
+        type: RegexType.phoneNumber
     }
 ];

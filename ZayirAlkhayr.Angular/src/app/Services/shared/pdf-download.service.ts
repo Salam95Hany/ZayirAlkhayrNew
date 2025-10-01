@@ -13,48 +13,6 @@ export class PdfDownloadService {
   constructor(private http: HttpClient) { }
 
   ConverHeaderToPDFModel(Arry: any[]) {
-    Arry = [
-      {
-        "displayValue": "Code",
-        "displayName": "الكود",
-        "valueType": "Text"
-      },
-      {
-        "displayValue": "FullName",
-        "displayName": "الاسم",
-        "valueType": "Text"
-      },
-      {
-        "displayValue": "Description",
-        "displayName": "الوصف",
-        "valueType": "Text"
-      },
-      {
-        "displayValue": "Phone",
-        "displayName": "رقم التلفون",
-        "valueType": "Text"
-      },
-      {
-        "displayValue": "Phone2",
-        "displayName": "رقم التلفون 2",
-        "valueType": "Text"
-      },
-      {
-        "displayValue": "Address",
-        "displayName": "العنوان",
-        "valueType": "Text"
-      },
-      {
-        "displayValue": "Nationality",
-        "displayName": "الجنسية",
-        "valueType": "Text"
-      },
-      {
-        "displayValue": "FaceBook",
-        "displayName": "صفحة الفيس بوك",
-        "valueType": "Text"
-      }
-    ]
     this.PDFHeaderModel = [];
     Arry.forEach((header, index) => {
       let obj: PDFHeaderSelectedModel = {} as PDFHeaderSelectedModel;

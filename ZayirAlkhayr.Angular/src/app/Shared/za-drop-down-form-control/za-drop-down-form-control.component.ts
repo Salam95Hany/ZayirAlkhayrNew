@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, forwardRef, Input, Output, Renderer2 } from '@angular/core';
+import { Component, EventEmitter, forwardRef, input, Input, Output, Renderer2 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NgbDropdownConfig, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormDropdownModel } from '../../Models/shared/FormDropdownModel';
@@ -27,6 +27,7 @@ export class ZaDropDownFormControlComponent {
   @Input() showSearch: boolean = false;
   @Input() selectMulti: boolean = false;
   @Input() isCustomDropdown: boolean = false;
+  @Input() hasError: any;
   @Output() valueChanged = new EventEmitter<any | any[]>();
   selectedItems: string[] = [];
   selectedValues: string[] = [];

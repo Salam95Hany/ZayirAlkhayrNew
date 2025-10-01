@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +35,7 @@ export class FormService {
 
     return ItemForm;
   }
-  
+
   // get all values of the formGroup, loop over them
   // then mark each field as touched
   public markFormGroupTouched(formGroup: FormGroup) {
@@ -126,19 +126,13 @@ export class FormService {
   }
 
   public updateFieldsRequiredValidation(formGroup: FormGroup, field: string, isRequired: boolean) {
-    const control = formGroup.get(field);
+    const control: AbstractControl | null = formGroup.get(field);
     if (!control) return;
 
-    const currentValidators = control.validator ? [control.validator] : [];
-
     if (isRequired) {
-      // Add required if not already present
-      control.setValidators([Validators.required, ...currentValidators]);
+      control.addValidators(Validators.required);
     } else {
-      // Filter out only the required validator
-      const validators = currentValidators
-        .filter(v => v !== Validators.required);
-      control.setValidators(validators);
+      control.removeValidators(Validators.required);
     }
 
     control.updateValueAndValidity();

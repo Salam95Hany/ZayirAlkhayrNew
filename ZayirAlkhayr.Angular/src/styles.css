@@ -1056,6 +1056,10 @@ tr {
     color: #ff323d;
 }
 
+.button-table-action.btn-details {
+    color: #23b721;
+}
+
 .button-table-action.btn-edit:hover {
     background-color: #3581ff;
     color: #fff;
@@ -1066,8 +1070,12 @@ tr {
     color: #fff;
 }
 
+.button-table-action.btn-details:hover {
+    background-color: #23b721;
+    color: #fff;
+}
+
 .search-box {
-    /* margin-right: 5px; */
     min-width: 200px;
 }
 
@@ -2294,7 +2302,7 @@ td {
 
 .input-box.error {
     border-color: #ef4444 !important;
-    background: #fef2f2;
+    background: #fef2f2 !important;
 }
 
 .input-box.error:focus {

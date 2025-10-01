@@ -7,11 +7,12 @@ using ZayirAlkhayr.Entities.Models;
 
 namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.BeneFactor
 {
-    public class BeneFactorParentSpecification:BaseSpecification<BeneFactorDetail>
+    public class BeneFactorParentSpecification : BaseSpecification<BeneFactorDetail>
     {
-        public BeneFactorParentSpecification(int BeneFactorId) :base(i => i.BeneFactorId == BeneFactorId && i.IsParent.Value)
+        public BeneFactorParentSpecification(int BeneFactorId, bool ApplyIsActive = false) : base(i => i.BeneFactorId == BeneFactorId && i.IsParent.Value)
         {
-            
+            if (ApplyIsActive)
+                AddCriteria(i => i.IsActive == true);
         }
     }
 }
