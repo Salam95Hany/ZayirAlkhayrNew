@@ -21,7 +21,7 @@ import { BenefactorService } from '../../../../Services/zainstitution/benefactor
 export class BenefactorNotesComponent implements OnInit {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'ملاحظات المتبرعين'];
   filterList: FilterModel[] = [];
-  isFilter = false;
+  isFilter = true;
   pagingFilterModel: PagingFilterModel = {
     currentPage: 1,
     pageSize: 20,

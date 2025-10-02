@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core';
-import { PDFHeaderSelectedModel, PDFModel } from '../../Models/shared/PDFHeaderSelected';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
+import { PDFHeaderSelected, SearchReportModel } from '../../Models/shared/SearchReportModel';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PdfDownloadService {
-  PDFHeaderModel: PDFHeaderSelectedModel[] = [];
+  PDFHeaderModel: PDFHeaderSelected[] = [];
   apiURL = environment.apiUrl;
   constructor(private http: HttpClient) { }
 
   ConverHeaderToPDFModel(Arry: any[]) {
     this.PDFHeaderModel = [];
     Arry.forEach((header, index) => {
-      let obj: PDFHeaderSelectedModel = {} as PDFHeaderSelectedModel;
+      let obj: PDFHeaderSelected = {} as PDFHeaderSelected;
       obj.nameEn = header.displayValue;
       obj.nameAr = header.displayName;
       obj.isSelected = false;
@@ -28,8 +28,8 @@ export class PdfDownloadService {
     return this.PDFHeaderModel;
   }
 
-  DownloadFile(Model: PDFModel, fileName: string, downloadPath: string) {
-    return this.http.post(this.apiURL + downloadPath, Model, {
+  DownloadFile(Model: SearchReportModel, fileName: string) {
+    return this.http.post(this.apiURL + 'CreateReport/CreateGeneralReport', Model, {
       responseType: 'blob',
       observe: 'response'
     }).pipe(

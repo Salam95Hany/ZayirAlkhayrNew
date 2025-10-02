@@ -13,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 import { BenefactorService } from '../../../../Services/zainstitution/benefactor.service';
 import { FormService } from '../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
+import { AuthService } from '../../../../Auth/auth.service';
 
 @Component({
   selector: 'app-benefactor-nationalities',
@@ -27,7 +28,7 @@ export class BenefactorNationalitiesComponent implements OnInit {
   filterList: FilterModel[] = [];
   ItemForm: FormGroup;
   showLoader: boolean = false;
-  isFilter = false;
+  isFilter = true;
   UserModel: any;
   SliderId: number;
   pagingFilterModel: PagingFilterModel = {
@@ -40,13 +41,17 @@ export class BenefactorNationalitiesComponent implements OnInit {
     results: [],
   };
 
+  formErrors = {
+    name: ''
+  };
+
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
-    private formService: FormService, private benefactorService: BenefactorService) {
+    private formService: FormService, private benefactorService: BenefactorService, private authService: AuthService) {
 
   }
 
   ngOnInit(): void {
-    this.UserModel = JSON.parse(localStorage.getItem('UserModel'));
+    this.UserModel = this.authService.userId;
     this.FormInit();
     this.GetAllBeneFactorNationalities();
   }
@@ -56,6 +61,10 @@ export class BenefactorNationalitiesComponent implements OnInit {
       id: 0,
       name: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       InsertUser: null
+    });
+
+    this.ItemForm.valueChanges.subscribe((data) => {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
     });
   }
 
@@ -111,13 +120,23 @@ export class BenefactorNationalitiesComponent implements OnInit {
     this.GetAllBeneFactorNationalities();
   }
 
+  validateForm(): boolean {
+    this.formService.markFormGroupTouched(this.ItemForm);
+    if (this.ItemForm.valid) {
+      return true;
+    } else {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, false)
+      return false;
+    }
+  }
+
   AddNewItem() {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
-    let isValid = this.ItemForm.valid;
+    let isValid = this.validateForm();
 
     if (!isValid)
       return;
-    
+
     this.showLoader = true;
     this.benefactorService.AddNewBeneFactorNationality(this.ItemForm.value).subscribe(data => {
       if (data.isSuccess) {

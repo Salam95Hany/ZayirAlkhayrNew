@@ -36,7 +36,7 @@ export class ZaFiltersComponent {
     });
     if (this.SearchText) {
       const textFilter: FilterModel = {
-        categoryDisplayName: 'بحث بالنص',
+        categoryDisplayName: 'مربع البحث',
         categoryName: 'SearchText',
         itemKey: this.SearchText,
         itemId: this.SearchText,

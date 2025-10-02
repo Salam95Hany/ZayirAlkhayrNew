@@ -73,4 +73,8 @@ export class AuthService {
   get userId(): string {
     return JSON.parse(localStorage.getItem('UserModel') ?? 'null')?.userId;
   }
+
+  get userName(): string {
+    return JSON.parse(localStorage.getItem('UserModel') ?? 'null')?.userName;
+  }
 }

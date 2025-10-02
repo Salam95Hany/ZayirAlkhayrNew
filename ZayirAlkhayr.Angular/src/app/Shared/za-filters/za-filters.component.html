@@ -21,9 +21,9 @@
                     <div class="form-check">
                         <input class="form-check-input" [(ngModel)]="filterItem.isChecked" (change)="filterChecked()" type="checkbox" id="filter-input_{{i}}_{{x}}">
                         <label class="form-check-label d-flex align-items-center justify-content-between w-100 pe-2" for="filter-input_{{i}}_{{x}}">
-                        <span>{{filterItem.itemKey}}</span>
-                        <span>{{filterItem.itemValue}}</span>
-                        </label>
+              <span>{{filterItem.itemKey}}</span>
+              <span>{{filterItem.itemValue}}</span>
+            </label>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
 </div>
 <div class="d-flex align-items-center">
     <span class="badge badge-size bg-primary me-1 mb-1" *ngFor="let selected of SelectedFilter;let i = index">
-    {{selected.categoryName}} : {{selected.itemKey}}
+    {{selected.categoryName == 'SearchText' ? selected.categoryDisplayName:selected.categoryName}} : {{selected.itemKey}}
     <i class="fas fa-times-circle ms-1 icon-close cursor-pointer" (click)="RemoveSelectedFilter(selected,i)"></i>
   </span>
     <span class="badge badge-size bg-secondary me-1 mb-1" *ngIf="SelectedFilter.length > 0">

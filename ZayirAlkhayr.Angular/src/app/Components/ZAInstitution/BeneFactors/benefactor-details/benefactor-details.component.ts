@@ -14,6 +14,7 @@ import { FormService } from '../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 import { FileService } from '../../../../Services/shared/file.service';
 import { SharedService } from '../../../../Services/shared/shared.service';
+import { AuthService } from '../../../../Auth/auth.service';
 
 @Component({
   selector: 'app-benefactor-details',
@@ -48,7 +49,7 @@ export class BenefactorDetailsComponent implements OnInit {
   isFileExist = false;
   BeneFactorTypeValidation = false;
   TypeSwitcher = false;
-  isFilter = false;
+  isFilter = true;
   ImageFile: any;
   ItemForm: FormGroup;
   PagingFilter: PagingFilterModel = {
@@ -69,11 +70,11 @@ export class BenefactorDetailsComponent implements OnInit {
   };
 
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private sharedService: SharedService,
-    private formService: FormService, private benefactorService: BenefactorService, private fileService: FileService
+    private formService: FormService, private benefactorService: BenefactorService, private fileService: FileService, private authService: AuthService
   ) { }
 
   ngOnInit(): void {
-    this.UserModel = JSON.parse(localStorage.getItem('UserModel'));
+    this.UserModel = this.authService.userId;
     this.FormInit();
     this.GetAllBeneFactorsSelector();
     this.GetAllBeneFactorTypesSelector();

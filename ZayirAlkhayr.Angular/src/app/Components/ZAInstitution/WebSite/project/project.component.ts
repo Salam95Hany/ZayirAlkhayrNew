@@ -15,6 +15,7 @@ import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.
 import { FileService } from '../../../../Services/shared/file.service';
 import { FormService } from '../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
+import { AuthService } from '../../../../Auth/auth.service';
 
 @Component({
   selector: 'app-project',
@@ -61,12 +62,12 @@ export class ProjectComponent implements OnInit {
     remainingAmount: ''
   };
 
-  constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
+  constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,private authService: AuthService,
     private fileService: FileService, private websiteService: ZaWebsiteService, private formService: FormService
   ) { }
 
   ngOnInit(): void {
-    this.UserModel = JSON.parse(localStorage.getItem('UserModel'));
+    this.UserModel = this.authService.userId;
     this.FormInit();
     this.GetAllProjects();
     this.GetWebsiteAdminFilters();

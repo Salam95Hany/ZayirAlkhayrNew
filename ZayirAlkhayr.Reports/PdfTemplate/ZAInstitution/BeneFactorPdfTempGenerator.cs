@@ -27,26 +27,23 @@ namespace ZayirAlkhayr.Reports.PdfTemplate.ZAInstitution
             var FullPath = Path.Combine(_environment.WebRootPath, "ExportFiles", "BeneFactor" + ".pdf");
             var ImgPath = Path.Combine(_environment.WebRootPath, "Template", "ZayirAlkhayrLogo2.jpeg");
             var DT = await _beneFactorService.GetExportBeneFactorsData(Model.FilterItems);
-            var DtBatches = DT.Results.ToDataTableBatches(Model.RowCount);
+            //var DtBatches = DT.Results.ToDataTableBatches(Model.RowCount);
             Model.Headers.Add(new PDFHeaderSelected { DisplayOrder = 0, NameAr = "الرقم", NameEn = "RowNumber", ValueType = "Text" });
             Model.Headers = Model.Headers.OrderBy(i => i.DisplayOrder).ToList();
 
             var document = Document.Create(container =>
             {
-                foreach (var dt in DtBatches)
+                container.Page(page =>
                 {
-                    container.Page(page =>
-                    {
-                        page.Size(PageSizes.A4);
-                        page.PageColor(Colors.White);
-                        page.DefaultTextStyle(x => x.FontSize(12).FontFamily("Arial"));
-                        page.ContentFromRightToLeft();
+                    page.Size(PageSizes.A4);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(12).FontFamily("Arial"));
+                    page.ContentFromRightToLeft();
 
-                        page.Header().AddHeaderContent(ImgPath, "المتبرعين", "بیانات المتبرعین");
-                        page.Content().AddTableContent(dt, Model.Headers);
-                        page.Footer().AddFooterContent();
-                    });
-                }
+                    page.Header().AddHeaderContent(ImgPath, "المتبرعين", "بیانات المتبرعین");
+                    page.Content().AddTableContent(DT.Results, Model.Headers);
+                    page.Footer().AddFooterContent();
+                });
             });
 
             document.GeneratePdf(FullPath);

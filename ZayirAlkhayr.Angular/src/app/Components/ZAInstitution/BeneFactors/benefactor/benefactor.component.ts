@@ -13,18 +13,19 @@ import { ToastrService } from 'ngx-toastr';
 import { BenefactorService } from '../../../../Services/zainstitution/benefactor.service';
 import { PdfDownloadService } from '../../../../Services/shared/pdf-download.service';
 import { BeneFactorDetails } from '../../../../Models/zainstitution/BeneFactorModel';
-import { PDFHeaderSelectedModel, PDFModel } from '../../../../Models/shared/PDFHeaderSelected';
 import { FileService } from '../../../../Services/shared/file.service';
 import { FormService } from '../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 import { SharedService } from '../../../../Services/shared/shared.service';
 import { ZaDropDownFormControlComponent } from '../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
+import { AuthService } from '../../../../Auth/auth.service';
+import { SearchReportModel } from '../../../../Models/shared/SearchReportModel';
 
 @Component({
   selector: 'app-benefactor',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule,ZaDropDownFormControlComponent],
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaDropDownFormControlComponent],
   providers: [DatePipe],
   templateUrl: './benefactor.component.html',
   styleUrl: './benefactor.component.css'
@@ -34,7 +35,11 @@ export class BenefactorComponent {
   @ViewChild('DetailsSidePanel', { static: true }) DetailsSidePanel: TemplateRef<any>;
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'المتبرعين'];
   filterList: FilterModel[] = [];
-  PDFHeaderModel: PDFHeaderSelectedModel[] = [];
+  SearchReport: SearchReportModel = {
+    reportType: 'BeneFactorPdf',
+    headers: [],
+    filterItems: []
+  };
   BeneFactorValues: BeneFactorDetails = {} as BeneFactorDetails;
   fileURL: any[] = [];
   BeneFactorValuesData: any[] = [];
@@ -42,16 +47,12 @@ export class BenefactorComponent {
   NationalityList: any[] = [];
   ItemForm: FormGroup;
   showLoader: boolean = false;
-  isFilter = false;
+  isFilter = true;
   isFileExist = false;
   ImageFile: any;
   UserModel: any;
   BeneFactorId: any;
-  RowCount = 20;
-  PDFModel: PDFModel = {
-    filterList: [],
-    headers: []
-  };
+  RowCount = 15;
   pagingFilterModel: PagingFilterModel = {
     currentPage: 1,
     pageSize: 20,
@@ -73,13 +74,13 @@ export class BenefactorComponent {
     welcomeMessage: ''
   };
 
-  constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
+  constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private authService: AuthService,
     private fileService: FileService, private benefactorService: BenefactorService, private pdfService: PdfDownloadService,
     private offcanvasService: NgbOffcanvas, private datePipe: DatePipe, private formService: FormService, private sharedService: SharedService
   ) { }
 
   ngOnInit(): void {
-    this.UserModel = JSON.parse(localStorage.getItem('UserModel'));
+    this.UserModel = this.authService.userId;
     this.FormInit();
     this.GetAllBeneFactorNationalitiesSelector();
     this.GetAllBeneFactorData();
@@ -153,7 +154,7 @@ export class BenefactorComponent {
   openDeleteItemModal(content: any, item: any) {
     this.BeneFactorId = item.id;
     this.modalService.open(content, {
-      size: 'xl',
+      size: 'md',
       scrollable: true,
       centered: true
     });
@@ -170,17 +171,16 @@ export class BenefactorComponent {
   }
 
   OpenPdfFileItemModal(content: any) {
-    this.PDFHeaderModel = this.pdfService.ConverHeaderToPDFModel(this.BeneFactorHeaders);
-    this.RowCount = 20;
+    this.SearchReport.headers = this.pdfService.ConverHeaderToPDFModel(this.BeneFactorHeaders);
+    this.RowCount = 15;
     this.modalService.open(content, {
-      size: 'xl',
+      size: 'lg',
       scrollable: true,
       centered: true
     });
   }
 
   BeneFactorValueCollapseClick(item: any) {
-    debugger;
     item.isCollapsed = !item.isCollapsed;
     this.BeneFactorValuesData.filter(i => i.id != item.id).forEach(item => {
       item.isCollapsed = false;
@@ -228,7 +228,8 @@ export class BenefactorComponent {
 
   filterChecked(filterList: FilterModel[]) {
     this.pagingFilterModel.filterList = filterList;
-    this.PDFModel.filterList = filterList;
+    this.pagingFilterModel.pageSize = 20;
+    this.SearchReport.filterItems = filterList;
     this.GetAllBeneFactorData();
   }
 
@@ -364,8 +365,8 @@ export class BenefactorComponent {
       return;
     }
 
-    let checked = this.PDFHeaderModel.filter(i => i.isSelected);
-    let isAllowSummation = this.PDFHeaderModel.filter(i => i.isAllowSummation);
+    let checked = this.SearchReport.headers.filter(i => i.isSelected);
+    let isAllowSummation = this.SearchReport.headers.filter(i => i.isAllowSummation);
     if (isAllowSummation.length > 1) {
       this.toaster.warning('لا يمكن اختيار جمع قيم العامود الا لعامود واحد فقط');
       return;
@@ -386,15 +387,18 @@ export class BenefactorComponent {
       return;
     }
 
-    if (this.RowCount > 20) {
-      this.toaster.warning('عدد الاسطر لا يتجاوز 20 سطر');
-      return;
-    }
+    // if (this.RowCount > 15) {
+    //   this.toaster.warning('عدد الاسطر لا يتجاوز 15 سطر');
+    //   return;
+    // }
+
     let today = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     let fileName = 'المتبرعين' + '_' + today;
-    this.PDFModel.headers = this.PDFHeaderModel.filter(i => i.isSelected);
+    this.SearchReport.headers = this.SearchReport.headers.filter(i => i.isSelected);
+    this.SearchReport.rowCount = this.RowCount;
+    this.SearchReport.reportType = 'BeneFactorPdf';
     this.showLoader = true;
-    this.pdfService.DownloadFile(this.PDFModel, fileName + '.pdf', 'BeneFactor/ExportBeneFactorsPDFFile?RowCount=' + this.RowCount).subscribe(data => {
+    this.pdfService.DownloadFile(this.SearchReport, fileName + '.pdf').subscribe(data => {
       this.showLoader = false;
     });
     this.modalService.dismissAll();
@@ -406,12 +410,13 @@ export class BenefactorComponent {
       return;
     }
 
-    let userName = this.UserModel?.userName;
     let today = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     let fileName = 'المتبرعين' + '_' + today;
-    this.PDFModel.headers = this.pdfService.ConverHeaderToPDFModel(this.BeneFactorHeaders);
+    this.SearchReport.headers = this.pdfService.ConverHeaderToPDFModel(this.BeneFactorHeaders);
+    this.SearchReport.userName = this.authService.userName;
+    this.SearchReport.reportType = 'BeneFactorExcel';
     this.showLoader = true;
-    this.pdfService.DownloadFile(this.PDFModel, fileName + '.xlsx', 'BeneFactor/ExportBeneFactorsExcelFile?UserName=' + userName).subscribe(data => {
+    this.pdfService.DownloadFile(this.SearchReport, fileName + '.xlsx').subscribe(data => {
       this.showLoader = false;
     });
   }

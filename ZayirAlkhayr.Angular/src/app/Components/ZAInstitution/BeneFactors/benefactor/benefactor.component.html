@@ -205,7 +205,7 @@
                             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-2">
                                 <div class="w-25" *ngFor="let url of fileURL">
                                     <div class="choosed-img img-thumbnail shadow-sm">
-                                        <img src="{{url.image}}" loading="lazy" alt="" />
+                                        <img src="{{url.image}}" loading="lazy" alt="" (error)="$event.target.src = 'logo-2.png'" />
                                         <div class="choosed-img-delete" (click)="DeleteSelectedFile()">
                                             <i class="far fa-times-circle"></i>
                                         </div>
@@ -338,7 +338,7 @@
     <div class="modal-body">
         <table class="table table-bordered table-feature-value align-middle border m-0">
             <tbody>
-                <tr *ngFor="let item of PDFHeaderModel;let x = index">
+                <tr *ngFor="let item of SearchReport.headers;let x = index">
                     <td class="table-feature">{{item.nameAr}}</td>
                     <td class="table-value">
                         <div class="d-flex align-items-center">
@@ -351,24 +351,24 @@
                                 </label>
                             <div class="ms-2">غير محدد</div>
                             <div class="mr-25">
-                                <input type="text" class="form-control" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="item.displayOrder" placeholder="الترتيب">
+                                <input type="number" class="form-control w-50 text-center" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="item.displayOrder" placeholder="الترتيب">
                             </div>
                         </div>
                     </td>
                 </tr>
-                <tr>
+                <!-- <tr>
                     <td class="table-feature">عدد الاسطر في الصفحة الواحدة</td>
                     <td class="table-value">
                         <input type="text" class="form-control" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="RowCount">
                     </td>
-                </tr>
+                </tr> -->
                 <tr>
                     <td class="table-feature">تنبيه هام</td>
                     <td class="table-value">
                         <ul>
                             <li class="fs-5">لا يمكن اختيار أكثر من 6 أعمدة في الصفحة الواحدة</li>
-                            <li class="fs-5">لا يمكن اختيار اكثر من 20 سطر في الصفحة الواحدة</li>
-                            <li class="fs-5">إذا كان احد الأعمدة يحتوي على جمل طويلة برجاء تقليل عدد الأسطر والأعمدة</li>
+                            <!-- <li class="fs-5">لا يمكن اختيار اكثر من 15 سطر في الصفحة الواحدة</li>
+                            <li class="fs-5">إذا كان احد الأعمدة يحتوي على نص طويل برجاء تقليل عدد الأسطر والأعمدة</li> -->
                             <!-- <li class="fs-5">لا يمكن اختيار جمع قيم العامود الا لعامود واحد فقط</li> -->
                         </ul>
                     </td>

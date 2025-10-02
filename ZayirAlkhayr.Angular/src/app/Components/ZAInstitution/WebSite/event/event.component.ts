@@ -15,6 +15,7 @@ import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.
 import { FileService } from '../../../../Services/shared/file.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 import { FormService } from '../../../../Services/shared/form.service';
+import { AuthService } from '../../../../Auth/auth.service';
 
 @Component({
   selector: 'app-event',
@@ -59,12 +60,12 @@ export class EventComponent implements OnInit {
     toDate: ''
   };
 
-  constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
+  constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,private authService: AuthService,
     private fileService: FileService, private websiteService: ZaWebsiteService, private formService: FormService
   ) { }
 
   ngOnInit(): void {
-    this.UserModel = JSON.parse(localStorage.getItem('UserModel'));;
+    this.UserModel = this.authService.userId;
     this.FormInit();
     this.GetAllEvents();
     this.GetWebsiteAdminFilters();

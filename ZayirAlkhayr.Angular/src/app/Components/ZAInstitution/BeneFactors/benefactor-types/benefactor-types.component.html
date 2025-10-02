@@ -33,7 +33,7 @@
                         <th>الاسم</th>
                         <th>تمت الاضافة من قبل</th>
                         <th>تاريخ الاضافة</th>
-                        <th>عمليات</th>
+                        <!-- <th>عمليات</th> -->
                     </tr>
                 </thead>
                 <tbody>
@@ -42,7 +42,7 @@
                             <td>{{item.name}}</td>
                             <td>{{item.createdBy}}</td>
                             <td>{{item.insertDate}}</td>
-                            <td>
+                            <!-- <td>
                                 <div class="w-100 d-flex align-items-center justify-content-center">
                                     <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
                                         <i class="uil uil-pen"></i>
@@ -53,7 +53,7 @@
                                     <span>حذف</span>
                                 </button>
                                 </div>
-                            </td>
+                            </td> -->
                         </tr>
                         <tr *ngIf="!pagedResponseModel.results.length">
                             <td colspan="12" class="text-right">
@@ -84,10 +84,9 @@
                     <tr>
                         <td class="table-feature">الاسم</td>
                         <td class="table-value">
-                            <input type="text" class="form-control form-control-lg" formControlName="name" placeholder="الاسم...">
-                            <div *ngIf="ItemForm.controls['name']?.invalid && (ItemForm.controls['name']?.dirty || ItemForm.controls['name']?.touched)" class="error-message">
-                                <span *ngIf="ItemForm.controls['name'].errors?.['required']"> هذا الحقل مطلوب</span>
-                                <span *ngIf="ItemForm.controls['name'].errors?.['noSpace']"> لا يمكن ان يحتوي الحقل على مسافات فقط</span>
+                            <input type="text" class="form-control form-control-lg input-box" formControlName="name" placeholder="الاسم..." [class.error]="formErrors.name">
+                            <div class="error-message" *ngIf="formErrors.name">
+                                {{ formErrors.name }}
                             </div>
                         </td>
                     </tr>

@@ -107,23 +107,24 @@ namespace ZayirAlkhayr.Reports.Service
                             header.Cell().Element(HeaderCellStyle).Text(name.NameAr);
                         }
                         IContainer HeaderCellStyle(IContainer container) => container
-                .Border(1)
-                .BorderColor(Colors.Grey.Lighten1)
-                .BackgroundLinearGradient(
-                    135,
-                    new[]
-                    {
-                        Color.FromHex("#f8fdf8"),
-                        Color.FromHex("#e8f5e8")
-                    })
-                .PaddingVertical(5)
-                .PaddingHorizontal(5);
+                        .Border(1)
+                        .BorderColor(Colors.Grey.Lighten1)
+                        .BackgroundLinearGradient(
+                            135,
+                            new[]
+                            {
+                                Color.FromHex("#f8fdf8"),
+                                Color.FromHex("#e8f5e8")
+                            })
+                        .PaddingVertical(5)
+                        .PaddingHorizontal(5);
                     });
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
                         foreach (var column in HeaderNames)
                         {
-                            tbl.Cell().Element(CellStyle).Text(dt.Rows[i][column.NameEn].ToString());
+                            var cellValue = dt.Rows[i][column.NameEn]?.ToString() ?? "";
+                            tbl.Cell().Element(CellStyle).ShowEntire().Text(cellValue);
                         }
                     }
 
