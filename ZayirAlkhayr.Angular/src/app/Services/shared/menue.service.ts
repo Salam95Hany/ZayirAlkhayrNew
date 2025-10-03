@@ -138,7 +138,7 @@ export class MenueService {
               route: '/za-institution/account-import-money'
             },
             {
-              displayName: 'الصادرات',
+              displayName: 'المصروفات',
               menuItem: 'account-export-money',
               description: 'تتبع و إدارة الصادرات اليومية',
               icon: 'uil uil-sliders-v-alt',

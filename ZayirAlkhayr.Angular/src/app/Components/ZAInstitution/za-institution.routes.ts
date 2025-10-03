@@ -65,6 +65,11 @@ export const ZAInstitutionRoutes: Routes = [
                 loadComponent: () =>
                     import('./BeneFactors/benefactor-types/benefactor-types.component').then(m => m.BenefactorTypesComponent),
             },
+            {
+                path: 'account-export-money',
+                loadComponent: () =>
+                    import('./Tasks/account-export-mony/account-export-mony.component').then(m => m.AccountExportMonyComponent),
+            },
             { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]
     }

@@ -171,6 +171,7 @@ export class ProjectComponent implements OnInit {
 
   filterChecked(filterItems: FilterModel[]) {
     this.pagingFilterModel.filterList = filterItems;
+    this.pagingFilterModel.currentPage = 1;
     this.GetAllProjects();
   }
 

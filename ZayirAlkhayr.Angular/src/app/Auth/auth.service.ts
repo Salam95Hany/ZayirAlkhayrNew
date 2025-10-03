@@ -12,6 +12,7 @@ export class AuthService {
   apiURL = environment.apiUrl;
   private http = inject(HttpClient);
   private router = inject(Router);
+  private UserModel = JSON.parse(localStorage.getItem('UserModel'));
 
   AdminLogin(model: any) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Auth/AdminLogin', model);
@@ -33,7 +34,7 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    let currentUser = JSON.parse(localStorage.getItem('UserModel'));
+    let currentUser = this.UserModel;
     if (!currentUser || this.isTokenExpired())
       return false;
 
@@ -41,7 +42,7 @@ export class AuthService {
   }
 
   isTokenExpired(): boolean {
-    let access_token = JSON.parse(localStorage.getItem('UserModel'))?.token;
+    let access_token = this.UserModel?.token;
     if (!access_token)
       return true;
     const decode = jwtDecode(access_token);
@@ -53,7 +54,7 @@ export class AuthService {
   }
 
   isInRole(roles: string[]): boolean {
-    let userModel = JSON.parse(localStorage.getItem('UserModel'));
+    let userModel = this.UserModel;
     if (!userModel)
       return false;
 
@@ -67,14 +68,14 @@ export class AuthService {
   }
 
   getUserInfo() {
-    return JSON.parse(localStorage.getItem('UserModel'));
+    return this.UserModel;
   }
 
   get userId(): string {
-    return JSON.parse(localStorage.getItem('UserModel') ?? 'null')?.userId;
+    return this.UserModel?.userId;
   }
 
   get userName(): string {
-    return JSON.parse(localStorage.getItem('UserModel') ?? 'null')?.userName;
+    return this.UserModel?.userName;
   }
 }

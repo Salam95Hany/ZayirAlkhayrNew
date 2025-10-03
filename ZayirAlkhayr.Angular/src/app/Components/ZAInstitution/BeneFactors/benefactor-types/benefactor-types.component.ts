@@ -116,6 +116,7 @@ export class BenefactorTypesComponent implements OnInit {
 
   filterChecked(filterList: FilterModel[]) {
     this.pagingFilterModel.filterList = filterList;
+    this.pagingFilterModel.currentPage = 1;
     this.GetAllBeneFactorTypes();
   }
 

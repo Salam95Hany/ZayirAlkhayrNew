@@ -17,13 +17,13 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.Tasks
         Task<ApiResponseModel<DataTable>> GetAllAccountsImportMonyData(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<List<FilterModel>>> GetAllAccountsImportMonyFilters(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<DataTable>> GetAllImportExportMonyStatistics(PagingFilterModel PagingFilter);
-        //Task<ApiResponseModel<string>> ExportAccountsImportMonyExcelFile(PDFModel Model, string UserName);
-        //Task<ApiResponseModel<string>> ExportAccountsExportMonyExcelFile(PDFModel Model, string UserName);
         Task<ApiResponseModel<string>> AddNewAccountsImportMony(AccountsImportMony Model);
         Task<ApiResponseModel<string>> UpdateAccountsImportMony(AccountsImportMony Model);
         Task<ApiResponseModel<string>> DeleteAccountsImportMony(int AccountId);
         Task<ApiResponseModel<string>> AddNewAccountsExportMony(AccountsExportMony Model);
         Task<ApiResponseModel<string>> UpdateAccountsExportMony(AccountsExportMony Model);
         Task<ApiResponseModel<string>> DeleteAccountsExportMony(int AccountId);
+        Task<ApiResponseModel<DataSet>> GetExportAccountsImportMonyData(SearchReportModel Model);
+        Task<ApiResponseModel<DataSet>> GetExportAccountsExportMonyData(SearchReportModel Model);
     }
 }

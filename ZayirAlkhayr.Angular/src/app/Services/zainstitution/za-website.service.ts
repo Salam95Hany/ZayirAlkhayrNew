@@ -4,7 +4,6 @@ import { FilterModel } from '../../Models/shared/FilterModel';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { FileSortingModel } from '../../Models/shared/FileModel';
-import { PagedResponseModel } from '../../Models/shared/PagedResponseModel';
 import { ApiResponseModel } from '../../Models/shared/ErrorResponseModel';
 
 @Injectable({

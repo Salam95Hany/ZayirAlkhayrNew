@@ -50,6 +50,7 @@ export class ZaDropDownFormControlComponent {
   }
 
   ngOnChanges(changes: any): void {
+    debugger;
     if (changes.data) {
       if (this.selectMulti)
         this.writeValue(this.selectedValues);

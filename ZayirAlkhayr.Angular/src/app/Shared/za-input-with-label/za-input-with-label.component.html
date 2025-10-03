@@ -1,0 +1,6 @@
+<input [type]="type" class="form-control form-control-lg input-box" [placeholder]="placeholder" [value]="value" (input)="onInput($event)" (blur)="onTouched()" (keypress)="NumbersOnly($event.key)" (paste)="allowPaste" (copy)="allowCopy" (cut)="allowCut"
+    [class.error]="error" [disabled]="disabled">
+
+<div class="error-message" *ngIf="error">
+    {{ error }}
+</div>

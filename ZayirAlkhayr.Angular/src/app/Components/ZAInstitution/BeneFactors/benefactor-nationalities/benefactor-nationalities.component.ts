@@ -117,6 +117,7 @@ export class BenefactorNationalitiesComponent implements OnInit {
 
   filterChecked(filterList: FilterModel[]) {
     this.pagingFilterModel.filterList = filterList;
+    this.pagingFilterModel.currentPage = 1;
     this.GetAllBeneFactorNationalities();
   }
 

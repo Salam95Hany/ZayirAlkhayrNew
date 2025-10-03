@@ -1,12 +1,5 @@
-﻿using Azure;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Reports;
@@ -21,7 +14,6 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISQLHelper _sQLHelper;
-        //private readonly IExportManagerService _exportManagerService;
         public AccountsMonyService(ISQLHelper sQLHelper, IUnitOfWork unitOfWork)
         {
             _sQLHelper = sQLHelper;
@@ -112,66 +104,38 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        //public async Task<ApiResponseModel<DataSet>> ExportAccountsImportMonyData(PDFModel Model)
-        //{
-        //    int MonthNum = 0;
-        //    var FilterDt = Model.FilterList.ToDataTableFromFilterModel();
-        //    var Date = Model.FilterList.FirstOrDefault(i => i.CategoryName == "Date")?.ItemId;
-        //    var Month = Model.FilterList.FirstOrDefault(i => i.CategoryName == "Month")?.ItemId;
-        //    if (!string.IsNullOrEmpty(Month))
-        //        MonthNum = DateTime.Parse(Month).Month;
+        public async Task<ApiResponseModel<DataSet>> GetExportAccountsImportMonyData(SearchReportModel Model)
+        {
+            int MonthNum = 0;
+            var FilterDt = Model.FilterItems.ToDataTableFromFilterModel();
+            var Date = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "Date")?.ItemId;
+            var Month = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "Month")?.ItemId;
+            if (!string.IsNullOrEmpty(Month))
+                MonthNum = DateTime.Parse(Month).Month;
 
-        //    var Params = new SqlParameter[3];
-        //    Params[0] = new SqlParameter("@FilterList", FilterDt);
-        //    Params[1] = new SqlParameter("@Date", Date);
-        //    Params[2] = new SqlParameter("@Month", MonthNum);
-        //    var dt = await _sQLHelper.ExecuteDatasetAsync("admin.SP_ExportAccountsImportMonyData", Params);
-        //    return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
-        //}
+            var Params = new SqlParameter[3];
+            Params[0] = new SqlParameter("@FilterList", FilterDt);
+            Params[1] = new SqlParameter("@Date", Date);
+            Params[2] = new SqlParameter("@Month", MonthNum);
+            var dt = await _sQLHelper.ExecuteDatasetAsync("admin.SP_ExportAccountsImportMonyData", Params);
+            return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
+        }
 
-        //public async Task<ApiResponseModel<DataSet>> ExportAccountsExportMonyData(PDFModel Model)
-        //{
-        //    int MonthNum = 0;
-        //    var FilterDt = Model.FilterList.ToDataTableFromFilterModel();
-        //    var Date = Model.FilterList.FirstOrDefault(i => i.CategoryName == "Date")?.ItemId;
-        //    var Month = Model.FilterList.FirstOrDefault(i => i.CategoryName == "Month")?.ItemId;
-        //    if (!string.IsNullOrEmpty(Month))
-        //        MonthNum = DateTime.Parse(Month).Month;
-        //    var Params = new SqlParameter[3];
-        //    Params[0] = new SqlParameter("@FilterList", FilterDt);
-        //    Params[1] = new SqlParameter("@Date", Date);
-        //    Params[2] = new SqlParameter("@Month", MonthNum);
-        //    var dt = await _sQLHelper.ExecuteDatasetAsync("admin.SP_ExportAccountsExportMonyData", Params);
-        //    return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
-        //}
-
-        //public async Task<ApiResponseModel<string>> ExportAccountsImportMonyExcelFile(PDFModel Model, string UserName)
-        //{
-        //    var Dt = await ExportAccountsImportMonyData(Model);
-        //    Model.Headers = Dt.Results.Tables[1].AsEnumerable().Select(i => new PDFHeaderSelected
-        //    {
-        //        NameEn = i.Field<string>("DisplayValue"),
-        //        NameAr = i.Field<string>("DisplayName")
-        //    }).ToList();
-
-        //    //var ExportTemplate = new ExportTemplateBase { Name = "الايرادات", SheetName = "الايرادات", TemplateName = "الايرادات", UserName = UserName, Header = new ExportHeaders { ListHeaders = Model.Headers } };
-        //    //var File = _exportManagerService.Export(ExportTemplate, Dt.Tables[0]);
-        //    return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, "");
-        //}
-
-        //public async Task<ApiResponseModel<string>> ExportAccountsExportMonyExcelFile(PDFModel Model, string UserName)
-        //{
-        //    var Dt = await ExportAccountsExportMonyData(Model);
-        //    Model.Headers = Dt.Results.Tables[1].AsEnumerable().Select(i => new PDFHeaderSelected
-        //    {
-        //        NameEn = i.Field<string>("DisplayValue"),
-        //        NameAr = i.Field<string>("DisplayName")
-        //    }).ToList();
-
-        //    //var ExportTemplate = new ExportTemplateBase { Name = "الصادرات", SheetName = "الصادرات", TemplateName = "الصادرات", UserName = UserName, Header = new ExportHeaders { ListHeaders = Model.Headers } };
-        //    //var File = _exportManagerService.Export(ExportTemplate, Dt.Tables[0]);
-        //    return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, "");
-        //}
+        public async Task<ApiResponseModel<DataSet>> GetExportAccountsExportMonyData(SearchReportModel Model)
+        {
+            int MonthNum = 0;
+            var FilterDt = Model.FilterItems.ToDataTableFromFilterModel();
+            var Date = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "Date")?.ItemId;
+            var Month = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "Month")?.ItemId;
+            if (!string.IsNullOrEmpty(Month))
+                MonthNum = DateTime.Parse(Month).Month;
+            var Params = new SqlParameter[3];
+            Params[0] = new SqlParameter("@FilterList", FilterDt);
+            Params[1] = new SqlParameter("@Date", Date);
+            Params[2] = new SqlParameter("@Month", MonthNum);
+            var dt = await _sQLHelper.ExecuteDatasetAsync("admin.SP_ExportAccountsExportMonyData", Params);
+            return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
+        }
 
         public async Task<ApiResponseModel<string>> AddNewAccountsImportMony(AccountsImportMony Model)
         {

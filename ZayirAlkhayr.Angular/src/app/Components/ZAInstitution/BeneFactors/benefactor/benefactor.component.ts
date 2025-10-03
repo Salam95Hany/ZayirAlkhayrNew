@@ -228,8 +228,8 @@ export class BenefactorComponent {
 
   filterChecked(filterList: FilterModel[]) {
     this.pagingFilterModel.filterList = filterList;
-    this.pagingFilterModel.pageSize = 20;
     this.SearchReport.filterItems = filterList;
+    this.pagingFilterModel.currentPage = 1;
     this.GetAllBeneFactorData();
   }
 

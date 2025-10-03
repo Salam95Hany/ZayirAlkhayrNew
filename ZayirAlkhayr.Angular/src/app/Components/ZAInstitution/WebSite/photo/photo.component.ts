@@ -172,6 +172,7 @@ export class PhotoComponent implements OnInit {
 
   filterChecked(filterItems: FilterModel[]) {
     this.pagingFilterModel.filterList = filterItems;
+    this.pagingFilterModel.currentPage = 1;
     this.GetAllPhotos();
   }
 
