@@ -15,12 +15,13 @@ import { FileService } from '../../../../Services/shared/file.service';
 import { FormService } from '../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../Auth/auth.service';
+import { ZaLoaderComponent } from "../../../../Shared/za-loader/za-loader.component";
 
 @Component({
   selector: 'app-slide-image',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
   templateUrl: './slide-image.component.html',
   styleUrl: './slide-image.component.css'
 })
@@ -35,7 +36,7 @@ export class SlideImageComponent implements OnInit {
   isFilter = true;
   isFileExist = false;
   ImageFile: any;
-  UserModel: any;
+  UserId: any;
   SliderId: number;
   pagingFilterModel: PagingFilterModel = {
     currentPage: 1,
@@ -56,7 +57,7 @@ export class SlideImageComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.UserModel = this.authService.userId;
+    this.UserId = this.authService.userId;
     this.FormInit();
     this.GetHomeSliderImages();
     this.GetWebsiteAdminFilters();
@@ -86,7 +87,7 @@ export class SlideImageComponent implements OnInit {
       title: item?.title,
       isVisible: item?.isVisible,
       oldFileName: fileName[fileName.length - 1],
-      InsertUser: this.UserModel?.userId,
+      InsertUser: this.UserId,
       file: null,
     });
   }
@@ -95,7 +96,7 @@ export class SlideImageComponent implements OnInit {
     this.ItemForm.reset();
     this.ItemForm.get('id').setValue(0);
     this.ItemForm.get('isVisible').setValue(true);
-    this.ItemForm.get('InsertUser').setValue(this.UserModel?.userId);
+    this.ItemForm.get('InsertUser').setValue(this.UserId);
   }
 
   // openSidePanel(journalEntryId: number) {

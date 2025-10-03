@@ -1,1 +1,54 @@
-<p>daily-tasks works!</p>
+<app-za-breadcrumb [TitleList]="TitleList"></app-za-breadcrumb>
+
+<div class="table-card border radius-10 overflow-hidden shadow-sm">
+    <div class="p-3 bg-white">
+        <div class="table-responsive shadow-sm radius-10">
+            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+                <thead>
+                    <tr>
+                        <th>المهمة</th>
+                        <th class="text-center">الحالة</th>
+                        <th>تم التعيين من قبل</th>
+                        <th class="text-center">تغيير الحالة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container>
+                        <tr *ngFor="let item of TasksData">
+                            <td>{{item.task}}</td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center fs-5 gap-2">
+                                    <div class="badge badge-success round fs-15" *ngIf="item.statusId == 1">
+                                        {{item.taskStatusName}}</div>
+                                    <div class="badge badge-warning round fs-15" *ngIf="item.statusId == 2">
+                                        {{item.taskStatusName}}
+                                    </div>
+                                    <div class="badge badge-danger round fs-15" *ngIf="item.statusId == 3">
+                                        {{item.taskStatusName}}</div>
+                                </div>
+                            </td>
+                            <td>{{item.assignFrom}}</td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center fs-5 gap-2">
+                                    <button class="btn btn-warning d-flex align-items-center gap-2" (click)="ConvertTaskStatus(item.id,2)" *ngIf="item.statusId != 2 && item.statusId != 3">
+                                        <span class="navbar-brand m-0">قيد العمل</span>
+                                    </button>
+                                    <button class="btn btn-danger d-flex align-items-center gap-2" (click)="ConvertTaskStatus(item.id,3)" *ngIf="item.statusId != 1" [disabled]="item.statusId == 3">
+                                        <span class="navbar-brand m-0">تم الانتهاء</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="!TasksData.length">
+                            <td colspan="12" class="text-right">
+                                <app-za-empty-data [showEmptyData]="!TasksData.length"></app-za-empty-data>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<app-za-loader [show]="showLoader"></app-za-loader>

@@ -8,8 +8,8 @@ namespace ZayirAlkhayr.Entities.Common
 {
     public class FormDropdownModel
     {
-        public int Value { get; set; }
-        public string Name { get; set; }
+        public string? Value { get; set; }
+        public string? Name { get; set; }
         public bool IsSelected { get; set; } = false;
         public Dictionary<string, object> ExtraData { get; set; } = new();
     }

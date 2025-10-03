@@ -13,5 +13,6 @@ namespace ZayirAlkhayr.Interfaces.Shared
         Task<ApiResponseModel<List<FormDropdownModel>>> GetAllBeneFactorNationalitiesSelector();
         Task<ApiResponseModel<List<FormDropdownModel>>> GetAllBeneFactorParentSelectorById(int BeneFactorId);
         Task<ApiResponseModel<List<FormDropdownModel>>> GetAllBeneFactorTypesSelector();
+        Task<ApiResponseModel<List<FormDropdownModel>>> GetAllUsersSelector();
     }
 }

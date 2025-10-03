@@ -15,12 +15,13 @@ import { CustomValidators, RegexType } from '../../../../Services/shared/custom-
 import { FileService } from '../../../../Services/shared/file.service';
 import { SharedService } from '../../../../Services/shared/shared.service';
 import { AuthService } from '../../../../Auth/auth.service';
+import { ZaLoaderComponent } from "../../../../Shared/za-loader/za-loader.component";
 
 @Component({
   selector: 'app-benefactor-details',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-    ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaDropDownFormControlComponent],
+    ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaDropDownFormControlComponent, ZaLoaderComponent],
   templateUrl: './benefactor-details.component.html',
   styleUrl: './benefactor-details.component.css'
 })
@@ -38,7 +39,7 @@ export class BenefactorDetailsComponent implements OnInit {
   BeneFactorValueId: any;
   DefaultImage = 'logo-2.png';
   BeneFactorTypeId: any;
-  UserModel: any;
+  UserId: any;
   Code: any;
   SearchText = '';
   BeneFactorTypeSearchText = '';
@@ -74,7 +75,7 @@ export class BenefactorDetailsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.UserModel = this.authService.userId;
+    this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllBeneFactorsSelector();
     this.GetAllBeneFactorTypesSelector();
@@ -114,7 +115,7 @@ export class BenefactorDetailsComponent implements OnInit {
     this.ItemForm.get('id').setValue(0);
     this.ItemForm.get('isFinalSubscribe').setValue(false);
     this.ItemForm.get('isParent').setValue(false);
-    this.ItemForm.get('insertUser').setValue(this.UserModel?.userId);
+    this.ItemForm.get('insertUser').setValue(this.UserId);
   }
 
   openItemModal(content: any, item: any) {

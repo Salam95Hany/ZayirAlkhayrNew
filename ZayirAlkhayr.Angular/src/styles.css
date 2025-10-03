@@ -2313,3 +2313,28 @@ td {
 .mt-25 {
     margin-top: 2.5rem !important;
 }
+
+.badge {
+    cursor: pointer;
+}
+
+.badge-sky {
+    background-color: #d5e6f6;
+    color: #1f407d;
+}
+
+.badge-danger {
+    background-color: #edc7cb;
+    color: #dc3545;
+}
+
+.badge-success {
+    background-color: #d9efd8;
+    color: #269124;
+}
+
+.badge-warning {
+    background-color: #f5ebcb;
+    color: #d8a408;
+    ;
+}

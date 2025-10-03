@@ -11,13 +11,13 @@ export class TaskService {
   apiURL = environment.apiUrl;
   constructor(private http: HttpClient) { }
 
-  // ============================= SliderImage ==============================
+  // ============================= AccountsMony ==============================
 
   GetAllAccountsExportMonyData(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'AccountsMony/GetAllAccountsExportMonyData', PagingFilter);
   }
 
-   GetAllAccountsExportMonyFilters(PagingFilter: PagingFilterModel) {
+  GetAllAccountsExportMonyFilters(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'AccountsMony/GetAllAccountsExportMonyFilters', PagingFilter);
   }
 
@@ -25,15 +25,65 @@ export class TaskService {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/GetAllImportExportMonyStatistics', PagingFilter);
   }
 
-   AddNewAccountsExportMony(Model: any) {
+  AddNewAccountsExportMony(Model: any) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/AddNewAccountsExportMony', Model);
   }
 
-   UpdateAccountsExportMony(Model: any) {
+  UpdateAccountsExportMony(Model: any) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/UpdateAccountsExportMony', Model);
   }
 
-    DeleteAccountsExportMony(AccountId: number) {
+  DeleteAccountsExportMony(AccountId: number) {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/DeleteAccountsExportMony?AccountId=' + AccountId);
+  }
+
+  GetAllAccountsImportMonyData(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'AccountsMony/GetAllAccountsImportMonyData', PagingFilter);
+  }
+
+  GetAllAccountsImportMonyFilters(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'AccountsMony/GetAllAccountsImportMonyFilters', PagingFilter);
+  }
+
+  AddNewAccountsImportMony(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/AddNewAccountsImportMony', Model);
+  }
+
+  UpdateAccountsImportMony(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/UpdateAccountsImportMony', Model);
+  }
+
+  DeleteAccountsImportMony(AccountId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/DeleteAccountsImportMony?AccountId=' + AccountId);
+  }
+
+  // ============================= GeneralTasks ==============================
+
+  GetAllUserTasks(UserId: string) {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'GeneralTasks/GetAllUserTasks?UserId=' + UserId);
+  }
+
+  ConvertTaskStatus(TaskId: number, StatusId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/ConvertTaskStatus?TaskId=' + TaskId + '&StatusId=' + StatusId);
+  }
+
+   GetAllGeneralTasksData(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'GeneralTasks/GetAllGeneralTasksData', PagingFilter);
+  }
+
+    GetAllGeneralTasksFilter(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'GeneralTasks/GetAllGeneralTasksFilter', PagingFilter);
+  }
+
+  AddNewGeneralTask(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/AddNewGeneralTask', Model);
+  }
+
+   UpdateGeneralTask(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/UpdateGeneralTask', Model);
+  }
+
+   DeleteGeneralTask(TaskId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/DeleteGeneralTask?TaskId=' + TaskId);
   }
 }

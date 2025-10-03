@@ -16,12 +16,13 @@ import { FileService } from '../../../../Services/shared/file.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 import { FormService } from '../../../../Services/shared/form.service';
 import { AuthService } from '../../../../Auth/auth.service';
+import { ZaLoaderComponent } from "../../../../Shared/za-loader/za-loader.component";
 
 @Component({
   selector: 'app-event',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
   templateUrl: './event.component.html',
   styleUrl: './event.component.css'
 })
@@ -38,7 +39,7 @@ export class EventComponent implements OnInit {
   isFilter = true;
   isFileExist = false;
   EventId: any;
-  UserModel: any;
+  UserId: any;
   FileModel: UploadFileModel = {
     files: [],
     deletedFiles: []
@@ -65,7 +66,7 @@ export class EventComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.UserModel = this.authService.userId;
+    this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllEvents();
     this.GetWebsiteAdminFilters();
@@ -95,7 +96,7 @@ export class EventComponent implements OnInit {
       fromDate: item?.fromDate,
       toDate: item?.toDate,
       isVisible: item?.isVisible,
-      insertUser: this.UserModel?.userId ?? null
+      insertUser: this.UserId ?? null
     });
   }
 
@@ -104,7 +105,7 @@ export class EventComponent implements OnInit {
     this.EventId = '';
     this.ItemForm.get('id').setValue(0);
     this.ItemForm.get('isVisible').setValue(true);
-    this.ItemForm.get('insertUser').setValue(this.UserModel?.userId);
+    this.ItemForm.get('insertUser').setValue(this.UserId);
   }
 
   openItemModal(content: any, item: any) {

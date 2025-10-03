@@ -42,5 +42,12 @@ namespace ZayirAlkhayr.Controllers.Shared
             var results = await _sharedService.GetAllBeneFactorTypesSelector();
             return results;
         }
+
+        [HttpGet("GetAllUsersSelector")]
+        public async Task<ApiResponseModel<List<FormDropdownModel>>> GetAllUsersSelector()
+        {
+            var results = await _sharedService.GetAllUsersSelector();
+            return results;
+        }
     }
 }

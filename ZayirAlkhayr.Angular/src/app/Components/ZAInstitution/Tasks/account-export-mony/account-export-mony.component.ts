@@ -19,20 +19,20 @@ import { SharedService } from '../../../../Services/shared/shared.service';
 import { PdfDownloadService } from '../../../../Services/shared/pdf-download.service';
 import { SearchReportModel } from '../../../../Models/shared/SearchReportModel';
 import { ZaDropDownFormControlComponent } from '../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
+import { ZaLoaderComponent } from "../../../../Shared/za-loader/za-loader.component";
 
 @Component({
   selector: 'app-account-export-mony',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RoleCheckerDirective, ZaInputWithLabelComponent,
-    NgIf, NgFor, ZaDropDownFormControlComponent
-  ],
+    NgIf, NgFor, ZaDropDownFormControlComponent, ZaLoaderComponent],
   templateUrl: './account-export-mony.component.html',
   styleUrl: './account-export-mony.component.css',
   providers: [DatePipe]
 })
 export class AccountExportMonyComponent implements OnInit {
-  TitleList = ['مؤسسة زائر الخير', 'إدارة المهام', 'المصروفات'];
+  TitleList = ['مؤسسة زائر الخير', 'إدارة الحسابات', 'المصروفات'];
   filterList: FilterModel[] = [];
   AccountMoneyList: any[] = [];
   BeneFactors: any[] = [];

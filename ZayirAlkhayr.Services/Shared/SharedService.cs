@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.BeneFactor;
@@ -26,7 +27,7 @@ namespace ZayirAlkhayr.Services.Shared
             var Data = await _unitOfWork.Repository<BeneFactor>().GetAllAsync();
             var Results = Data.Select(i => new FormDropdownModel
             {
-                Value = i.Id,
+                Value = i.Id.ToString(),
                 Name = i.FullName,
                 ExtraData = new Dictionary<string, object>
                 {
@@ -41,7 +42,7 @@ namespace ZayirAlkhayr.Services.Shared
             var Data = await _unitOfWork.Repository<BeneFactorNationality>().GetAllAsync();
             var Results = Data.Select(i => new FormDropdownModel
             {
-                Value = i.Id,
+                Value = i.Id.ToString(),
                 Name = i.Name,
             }).ToList();
             return ApiResponseModel<List<FormDropdownModel>>.Success(GenericErrors.GetSuccess, Results);
@@ -53,7 +54,7 @@ namespace ZayirAlkhayr.Services.Shared
             var Data = await _unitOfWork.Repository<BeneFactorDetail>().GetAllWithSpecAsync(Spec);
             var Results = Data.Select(i => new FormDropdownModel
             {
-                Value = i.Id,
+                Value = i.Id.ToString(),
                 Name = i.TotalValue + " " + i.PaymentDate.ToString("dddd d MMMM , yyyy", new CultureInfo("ar-AE")),
                 ExtraData = new Dictionary<string, object>
                 {
@@ -69,8 +70,19 @@ namespace ZayirAlkhayr.Services.Shared
             var Data = await _unitOfWork.Repository<BeneFactorType>().GetAllWithSpecAsync(Spec);
             var Results = Data.Select(i => new FormDropdownModel
             {
-                Value = i.Id,
+                Value = i.Id.ToString(),
                 Name = i.Name,
+            }).ToList();
+            return ApiResponseModel<List<FormDropdownModel>>.Success(GenericErrors.GetSuccess, Results);
+        }
+
+        public async Task<ApiResponseModel<List<FormDropdownModel>>> GetAllUsersSelector()
+        {
+            var Data = await _unitOfWork.Repository<AdminUser>().GetAllAsync();
+            var Results = Data.Select(i => new FormDropdownModel
+            {
+                Value = i.Id,
+                Name = i.UserName,
             }).ToList();
             return ApiResponseModel<List<FormDropdownModel>>.Success(GenericErrors.GetSuccess, Results);
         }

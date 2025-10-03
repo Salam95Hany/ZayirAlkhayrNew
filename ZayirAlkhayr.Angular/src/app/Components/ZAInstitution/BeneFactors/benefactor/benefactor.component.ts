@@ -20,12 +20,13 @@ import { SharedService } from '../../../../Services/shared/shared.service';
 import { ZaDropDownFormControlComponent } from '../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 import { AuthService } from '../../../../Auth/auth.service';
 import { SearchReportModel } from '../../../../Models/shared/SearchReportModel';
+import { ZaLoaderComponent } from "../../../../Shared/za-loader/za-loader.component";
 
 @Component({
   selector: 'app-benefactor',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaDropDownFormControlComponent],
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaDropDownFormControlComponent, ZaLoaderComponent],
   providers: [DatePipe],
   templateUrl: './benefactor.component.html',
   styleUrl: './benefactor.component.css'
@@ -50,7 +51,7 @@ export class BenefactorComponent {
   isFilter = true;
   isFileExist = false;
   ImageFile: any;
-  UserModel: any;
+  UserId: any;
   BeneFactorId: any;
   RowCount = 15;
   pagingFilterModel: PagingFilterModel = {
@@ -80,7 +81,7 @@ export class BenefactorComponent {
   ) { }
 
   ngOnInit(): void {
-    this.UserModel = this.authService.userId;
+    this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllBeneFactorNationalitiesSelector();
     this.GetAllBeneFactorData();
@@ -123,7 +124,7 @@ export class BenefactorComponent {
       faceBook: item?.faceBook,
       welcomeMessage: item?.welcomeMessage,
       oldFileName: fileName[fileName.length - 1],
-      InsertUser: this.UserModel?.userId,
+      InsertUser: this.UserId,
       file: null,
     });
   }
@@ -133,7 +134,7 @@ export class BenefactorComponent {
     this.BeneFactorId = '';
     this.InputFile.nativeElement.value = '';
     this.ItemForm.get('id').setValue(0);
-    this.ItemForm.get('InsertUser').setValue(this.UserModel?.userId);
+    this.ItemForm.get('InsertUser').setValue(this.UserId);
   }
 
   openItemModal(content: any, item: any) {
@@ -322,7 +323,7 @@ export class BenefactorComponent {
     this.BeneFactorValues.beneFactorTypeId = 1;
     this.BeneFactorValues.isParent = true;
     this.BeneFactorValues.isActive = false;
-    this.BeneFactorValues.insertUser = this.UserModel?.userId;
+    this.BeneFactorValues.insertUser = this.UserId;
     const formData = new FormData();
     this.formService.buildFormData(formData, this.BeneFactorValues);
     this.showLoader = true;

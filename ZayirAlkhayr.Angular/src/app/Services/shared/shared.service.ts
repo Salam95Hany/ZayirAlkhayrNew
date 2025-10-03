@@ -27,4 +27,8 @@ export class SharedService {
   GetAllBeneFactorTypesSelector() {
     return this.http.get<ApiResponseModel<FormDropdownModel[]>>(this.apiURL + 'Shared/GetAllBeneFactorTypesSelector');
   }
+
+  GetAllUsersSelector() {
+    return this.http.get<ApiResponseModel<FormDropdownModel[]>>(this.apiURL + 'Shared/GetAllUsersSelector');
+  }
 }

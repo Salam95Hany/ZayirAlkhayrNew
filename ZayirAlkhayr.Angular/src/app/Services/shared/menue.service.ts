@@ -112,9 +112,8 @@ export class MenueService {
           displayName: 'إدارة المهام',
           menuItem: '3',
           description: 'إدارة المهام و الحسابات',
-          icon: 'uil uil-sliders-v-alt',
+          icon: 'uil uil-list-ul',
           route: '/za-institution/home/3',
-
           subMenus: [
             {
               displayName: 'المهام العامة',
@@ -129,7 +128,17 @@ export class MenueService {
               description: 'إدارة و عرض المهام اليومية',
               icon: 'uil uil-sliders-v-alt',
               route: '/za-institution/daily-tasks'
-            },
+            }
+          ]
+        },
+        {
+          menuItemId: MenuType.ZAInstitution,
+          displayName: 'إدارة الحسابات',
+          menuItem: '4',
+          description: 'تتبع و إدارة الحسابات',
+          icon: 'uil uil-credit-card',
+          route: '/za-institution/home/4',
+          subMenus: [
             {
               displayName: 'الايرادات',
               menuItem: 'account-import-money',
@@ -140,7 +149,7 @@ export class MenueService {
             {
               displayName: 'المصروفات',
               menuItem: 'account-export-money',
-              description: 'تتبع و إدارة الصادرات اليومية',
+              description: 'تتبع و إدارة المصروفات اليومية',
               icon: 'uil uil-sliders-v-alt',
               route: '/za-institution/account-export-money'
             },
@@ -148,11 +157,11 @@ export class MenueService {
         },
         {
           menuItemId: MenuType.ZAInstitution,
-          displayName: 'إدارة الحالات',
-          menuItem: '4',
+          displayName: 'خدمات اجتماعية',
+          menuItem: '5',
           description: 'إدارة بيانات المحتاجين',
           icon: 'fa-solid fa-users',
-          route: '/za-institution/home/4',
+          route: '/za-institution/home/5',
           subMenus: [
             {
               displayName: 'حالات عامة',
@@ -194,10 +203,10 @@ export class MenueService {
         {
           menuItemId: MenuType.ZAInstitution,
           displayName: 'الاعدادات',
-          menuItem: '5',
+          menuItem: '6',
           description: 'التحكم في المستخدمين والنسخ الاحتياطية',
           icon: 'fa-solid fa-tools',
-          route: '/za-institution/home/5',
+          route: '/za-institution/home/6',
 
           subMenus: [
             {

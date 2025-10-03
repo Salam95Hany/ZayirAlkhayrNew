@@ -14,12 +14,13 @@ import { BenefactorService } from '../../../../Services/zainstitution/benefactor
 import { FormService } from '../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../Auth/auth.service';
+import { ZaLoaderComponent } from "../../../../Shared/za-loader/za-loader.component";
 
 @Component({
   selector: 'app-benefactor-types',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
   templateUrl: './benefactor-types.component.html',
   styleUrl: './benefactor-types.component.css'
 })
@@ -29,7 +30,7 @@ export class BenefactorTypesComponent implements OnInit {
   ItemForm: FormGroup;
   showLoader: boolean = false;
   isFilter = true;
-  UserModel: any;
+  UserId: any;
   SliderId: number;
   pagingFilterModel: PagingFilterModel = {
     currentPage: 1,
@@ -50,7 +51,7 @@ export class BenefactorTypesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.UserModel = this.authService.userId;
+    this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllBeneFactorTypes();
   }
@@ -71,14 +72,14 @@ export class BenefactorTypesComponent implements OnInit {
     this.ItemForm.setValue({
       id: item.id,
       name: item?.name,
-      InsertUser: this.UserModel?.userId,
+      InsertUser: this.UserId,
     });
   }
 
   ResetForm() {
     this.ItemForm.reset();
     this.ItemForm.get('id').setValue(0);
-    this.ItemForm.get('InsertUser').setValue(this.UserModel?.userId);
+    this.ItemForm.get('InsertUser').setValue(this.UserId);
   }
 
   openItemModal(content: any, item: any) {

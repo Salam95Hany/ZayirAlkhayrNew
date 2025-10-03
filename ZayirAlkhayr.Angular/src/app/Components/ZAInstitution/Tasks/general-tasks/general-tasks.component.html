@@ -1,1 +1,172 @@
-<p>general-tasks works!</p>
+<app-za-breadcrumb [TitleList]="TitleList"></app-za-breadcrumb>
+
+<div class="table-card border radius-10 overflow-hidden shadow-sm">
+    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
+        <div class="col-md-8 mb-2">
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>إضافة</span>
+                </button>
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                    <i class="uil uil-filter"></i>
+                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2">
+            <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
+        </div>
+        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <div class="d-flex align-items-center">
+                <ng-container>
+                    <app-za-filters [FilterList]="filterList" (filterChanged)="FilterChecked($event)" [searchPlaceholder]="'ب تعيين ل...'"></app-za-filters>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <div class="p-3 bg-white">
+        <div class="table-responsive shadow-sm radius-10">
+            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+                <thead>
+                    <tr>
+                        <th>المهمة</th>
+                        <th>تعيين ل</th>
+                        <th class="text-center">الحالة</th>
+                        <th>تاريخ المهمة</th>
+                        <th>تمت الاضافة من قبل</th>
+                        <th class="text-center">تغيير الحالة</th>
+                        <th class="text-center">أجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container>
+                        <tr *ngFor="let item of TasksData">
+                            <td>{{item.task}}</td>
+                            <td>{{item.assignTo}}</td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center fs-5 gap-2">
+                                    <div class="badge badge-success round fs-15" *ngIf="item.statusId == 1">
+                                        {{item.taskStatusName}}</div>
+                                    <div class="badge badge-warning round fs-15" *ngIf="item.statusId == 2">
+                                        {{item.taskStatusName}}
+                                    </div>
+                                    <div class="badge badge-danger round fs-15" *ngIf="item.statusId == 3">
+                                        {{item.taskStatusName}}</div>
+                                </div>
+                            </td>
+                            <td>{{item.taskDate}}</td>
+                            <td>{{item.createdBy}}</td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center fs-5 gap-2" *ngIf="item.showButtonStatus">
+                                    <button class="btn btn-warning d-flex align-items-center gap-2" (click)="ConvertTaskStatus(item.id,2)" *ngIf="item.statusId != 2 && item.statusId != 3">
+                                        <span class="navbar-brand m-0">قيد العمل</span>
+                                    </button>
+                                    <button class="btn btn-danger d-flex align-items-center gap-2" (click)="ConvertTaskStatus(item.id,3)" *ngIf="item.statusId != 1" [disabled]="item.statusId == 3">
+                                        <span class="navbar-brand m-0">تم الانتهاء</span>
+                                    </button>
+                                </div>
+                            </td>
+                            <td appRole [roles]="['SupperAdmin','Admin']">
+                                <div class="w-100 d-flex align-items-center justify-content-center">
+                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
+                                        <i class="uil uil-pen"></i>
+                                        <span>تعديل</span>
+                                    </button>
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item)">
+                                        <i class="uil uil-trash-alt"></i>
+                                        <span>حذف</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="!TasksData.length">
+                            <td colspan="12" class="text-right">
+                                <app-za-empty-data [showEmptyData]="!TasksData.length"></app-za-empty-data>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<ng-template #OpenItemModal let-modal>
+    <div class="modal-header modal-header-bg justify-content-between">
+        <h2 class="d-flex align-items-center gap-2">
+            <i class="uil uil-plus"></i>
+            <span>املأ البيانات الأتية</span>
+        </h2>
+        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+            <i class="uil uil-times-circle"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="ItemForm" autocomplete="off">
+            <table class="table table-bordered table-feature-value align-middle border m-0">
+                <tbody>
+                    <tr>
+                        <td class="table-feature">المهمة</td>
+                        <td class="table-value">
+                            <app-za-input-with-label [type]="'text'" [placeholder]="'المهمة...'" [error]="formErrors.task" formControlName="task"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">تاريخ المهمة</td>
+                        <td class="table-value">
+                            <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ المهمة...'" [error]="formErrors.taskAddedDate" formControlName="taskAddedDate"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">تعيين ل</td>
+                        <td class="table-value">
+                            <div class="form-floating">
+                                <app-za-drop-down-form-control [data]="UsersData" [showSearch]="true" [placeholder]="'تعيين ل'" formControlName="assignTo" [hasError]="formErrors.assignTo"></app-za-drop-down-form-control>
+                            </div>
+                            <div class="error-message" *ngIf="formErrors.assignTo">
+                                {{ formErrors.assignTo }}
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <div class="modal-footer flex-nowrap gap-2">
+        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
+            <i class="uil uil-save fs-3"></i>
+            <span>حفظ</span>
+        </button>
+        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
+            <i class="uil uil-times-circle fs-3"></i>
+            <span>الغاء</span>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteItemModal let-modal>
+    <div class="modal-header modal-header-bg justify-content-between">
+        <h2 class="d-flex align-items-center gap-2">
+            <span>تأكيد الإجراء</span>
+        </h2>
+        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+            <i class="uil uil-times-circle"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
+    </div>
+    <div class="modal-footer justify-content-start">
+        <button type="button" class="btn btn-success" (click)="DeleteItem()">
+            <i class="fas fa-check"></i>
+            <span class="ms-2">نعم</span>
+        </button>
+        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
+            <i class="fas fa-times"></i>
+            <span class="ms-2">لا</span>
+        </button>
+    </div>
+</ng-template>
+
+<app-za-loader [show]="showLoader"></app-za-loader>

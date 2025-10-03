@@ -70,6 +70,22 @@ export const ZAInstitutionRoutes: Routes = [
                 loadComponent: () =>
                     import('./Tasks/account-export-mony/account-export-mony.component').then(m => m.AccountExportMonyComponent),
             },
+            {
+                path: 'account-import-money',
+                loadComponent: () =>
+                    import('./Tasks/account-import-mony/account-import-mony.component').then(m => m.AccountImportMonyComponent),
+            },
+            {
+                path: 'daily-tasks',
+                loadComponent: () =>
+                    import('./Tasks/daily-tasks/daily-tasks.component').then(m => m.DailyTasksComponent),
+            },
+            {
+                path: 'general-tasks',
+                loadComponent: () =>
+                    import('./Tasks/general-tasks/general-tasks.component').then(m => m.GeneralTasksComponent),
+            },
+
             { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]
     }

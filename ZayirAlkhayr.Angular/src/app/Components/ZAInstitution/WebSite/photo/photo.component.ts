@@ -16,12 +16,13 @@ import { FileService } from '../../../../Services/shared/file.service';
 import { FormService } from '../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../Auth/auth.service';
+import { ZaLoaderComponent } from "../../../../Shared/za-loader/za-loader.component";
 
 @Component({
   selector: 'app-photo',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
   templateUrl: './photo.component.html',
   styleUrl: './photo.component.css'
 })
@@ -40,7 +41,7 @@ export class PhotoComponent implements OnInit {
   isFileExist = false;
   PhotoId: any;
   ImageFile: any;
-  UserModel: any;
+  UserId: any;
   FileModel: UploadFileModel = {
     files: [],
     deletedFiles: []
@@ -65,7 +66,7 @@ export class PhotoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.UserModel = this.authService.userId;
+    this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllPhotos();
     this.GetWebsiteAdminFilters();
@@ -97,7 +98,7 @@ export class PhotoComponent implements OnInit {
       description: item?.description,
       isVisible: item?.isVisible,
       oldFileName: fileName[fileName.length - 1],
-      InsertUser: this.UserModel?.userId,
+      InsertUser: this.UserId,
       file: null,
     });
   }
@@ -108,7 +109,7 @@ export class PhotoComponent implements OnInit {
     this.InputFile.nativeElement.value = '';
     this.ItemForm.get('id').setValue(0);
     this.ItemForm.get('isVisible').setValue(true);
-    this.ItemForm.get('InsertUser').setValue(this.UserModel?.userId);
+    this.ItemForm.get('InsertUser').setValue(this.UserId);
   }
 
   openItemModal(content: any, item: any) {

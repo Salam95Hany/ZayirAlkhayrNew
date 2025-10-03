@@ -16,12 +16,13 @@ import { FileService } from '../../../../Services/shared/file.service';
 import { FormService } from '../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../Auth/auth.service';
+import { ZaLoaderComponent } from "../../../../Shared/za-loader/za-loader.component";
 
 @Component({
   selector: 'app-project',
   standalone: true,
   imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule],
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
   templateUrl: './project.component.html',
   styleUrl: './project.component.css'
 })
@@ -38,7 +39,7 @@ export class ProjectComponent implements OnInit {
   isFilter = true;
   isFileExist = false;
   ProjectId: any;
-  UserModel: any;
+  UserId: any;
   FileModel: UploadFileModel = {
     files: [],
     deletedFiles: []
@@ -67,7 +68,7 @@ export class ProjectComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.UserModel = this.authService.userId;
+    this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllProjects();
     this.GetWebsiteAdminFilters();
@@ -101,7 +102,7 @@ export class ProjectComponent implements OnInit {
       totalAmount: item?.totalAmount,
       remainingAmount: item?.remainingAmount,
       isVisible: item?.isVisible,
-      insertUser: this.UserModel?.userId ?? null
+      insertUser: this.UserId ?? null
     });
   }
 
@@ -110,7 +111,7 @@ export class ProjectComponent implements OnInit {
     this.ProjectId = '';
     this.ItemForm.get('id').setValue(0);
     this.ItemForm.get('isVisible').setValue(true);
-    this.ItemForm.get('insertUser').setValue(this.UserModel?.userId);
+    this.ItemForm.get('insertUser').setValue(this.UserId);
   }
 
   openItemModal(content: any, item: any) {
