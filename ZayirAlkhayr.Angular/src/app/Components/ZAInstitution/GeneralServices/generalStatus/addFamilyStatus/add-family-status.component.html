@@ -1,1 +1,62 @@
-<p>add-family-status works!</p>
+<div class="stepper-container mb-3">
+    <div class="row g-4">
+        <div class="col-xl-2 d-flex justify-content-center justify-content-xl-start m-0">
+            <div class="d-flex flex-column align-items-center justify-content-center gap-2">
+                <div class="user-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h4>اضافة حالة جديدة</h4>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <div class="stepper-wrapper">
+                <div class="stepper-item" *ngFor="let item of StepList; index as i" [ngClass]="{
+                'completed': i + 1 < activeStep,
+                'active': i + 1 == activeStep }">
+                    <div class="step-circle">{{ item.number }}</div>
+                    <div class="step-label">{{ item.stepName }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 d-flex align-items-center justify-content-center justify-content-xl-end m-0">
+            <button class="btn btn-nav btn-next me-2" *ngIf="activeStep > 1" (click)="PreviousSteps()">
+                <i class="fas fa-arrow-right"></i>
+                السابق
+            </button>
+            <button class="btn btn-nav btn-prev" *ngIf="activeStep >= 7">
+                <i class="fas fa-plus-circle fa-fw"></i>
+                <span class="navbar-brand m-0">اضافة</span>
+            </button>
+            <button class="btn btn-nav btn-prev" *ngIf="activeStep >= 1 && activeStep < 7" (click)="NextStep()">
+                التالي
+                <i class="fas fa-arrow-left"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="steppers-content" *ngIf="FamilyLookups">
+    <div [hidden]="activeStep != 1">
+        <app-family-status #FamilyStatus [Categories]="FamilyLookups.categories" [Nationalities]="FamilyLookups.nationalities" [StatusTypes]="FamilyLookups.statusTypes"></app-family-status>
+    </div>
+    <div [hidden]="activeStep != 2">
+        <app-family-data #FamilyData></app-family-data>
+    </div>
+    <div [hidden]="activeStep != 3">
+        <app-family-income-data #FamilyIncome></app-family-income-data>
+    </div>
+    <div [hidden]="activeStep != 4">
+        <app-family-expenses-data #FamilyExpenses [FamilyMembersCount]="AddFamilyStatusModel?.familyDetails?.length"></app-family-expenses-data>
+    </div>
+    <div [hidden]="activeStep != 5">
+        <app-family-medical #FamilyMedical [FamilyDetails]="AddFamilyStatusModel?.familyDetails" [FamilyStatusName]="AddFamilyStatusModel?.familyStatus?.name" [PatientTypes]="FamilyLookups.patientTypes"></app-family-medical>
+    </div>
+    <div [hidden]="activeStep != 6">
+        <app-family-need #FamilyNeed [FamilyNeeds]="FamilyLookups.familyNeeds" [FamilyCategories]="FamilyLookups.familyNeedCategories"></app-family-need>
+    </div>
+    <div [hidden]="activeStep != 7">
+        <app-reviewers #Reviewers></app-reviewers>
+    </div>
+</div>
+
+<app-za-loader [show]="showLoader"></app-za-loader>

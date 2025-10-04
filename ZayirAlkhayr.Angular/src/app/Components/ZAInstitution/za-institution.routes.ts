@@ -85,6 +85,16 @@ export const ZAInstitutionRoutes: Routes = [
                 loadComponent: () =>
                     import('./Tasks/general-tasks/general-tasks.component').then(m => m.GeneralTasksComponent),
             },
+            {
+                path: 'family-status',
+                loadComponent: () =>
+                    import('./GeneralServices/generalStatus/all-family-status/all-family-status.component').then(m => m.AllFamilyStatusComponent),
+            },
+             {
+                path: 'add-family-status',
+                loadComponent: () =>
+                    import('./GeneralServices/generalStatus/addFamilyStatus/add-family-status.component').then(m => m.AddFamilyStatusComponent),
+            },
 
             { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]
