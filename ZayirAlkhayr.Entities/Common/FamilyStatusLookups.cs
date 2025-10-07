@@ -9,12 +9,12 @@ namespace ZayirAlkhayr.Entities.Common
 {
     public class FamilyStatusLookups
     {
-        public List<FamilyCategory> Categories { get; set; }
-        public List<FamilyNationality> Nationalities { get; set; }
+        public List<FormDropdownModel> Categories { get; set; }
+        public List<FormDropdownModel> Nationalities { get; set; }
         public List<FamilyNeedType> FamilyNeeds { get; set; }
         public List<FamilyNeedCategory> FamilyNeedCategories { get; set; }
-        public List<FamilyStatusType> StatusTypes { get; set; }
-        public List<FamilyPatientType> PatientTypes { get; set; }
+        public List<FormDropdownModel> StatusTypes { get; set; }
+        public List<FormDropdownModel> PatientTypes { get; set; }
     }
 
     public class UpdateFamilyStatusLookups

@@ -1,4 +1,4 @@
-import { Component, forwardRef, Input } from '@angular/core';
+import { Component, EventEmitter, forwardRef, Input, Output } from '@angular/core';
 import { FormService } from '../../Services/shared/form.service';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NgIf } from '@angular/common';
@@ -26,6 +26,7 @@ export class ZaInputWithLabelComponent {
   @Input() allowCopy: boolean = true;
   @Input() allowCut: boolean = true;
   @Input() disabled: boolean = false;
+  @Output() inputChanged = new EventEmitter<string>();
   value: any = '';
 
   constructor(private formService: FormService) {
@@ -53,6 +54,7 @@ export class ZaInputWithLabelComponent {
   onInput(event: any) {
     this.value = event.target.value;
     this.onChange(this.value);
+    this.inputChanged.emit(this.value);
   }
 
   NumbersOnly(key: any) {

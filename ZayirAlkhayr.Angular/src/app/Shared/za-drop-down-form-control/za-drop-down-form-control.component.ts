@@ -28,9 +28,10 @@ export class ZaDropDownFormControlComponent {
   @Input() selectMulti: boolean = false;
   @Input() isCustomDropdown: boolean = false;
   @Input() hasError: any;
+  @Input() selectedValues: string[] = [];
   @Output() valueChanged = new EventEmitter<any | any[]>();
   selectedItems: string[] = [];
-  selectedValues: string[] = [];
+
   filteredData: any[] = [];
   searchText: string = '';
   selectedValue: any = '';
@@ -51,7 +52,7 @@ export class ZaDropDownFormControlComponent {
 
   ngOnChanges(changes: any): void {
     debugger;
-    if (changes.data) {
+    if (changes.data || changes?.selectedValues) {
       if (this.selectMulti)
         this.writeValue(this.selectedValues);
       else
@@ -63,7 +64,7 @@ export class ZaDropDownFormControlComponent {
     if (this.selectMulti) {
       if (value)
         this.selectedValues = value;
-
+      this.data?.forEach(i => i.isSelected = false);
       var items = this.data?.filter(x => value?.includes(x.value));
       if (items && items.length > 0) {
         this.selectedItems = items.map(x => x.name);

@@ -22,15 +22,9 @@
 
 
 <div *ngIf="selectMulti" ngbDropdown [autoClose]="'outside'" class="dropdown-as-input">
-    <button type="button" [disabled]="disabled" id="dropdownBasic1" ngbDropdownToggle>
+    <button type="button" [disabled]="disabled" id="dropdownBasic1" class="input-box" [class.error]="hasError" ngbDropdownToggle>
         <div class="overflow-hidden"> 
-            <span *ngIf="selectedItems.length === 0">{{placeholder}}</span>
-            <span *ngIf="selectedItems.length > 0" >
-                <span *ngFor="let item of selectedItems?.slice(0,2)">
-                    {{item?.substring(0, 20)}} - 
-                </span>
-            </span>
-            <span *ngIf="selectedItems.length > 2"> ...</span>  
+            <span>{{placeholder}}</span>
         </div>
     </button>
     <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="w-100">

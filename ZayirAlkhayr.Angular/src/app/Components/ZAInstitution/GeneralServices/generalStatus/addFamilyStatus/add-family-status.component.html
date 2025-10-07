@@ -35,7 +35,7 @@
     </div>
 </div>
 
-<div class="steppers-content" *ngIf="FamilyLookups">
+<div class="steppers-content" *ngIf="isLookupsLoaded">
     <div [hidden]="activeStep != 1">
         <app-family-status #FamilyStatus [Categories]="FamilyLookups.categories" [Nationalities]="FamilyLookups.nationalities" [StatusTypes]="FamilyLookups.statusTypes"></app-family-status>
     </div>

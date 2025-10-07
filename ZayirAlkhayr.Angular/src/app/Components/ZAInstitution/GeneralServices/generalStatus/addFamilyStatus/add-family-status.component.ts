@@ -17,8 +17,8 @@ import { GeneralStatusService } from '../../../../../Services/zainstitution/gene
 @Component({
   selector: 'app-add-family-status',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, ZaLoaderComponent,FamilyStatusComponent,FamilyDataComponent,FamilyIncomeDataComponent,FamilyExpensesDataComponent,
-    FamilyMedicalComponent,FamilyNeedComponent,ReviewersComponent
+  imports: [NgFor, NgIf, NgClass, ZaLoaderComponent, FamilyStatusComponent, FamilyDataComponent, FamilyIncomeDataComponent, FamilyExpensesDataComponent,
+    FamilyMedicalComponent, FamilyNeedComponent, ReviewersComponent
   ],
   templateUrl: './add-family-status.component.html',
   styleUrl: './add-family-status.component.css'
@@ -34,6 +34,7 @@ export class AddFamilyStatusComponent implements OnInit {
   FamilyLookups: FamilyStatusLookups = {} as FamilyStatusLookups;
   AddFamilyStatusModel: AddFamilyStatusModel = {} as AddFamilyStatusModel;
   showLoader = false;
+  isLookupsLoaded = false;
   StepName: string;
   activeStep = 1;
   Counter = 0;
@@ -65,6 +66,7 @@ export class AddFamilyStatusComponent implements OnInit {
     this.generalStatusService.GetFamilyStatusLookups().subscribe(data => {
       this.showLoader = false;
       this.FamilyLookups = data.results;
+      this.isLookupsLoaded = true;
     });
   }
 

@@ -1,1 +1,186 @@
-<p>family-data works!</p>
+<div class="table-card border radius-10 overflow-hidden shadow-sm">
+    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
+        <div class="col-md-8 mb-2">
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>إضافة</span>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2"></div>
+        <div class="col-md-12 mt-3"></div>
+    </div>
+    <div class="p-3 bg-white">
+        <div class="table-responsive shadow-sm radius-10">
+            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>الصلة</th>
+                        <th>السن</th>
+                        <th>الحالة الاجتماعية</th>
+                        <th>التعليم</th>
+                        <th>المهنة</th>
+                        <th>الرقم القومي</th>
+                        <th *ngIf="!DetailsMode">عمليات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container>
+                        <tr *ngFor="let item of FamilyDetails">
+                            <td>{{item.name}}</td>
+                            <td>{{item.relevance}}</td>
+                            <td>{{item.age}}</td>
+                            <td>{{item.maritalStatus}}</td>
+                            <td>{{item.education}}</td>
+                            <td>{{item.jop}}</td>
+                            <td>{{item.nationalId}}</td>
+                            <td>
+                                <div class="w-100 d-flex align-items-center justify-content-center">
+                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
+                                        <i class="uil uil-pen"></i>
+                                        <span>تعديل</span>
+                                    </button>
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item)">
+                                        <i class="uil uil-trash-alt"></i>
+                                        <span>حذف</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="!FamilyDetails.length">
+                            <td colspan="12" class="text-right">
+                                <app-za-empty-data [showEmptyData]="!FamilyDetails.length"></app-za-empty-data>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+        <div class="row mt-3 g-3">
+            <div class="col-md-6">
+                <div class="stats-card border radius-10 p-3 bg-light d-flex align-items-center justify-content-between">
+                    <div class="stats-label">
+                        <i class="fas fa-child me-2 text-primary"></i>
+                        <span class="fw-semibold">عدد الأبناء</span>
+                    </div>
+                    <div class="stats-value">
+                        <span class="badge bg-primary fs-6 px-3 py-2">{{FamilyChildCount}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stats-card border radius-10 p-3 bg-light d-flex align-items-center justify-content-between">
+                    <div class="stats-label">
+                        <i class="fas fa-users me-2 text-success"></i>
+                        <span class="fw-semibold">عدد أفراد الأسرة</span>
+                    </div>
+                    <div class="stats-value">
+                        <span class="badge bg-success fs-6 px-3 py-2">{{FamilyChildCount + 1}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #OpenItemModal let-modal>
+        <div class="modal-header modal-header-bg justify-content-between">
+            <h2 class="d-flex align-items-center gap-2">
+                <i class="uil uil-plus"></i>
+                <span>املأ البيانات الأتية</span>
+            </h2>
+            <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+                <i class="uil uil-times-circle"></i>
+            </div>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="ItemForm" autocomplete="off">
+                <table class="table table-bordered table-feature-value align-middle border m-0">
+                    <tbody>
+                        <tr>
+                            <td class="table-feature">الاسم</td>
+                            <td class="table-value">
+                                <app-za-input-with-label [type]="'text'" [placeholder]="'الاسم...'" [error]="formErrors.name" formControlName="name"></app-za-input-with-label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">الصلة</td>
+                            <td class="table-value">
+                                <app-za-input-with-label [type]="'text'" [placeholder]="'الصلة...'" [error]="formErrors.relevance" formControlName="relevance"></app-za-input-with-label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">السن</td>
+                            <td class="table-value">
+                                <app-za-input-with-label [type]="'text'" [placeholder]="'السن...'" [error]="formErrors.age" formControlName="age" [allowNumbersOnly]="true" [allowPaste]="false"></app-za-input-with-label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">التعليم</td>
+                            <td class="table-value">
+                                <app-za-input-with-label [type]="'text'" [placeholder]="'التعليم...'" [error]="formErrors.education" formControlName="education"></app-za-input-with-label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">المهنة</td>
+                            <td class="table-value">
+                                <app-za-input-with-label [type]="'text'" [placeholder]="'المهنة...'" [error]="formErrors.jop" formControlName="jop"></app-za-input-with-label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">الرقم القومي</td>
+                            <td class="table-value">
+                                <app-za-input-with-label [type]="'text'" [placeholder]="'الرقم القومي...'" [error]="formErrors.nationalId" formControlName="nationalId"></app-za-input-with-label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">الحالة الاجتماعية</td>
+                            <td class="table-value">
+                                <div class="form-floating">
+                                    <app-za-drop-down-form-control [data]="MaritalStatus" [showSearch]="true" [placeholder]="'الحالة الاجتماعية'" formControlName="maritalStatus" [hasError]="formErrors.maritalStatus"></app-za-drop-down-form-control>
+                                </div>
+                                <div class="error-message" *ngIf="formErrors.maritalStatus">
+                                    {{ formErrors.maritalStatus }}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div class="modal-footer flex-nowrap gap-2">
+            <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
+            <i class="uil uil-save fs-3"></i>
+            <span>حفظ</span>
+        </button>
+            <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
+            <i class="uil uil-times-circle fs-3"></i>
+            <span>الغاء</span>
+        </button>
+        </div>
+    </ng-template>
+
+    <ng-template #deleteItemModal let-modal>
+        <div class="modal-header modal-header-bg justify-content-between">
+            <h2 class="d-flex align-items-center gap-2">
+                <span>تأكيد الإجراء</span>
+            </h2>
+            <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+                <i class="uil uil-times-circle"></i>
+            </div>
+        </div>
+        <div class="modal-body">
+            <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
+        </div>
+        <div class="modal-footer justify-content-start">
+            <button type="button" class="btn btn-success" (click)="DeleteItem()">
+            <i class="fas fa-check"></i>
+            <span class="ms-2">نعم</span>
+        </button>
+            <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
+            <i class="fas fa-times"></i>
+            <span class="ms-2">لا</span>
+        </button>
+        </div>
+    </ng-template>

@@ -1,1 +1,95 @@
-<p>family-expenses-data works!</p>
+<div class="table-responsive shadow-sm radius-10">
+    <table class="table table-bordered table-feature-value align-middle border m-0">
+        <thead>
+            <tr>
+                <th colspan="2">بيان المصروفات للاسرة</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="table-feature">إيجار\كهرباء\مياه\غاز\صرف</td>
+                <td class="table-value">
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'إيجار/كهرباء/مياه/غاز/صرف...'" [(ngModel)]="FamilyExpenses.rent_Electricity_Water_Gas_Sewage" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'rent_Electricity_Water_Gas_Sewage')"></app-za-input-with-label>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">كشف طبي\علاج</td>
+                <td class="table-value">
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'كشف طبي/علاج...'" [(ngModel)]="FamilyExpenses.medicalExamination_Treatment" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'medicalExamination_Treatment')"></app-za-input-with-label>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">ديون\أقساط</td>
+                <td class="table-value">
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'ديون/أقساط...'" [(ngModel)]="FamilyExpenses.installment_debts" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'installment_debts')"></app-za-input-with-label>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">مصاريف مدارس\حضانة\دروس</td>
+                <td class="table-value">
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'مصاريف مدارس/حضانة/دروس...'" [(ngModel)]="FamilyExpenses.schoolExpenses" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'schoolExpenses')"></app-za-input-with-label>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">جلسات علاج طبيعي</td>
+                <td class="table-value">
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'جلسات علاج طبيعي...'" [(ngModel)]="FamilyExpenses.physiotherapySessions" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'physiotherapySessions')"></app-za-input-with-label>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">تحاليل</td>
+                <td class="table-value">
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'تحاليل...'" [(ngModel)]="FamilyExpenses.analysis" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'analysis')"></app-za-input-with-label>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">انتقالات مرضية</td>
+                <td class="table-value">
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'انتقالات مرضية...'" [(ngModel)]="FamilyExpenses.satisfactoryTransfers" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'satisfactoryTransfers')"></app-za-input-with-label>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">من التموين الموازي</td>
+                <td>
+                    <div class="d-flex d-flex align-items-center">
+                        <div class="me-2">نعم</div>
+                        <label class="jtoggler-wrapper m-0 mx-0">
+                          <input type="checkbox" class="jtoggler" [disabled]="DetailsMode" [(ngModel)]="FamilyExpenses.isMinisterialSupply">
+                          <div class="jtoggler-control">
+                            <div class="jtoggler-handle"></div>
+                          </div>
+                        </label>
+                        <div class="ms-2">لا</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">تستفيد من بنك الطعام</td>
+                <td>
+                    <div class="d-flex d-flex align-items-center">
+                        <div class="me-2">نعم</div>
+                        <label class="jtoggler-wrapper m-0 mx-0">
+                          <input type="checkbox" class="jtoggler" [disabled]="DetailsMode" [(ngModel)]="FamilyExpenses.isFoodBank">
+                          <div class="jtoggler-control">
+                            <div class="jtoggler-handle"></div>
+                          </div>
+                        </label>
+                        <div class="ms-2">لا</div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">إجمالي مصروفات الاسرة</td>
+                <td class="table-value">
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'إجمالي مصروفات الاسرة...'" [(ngModel)]="FamilyExpenses.totalFamilyExpenses" [disabled]="true"></app-za-input-with-label>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">صافي دخل الاسرة</td>
+                <td class="table-value">
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'صافي دخل الاسرة...'" [(ngModel)]="FamilyExpenses.netFamilyIncome" [disabled]="true"></app-za-input-with-label>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

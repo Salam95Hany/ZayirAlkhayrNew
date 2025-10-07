@@ -22,13 +22,13 @@
                 <tr>
                     <td class="table-feature">رقم الهاتف 1</td>
                     <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'رقم الهاتف 1...'" [error]="formErrors.phone" [allowNumbersOnly]="true" formControlName="phone"></app-za-input-with-label>
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'رقم الهاتف 1...'" [error]="formErrors.phone" [allowNumbersOnly]="true" [allowPaste]="false" formControlName="phone"></app-za-input-with-label>
                     </td>
                 </tr>
                 <tr>
                     <td class="table-feature">رقم الهاتف 2</td>
                     <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'رقم الهاتف 2...'" [allowNumbersOnly]="true" formControlName="phone1"></app-za-input-with-label>
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'رقم الهاتف 2...'" [allowNumbersOnly]="true" [allowPaste]="false" formControlName="phone1"></app-za-input-with-label>
                     </td>
                 </tr>
                 <tr>
@@ -40,62 +40,98 @@
                 <tr>
                     <td class="table-feature">الصلة</td>
                     <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'الصلة...'" formControlName="relevance"></app-za-input-with-label>
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'الصلة...'" formControlName="relevance" [error]="formErrors.relevance"></app-za-input-with-label>
                     </td>
                 </tr>
                 <tr>
                     <td class="table-feature">التعليم</td>
                     <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'التعليم...'" formControlName="education"></app-za-input-with-label>
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'التعليم...'" formControlName="education" [error]="formErrors.education"></app-za-input-with-label>
                     </td>
                 </tr>
                 <tr>
                     <td class="table-feature">المهنة</td>
                     <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'المهنة...'" formControlName="jop"></app-za-input-with-label>
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'المهنة...'" formControlName="jop" [error]="formErrors.jop"></app-za-input-with-label>
                     </td>
                 </tr>
                 <tr>
                     <td class="table-feature">السن</td>
                     <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'السن...'" [allowNumbersOnly]="true" formControlName="age"></app-za-input-with-label>
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'السن...'" [allowNumbersOnly]="true" [allowPaste]="false" formControlName="age"></app-za-input-with-label>
                     </td>
                 </tr>
                 <tr>
                     <td class="table-feature">الرقم القومي</td>
                     <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'الرقم القومي...'" formControlName="nationalId"></app-za-input-with-label>
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'الرقم القومي...'" formControlName="nationalId" [error]="formErrors.nationalId"></app-za-input-with-label>
                     </td>
                 </tr>
                 <tr>
                     <td class="table-feature">القرية</td>
                     <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'القرية...'" formControlName="village"></app-za-input-with-label>
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'القرية...'" formControlName="village" [error]="formErrors.village"></app-za-input-with-label>
                     </td>
                 </tr>
                 <tr>
                     <td class="table-feature">المركز</td>
                     <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'المركز...'" formControlName="center"></app-za-input-with-label>
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'المركز...'" formControlName="center" [error]="formErrors.center"></app-za-input-with-label>
                     </td>
                 </tr>
                 <tr>
                     <td class="table-feature">المحافظة</td>
                     <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'المحافظة...'" formControlName="governorate"></app-za-input-with-label>
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'المحافظة...'" formControlName="governorate" [error]="formErrors.governorate"></app-za-input-with-label>
                     </td>
                 </tr>
-                <!-- <tr>
+                <tr>
                     <td class="table-feature">الحالة الاجتماعية</td>
                     <td class="table-value">
                         <div class="form-floating">
-                            <app-za-drop-down-form-control [data]="MaritalStatus" [showSearch]="true" [placeholder]="'الحالة الاجتماعية'" formControlName="assignTo" [hasError]="formErrors.assignTo"></app-za-drop-down-form-control>
-                        </div>
-                        <div class="error-message" *ngIf="formErrors.assignTo">
-                            {{ formErrors.assignTo }}
+                            <app-za-drop-down-form-control [data]="MaritalStatus" [showSearch]="true" [placeholder]="'الحالة الاجتماعية'" formControlName="maritalStatus"></app-za-drop-down-form-control>
                         </div>
                     </td>
-                </tr> -->
+                </tr>
+                <tr>
+                    <td class="table-feature">النوع</td>
+                    <td class="table-value">
+                        <div class="form-floating">
+                            <app-za-drop-down-form-control [data]="StatusTypes" [showSearch]="true" [placeholder]="'النوع'" formControlName="statusTypeId" [hasError]="formErrors.statusTypeId"></app-za-drop-down-form-control>
+                        </div>
+                        <div class="error-message" *ngIf="formErrors.statusTypeId">
+                            {{ formErrors.statusTypeId }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-feature">الجنسية</td>
+                    <td class="table-value">
+                        <div class="form-floating">
+                            <app-za-drop-down-form-control [data]="Nationalities" [showSearch]="true" [placeholder]="'الجنسية'" formControlName="nationalityId" [hasError]="formErrors.nationalityId"></app-za-drop-down-form-control>
+                        </div>
+                        <div class="error-message" *ngIf="formErrors.nationalityId">
+                            {{ formErrors.nationalityId }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-feature">الفئة</td>
+                    <td class="table-value">
+                        <div class="form-floating">
+                            <app-za-drop-down-form-control [data]="Categories" [showSearch]="true" [placeholder]="'الفئة'" formControlName="categoryId" [hasError]="formErrors.categoryId"></app-za-drop-down-form-control>
+                        </div>
+                        <div class="error-message" *ngIf="formErrors.categoryId">
+                            {{ formErrors.categoryId }}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-feature">تاريخ الاضافة</td>
+                    <td class="table-value">
+                        <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ الاضافة...'" [error]="formErrors.addedDate" formControlName="addedDate" [disabled]="DetailsMode || UpdateMode"></app-za-input-with-label>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </form>

@@ -1,16 +1,19 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FamilyStatus } from '../../../../../../Models/zainstitution/GeneralStatus/AddFamilyStatusModel';
 import { FamilyCategories, FamilyNationalities, FamilyStatusTypes } from '../../../../../../Models/zainstitution/GeneralStatus/FamilyStatusLookups';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { ZaInputWithLabelComponent } from "../../../../../../Shared/za-input-with-label/za-input-with-label.component";
 import { ZaDropDownFormControlComponent } from "../../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormService } from '../../../../../../Services/shared/form.service';
+import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
+import { FormDropdownModel } from '../../../../../../Models/shared/FormDropdownModel';
 
 @Component({
   selector: 'app-family-status',
   standalone: true,
-  imports: [ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule],
+  imports: [ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule,NgIf],
   templateUrl: './family-status.component.html',
   styleUrl: './family-status.component.css',
   providers: [DatePipe]
@@ -18,9 +21,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class FamilyStatusComponent implements OnInit {
   @Output() StatusNameChanged = new EventEmitter<string>();
   @Input() FamilyStatus: FamilyStatus = {} as FamilyStatus;
-  @Input() Categories: FamilyCategories[] = [];
-  @Input() Nationalities: FamilyNationalities[] = [];
-  @Input() StatusTypes: FamilyStatusTypes[] = [];
+  @Input() Categories: FormDropdownModel[] = [];
+  @Input() Nationalities: FormDropdownModel[] = [];
+  @Input() StatusTypes: FormDropdownModel[] = [];
   @Input() UpdateMode = false;
   @Input() DetailsMode = false;
 
@@ -29,24 +32,32 @@ export class FamilyStatusComponent implements OnInit {
   ItemForm: FormGroup;
 
   MaritalStatus: any[] = [
-    { id: 1, name: 'أعزب' },
-    { id: 2, name: 'متزوج' },
-    { id: 3, name: 'مطلقة' },
-    { id: 4, name: 'أرمل' }
+    { value: 'أعزب', name: 'أعزب' },
+    { value: 'متزوج', name: 'متزوج' },
+    { value: 'مطلقة', name: 'مطلقة' },
+    { value: 'أرمل', name: 'أرمل' }
   ];
 
-   formErrors = {
+  formErrors = {
     name: '',
     fname: '',
     phone: '',
     address: '',
+    relevance: '',
     statusTypeId: '',
     nationalityId: '',
     categoryId: '',
-    addedDate: ''
+    addedDate: '',
+    education: '',
+    jop: '',
+    nationalId: '',
+    village: '',
+    center: '',
+    governorate: '',
+    maritalStatus: ''
   };
 
-  constructor(private datePipe: DatePipe, private fb: FormBuilder, private authService: AuthService) { }
+  constructor(private datePipe: DatePipe, private fb: FormBuilder, private authService: AuthService, private formService: FormService) { }
 
   ngOnInit(): void {
     this.UserId = this.authService.userId;
@@ -64,24 +75,28 @@ export class FamilyStatusComponent implements OnInit {
     this.FamilyStatus.insertUser = this.UserId;
 
     this.ItemForm = this.fb.group({
-      name: [this.FamilyStatus.name, Validators.required],
-      fname: [this.FamilyStatus.fname, Validators.required],
-      phone: [this.FamilyStatus.phone, [Validators.required]],
+      name: [this.FamilyStatus.name, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      fname: [this.FamilyStatus.fname, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      phone: [this.FamilyStatus.phone, Validators.required],
       phone1: [this.FamilyStatus.phone1],
-      address: [this.FamilyStatus.address, Validators.required],
-      relevance: [this.FamilyStatus.relevance],
-      education: [this.FamilyStatus.education],
-      jop: [this.FamilyStatus.jop],
+      address: [this.FamilyStatus.address, CustomValidators.regexPattern(RegexType.noSpace)],
+      relevance: [this.FamilyStatus.relevance, CustomValidators.regexPattern(RegexType.noSpace)],
+      education: [this.FamilyStatus.education, CustomValidators.regexPattern(RegexType.noSpace)],
+      jop: [this.FamilyStatus.jop, CustomValidators.regexPattern(RegexType.noSpace)],
       age: [this.FamilyStatus.age],
-      nationalId: [this.FamilyStatus.nationalId],
-      village: [this.FamilyStatus.village],
-      center: [this.FamilyStatus.center],
-      governorate: [this.FamilyStatus.governorate],
-      maritalStatus: [this.FamilyStatus.maritalStatus],
+      nationalId: [this.FamilyStatus.nationalId, CustomValidators.regexPattern(RegexType.noSpace)],
+      village: [this.FamilyStatus.village, CustomValidators.regexPattern(RegexType.noSpace)],
+      center: [this.FamilyStatus.center, CustomValidators.regexPattern(RegexType.noSpace)],
+      governorate: [this.FamilyStatus.governorate, CustomValidators.regexPattern(RegexType.noSpace)],
+      maritalStatus: [this.FamilyStatus.maritalStatus, CustomValidators.regexPattern(RegexType.noSpace)],
       statusTypeId: [this.FamilyStatus.statusTypeId, Validators.required],
       nationalityId: [this.FamilyStatus.nationalityId, Validators.required],
       categoryId: [this.FamilyStatus.categoryId, Validators.required],
       addedDate: [this.FamilyStatus.addedDate, Validators.required]
+    });
+
+    this.ItemForm.valueChanges.subscribe((data) => {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
     });
 
     this.ItemForm.get('name')?.valueChanges.subscribe(value => {
@@ -91,15 +106,23 @@ export class FamilyStatusComponent implements OnInit {
     });
   }
 
-  onfocus() {
-    this.isDate = true;
+  validateForm(): boolean {
+    this.formService.markFormGroupTouched(this.ItemForm);
+    if (this.ItemForm.valid) {
+      return true;
+    } else {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, false)
+      return false;
+    }
   }
 
   GetOutputData() {
-    this.ItemForm.markAllAsTouched();
-    if (!this.ItemForm.valid) {
-      return null;
-    }
+    // let isValid = this.validateForm();
+    // if (!isValid) {
+    //   return null;
+    // }
+
+
     return this.ItemForm.value;
   }
 }

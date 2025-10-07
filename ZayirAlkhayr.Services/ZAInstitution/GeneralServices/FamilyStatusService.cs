@@ -94,28 +94,48 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             return ApiResponseModel<FamilyStatusLookups>.Success(GenericErrors.GetSuccess, Model);
         }
 
-        async Task<List<FamilyCategory>> GetFamilyCategories()
+        async Task<List<FormDropdownModel>> GetFamilyCategories()
         {
             var results = await _unitOfWork.Repository<FamilyCategory>().GetAllAsync();
-            return results;
+            var data = results.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.Name
+            }).ToList();
+            return data;
         }
 
-        async Task<List<FamilyPatientType>> GetFamilyPatientTypes()
+        async Task<List<FormDropdownModel>> GetFamilyPatientTypes()
         {
             var results = await _unitOfWork.Repository<FamilyPatientType>().GetAllAsync();
-            return results;
+            var data = results.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.Name
+            }).ToList();
+            return data;
         }
 
-        async Task<List<FamilyNationality>> GetFamilyNationalities()
+        async Task<List<FormDropdownModel>> GetFamilyNationalities()
         {
             var results = await _unitOfWork.Repository<FamilyNationality>().GetAllAsync();
-            return results;
+            var data = results.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.Name
+            }).ToList();
+            return data;
         }
 
-        async Task<List<FamilyStatusType>> GetFamilyStatusTypes()
+        async Task<List<FormDropdownModel>> GetFamilyStatusTypes()
         {
             var results = await _unitOfWork.Repository<FamilyStatusType>().GetAllAsync();
-            return results;
+            var data = results.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.Name
+            }).ToList();
+            return data;
         }
 
         async Task<List<FamilyNeedType>> GetFamilyNeedTypes()

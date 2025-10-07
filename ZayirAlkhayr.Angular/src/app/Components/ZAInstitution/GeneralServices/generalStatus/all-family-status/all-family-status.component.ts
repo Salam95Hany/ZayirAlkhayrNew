@@ -22,8 +22,8 @@ import { RouterModule } from '@angular/router';
   selector: 'app-all-family-status',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
-    CommonModule, FormsModule, ReactiveFormsModule, NgbModule, ZaInputWithLabelComponent,RouterModule,
-    NgIf, NgFor, ZaDropDownFormControlComponent, ZaLoaderComponent],
+    CommonModule, FormsModule, ReactiveFormsModule, NgbModule,RouterModule,
+    NgIf, NgFor, ZaLoaderComponent],
   templateUrl: './all-family-status.component.html',
   styleUrl: './all-family-status.component.css'
 })

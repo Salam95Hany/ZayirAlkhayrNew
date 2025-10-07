@@ -1,1 +1,211 @@
-<p>family-medical works!</p>
+<div class="table-card border radius-10 overflow-hidden shadow-sm">
+    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
+        <div class="col-md-8 mb-2">
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>إضافة</span>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2"></div>
+        <div class="col-md-12 mt-3"></div>
+    </div>
+    <div class="p-3 bg-white">
+        <div class="table-responsive shadow-sm radius-10">
+            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+                <thead>
+                    <tr>
+                        <th>الاسم</th>
+                        <th>نوع المريض</th>
+                        <th>تاريخ المريض</th>
+                        <th>التخصص</th>
+                        <th>هل يوجد تقرير طبي</th>
+                        <th>هل يحتاج لعملية</th>
+                        <th *ngIf="!DetailsMode">عمليات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container>
+                        <tr *ngFor="let item of FamilyPatients">
+                            <td>{{item.name}}</td>
+                            <td>{{item.specialization}}</td>
+                            <td>{{item.patientDate}}</td>
+                            <td>{{item.patientTypeNames}}</td>
+                            <td>
+                                <div class="d-flex d-flex align-items-center">
+                                    <div class="me-2">نعم</div>
+                                    <label class="jtoggler-wrapper m-0 mx-0">
+                                        <input type="checkbox" class="jtoggler" [checked]="item.isMedicalReport"
+                                            disabled>
+                                        <div class="jtoggler-control">
+                                            <div class="jtoggler-handle"></div>
+                                        </div>
+                                    </label>
+                                    <div class="ms-2">لا</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex d-flex align-items-center">
+                                    <div class="me-2">نعم</div>
+                                    <label class="jtoggler-wrapper m-0 mx-0">
+                                        <input type="checkbox" class="jtoggler" [checked]="item.isNeedProcess" disabled>
+                                        <div class="jtoggler-control">
+                                            <div class="jtoggler-handle"></div>
+                                        </div>
+                                    </label>
+                                    <div class="ms-2">لا</div>
+                                </div>
+                            </td>
+                            <td *ngIf="!DetailsMode">
+                                <div class="w-100 d-flex align-items-center justify-content-center">
+                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
+                                        <i class="uil uil-pen"></i>
+                                        <span>تعديل</span>
+                                    </button>
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item)">
+                                        <i class="uil uil-trash-alt"></i>
+                                        <span>حذف</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="!FamilyPatients.length">
+                            <td colspan="12" class="text-right">
+                                <app-za-empty-data [showEmptyData]="!FamilyPatients.length"></app-za-empty-data>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <ng-template #OpenItemModal let-modal>
+        <div class="modal-header modal-header-bg justify-content-between">
+            <h2 class="d-flex align-items-center gap-2">
+                <i class="uil uil-plus"></i>
+                <span>املأ البيانات الأتية</span>
+            </h2>
+            <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+                <i class="uil uil-times-circle"></i>
+            </div>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="ItemForm" autocomplete="off">
+                <table class="table table-bordered table-feature-value align-middle border m-0">
+                    <tbody>
+                        <tr>
+                            <td class="table-feature">اسم الفرد</td>
+                            <td class="table-value">
+                                <div class="form-floating">
+                                    <app-za-drop-down-form-control [data]="FamilyNames" [showSearch]="true" [placeholder]="'اسم الفرد'" formControlName="familyName" [hasError]="formErrors.familyName"></app-za-drop-down-form-control>
+                                </div>
+                                <div class="error-message" *ngIf="formErrors.familyName">
+                                    {{ formErrors.familyName }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">التخصص</td>
+                            <td class="table-value">
+                                <div class="form-floating">
+                                    <app-za-drop-down-form-control [data]="PatientTypes" [selectedValues]="SelectedPatientTypeIds" [showSearch]="true" [placeholder]="'التخصص'" [selectMulti]="true" formControlName="patientType" (valueChanged)="PatientTypeChange($event)" [hasError]="formErrors.patientType"></app-za-drop-down-form-control>
+                                </div>
+                                <div class="selected-items-container">
+                                    <div class="d-flex align-items-center flex-wrap gap-2">
+                                        <div class="selected-item-chip" *ngFor="let selected of SelectedPatientTypes;let i = index">
+                                            <button class="chip-remove-btn" type="button" aria-label="Remove" (click)="RemoveSelectedPatientTypes(selected.id)">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                            <span class="chip-label">{{selected.name}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="error-message" *ngIf="formErrors.patientType">
+                                    {{ formErrors.patientType }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">نوع المرض</td>
+                            <td class="table-value">
+                                <app-za-input-with-label [type]="'text'" [placeholder]="'نوع المرض...'" [error]="formErrors.specialization" formControlName="specialization"></app-za-input-with-label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">تاريخ المرض</td>
+                            <td class="table-value">
+                                <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ المرض...'" [error]="formErrors.patientDate" formControlName="patientDate"></app-za-input-with-label>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="table-feature">هل يوجد تقرير طبي</td>
+                            <td class="table-value">
+                                <div class="d-flex d-flex align-items-center">
+                                    <div class="me-2">نعم</div>
+                                    <label class="jtoggler-wrapper m-0 mx-0">
+                                        <input type="checkbox" class="jtoggler" formControlName="isMedicalReport">
+                                        <div class="jtoggler-control">
+                                            <div class="jtoggler-handle"></div>
+                                        </div>
+                                    </label>
+                                    <div class="ms-2">لا</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">هل يحتاج لعملية</td>
+                            <td class="table-value">
+                                <div class="d-flex d-flex align-items-center">
+                                    <div class="me-2">نعم</div>
+                                    <label class="jtoggler-wrapper m-0 mx-0">
+                                        <input type="checkbox" class="jtoggler" formControlName="isNeedProcess">
+                                        <div class="jtoggler-control">
+                                            <div class="jtoggler-handle"></div>
+                                        </div>
+                                    </label>
+                                    <div class="ms-2">لا</div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div class="modal-footer flex-nowrap gap-2">
+            <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
+                <i class="uil uil-save fs-3"></i>
+                <span>حفظ</span>
+            </button>
+            <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
+                <i class="uil uil-times-circle fs-3"></i>
+                <span>الغاء</span>
+            </button>
+        </div>
+    </ng-template>
+
+    <ng-template #deleteItemModal let-modal>
+        <div class="modal-header modal-header-bg justify-content-between">
+            <h2 class="d-flex align-items-center gap-2">
+                <span>تأكيد الإجراء</span>
+            </h2>
+            <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+                <i class="uil uil-times-circle"></i>
+            </div>
+        </div>
+        <div class="modal-body">
+            <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
+        </div>
+        <div class="modal-footer justify-content-start">
+            <button type="button" class="btn btn-success" (click)="DeleteItem()">
+                <i class="fas fa-check"></i>
+                <span class="ms-2">نعم</span>
+            </button>
+            <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
+                <i class="fas fa-times"></i>
+                <span class="ms-2">لا</span>
+            </button>
+        </div>
+    </ng-template>

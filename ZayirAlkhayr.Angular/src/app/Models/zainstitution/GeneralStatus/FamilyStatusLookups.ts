@@ -1,10 +1,11 @@
+import { FormDropdownModel } from "../../shared/FormDropdownModel";
 
 export interface FamilyStatusLookups {
-    categories: FamilyCategories[];
-    nationalities: FamilyNationalities[];
+    categories: FormDropdownModel[];
+    nationalities: FormDropdownModel[];
     familyNeeds: FamilyNeedTypes[];
     familyNeedCategories:FamilyCategories[];
-    statusTypes: FamilyStatusTypes[],
+    statusTypes: FormDropdownModel[],
     patientTypes: FamilyPatientTypes[]
 
 }
