@@ -13,7 +13,7 @@ import { FormDropdownModel } from '../../../../../../Models/shared/FormDropdownM
 @Component({
   selector: 'app-family-status',
   standalone: true,
-  imports: [ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule,NgIf],
+  imports: [ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule, NgIf],
   templateUrl: './family-status.component.html',
   styleUrl: './family-status.component.css',
   providers: [DatePipe]
@@ -117,11 +117,10 @@ export class FamilyStatusComponent implements OnInit {
   }
 
   GetOutputData() {
-    // let isValid = this.validateForm();
-    // if (!isValid) {
-    //   return null;
-    // }
-
+    let isValid = this.validateForm();
+    if (!isValid) {
+      return null;
+    }
 
     return this.ItemForm.value;
   }

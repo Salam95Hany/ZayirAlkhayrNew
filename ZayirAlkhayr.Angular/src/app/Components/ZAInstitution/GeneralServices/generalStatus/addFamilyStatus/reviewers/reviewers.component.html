@@ -1,1 +1,69 @@
-<p>reviewers works!</p>
+<div class="table-responsive shadow-sm radius-10 mb-3">
+    <table class="table table-bordered table-feature-value align-middle border m-0">
+        <thead>
+            <tr>
+                <th colspan="2">المراجعين</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="table-feature">اسم الحالة</td>
+                <td class="table-value">
+                    <textarea class="form-control" rows="3" [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.statusDescription"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">احتياجات المسكن والحالة</td>
+                <td class="table-value">
+                    <textarea class="form-control" rows="3" [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.housingNeedsAndStatus"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">ملاحظات الباحث</td>
+                <td class="table-value">
+                    <textarea class="form-control" rows="3" [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.researcherNotes"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">ملاحظات المراجع</td>
+                <td class="table-value">
+                    <textarea class="form-control" rows="3" [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.referencesNotes"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="table-feature">تاريخ الزيارة</td>
+                <td class="table-value">
+                    <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ الزيارة...'" [(ngModel)]="ExtraDetails.lastVisitDate"></app-za-input-with-label>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="table-responsive shadow-sm radius-10">
+    <table class="table table-bordered table-feature-value align-middle border m-0">
+        <thead>
+            <tr>
+                <th colspan="2">الأوراق الشخصية</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of PersonalPearpers">
+                <td class="table-feature-d">{{item.name}}</td>
+                <td class="table-value">
+                    <div class="d-flex d-flex align-items-center">
+                        <div class="me-2">نعم</div>
+                        <label class="jtoggler-wrapper m-0 mx-0">
+                            <input type="checkbox" class="jtoggler" [disabled]="DetailsMode"
+                                [(ngModel)]="item.isSelected">
+                            <div class="jtoggler-control">
+                                <div class="jtoggler-handle"></div>
+                            </div>
+                        </label>
+                        <div class="ms-2">لا</div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

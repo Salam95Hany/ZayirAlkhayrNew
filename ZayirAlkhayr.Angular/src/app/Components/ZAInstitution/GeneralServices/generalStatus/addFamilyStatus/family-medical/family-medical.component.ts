@@ -124,17 +124,23 @@ export class FamilyMedicalComponent implements OnInit, OnChanges {
   }
 
   FillEditForm(item: any) {
+    this.SelectedPatientTypes = item.patientTypeList;
+    this.SelectedPatientTypeIds = [...item.patientTypeIds];
     this.ItemForm.setValue({
       id: item.id,
       patientDate: item.patientDate,
       specialization: item.specialization,
       isMedicalReport: item.isMedicalReport,
-      isNeedProcess: item.isNeedProcess
+      isNeedProcess: item.isNeedProcess,
+      familyName: item.familyName,
+      patientType: this.SelectedPatientTypeIds.join(',')
     });
   }
 
   ResetForm() {
     this.ItemForm.reset();
+    this.SelectedPatientTypeIds = [];
+    this.SelectedPatientTypes = [];
     this.ItemForm.get('id').setValue(0);
   }
 
@@ -195,7 +201,7 @@ export class FamilyMedicalComponent implements OnInit, OnChanges {
     }
 
     if (this.addMode) {
-      let checked = this.FamilyPatients.find(i => i.name == 'this.FamilyName');
+      let checked = this.FamilyPatients.find(i => i.name == this.ItemForm?.value?.familyName);
       if (checked) {
         this.toaster.warning('هذا العنصر موجود');
         return;
@@ -208,19 +214,20 @@ export class FamilyMedicalComponent implements OnInit, OnChanges {
     if (this.addMode) {
       this.FamilyPatients.push({
         id: id + 1,
-        name: 'this.FamilyName',
+        name: this.ItemForm?.value?.familyName,
         patientTypeIds: this.SelectedPatientTypes.map(i => i.id),
         patientTypeNames: this.SelectedPatientTypes.map(i => i.name).join(' ,'),
         patientTypeList: this.SelectedPatientTypes,
         patientDate: formData.patientDate,
         specialization: formData.specialization,
         isMedicalReport: formData.isMedicalReport,
-        isNeedProcess: formData.isNeedProcess
+        isNeedProcess: formData.isNeedProcess,
+        familyName: formData.familyName
       });
     } else {
       let obj = this.FamilyPatients.find(i => i.id == formData.id);
       if (obj) {
-        obj.name = 'this.FamilyName';
+        obj.name = this.ItemForm?.value?.familyName;
         obj.patientTypeIds = this.SelectedPatientTypes.map(i => i.id);
         obj.patientTypeNames = this.SelectedPatientTypes.map(i => i.name).join(' ,');
         obj.patientTypeList = this.SelectedPatientTypes;
@@ -228,6 +235,7 @@ export class FamilyMedicalComponent implements OnInit, OnChanges {
         obj.specialization = formData.specialization;
         obj.isMedicalReport = formData.isMedicalReport;
         obj.isNeedProcess = formData.isNeedProcess;
+        obj.familyName = formData.familyName;
       }
     }
 

@@ -51,7 +51,6 @@ export class ZaDropDownFormControlComponent {
   }
 
   ngOnChanges(changes: any): void {
-    debugger;
     if (changes.data || changes?.selectedValues) {
       if (this.selectMulti)
         this.writeValue(this.selectedValues);
@@ -62,8 +61,8 @@ export class ZaDropDownFormControlComponent {
 
   writeValue(value: any): void {
     if (this.selectMulti) {
-      if (value)
-        this.selectedValues = value;
+      if (!value)
+        value = this.selectedValues;
       this.data?.forEach(i => i.isSelected = false);
       var items = this.data?.filter(x => value?.includes(x.value));
       if (items && items.length > 0) {

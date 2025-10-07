@@ -138,16 +138,30 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             return data;
         }
 
-        async Task<List<FamilyNeedType>> GetFamilyNeedTypes()
+        async Task<List<FormDropdownModel>> GetFamilyNeedTypes()
         {
             var results = await _unitOfWork.Repository<FamilyNeedType>().GetAllAsync();
-            return results;
+            var data = results.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.Name,
+                ExtraData = new Dictionary<string, object>
+                {
+                    { "categoryId", i.CategoryId }
+                }
+            }).ToList();
+            return data;
         }
 
-        async Task<List<FamilyNeedCategory>> GetFamilyNeedCategories()
+        async Task<List<FormDropdownModel>> GetFamilyNeedCategories()
         {
             var results = await _unitOfWork.Repository<FamilyNeedCategory>().GetAllAsync();
-            return results;
+            var data = results.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.Name
+            }).ToList();
+            return data;
         }
 
         public async Task<ApiResponseModel<UpdateFamilyStatusLookups>> GetUpdateFamilyStatusLookups(int FamilyStatusId)

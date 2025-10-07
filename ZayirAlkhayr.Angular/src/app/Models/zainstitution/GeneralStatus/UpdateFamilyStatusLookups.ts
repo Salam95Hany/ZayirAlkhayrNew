@@ -24,6 +24,7 @@ export interface FamilyPatientGroup {
     specialization?: string;
     isMedicalReport?: boolean | null;
     isNeedProcess?: boolean | null;
+    familyName?: string;
 }
 
 

@@ -8,11 +8,12 @@ import { CustomValidators, RegexType } from '../../../../../../Services/shared/c
 import { NgFor, NgIf } from '@angular/common';
 import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { ZaDropDownFormControlComponent } from '../../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
+import { ZaEmptyDataComponent } from '../../../../../../Shared/za-empty-data/za-empty-data.component';
 
 @Component({
   selector: 'app-family-data',
   standalone: true,
-  imports: [NgIf, NgFor, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule],
+  imports: [NgIf, NgFor, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule,ZaEmptyDataComponent],
   templateUrl: './family-data.component.html',
   styleUrl: './family-data.component.css'
 })

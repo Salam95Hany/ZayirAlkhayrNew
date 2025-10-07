@@ -11,8 +11,8 @@ namespace ZayirAlkhayr.Entities.Common
     {
         public List<FormDropdownModel> Categories { get; set; }
         public List<FormDropdownModel> Nationalities { get; set; }
-        public List<FamilyNeedType> FamilyNeeds { get; set; }
-        public List<FamilyNeedCategory> FamilyNeedCategories { get; set; }
+        public List<FormDropdownModel> FamilyNeeds { get; set; }
+        public List<FormDropdownModel> FamilyNeedCategories { get; set; }
         public List<FormDropdownModel> StatusTypes { get; set; }
         public List<FormDropdownModel> PatientTypes { get; set; }
     }

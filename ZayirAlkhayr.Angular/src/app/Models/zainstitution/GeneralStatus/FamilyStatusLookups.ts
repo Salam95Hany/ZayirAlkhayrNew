@@ -3,8 +3,8 @@ import { FormDropdownModel } from "../../shared/FormDropdownModel";
 export interface FamilyStatusLookups {
     categories: FormDropdownModel[];
     nationalities: FormDropdownModel[];
-    familyNeeds: FamilyNeedTypes[];
-    familyNeedCategories:FamilyCategories[];
+    familyNeeds: FormDropdownModel[];
+    familyNeedCategories:FormDropdownModel[];
     statusTypes: FormDropdownModel[],
     patientTypes: FamilyPatientTypes[]
 
