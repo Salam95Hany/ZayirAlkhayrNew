@@ -9,43 +9,43 @@
             <tr>
                 <td class="table-feature">إيجار\كهرباء\مياه\غاز\صرف</td>
                 <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'إيجار/كهرباء/مياه/غاز/صرف...'" [(ngModel)]="FamilyExpenses.rent_Electricity_Water_Gas_Sewage" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'rent_Electricity_Water_Gas_Sewage')"></app-za-input-with-label>
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'إيجار/كهرباء/مياه/غاز/صرف...'" [disabled]="DetailsMode" [(ngModel)]="FamilyExpenses.rent_Electricity_Water_Gas_Sewage" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'rent_Electricity_Water_Gas_Sewage')"></app-za-input-with-label>
                 </td>
             </tr>
             <tr>
                 <td class="table-feature">كشف طبي\علاج</td>
                 <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'كشف طبي/علاج...'" [(ngModel)]="FamilyExpenses.medicalExamination_Treatment" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'medicalExamination_Treatment')"></app-za-input-with-label>
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'كشف طبي/علاج...'" [disabled]="DetailsMode" [(ngModel)]="FamilyExpenses.medicalExamination_Treatment" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'medicalExamination_Treatment')"></app-za-input-with-label>
                 </td>
             </tr>
             <tr>
                 <td class="table-feature">ديون\أقساط</td>
                 <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'ديون/أقساط...'" [(ngModel)]="FamilyExpenses.installment_debts" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'installment_debts')"></app-za-input-with-label>
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'ديون/أقساط...'" [disabled]="DetailsMode" [(ngModel)]="FamilyExpenses.installment_debts" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'installment_debts')"></app-za-input-with-label>
                 </td>
             </tr>
             <tr>
                 <td class="table-feature">مصاريف مدارس\حضانة\دروس</td>
                 <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'مصاريف مدارس/حضانة/دروس...'" [(ngModel)]="FamilyExpenses.schoolExpenses" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'schoolExpenses')"></app-za-input-with-label>
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'مصاريف مدارس/حضانة/دروس...'" [disabled]="DetailsMode" [(ngModel)]="FamilyExpenses.schoolExpenses" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'schoolExpenses')"></app-za-input-with-label>
                 </td>
             </tr>
             <tr>
                 <td class="table-feature">جلسات علاج طبيعي</td>
                 <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'جلسات علاج طبيعي...'" [(ngModel)]="FamilyExpenses.physiotherapySessions" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'physiotherapySessions')"></app-za-input-with-label>
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'جلسات علاج طبيعي...'" [disabled]="DetailsMode" [(ngModel)]="FamilyExpenses.physiotherapySessions" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'physiotherapySessions')"></app-za-input-with-label>
                 </td>
             </tr>
             <tr>
                 <td class="table-feature">تحاليل</td>
                 <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'تحاليل...'" [(ngModel)]="FamilyExpenses.analysis" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'analysis')"></app-za-input-with-label>
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'تحاليل...'" [disabled]="DetailsMode" [(ngModel)]="FamilyExpenses.analysis" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'analysis')"></app-za-input-with-label>
                 </td>
             </tr>
             <tr>
                 <td class="table-feature">انتقالات مرضية</td>
                 <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'انتقالات مرضية...'" [(ngModel)]="FamilyExpenses.satisfactoryTransfers" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'satisfactoryTransfers')"></app-za-input-with-label>
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'انتقالات مرضية...'" [disabled]="DetailsMode" [(ngModel)]="FamilyExpenses.satisfactoryTransfers" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'satisfactoryTransfers')"></app-za-input-with-label>
                 </td>
             </tr>
             <tr>

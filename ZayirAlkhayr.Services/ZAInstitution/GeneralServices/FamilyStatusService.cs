@@ -30,7 +30,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[3] = new SqlParameter("@IsFilter", false);
             var dt = await _sQLHelper.ExecuteDatasetAsync("admin.SP_GetAllFamilyStatusDataWithFilters", Params);
-            return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
+            var TotalCount = dt.Tables[0].Rows.Count > 0 && dt.Tables[0].Columns.Contains("TotalCount") ? int.Parse(dt.Tables[0].Rows[0]["TotalCount"].ToString()) : 0;
+            return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt, TotalCount);
         }
 
         public async Task<ApiResponseModel<List<FilterModel>>> GetAllFamilyStatusFilter(PagingFilterModel PagingFilter)

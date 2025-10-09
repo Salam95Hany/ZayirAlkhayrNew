@@ -143,9 +143,7 @@
         align-items: center;
         position: relative;
         padding-bottom: 30px;
-        /* مسافة تحت كل step */
     }
-    /* الخط العمودي */
     .stepper-item:not(:last-child)::after {
         content: '';
         position: absolute;

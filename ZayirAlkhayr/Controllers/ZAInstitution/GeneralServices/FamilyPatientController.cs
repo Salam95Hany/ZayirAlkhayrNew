@@ -25,7 +25,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.GeneralServices
             return results;
         }
 
-        [HttpPost("GetAllFamilyPatientFilter")]
+        [HttpGet("GetAllFamilyPatientFilter")]
         public async Task<ApiResponseModel<List<FilterModel>>> GetAllFamilyPatientFilter()
         {
             var results = await _familyPatientService.GetAllFamilyPatientFilter();

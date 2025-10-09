@@ -86,5 +86,16 @@ namespace ZayirAlkhayr.Services.Shared
             }).ToList();
             return ApiResponseModel<List<FormDropdownModel>>.Success(GenericErrors.GetSuccess, Results);
         }
+
+        public async Task<ApiResponseModel<List<FormDropdownModel>>> GetAllFamilyNeedCategoriesSelector()
+        {
+            var Data = await _unitOfWork.Repository<FamilyNeedCategory>().GetAllAsync();
+            var Results = Data.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.Name,
+            }).ToList();
+            return ApiResponseModel<List<FormDropdownModel>>.Success(GenericErrors.GetSuccess, Results);
+        }
     }
 }

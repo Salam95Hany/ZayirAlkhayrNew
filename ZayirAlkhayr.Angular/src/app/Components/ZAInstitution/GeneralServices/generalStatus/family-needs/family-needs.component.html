@@ -1,1 +1,276 @@
-<p>family-needs works!</p>
+<app-za-breadcrumb [TitleList]="TitleList"></app-za-breadcrumb>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="table-card border radius-10 overflow-hidden shadow-sm">
+            <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
+                <div class="col-md-8 mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openNeedAddItemModal(OpenNeedItemModal,null)">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>إضافة</span>
+                        </button>
+                        <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="NeedIsFilter = !NeedIsFilter" [attr.aria-expanded]="!NeedIsFilter">
+                            <i class="uil uil-filter"></i>
+                            <span class="navbar-brand m-0">{{ NeedIsFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <app-za-pagination (pageChanged)="NeedPageChange($event)" [currentPage]="NeedsPagingFilter.currentPage" [pageSize]="NeedsPagingFilter.pageSize" [totalCount]="NeedTotalCount"></app-za-pagination>
+                </div>
+                <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="NeedIsFilter">
+                    <div class="d-flex align-items-center">
+                        <ng-container>
+                            <app-za-filters [FilterList]="NeedFilterList" (filterChanged)="NeedFilterChecked($event)" [searchPlaceholder]="'البحث بالاسم ...'"></app-za-filters>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 bg-white">
+                <div class="table-responsive shadow-sm radius-10">
+                    <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الفئة</th>
+                                <th>تمت الاضافة من قبل</th>
+                                <th>تاريخ الاضافة</th>
+                                <th>عمليات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container>
+                                <tr *ngFor="let item of FamilyNeedsData">
+                                    <td>{{item.name}}</td>
+                                    <td>{{item.categoryName}}</td>
+                                    <td>{{item.createdBy}}</td>
+                                    <td>{{item.insertDateStr}}</td>
+                                    <td>
+                                        <div class="w-100 d-flex align-items-center justify-content-center">
+                                            <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openNeedAddItemModal(OpenNeedItemModal,item)">
+                                                <i class="uil uil-pen"></i>
+                                                <span>تعديل</span>
+                                            </button>
+                                            <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteNeedItemModal(deleteNeedItemModal,item)">
+                                                <i class="uil uil-trash-alt"></i>
+                                                <span>حذف</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="!FamilyNeedsData.length">
+                                    <td colspan="12" class="text-right">
+                                        <app-za-empty-data [showEmptyData]="!FamilyNeedsData.length"></app-za-empty-data>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="table-card border radius-10 overflow-hidden shadow-sm">
+            <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
+                <div class="col-md-8 mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openCategoryAddItemModal(OpenCategoryItemModal,null)">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>إضافة</span>
+                        </button>
+                        <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="CategoryIsFilter = !CategoryIsFilter" [attr.aria-expanded]="!CategoryIsFilter">
+                            <i class="uil uil-filter"></i>
+                            <span class="navbar-brand m-0">{{ CategoryIsFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <app-za-pagination (pageChanged)="CategoryPageChange($event)" [currentPage]="CategoriesPagingFilter.currentPage" [pageSize]="CategoriesPagingFilter.pageSize" [totalCount]="CategoryTotalCount"></app-za-pagination>
+                </div>
+                <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="CategoryIsFilter">
+                    <div class="d-flex align-items-center">
+                        <ng-container>
+                            <app-za-filters [FilterList]="CategoryFilterList" (filterChanged)="CategoryFilterChecked($event)" [searchPlaceholder]="'البحث بالاسم ...'"></app-za-filters>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 bg-white">
+                <div class="table-responsive shadow-sm radius-10">
+                    <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>تمت الاضافة من قبل</th>
+                                <th>تاريخ الاضافة</th>
+                                <th>عمليات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container>
+                                <tr *ngFor="let item of FamilyCategoriesData">
+                                    <td>{{item.name}}</td>
+                                    <td>{{item.createdBy}}</td>
+                                    <td>{{item.insertDateStr}}</td>
+                                    <td>
+                                        <div class="w-100 d-flex align-items-center justify-content-center">
+                                            <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openCategoryAddItemModal(OpenCategoryItemModal,item)">
+                                                <i class="uil uil-pen"></i>
+                                                <span>تعديل</span>
+                                            </button>
+                                            <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteCategoryItemModal(deleteCategoryItemModal,item)">
+                                                <i class="uil uil-trash-alt"></i>
+                                                <span>حذف</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="!FamilyCategoriesData.length">
+                                    <td colspan="12" class="text-right">
+                                        <app-za-empty-data [showEmptyData]="!FamilyCategoriesData.length"></app-za-empty-data>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ng-template #OpenNeedItemModal let-modal>
+    <div class="modal-header modal-header-bg justify-content-between">
+        <h2 class="d-flex align-items-center gap-2">
+            <i class="uil uil-plus"></i>
+            <span>املأ البيانات الأتية</span>
+        </h2>
+        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+            <i class="uil uil-times-circle"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="NeedForm" autocomplete="off">
+            <table class="table table-bordered table-feature-value align-middle border m-0">
+                <tbody>
+                    <tr>
+                        <td class="table-feature">الاسم</td>
+                        <td class="table-value">
+                            <app-za-input-with-label [type]="'text'" [placeholder]="'الاسم...'" formControlName="name" [error]="needFormErrors.name"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">الفئات</td>
+                        <td class="table-value">
+                            <div class="form-floating">
+                                <app-za-drop-down-form-control [data]="CategoryList" [showSearch]="true" [placeholder]="'الفئات'" formControlName="categoryId" [hasError]="needFormErrors.categoryId"></app-za-drop-down-form-control>
+                            </div>
+                            <div class="error-message" *ngIf="needFormErrors.categoryId">
+                                {{ needFormErrors.categoryId }}
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <div class="modal-footer flex-nowrap gap-2">
+        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewNeed()">
+            <i class="uil uil-save fs-3"></i>
+            <span>حفظ</span>
+        </button>
+        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
+            <i class="uil uil-times-circle fs-3"></i>
+            <span>الغاء</span>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteNeedItemModal let-modal>
+    <div class="modal-header modal-header-bg justify-content-between">
+        <h2 class="d-flex align-items-center gap-2">
+            <span>تأكيد الإجراء</span>
+        </h2>
+        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+            <i class="uil uil-times-circle"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
+    </div>
+    <div class="modal-footer justify-content-start">
+        <button type="button" class="btn btn-success" (click)="DeleteNeed()">
+            <i class="fas fa-check"></i>
+            <span class="ms-2">نعم</span>
+        </button>
+        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
+            <i class="fas fa-times"></i>
+            <span class="ms-2">لا</span>
+        </button>
+    </div>
+</ng-template>
+
+
+<ng-template #OpenCategoryItemModal let-modal>
+    <div class="modal-header modal-header-bg justify-content-between">
+        <h2 class="d-flex align-items-center gap-2">
+            <i class="uil uil-plus"></i>
+            <span>املأ البيانات الأتية</span>
+        </h2>
+        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+            <i class="uil uil-times-circle"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form [formGroup]="CategoryForm" autocomplete="off">
+            <table class="table table-bordered table-feature-value align-middle border m-0">
+                <tbody>
+                    <tr>
+                        <td class="table-feature">الاسم</td>
+                        <td class="table-value">
+                            <app-za-input-with-label [type]="'text'" [placeholder]="'الاسم...'" formControlName="name" [error]="categoryFormErrors.name"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <div class="modal-footer flex-nowrap gap-2">
+        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewCategory()">
+            <i class="uil uil-save fs-3"></i>
+            <span>حفظ</span>
+        </button>
+        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
+            <i class="uil uil-times-circle fs-3"></i>
+            <span>الغاء</span>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteCategoryItemModal let-modal>
+    <div class="modal-header modal-header-bg justify-content-between">
+        <h2 class="d-flex align-items-center gap-2">
+            <span>تأكيد الإجراء</span>
+        </h2>
+        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+            <i class="uil uil-times-circle"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
+    </div>
+    <div class="modal-footer justify-content-start">
+        <button type="button" class="btn btn-success" (click)="DeleteCategory()">
+            <i class="fas fa-check"></i>
+            <span class="ms-2">نعم</span>
+        </button>
+        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
+            <i class="fas fa-times"></i>
+            <span class="ms-2">لا</span>
+        </button>
+    </div>
+</ng-template>
+
+<app-za-loader [show]="showLoader"></app-za-loader>

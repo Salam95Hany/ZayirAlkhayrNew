@@ -112,14 +112,13 @@ export class AddFamilyStatusComponent implements OnInit {
     let data = this.viewChilds[this.Counter].GetOutputData();
     this.AddFamilyStatusModel[this.StepName] = data;
     this.showLoader = true;
-    console.log(this.AddFamilyStatusModel);
-    // this.generalStatusService.AddNewFamilyStatus(this.AddFamilyStatusModel).subscribe(data => {
-    //   this.showLoader = false;
-    //   if (data.isSuccess) {
-    //     this.toaster.success(data.message);
-    //     this.router.navigateByUrl('/za-institution/family-status');
-    //   } else
-    //     this.toaster.error(data.message);
-    // });
+    this.generalStatusService.AddNewFamilyStatus(this.AddFamilyStatusModel).subscribe(data => {
+      this.showLoader = false;
+      if (data.isSuccess) {
+        this.toaster.success(data.message);
+        this.router.navigateByUrl('/za-institution/family-status');
+      } else
+        this.toaster.error(data.message);
+    });
   }
 }

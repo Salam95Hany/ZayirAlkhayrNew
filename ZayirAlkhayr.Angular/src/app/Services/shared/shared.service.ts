@@ -31,4 +31,8 @@ export class SharedService {
   GetAllUsersSelector() {
     return this.http.get<ApiResponseModel<FormDropdownModel[]>>(this.apiURL + 'Shared/GetAllUsersSelector');
   }
+
+  GetAllFamilyNeedCategoriesSelector() {
+    return this.http.get<ApiResponseModel<FormDropdownModel[]>>(this.apiURL + 'Shared/GetAllFamilyNeedCategoriesSelector');
+  }
 }

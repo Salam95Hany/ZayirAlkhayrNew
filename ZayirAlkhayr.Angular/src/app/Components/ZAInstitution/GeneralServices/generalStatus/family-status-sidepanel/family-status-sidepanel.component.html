@@ -1,1 +1,49 @@
-<p>family-status-sidepanel works!</p>
+<div class="offcanvas-header justify-content-between gap-3 fs-4 border-bottom py-3">
+    <div class="d-flex align-items-center gap-2">
+        <i class="fas fa-info-circle offcanvas-header-icon"></i>
+        <span>
+            {{ FamilyStatusCode }} - {{ FamilyStatusName }}
+        </span>
+    </div>
+    <div class="cursor-pointer text-danger fs-2" (click)="dismissSidePanel()">
+        <i class="uil uil-times-circle"></i>
+    </div>
+</div>
+<div class="offcanvas-body pt-4 bg-light" *ngIf="isLookupsLoaded">
+    <hr>
+    <div>
+        <h3>الحالة</h3>
+        <app-family-status #FamilyStatus (StatusNameChanged)="StatusNameChanged($event)" [Categories]="FamilyStatusInfo.lookups.categories" [Nationalities]="FamilyStatusInfo.lookups.nationalities" [StatusTypes]="FamilyStatusInfo.lookups.statusTypes" [FamilyStatus]="FamilyStatusInfo.familyStatus"
+            [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode">
+        </app-family-status>
+    </div>
+    <div class="mb-5">
+        <h3>بيانات الاسرة</h3>
+        <app-family-data #FamilyData (FamilyDetailsChange)="FamilyDetailsChange($event)" [FamilyDetails]="FamilyStatusInfo.familyStatus.familyDetails" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode"></app-family-data>
+    </div>
+    <div class="mb-5">
+        <h3>بيانات دخل الاسرة</h3>
+        <app-family-income-data #FamilyIncome [FamilyIncome]="FamilyStatusInfo.familyStatus.familyIncomes" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode" (FamilyIncomeChange)="FamilyIncomeChange($event)"></app-family-income-data>
+    </div>
+    <div class="mb-5">
+        <h3>بيان المصروفات للاسرة</h3>
+        <app-family-expenses-data #FamilyExpenses [FamilyExpenses]="FamilyStatusInfo.familyStatus.familyExpenses" [FamilyIncome]="FamilyStatusInfo.familyStatus.familyIncomes" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode"></app-family-expenses-data>
+    </div>
+    <div class="mb-5">
+        <h3>الجانب الطبي لأفراد الاسرة</h3>
+        <app-family-medical #FamilyMedical [FamilyDetails]="FamilyStatusInfo.familyStatus.familyDetails" [FamilyStatusName]="FamilyStatusInfo?.familyStatus?.name" [PatientTypes]="FamilyStatusInfo.lookups.patientTypes" [FamilyPatients]="FamilyStatusInfo.familyPatient"
+            [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode"></app-family-medical>
+    </div>
+    <div class="mb-5">
+        <h3>احتياجات الحالة</h3>
+        <app-family-need #FamilyNeed [FamilyNeeds]="FamilyStatusInfo.lookups.familyNeeds" [FamilyCategories]="FamilyStatusInfo.lookups.familyNeedCategories" [SelectedNeeds]="FamilyStatusInfo.familyStatus.familyNeeds" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode"></app-family-need>
+    </div>
+    <div>
+        <h3>المراجعين</h3>
+        <app-reviewers #Reviewers [ExtraDetails]="FamilyStatusInfo.familyStatus.familyExtraDetails" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode"></app-reviewers>
+    </div>
+    <hr *ngIf="!DetailsMode">
+    <button class="btn btn-success w-100" *ngIf="!DetailsMode" (click)="UpdateFamilyStatus()">حفظ</button>
+</div>
+
+<app-za-loader [show]="showLoader"></app-za-loader>

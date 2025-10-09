@@ -49,5 +49,12 @@ namespace ZayirAlkhayr.Controllers.Shared
             var results = await _sharedService.GetAllUsersSelector();
             return results;
         }
+
+        [HttpGet("GetAllFamilyNeedCategoriesSelector")]
+        public async Task<ApiResponseModel<List<FormDropdownModel>>> GetAllFamilyNeedCategoriesSelector()
+        {
+            var results = await _sharedService.GetAllFamilyNeedCategoriesSelector();
+            return results;
+        }
     }
 }

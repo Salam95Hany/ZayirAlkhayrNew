@@ -4,10 +4,26 @@
     <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
         <div class="col-md-8 mb-2">
             <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" routerLink="/za-institution/add-family-status">
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" routerLink="/ZAInstitution/add-family-status">
                     <i class="fas fa-plus-circle"></i>
-                    <span>اضافة حالة جديدة</span>
+                    <span>إضافة</span>
                 </button>
+                <div ngbDropdown class="d-inline-block">
+                    <button type="button" class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" id="dropdownBasic1" ngbDropdownToggle>
+                        <i class="uil uil-export"></i>
+                        <span>تنزيل</span>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="border rounded">
+                        <button ngbDropdownItem class="d-flex align-items-center gap-2" (click)="OpenPdfFileItemModal(PDFFileItemModal)">
+                            <i class="fas fa-file-download"></i>
+                            <span class="px-2">PDF</span>
+                        </button>
+                        <button ngbDropdownItem (click)="DownloadExcelFile()">
+                            <i class="fas fa-file-download"></i>
+                            <span class="px-2">Excel</span>
+                        </button>
+                    </div>
+                </div>
                 <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
                     <i class="uil uil-filter"></i>
                     <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
@@ -20,7 +36,7 @@
         <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
             <div class="d-flex align-items-center">
                 <ng-container>
-                    <app-za-filters [FilterList]="filterList" (filterChanged)="FilterChecked($event)" [searchPlaceholder]="'ب تعيين ل...'"></app-za-filters>
+                    <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)" [searchPlaceholder]="'البحث بالاسم ...'"></app-za-filters>
                 </ng-container>
             </div>
         </div>
@@ -30,52 +46,50 @@
             <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
                 <thead>
                     <tr>
-                        <th>المهمة</th>
-                        <th>تعيين ل</th>
-                        <th class="text-center">الحالة</th>
-                        <th>تاريخ المهمة</th>
+                        <th>الكود</th>
+                        <th>الاسم</th>
+                        <th>الجنسية</th>
+                        <th>رقم التلفون</th>
+                        <th>العنوان</th>
+                        <th>نوع الحالة</th>
+                        <th>الفئة</th>
                         <th>تمت الاضافة من قبل</th>
-                        <th class="text-center">تغيير الحالة</th>
-                        <th class="text-center">أجراءات</th>
+                        <th>تاريخ الاضافة</th>
+                        <th>عمليات</th>
                     </tr>
                 </thead>
                 <tbody>
                     <ng-container>
-                        <tr *ngFor="let item of TasksData">
-                            <td>{{item.task}}</td>
-                            <td>{{item.assignTo}}</td>
-                            <td>
-                                <div class="d-flex align-items-center justify-content-center fs-5 gap-2">
-                                    <div class="badge badge-success round fs-15" *ngIf="item.statusId == 1">
-                                        {{item.taskStatusName}}</div>
-                                    <div class="badge badge-warning round fs-15" *ngIf="item.statusId == 2">
-                                        {{item.taskStatusName}}
-                                    </div>
-                                    <div class="badge badge-danger round fs-15" *ngIf="item.statusId == 3">
-                                        {{item.taskStatusName}}</div>
-                                </div>
-                            </td>
-                            <td>{{item.taskDate}}</td>
+                        <tr *ngFor="let item of FamilyStatusData">
+                            <td>{{item.code}}</td>
+                            <td>{{item.statusName}}</td>
+                            <td>{{item.nationalityName}}</td>
+                            <td>{{item.phone}}</td>
+                            <td>{{item.address}}</td>
+                            <td>{{item.statusTypeName}}</td>
+                            <td>{{item.categoryName}}</td>
                             <td>{{item.createdBy}}</td>
+                            <td>{{item.insertDateStr}}</td>
                             <td>
-
-                            </td>
-                            <td appRole [roles]="['SupperAdmin','Admin']">
                                 <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
+                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openUpdateFamilyStatusSidePanel(item,true,false)">
                                         <i class="uil uil-pen"></i>
                                         <span>تعديل</span>
                                     </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item)">
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" (click)="openDeleteItemModal(deleteItemModal,item.id)">
                                         <i class="uil uil-trash-alt"></i>
                                         <span>حذف</span>
+                                    </button>
+                                    <button class="button-table-action btn-details d-flex align-items-center justify-content-center gap-2" (click)="openUpdateFamilyStatusSidePanel(item,false,true)">
+                                        <i class="uil uil-document-info"></i>
+                                        <span>معاينة</span>
                                     </button>
                                 </div>
                             </td>
                         </tr>
-                        <tr *ngIf="!TasksData.length">
-                            <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!TasksData.length"></app-za-empty-data>
+                        <tr *ngIf="!FamilyStatusData.length">
+                            <td colspan="13" class="text-right">
+                                <app-za-empty-data [showEmptyData]="!FamilyStatusData.length"></app-za-empty-data>
                             </td>
                         </tr>
                     </ng-container>
@@ -84,6 +98,60 @@
         </div>
     </div>
 </div>
+
+<ng-template #PDFFileItemModal let-modal>
+    <div class="modal-header modal-header-bg justify-content-between">
+        <h2 class="d-flex align-items-center gap-2">
+            <i class="uil uil-focus-add"></i>
+            <span>اختر أعمدة</span>
+        </h2>
+        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+            <i class="uil uil-times-circle"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <table class="table table-bordered table-feature-value align-middle border m-0">
+            <tbody>
+                <tr *ngFor="let item of SearchReport.headers;let x = index">
+                    <td class="table-feature">{{item.nameAr}}</td>
+                    <td class="table-value">
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">محدد</div>
+                            <label class="jtoggler-wrapper m-0 mx-0">
+                                <input type="checkbox" class="jtoggler" [(ngModel)]="item.isSelected">
+                                <div class="jtoggler-control">
+                                    <div class="jtoggler-handle"></div>
+                                </div>
+                            </label>
+                            <div class="ms-2">غير محدد</div>
+                            <div class="mr-25">
+                                <input type="number" class="form-control w-50 text-center" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="item.displayOrder" placeholder="الترتيب">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-feature">تنبيه هام</td>
+                    <td class="table-value">
+                        <ul>
+                            <li class="fs-5">لا يمكن اختيار أكثر من 6 أعمدة في الصفحة الواحدة</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer flex-nowrap gap-2">
+        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="DownloadPdfFile()">
+            <i class="uil uil-save fs-3"></i>
+            <span>حفظ</span>
+        </button>
+        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
+            <i class="uil uil-times-circle fs-3"></i>
+            <span>الغاء</span>
+        </button>
+    </div>
+</ng-template>
 
 <ng-template #deleteItemModal let-modal>
     <div class="modal-header modal-header-bg justify-content-between">

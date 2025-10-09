@@ -90,11 +90,37 @@ export const ZAInstitutionRoutes: Routes = [
                 loadComponent: () =>
                     import('./GeneralServices/generalStatus/all-family-status/all-family-status.component').then(m => m.AllFamilyStatusComponent),
             },
-             {
+            {
                 path: 'add-family-status',
                 loadComponent: () =>
                     import('./GeneralServices/generalStatus/addFamilyStatus/add-family-status.component').then(m => m.AddFamilyStatusComponent),
             },
+            {
+                path: 'family-nationality',
+                loadComponent: () =>
+                    import('./GeneralServices/generalStatus/family-nationality/family-nationality.component').then(m => m.FamilyNationalityComponent),
+            },
+            {
+                path: 'family-needs',
+                loadComponent: () =>
+                    import('./GeneralServices/generalStatus/family-needs/family-needs.component').then(m => m.FamilyNeedsComponent),
+            },
+            {
+                path: 'family-categories',
+                loadComponent: () =>
+                    import('./GeneralServices/generalStatus/family-categories/family-categories.component').then(m => m.FamilyCategoriesComponent),
+            },
+            {
+                path: 'family-patientTypes',
+                loadComponent: () =>
+                    import('./GeneralServices/generalStatus/family-patienttypes/family-patienttypes.component').then(m => m.FamilyPatienttypesComponent),
+            },
+
+
+
+
+
+
 
             { path: '', redirectTo: 'home', pathMatch: 'full' },
         ]

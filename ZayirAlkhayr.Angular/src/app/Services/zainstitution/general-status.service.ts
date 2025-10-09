@@ -51,16 +51,16 @@ apiURL = environment.apiUrl;
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'FamilyNeeds/GetAllFamilyNeedTypesData', PagingFilter);
   }
 
-  GetAllFamilyNeedTypesFilters(PagingFilter: PagingFilterModel) {
-    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'FamilyNeeds/GetAllFamilyNeedTypesFilters', PagingFilter);
+  GetAllFamilyNeedTypesFilters() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'FamilyNeeds/GetAllFamilyNeedTypesFilters');
   }
 
   GetAllFamilyNeedCategoriesData(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'FamilyNeeds/GetAllFamilyNeedCategoriesData', PagingFilter);
   }
 
-  GetAllFamilyNeedCategoriesFilters(PagingFilter: PagingFilterModel) {
-    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'FamilyNeeds/GetAllFamilyNeedCategoriesFilters', PagingFilter);
+  GetAllFamilyNeedCategoriesFilters() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'FamilyNeeds/GetAllFamilyNeedCategoriesFilters');
   }
 
   GetAllFamilyNeedCategories() {
@@ -119,8 +119,8 @@ apiURL = environment.apiUrl;
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'FamilyCategory/GetAllFamilyCategoryData', PagingFilter);
   }
 
-  GetAllFamilyCategoryFilter(PagingFilter: PagingFilterModel) {
-    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'FamilyCategory/GetAllFamilyCategoryFilter', PagingFilter);
+  GetAllFamilyCategoryFilter() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'FamilyCategory/GetAllFamilyCategoryFilter');
   }
 
   AddNewFamilyCategory(Model: any) {
@@ -141,8 +141,8 @@ apiURL = environment.apiUrl;
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'FamilyPatient/GetAllFamilyPatientData', PagingFilter);
   }
 
-  GetAllFamilyPatientFilter(PagingFilter: PagingFilterModel) {
-    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'FamilyPatient/GetAllFamilyPatientFilter', PagingFilter);
+  GetAllFamilyPatientFilter() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'FamilyPatient/GetAllFamilyPatientFilter');
   }
 
   AddNewFamilyPatient(Model: any) {

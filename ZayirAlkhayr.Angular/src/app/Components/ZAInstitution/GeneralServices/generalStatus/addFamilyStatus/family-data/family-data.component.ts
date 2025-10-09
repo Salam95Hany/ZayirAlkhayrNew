@@ -174,6 +174,7 @@ export class FamilyDataComponent {
   }
 
   DeleteItem() {
+    debugger;
     this.FamilyDetails = this.FamilyDetails.filter(i => i.id != this.FamilyDetailsId);
     if (this.UpdateMode)
       this.FamilyDetailsChange.emit(this.FamilyDetails);
