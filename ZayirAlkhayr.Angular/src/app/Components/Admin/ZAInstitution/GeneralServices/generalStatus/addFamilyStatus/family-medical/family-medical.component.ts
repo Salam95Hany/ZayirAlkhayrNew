@@ -76,7 +76,7 @@ export class FamilyMedicalComponent implements OnInit, OnChanges {
 
   mergeFamilyPatientUpdateMode() {
     this.FamilyPatients.forEach(item => {
-      let arry = this.PatientTypes.filter(i => item.patientTypeIds.includes(i.value));
+      let arry = this.PatientTypes.filter(i => item.patientTypeIds.includes(Number(i.value)));
       if (arry.length > 0) {
         item.patientTypeNames = arry.map(i => i.name).join(' ,');
         item.patientTypeList = arry.map<FamilyPatientTypeNames>(i => { return { id: i.value, name: i.name } });
@@ -126,13 +126,13 @@ export class FamilyMedicalComponent implements OnInit, OnChanges {
   FillEditForm(item: any) {
     this.SelectedPatientTypes = item.patientTypeList;
     this.SelectedPatientTypeIds = [...item.patientTypeIds];
-    this.ItemForm.setValue({
+    this.ItemForm.patchValue({
       id: item.id,
       patientDate: item.patientDate,
       specialization: item.specialization,
       isMedicalReport: item.isMedicalReport,
       isNeedProcess: item.isNeedProcess,
-      familyName: item.familyName,
+      familyName: item?.name,
       patientType: this.SelectedPatientTypeIds.join(',')
     });
   }
@@ -169,6 +169,8 @@ export class FamilyMedicalComponent implements OnInit, OnChanges {
   }
 
   PatientTypeChange(items: string[]) {
+    debugger
+    items = items.map(i => i.toString());
     this.SelectedPatientTypes = [];
     let arry = this.PatientTypes.filter(i => items.includes(i.value));
     this.SelectedPatientTypes = arry.map<FamilyPatientTypeNames>(i => { return { id: i.value, name: i.name } });

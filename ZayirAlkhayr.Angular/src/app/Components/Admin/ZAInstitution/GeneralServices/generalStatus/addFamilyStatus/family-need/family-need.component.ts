@@ -13,7 +13,7 @@ import { ZaInputWithLabelComponent } from '../../../../../../../Shared/za-input-
 @Component({
   selector: 'app-family-need',
   standalone: true,
-  imports: [NgIf, NgFor, ReactiveFormsModule, ZaDropDownFormControlComponent, ZaEmptyDataComponent,ZaInputWithLabelComponent],
+  imports: [NgIf, NgFor, ReactiveFormsModule, ZaDropDownFormControlComponent, ZaEmptyDataComponent, ZaInputWithLabelComponent],
   templateUrl: './family-need.component.html',
   styleUrl: './family-need.component.css',
   providers: [DatePipe]
@@ -54,7 +54,7 @@ export class FamilyNeedComponent implements OnInit, OnChanges {
     this.SelectedNeeds.forEach(item => {
       let need = this.FamilyNeeds.find(i => i.value == item.needTypeId);
       if (need)
-        category = this.FamilyCategories.find(i => i.value == need.value)?.name;
+        category = this.FamilyCategories.find(i => i.value == need.extraData['categoryId'])?.name;
       if (need && category) {
         item.categoryName = category;
         item.name = need.name;
@@ -91,11 +91,12 @@ export class FamilyNeedComponent implements OnInit, OnChanges {
   }
 
   FillEditForm(item: any) {
+    item.categoryId = item.categoryId ?? item?.needType?.categoryId;
     this.FamilyNeedsByCategory = this.FamilyNeeds.filter(i => i.extraData['categoryId'] == item.categoryId);
-    this.ItemForm.setValue({
+    this.ItemForm.patchValue({
       id: item.id,
-      categoryId: item?.categoryId,
-      familyNeedId: item?.needTypeId,
+      categoryId: item?.categoryId?.toString(),
+      familyNeedId: item?.needTypeId?.toString(),
       deliveryDate: item?.deliveryDate,
       isWaiting: item.isWaiting,
     });

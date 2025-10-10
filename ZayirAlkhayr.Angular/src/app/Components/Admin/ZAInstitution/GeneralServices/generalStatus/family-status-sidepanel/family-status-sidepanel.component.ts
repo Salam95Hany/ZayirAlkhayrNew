@@ -80,12 +80,12 @@ export class FamilyStatusSidepanelComponent implements OnInit {
   }
 
   FamilyIncomeChange(totalFamilyIncome: any) {
-    this.FamilyStatusInfo.familyIncome.totalFamilyIncome = totalFamilyIncome;
-    this.FamilyStatusInfo.familyIncome = { ...this.FamilyStatusInfo.familyIncome };
+    this.FamilyStatusInfo.familyStatus.familyIncomes.totalFamilyIncome = totalFamilyIncome;
+    this.FamilyStatusInfo.familyStatus.familyIncomes = { ...this.FamilyStatusInfo.familyStatus.familyIncomes };
   }
 
   FamilyDetailsChange(item: FamilyDetails[]) {
-    this.FamilyStatusInfo.familyDetails = [...item];
+    this.FamilyStatusInfo.familyStatus.familyDetails = [...item];
   }
 
 

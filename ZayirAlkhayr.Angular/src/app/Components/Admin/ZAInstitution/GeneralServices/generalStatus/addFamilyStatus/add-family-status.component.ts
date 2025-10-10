@@ -116,7 +116,7 @@ export class AddFamilyStatusComponent implements OnInit {
       this.showLoader = false;
       if (data.isSuccess) {
         this.toaster.success(data.message);
-        this.router.navigateByUrl('/za-institution/family-status');
+        this.router.navigateByUrl('admin/za-institution/family-status');
       } else
         this.toaster.error(data.message);
     });

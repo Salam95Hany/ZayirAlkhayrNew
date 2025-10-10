@@ -71,14 +71,14 @@ export class FamilyDataComponent {
   }
 
   FillEditForm(item: any) {
-    this.ItemForm.setValue({
+    this.ItemForm.patchValue({
       id: item.id,
       name: item.name,
       relevance: item.relevance,
       age: item.age,
       education: item.education,
       jop: item.jop,
-      nationalId: item?.nationalId,
+      nationalId: item?.nationalId ?? '',
       maritalStatus:item?.maritalStatus
     });
   }

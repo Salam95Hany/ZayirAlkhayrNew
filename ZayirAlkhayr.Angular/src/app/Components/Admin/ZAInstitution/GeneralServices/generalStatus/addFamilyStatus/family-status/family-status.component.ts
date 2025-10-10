@@ -74,24 +74,24 @@ export class FamilyStatusComponent implements OnInit {
     this.FamilyStatus.insertUser = this.UserId;
 
     this.ItemForm = this.fb.group({
-      name: [this.FamilyStatus.name, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      fname: [this.FamilyStatus.fname, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      phone: [this.FamilyStatus.phone, Validators.required],
-      phone1: [this.FamilyStatus.phone1],
-      address: [this.FamilyStatus.address, CustomValidators.regexPattern(RegexType.noSpace)],
-      relevance: [this.FamilyStatus.relevance, CustomValidators.regexPattern(RegexType.noSpace)],
-      education: [this.FamilyStatus.education, CustomValidators.regexPattern(RegexType.noSpace)],
-      jop: [this.FamilyStatus.jop, CustomValidators.regexPattern(RegexType.noSpace)],
-      age: [this.FamilyStatus.age],
-      nationalId: [this.FamilyStatus.nationalId, CustomValidators.regexPattern(RegexType.noSpace)],
-      village: [this.FamilyStatus.village, CustomValidators.regexPattern(RegexType.noSpace)],
-      center: [this.FamilyStatus.center, CustomValidators.regexPattern(RegexType.noSpace)],
-      governorate: [this.FamilyStatus.governorate, CustomValidators.regexPattern(RegexType.noSpace)],
+      name: [{ value: this.FamilyStatus.name, disabled: this.DetailsMode ? true : false }, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      fname: [{ value: this.FamilyStatus.fname, disabled: this.DetailsMode ? true : false }, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      phone: [{ value: this.FamilyStatus.phone, disabled: this.DetailsMode ? true : false }, Validators.required],
+      phone1: [{ value: this.FamilyStatus.phone1 ?? '', disabled: this.DetailsMode ? true : false }],
+      address: [{ value: this.FamilyStatus.address ?? '', disabled: this.DetailsMode ? true : false }, CustomValidators.regexPattern(RegexType.noSpace)],
+      relevance: [{ value: this.FamilyStatus.relevance ?? '', disabled: this.DetailsMode ? true : false }, CustomValidators.regexPattern(RegexType.noSpace)],
+      education: [{ value: this.FamilyStatus.education ?? '', disabled: this.DetailsMode ? true : false }, CustomValidators.regexPattern(RegexType.noSpace)],
+      jop: [{ value: this.FamilyStatus.jop ?? '', disabled: this.DetailsMode ? true : false }, CustomValidators.regexPattern(RegexType.noSpace)],
+      age: [{ value: this.FamilyStatus.age ?? '', disabled: this.DetailsMode ? true : false }],
+      nationalId: [{ value: this.FamilyStatus.nationalId?.toString() ?? '', disabled: this.DetailsMode ? true : false }, CustomValidators.regexPattern(RegexType.noSpace)],
+      village: [{ value: this.FamilyStatus.village ?? '', disabled: this.DetailsMode ? true : false }, CustomValidators.regexPattern(RegexType.noSpace)],
+      center: [{ value: this.FamilyStatus.center ?? '', disabled: this.DetailsMode ? true : false }, CustomValidators.regexPattern(RegexType.noSpace)],
+      governorate: [{ value: this.FamilyStatus.governorate ?? '', disabled: this.DetailsMode ? true : false }, CustomValidators.regexPattern(RegexType.noSpace)],
       maritalStatus: [this.FamilyStatus.maritalStatus, CustomValidators.regexPattern(RegexType.noSpace)],
-      statusTypeId: [this.FamilyStatus.statusTypeId, Validators.required],
-      nationalityId: [this.FamilyStatus.nationalityId, Validators.required],
-      categoryId: [this.FamilyStatus.categoryId, Validators.required],
-      addedDate: [this.FamilyStatus.addedDate, Validators.required]
+      statusTypeId: [this.FamilyStatus.statusTypeId?.toString(), Validators.required],
+      nationalityId: [this.FamilyStatus.nationalityId?.toString(), Validators.required],
+      categoryId: [this.FamilyStatus.categoryId?.toString(), Validators.required],
+      addedDate: [{ value: this.FamilyStatus.addedDate, disabled: this.DetailsMode || this.UpdateMode ? true : false }, Validators.required]
     });
 
     this.ItemForm.valueChanges.subscribe((data) => {
@@ -121,6 +121,8 @@ export class FamilyStatusComponent implements OnInit {
       return null;
     }
 
-    return this.ItemForm.value;
+    this.FamilyStatus = { ...this.FamilyStatus, ...this.ItemForm.value };
+
+    return this.FamilyStatus;
   }
 }

@@ -30,6 +30,8 @@ export class ZaInputWithLabelComponent {
   value: any = '';
 
   constructor(private formService: FormService) {
+    console.log(this.disabled);
+    
   }
 
   writeValue(obj: any): void {

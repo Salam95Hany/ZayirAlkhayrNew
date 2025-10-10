@@ -1,6 +1,6 @@
 <div class="table-card border radius-10 overflow-hidden shadow-sm">
     <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2">
+        <div class="col-md-8 mb-2" *ngIf="!DetailsMode">
             <div class="d-flex align-items-center gap-2">
                 <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)">
                     <i class="fas fa-plus-circle"></i>

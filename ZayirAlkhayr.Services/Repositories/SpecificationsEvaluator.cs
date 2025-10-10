@@ -32,6 +32,9 @@ namespace ZayirAlkhayr.Entities.Specifications
             if (spec.Includes != null)
                 query = spec.Includes.Aggregate(query, (currentQuery, includeExpression) => currentQuery.Include(includeExpression));
 
+            if (spec.IncludeStrings != null && spec.IncludeStrings.Any())
+                query = spec.IncludeStrings.Aggregate(query, (current, include) => current.Include(include));
+
 
             return query;
         }

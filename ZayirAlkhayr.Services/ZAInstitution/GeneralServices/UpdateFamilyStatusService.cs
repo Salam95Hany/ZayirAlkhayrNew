@@ -44,20 +44,17 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                     FamilyObj.UpdateUser = Model.FamilyStatus.InsertUser;
                     FamilyObj.UpdateDate = DateTime.UtcNow;
 
-                    var tasks = new List<Task>
-                    {
-                        UpdateFamilyIncome(Model.FamilyIncome, Model.FamilyStatus.Id),
-                        UpdateFamilyExpenses(Model.FamilyExpenses, Model.FamilyStatus.Id),
-                        UpdateFamilyExtraDetails(Model.FamilyExtraDetails, Model.FamilyStatus.Id),
-                        UpdateFamilyDetails(Model.FamilyDetails, Model.FamilyStatus.Id),
-                        UpdateFamilyPatient(Model.FamilyPatient, Model.FamilyStatus.Id),
-                        UpdateFamilyNeeds(Model.FamilyNeeds, Model.FamilyStatus.Id)
-                    };
 
-                    await Task.WhenAll(tasks);
+                    await UpdateFamilyIncome(Model.FamilyIncome, Model.FamilyStatus.Id);
+                    await UpdateFamilyExpenses(Model.FamilyExpenses, Model.FamilyStatus.Id);
+                    await UpdateFamilyExtraDetails(Model.FamilyExtraDetails, Model.FamilyStatus.Id);
+                    await UpdateFamilyDetails(Model.FamilyDetails, Model.FamilyStatus.Id);
+                    await UpdateFamilyPatient(Model.FamilyPatient, Model.FamilyStatus.Id);
+                    await UpdateFamilyNeeds(Model.FamilyNeeds, Model.FamilyStatus.Id);
+
                     await _unitOfWork.CompleteAsync();
                     await transaction.CommitAsync(cancellationToken);
-                    return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
+                    return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
                 }
 
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);

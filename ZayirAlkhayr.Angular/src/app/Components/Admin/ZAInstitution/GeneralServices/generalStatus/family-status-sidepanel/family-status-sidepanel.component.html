@@ -9,9 +9,9 @@
         <i class="uil uil-times-circle"></i>
     </div>
 </div>
-<div class="offcanvas-body pt-4 bg-light" *ngIf="isLookupsLoaded">
+<div class="offcanvas-body pt-4 bg-light scroll-body" *ngIf="isLookupsLoaded" #sidepanelEditStatus>
     <hr>
-    <div>
+    <div class="mb-5">
         <h3>الحالة</h3>
         <app-family-status #FamilyStatus (StatusNameChanged)="StatusNameChanged($event)" [Categories]="FamilyStatusInfo.lookups.categories" [Nationalities]="FamilyStatusInfo.lookups.nationalities" [StatusTypes]="FamilyStatusInfo.lookups.statusTypes" [FamilyStatus]="FamilyStatusInfo.familyStatus"
             [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode">
@@ -43,7 +43,7 @@
         <app-reviewers #Reviewers [ExtraDetails]="FamilyStatusInfo.familyStatus.familyExtraDetails" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode"></app-reviewers>
     </div>
     <hr *ngIf="!DetailsMode">
-    <button class="btn btn-success w-100" *ngIf="!DetailsMode" (click)="UpdateFamilyStatus()">حفظ</button>
+    <button class="w-100 btn-color" *ngIf="!DetailsMode" (click)="UpdateFamilyStatus()">حفظ</button>
 </div>
 
 <app-za-loader [show]="showLoader"></app-za-loader>

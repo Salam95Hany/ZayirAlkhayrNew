@@ -34,10 +34,10 @@ public partial class FamilyStatus : AuditableEntity
     public string MaritalStatus { get; set; }
     public string Relevance { get; set; }
     public FamilyCategory Category { get; set; }
+    public FamilyIncome FamilyIncomes { get; set; } = default!;
+    public FamilyExpense FamilyExpenses { get; set; } = default!;
+    public FamilyExtraDetail FamilyExtraDetails { get; set; } = default!;
     public ICollection<FamilyDetail> FamilyDetails { get; set; } = new List<FamilyDetail>();
-    public ICollection<FamilyExpense> FamilyExpenses { get; set; } = new List<FamilyExpense>();
-    public ICollection<FamilyExtraDetail> FamilyExtraDetails { get; set; } = new List<FamilyExtraDetail>();
-    public ICollection<FamilyIncome> FamilyIncomes { get; set; } = new List<FamilyIncome>();
     public ICollection<FamilyNeed> FamilyNeeds { get; set; } = new List<FamilyNeed>();
     public ICollection<FamilyPatient> FamilyPatients { get; set; } = new List<FamilyPatient>();
     public FamilyNationality Nationality { get; set; }

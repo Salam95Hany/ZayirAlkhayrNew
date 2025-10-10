@@ -264,7 +264,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 {
                     FamilyStatus = FamilyStatus,
                     FamilyDetails = FamilyStatus.FamilyDetails.ToList(),
-                    FamilyIncome = FamilyStatus.FamilyIncomes.FirstOrDefault(),
+                    FamilyIncome = FamilyStatus.FamilyIncomes,
                     OrphanDetails = OrphanObj,
                     FamilyPatient = FamilyPatientObj,
                     FamilyMembersCount = FamilyMembersCount

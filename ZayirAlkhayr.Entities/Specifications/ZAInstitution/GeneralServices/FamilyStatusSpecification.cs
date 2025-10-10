@@ -15,7 +15,8 @@ namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.GeneralServices
             AddInclude(i => i.FamilyExpenses);
             AddInclude(i => i.FamilyExtraDetails);
             AddInclude(i => i.FamilyIncomes);
-            AddInclude(i => i.FamilyNeeds);
+            //AddInclude(i => i.FamilyNeeds);
+            AddInclude("FamilyNeeds.NeedType");
         }
     }
 }

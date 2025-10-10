@@ -14,6 +14,7 @@ namespace ZayirAlkhayr.Entities.Specifications
 
         public Expression<Func<T, bool>> Criteria => _criteria;
         public List<Expression<Func<T, object>>> Includes { get; set; } = new();
+        public List<string> IncludeStrings { get; set; } = new();
         public Expression<Func<T, object>> OrderBy { get; set; }
         public Expression<Func<T, object>> OrderByDescending { get; set; }
         public int Skip { get; set; }
@@ -37,6 +38,11 @@ namespace ZayirAlkhayr.Entities.Specifications
         protected void AddInclude(Expression<Func<T, object>> include)
         {
             Includes.Add(include);
+        }
+
+        protected void AddInclude(string includeString)
+        {
+            IncludeStrings.Add(includeString);
         }
 
         protected void ApplyPaging(int skip, int take)
