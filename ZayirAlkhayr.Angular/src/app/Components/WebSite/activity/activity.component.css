@@ -1,0 +1,38 @@
+section:not(:last-child) {
+  margin-bottom: 50px;
+}
+
+.activity-card {
+  background-color: #FFF;
+  border-bottom: 3px solid var(--main-color);
+  cursor: pointer;
+}
+
+.activity-card:hover {
+  background-color: var(--main-color);
+  color: #FFF;
+}
+
+.activity-card-img {
+  background-color: #EEE;
+  padding: 10px;
+  display: inline-block;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+}
+
+.payment-img {
+  --dim: 170px;
+  width: 100%;
+  height: var(--dim);
+}
+
+.donate-img {
+  --dim: 50px;
+  width: var(--dim);
+  height: var(--dim);
+}

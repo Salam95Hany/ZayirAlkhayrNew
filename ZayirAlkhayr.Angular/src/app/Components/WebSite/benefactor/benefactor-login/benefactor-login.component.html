@@ -1,0 +1,40 @@
+<div class="login-wrapper">
+    <div class="login-box shadow-lg position-relative">
+        <header class="login-logo">
+            <div class="img-logo-box">
+                <img src="logo-2.png" class="logo-img" loading="lazy" alt="" />
+            </div>
+        </header>
+        <section class="login-info pt-5">
+            <h2 class="form-title text-center mb-5 d-flex align-items-center justify-content-center">
+                <span class="form-title-text d-inline-block position-relative">تسجيل الدخول</span>
+            </h2>
+            <div class="text-danger text-center" *ngIf="ErrorMessage">{{ErrorMessage}}</div>
+            <form #LoginForm="ngForm" class="d-flex flex-column gap-4 align-items-center w-100">
+                <div class="input-box w-100">
+                    <div class="input-group pb-2 border-bottom">
+                        <input type="text" (paste)="false" class="form-control bg-transparent border-0 text-black" name="Code" (keypress)="NumbersOnly($event.key)" #Code="ngModel" [(ngModel)]="BeneFactorLogin.code" placeholder="الكود" required />
+                        <span class="input-group-text bg-transparent border-0 p-0">
+              <i class="fas fa-user main-color"></i>
+            </span>
+                    </div>
+                    <div *ngIf="Code.invalid && (Code.dirty || Code.touched || LoginForm.submitted )" class="text-danger pt-2">
+                        <div *ngIf="Code.errors?.required">الكود مطلوب</div>
+                    </div>
+                </div>
+                <div class="input-box w-100">
+                    <div class="input-group pb-2 border-bottom">
+                        <input type="text" name="Name" #Name="ngModel" [(ngModel)]="BeneFactorLogin.name" placeholder="اسم المستخدم" class="form-control bg-transparent border-0 text-black" required />
+                    </div>
+                    <div *ngIf="Name.invalid && (Name.dirty || Name.touched || LoginForm.submitted )" class="text-danger pt-2">
+                        <div *ngIf="Name.errors?.required">اسم المستخدم مطلوب</div>
+                    </div>
+                </div>
+                <button class="btn main-button d-flex align-items-center gap-2 mt-4" (click)="Login()" [disabled]="ButtonDisabled">
+          <i class="fas fa-sign-in-alt rotated-icon"></i>
+          <span>تسجيل دخول</span>
+        </button>
+            </form>
+        </section>
+    </div>
+</div>

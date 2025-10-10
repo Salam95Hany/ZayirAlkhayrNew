@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { PagingFilterModel } from '../../Models/shared/PagingFilterModel ';
-import { PagedResponseModel } from '../../Models/shared/PagedResponseModel';
 import { ApiResponseModel } from '../../Models/shared/ErrorResponseModel';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BenefactorService {
   apiURL = environment.apiUrl;
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private router: Router) { }
 
   GetAllBeneFactorData(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/GetAllBeneFactorData', PagingFilter);
@@ -45,7 +45,7 @@ export class BenefactorService {
   }
 
   GetBeneFactorTypeByIds(BeneFactorTypeIds: number[]) {
-    return this.http.post<any[]>(this.apiURL + 'BeneFactor/GetBeneFactorTypeByIds', BeneFactorTypeIds);
+    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'BeneFactor/GetBeneFactorTypeByIds', BeneFactorTypeIds);
   }
 
   GetBeneFactorNotes(PagingFilter: PagingFilterModel) {
@@ -90,5 +90,29 @@ export class BenefactorService {
 
   DeleteBeneFactorDetails(DetailsId: number) {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/DeleteBeneFactorDetails?DetailsId=' + DetailsId);
+  }
+
+  BeneFactorLogin(Code: number, BeneFactorName: string) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/BeneFactorLogin?Code=' + Code + '&BeneFactorName=' + BeneFactorName);
+  }
+
+  isAuthenticated(): boolean {
+    let currentUser = JSON.parse(localStorage.getItem('BeneFactorModel'));
+    if (!currentUser || this.isLoginExpired(currentUser.loginDate))
+      return false;
+
+    return true;
+  }
+
+  loginRedirect(): void {
+    localStorage.removeItem('BeneFactorModel');
+    this.router.navigateByUrl('/benefactor-login');
+  }
+
+  isLoginExpired(date: any): boolean {
+    let now = new Date().getTime();
+    let loginDate = new Date(date);
+    const expirationDate = loginDate.setMinutes(loginDate.getMinutes(), 1800);
+    return expirationDate < now;
   }
 }

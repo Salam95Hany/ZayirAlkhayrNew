@@ -1,0 +1,18 @@
+<span class="main-color fw-bold fs-5">{{PhotoDetails?.title}}</span>
+<p class="fs-5 lh-lg mb-4" *ngIf="PhotoDetails">
+    {{PhotoDetails?.description}}
+</p>
+
+
+<div class="row gy-4">
+    <div class="col-md-6 col-lg-4" *ngFor="let img of imageUrls; index as i" (click)="this.isGallery = true; currentGallery = i">
+        <div class="photo-card-image img-thumbnail position-relative">
+            <img [src]="img.src" class="photo-img" loading="lazy" alt="" />
+            <div class="photo-card-icon">
+                <i class="fas fa-search-plus"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<media [slides]="imageUrls" [isGallery]="isGallery" [currentGallery]="currentGallery" (closeGallery)="this.isGallery = false"></media>

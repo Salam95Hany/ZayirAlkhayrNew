@@ -1,0 +1,73 @@
+<header id="main-header" class="position-relative">
+  <media [isCarousel]="true" [slides]="slides" [autoPlay]="true" [autoplayTime]="5000"></media>
+  <nav class="navbar navbar-expand-md navbar-light bg-body-tertiary" #navbar>
+    <div class="container">
+      <!-- <div class="d-flex align-items-center header-height">
+        <div class="border cursor-pointer fs-4 navbar-toggler px-3 py-2" (click)="collapsed = !collapsed"
+          [class.rotated]="!collapsed">
+          <i class="fas {{ collapsed ? 'fa-bars' : 'fa-times' }}"></i>
+        </div>
+      </div> -->
+      <button
+          class="navbar-toggler hamburger hamburger--elastic rounded-1 main-bgcolor my-2"
+          [class.is-active]="!collapsed"
+          type="button"
+          aria-controls="navbar-content"
+          [attr.aria-expanded]="!collapsed"
+          aria-label="Toggle navigation"
+          (click)="collapsed = !collapsed"
+        >
+        <span class="hamburger-box">
+          <span class="hamburger-inner"></span>
+        </span>
+        </button>
+
+      <div class="navbar-collapse" [class.collapse]="collapsed">
+        <ul class="navbar-nav navbar-links me-auto">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/aboutus" routerLinkActive="active" (click)="collapsed = true">عن زائر
+              الخير</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/event" routerLinkActive="active" (click)="collapsed = true">الفعاليات</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/activity" routerLinkActive="active" (click)="collapsed = true">الأنشطة</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/photos" routerLinkActive="active" (click)="collapsed = true">الصور</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/benefactor-login" routerLinkActive="active" (click)="collapsed = true">المتبرعين</a>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link" (dblclick)="GoToAdmin()"></a>
+          </li> -->
+        </ul>
+        <ul class="navbar-nav navbar-socials">
+          <li class="nav-item">
+            <a class="nav-link" placement="top" ngbTooltip="Facebook" target="_blank"
+              href="https://www.facebook.com/profile.php?id=100084803561189&mibextid=ZbWKwL"><i
+                class="fab fa-facebook-square"></i></a>
+          </li>
+          <!-- <li class="nav-item">
+              <a class="nav-link" placement="top" ngbTooltip="Twitter"><i class="fab fa-twitter-square"></i></a>
+            </li> -->
+          <!-- <li class="nav-item">
+              <a class="nav-link" placement="top" ngbTooltip="Instagram"><i class="fab fa-instagram-square"></i></a>
+            </li> -->
+          <!-- <li class="nav-item">
+            <a class="nav-link" placement="top" ngbTooltip="Youtube"><i class="fab fa-youtube"></i></a>
+          </li> -->
+          <!-- <li class="nav-item">
+              <a class="nav-link" placement="top" ngbTooltip="Tiktok"><i class="fab fa-tiktok"></i></a>
+            </li> -->
+          <li class="nav-item">
+            <a class="nav-link" placement="top" ngbTooltip="WhatsApp" target="_blank"
+              href="https://wa.me/+201141533223"><i class="fab fa-whatsapp"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

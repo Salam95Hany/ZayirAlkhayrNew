@@ -1,0 +1,96 @@
+<section class="activity-section">
+    <h3 class="text-center main-color mb-5 display-5">الأنشطة</h3>
+    <div class="row gy-4">
+        <div class="col-md-6 col-lg-3" routerLink="/activity-details/{{item.id}}" *ngFor="let item of ActivitiesData">
+            <div class="activity-card rounded text-center shadow-sm p-3">
+                <div class="activity-card-img">
+                    <img src="{{item.image}}" loading="lazy" alt="" style="width: 100px;height: 100px;" />
+                </div>
+                <div class="activity-card-text fw-bold">{{item.name}}</div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="payment-section">
+    <h3 class="text-center main-color mb-5 display-5">طرق التبرع</h3>
+    <div class="row gy-4">
+        <div class="col-lg-4" (click)="OpenVodaFoneCashModal(VodaFoneCashModal)">
+            <div class="activity-card rounded text-center shadow-sm p-3">
+                <div class="activity-card-img bg-transparent">
+                    <img src="vodafone-cash.png" class="payment-img" loading="lazy" alt="" />
+                </div>
+                <div class="activity-card-text fw-bold fs-5">فودافون كاش</div>
+            </div>
+        </div>
+        <div class="col-lg-4" (click)="OpenAhlyBankModal(AhlyBankModal)">
+            <div class="activity-card rounded text-center shadow-sm p-3">
+                <div class="activity-card-img bg-transparent">
+                    <img src="national-bank.png" class="payment-img" loading="lazy" alt="" />
+                </div>
+                <div class="activity-card-text fw-bold fs-5">البنك الأهلى</div>
+            </div>
+        </div>
+        <div class="col-lg-4" (click)="OpenCashModal(CashModal)">
+            <div class="activity-card rounded text-center shadow-sm p-3">
+                <div class="activity-card-img bg-transparent">
+                    <img src="wallets.png" class="payment-img" loading="lazy" alt="" />
+                </div>
+                <div class="activity-card-text fw-bold fs-5">نقدا</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<ng-template #VodaFoneCashModal let-modal>
+    <div class="modal-header d-flex align-items-center justify-content-between main-bgcolor text-white">
+        <div class="display-7 d-flex align-items-center gap-3">
+            <img src="vodafone-cash.png" class="donate-img" loading="lazy" alt="" />
+            <span>فودافون كاش</span>
+        </div>
+        <i class="fas fa-times cursor-pointer fa-2x modal-close-btn" (click)="modal.dismiss()"></i>
+    </div>
+    <div class="modal-body gray-bgcolor">
+        <ul>
+            <li>رقم فودافون كاش (01032203814)</li>
+        </ul>
+    </div>
+</ng-template>
+
+
+<ng-template #CashModal let-modal>
+    <div class="modal-header d-flex align-items-center justify-content-between main-bgcolor text-white">
+        <div class="display-7 d-flex align-items-center gap-3">
+            <img src="wallets.png" class="donate-img" loading="lazy" alt="" />
+            <span>نقدا</span>
+        </div>
+        <i class="fas fa-times cursor-pointer fa-2x modal-close-btn" (click)="modal.dismiss()"></i>
+    </div>
+    <div class="modal-body gray-bgcolor">
+        <ul>
+            <li>تواصل معنا على هاتفنا رقم
+                <a href="tel:01116044223">01116044223</a>
+                <a href="tel:01141533223"> ,01141533223</a>
+            </li>
+            <li>تواصل معنا على
+                <a target="_blank" href="https://wa.me/+201141533223">واتساب</a>
+            </li>
+        </ul>
+    </div>
+</ng-template>
+
+<ng-template #AhlyBankModal let-modal>
+    <div class="modal-header d-flex align-items-center justify-content-between main-bgcolor text-white">
+        <div class="display-7 d-flex align-items-center gap-3">
+            <img src="national-bank.png" class="donate-img" loading="lazy" alt="" />
+            <span>البنك الأهلى</span>
+        </div>
+        <i class="fas fa-times cursor-pointer fa-2x modal-close-btn" (click)="modal.dismiss()"></i>
+    </div>
+    <div class="modal-body gray-bgcolor">
+        <ul>
+            <li>اسم الحساب: مؤسسة زائر الخير</li>
+            <li>يمكنكم التبرع عبر حساب البنك الاهلي المصري من خلال هذا الرقم: 2303171408103402029
+            </li>
+        </ul>
+    </div>
+</ng-template>

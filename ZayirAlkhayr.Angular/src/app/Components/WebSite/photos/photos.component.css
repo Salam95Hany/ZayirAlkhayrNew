@@ -1,0 +1,46 @@
+.photo-img {
+    width: 100%;
+    height: 250px;
+  }
+  .photo-date {
+    font-size: 15px;
+  }
+  .photo-card-image {
+    margin-bottom: 10px;
+  }
+  .photo-card-icon {
+    position: absolute;
+    top: .25rem;
+    left: .25rem;
+    --dim: calc(100% - .5rem);
+    width: var(--dim);
+    height: var(--dim);
+    font-size: 20px;
+    background-color: var(--main-color-rgba);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    z-index: -1;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -ms-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+  }
+  .photo-card-icon i {
+    background-color: var(--main-color);
+    color: #FFF;
+    padding: 15px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+  }
+  .photo-card-image:hover .photo-card-icon {
+    opacity: 1;
+    z-index: 2;
+  }
+  

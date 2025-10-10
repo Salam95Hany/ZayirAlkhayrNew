@@ -1,0 +1,155 @@
+<header id="admin-header" class="fixed-top" *ngIf="ProjectData">
+    <nav class="navbar navbar-expand-md navbar-light py-0">
+        <div class="container-fluid">
+            <div class="logo-menu-area py-1">
+                <header class="login-logo d-flex align-items-center gap-3 cursor-pointer">
+                    <div class="img-logo-box">
+                        <img src="logo-2.png" class="logo-img" loading="lazy" alt="" />
+                    </div>
+                    <div class="d-flex align-items-center gap-2 text-white fs-6" routerLink="/">
+                        <span>زيارة الموقع</span>
+                        <i class="uil uil-sign-in-alt fs-5"></i>
+                    </div>
+                </header>
+            </div>
+            <button class="navbar-toggler hamburger hamburger--elastic rounded-1 my-2" [class.is-active]="!collapsed" type="button" aria-controls="navbar-content" [attr.aria-expanded]="!collapsed" aria-label="Toggle navigation" (click)="collapsed = !collapsed">
+                <span class="hamburger-box">
+                    <span class="hamburger-inner"></span>
+                </span>
+            </button>
+            <div class="navbar-collapse pt-3 pt-md-0 " [class.collapse]="collapsed" id="navbar-content">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-2">
+                            <i class="uil uil-user"></i>
+                            <span class="navbar-brand m-0">مرحبا بك</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="container-fluid section-wtih-fixed-header" *ngIf="ProjectData">
+    <div class="bg-white border rounded fs-5">
+        <div class="border-bottom p-3">{{ProjectData?.title}}</div>
+        <div class="bg-thin-light p-3">
+            <div class="benfactory-slider border p-2 rounded shadow-sm mb-4">
+                <swiper-container navigation="true" loop="true" autoplay='{"delay": 4000}' dir="rtl" [attr.breakpoints]="breakpointsJson" style="width: 100%; height: auto;   --swiper-navigation-color: #fff;
+    --swiper-navigation-size: 35px;">
+                    <swiper-slide *ngFor="let url of ProjectData?.images">
+                        <div class="benfactory-box">
+                            <div class="benfactory-img">
+                                <img [src]="url" loading="lazy" alt="benfactory-images" />
+                            </div>
+                        </div>
+                    </swiper-slide>
+                </swiper-container>
+            </div>
+            <div class="d-flex gap-2 max-width-60-per fs-6">
+                <span>&#8226;</span>
+                <span>{{ProjectData?.description}}</span>
+            </div>
+            <hr class="border-top border-secondary my-4">
+            <div class="row">
+                <div class="col-md-2 col-box"></div>
+                <div class="col-md-2 col-box">
+                    <div class="details__card shadow-sm">
+                        <div class="card__body">
+                            <div class="card__icon">
+                                <i class="uil uil-receipt fs-1"></i>
+                            </div>
+                            <!-- <p class="card__title"></p>
+                            <div class="d-flex justify-content-center">
+                                <p class="m-0 fs-4" *ngFor="let digit of DonationAmountDigits2" [@slideUp]>{{digit}}</p>
+                            </div> -->
+
+                            <p class="card__title fw-bold mb-0">اجمالي المبلغ</p>
+                        </div>
+                        <div class="card__ribbon">
+                            <label class="card__ribbon-label">
+                                <div class="d-flex justify-content-center">
+                                    <p class="m-0 fs-4" *ngFor="let digit of DonationAmountDigits2" [@slideUp]>{{digit}}
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-box">
+                    <div class="details__card shadow-sm">
+                        <div class="card__body">
+                            <div class="card__icon">
+                                <i class="uil uil-receipt fs-1"></i>
+                            </div>
+                            <!-- <p class="card__title">اجمالي المبلغ</p>
+                            <div class="d-flex justify-content-center">
+                                <p class="m-0 fs-4" *ngFor="let digit of DonationAmountDigits2" [@slideUp]>{{digit}}</p>
+                            </div> -->
+
+                            <p class="card__title fw-bold mb-0">اجمالى التبرع</p>
+                        </div>
+                        <div class="card__ribbon">
+                            <label class="card__ribbon-label">
+                                <div class="d-flex justify-content-center">
+                                    <p class="m-0 fs-4" *ngFor="let digit of DonationAmountDigits" [@slideUp]>{{digit}}
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-box">
+                    <div class="details__card shadow-sm">
+                        <div class="card__body">
+                            <div class="card__icon">
+                                <i class="uil uil-receipt fs-1"></i>
+                            </div>
+                            <!-- <p class="card__title">اجمالي المبلغ</p>
+                            <div class="d-flex justify-content-center">
+                                <p class="m-0 fs-4" *ngFor="let digit of DonationAmountDigits2" [@slideUp]>{{digit}}</p>
+                            </div> -->
+
+                            <p class="card__title fw-bold mb-0">المبلغ المتبق</p>
+                        </div>
+                        <div class="card__ribbon">
+                            <label class="card__ribbon-label">
+                                <div class="d-flex justify-content-center">
+                                    <p class="m-0 fs-4" *ngFor="let digit of DonationAmountDigits3" [@slideUp]>{{digit}}
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-box">
+                    <div class="details__card shadow-sm">
+                        <div class="card__body">
+                            <div class="card__icon">
+                                <i class="uil uil-receipt fs-1"></i>
+                            </div>
+                            <!-- <p class="card__title">اجمالى التبرع</p>
+                            <div class="d-flex justify-content-center">
+                                <p class="m-0 fs-4" *ngFor="let digit of DonationAmountDigits" [@slideUp]>{{digit}}</p>
+                            </div> -->
+
+                            <p class="card__title fw-bold mb-0">عدد المتبرعيين</p>
+                        </div>
+                        <div class="card__ribbon">
+                            <label class="card__ribbon-label">
+                                <div class="d-flex justify-content-center">
+                                    <p class="m-0 fs-4" *ngFor="let digit of DonationAmountDigits4" [@slideUp]>{{digit}}
+                                    </p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>

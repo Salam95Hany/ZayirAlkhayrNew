@@ -1,0 +1,44 @@
+.event-date {
+    position: relative;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+  .event-date::before {
+    content: '';
+    width: 100%;
+    height: 1px;
+    background-color: #dbdbdb;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+  }
+  .event-date .event-name {
+    position: relative;
+    z-index: 4;
+    padding: 0 20px;
+    background-color: var(--main-color);
+    color: #FFF;
+    border-radius: 4px;
+  }
+  img.event-img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+  }
+  .event-card:not(:last-child) {
+    margin-bottom: 20px;
+  }
+  .kahiry-img {
+    width: 100%;
+    height: 250px;
+  }
+  .kahiry-img img {
+    width: 100%;
+    height: 100%;
+}

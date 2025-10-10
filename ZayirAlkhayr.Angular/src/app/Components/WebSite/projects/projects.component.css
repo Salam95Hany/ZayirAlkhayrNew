@@ -1,0 +1,209 @@
+.navbar {
+    background: var(--main-color-gradient);
+    min-height: var(--admin-header-height);
+    z-index: 3;
+}
+
+.navbar .navbar-brand {
+    color: #FFF;
+}
+
+.navbar .nav-link {
+    color: #FFF;
+}
+
+.user-dropdown-link i {
+    font-size: 20px;
+    --dim: 40px;
+    width: var(--dim);
+    height: var(--dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FFF;
+    color: var(--main-color) !important;
+    cursor: pointer;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+}
+
+.user-dropdown-link i:hover {
+    background-color: #FFF;
+    color: var(--main-color) !important;
+}
+
+
+/* .user-dropdown-link.dropdown-toggle::after {
+    content: unset;
+  } */
+
+.dropdown-menu a {
+    font-size: 14px;
+}
+
+.logo-menu-area {
+    min-width: 225px;
+}
+
+.img-logo-box {
+    border: 2px solid var(--secondary-color);
+    border-radius: 50%;
+    background-color: #FFF;
+    --dim: 50px;
+    width: var(--dim);
+    height: var(--dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-logo .logo-img {
+    --dim: 40px;
+    width: var(--dim);
+    height: var(--dim);
+    margin-top: -15px;
+}
+
+.section-wtih-fixed-header {
+    position: relative;
+    top: calc(var(--admin-header-height) + 10px);
+    min-height: calc(100vh - var(--admin-header-height) - 10px);
+}
+
+.benfactory-box .benfactory-img img {
+    width: 100%;
+    height: calc(100vh / 1.7);
+    object-fit: cover;
+    object-position: center;
+}
+
+.max-width-60-per {
+    max-width: 60%;
+}
+
+.bg-thin-light {
+    background-color: #f7f7f7;
+}
+
+.details__card {
+    width: min(280px, 100%);
+    margin: auto;
+    background-color: #FFF;
+    text-align: center;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 4rem;
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+    border: 1px solid #ebebeb;
+    position: relative;
+}
+
+.col-box:not(:last-child) .details__card {
+    margin-bottom: 20px;
+}
+
+.details__card::before {
+    content: "";
+    position: absolute;
+    height: 30px;
+    width: 100px;
+    background-color: var(--main-color);
+    top: 32px;
+    right: -2.5px;
+    -webkit-clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
+    clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+.card__body {
+    padding: 2rem 1.5rem;
+    max-width: 25ch;
+    margin: auto;
+}
+
+.card__title {
+    font-weight: 800;
+    color: #121513;
+    font-size: 1.25rem;
+    margin-block: 1.5rem 0.75rem;
+}
+
+.card__paragraph {
+    color: #303830;
+    font-size: 0.875rem;
+}
+
+.card__ribbon {
+    margin-top: 1.5rem;
+    display: grid;
+    place-items: center;
+    height: 50px;
+    background-color: var(--main-color);
+    position: relative;
+    width: 101%;
+    left: 2px;
+    top: 0;
+    position: relative;
+    border-radius: 0 0 2rem 2rem;
+}
+
+.card__ribbon::after,
+.card__ribbon::before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    aspect-ratio: 1/1;
+    bottom: 100%;
+    z-index: -2;
+    background-color: red;
+}
+
+.card__ribbon::before {
+    left: 0;
+    transform-origin: left bottom;
+    transform: rotate(45deg);
+}
+
+.card__ribbon::after {
+    right: 0;
+    transform-origin: right bottom;
+    transform: rotate(-45deg);
+}
+
+.card__ribbon-label {
+    min-width: 90px;
+    padding: 0 10px;
+    height: 70px;
+    background-color: #fff;
+    position: relative;
+    transform: translateY(-50%);
+    border: 8px solid var(--main-color);
+    border-radius: 5px;
+    display: grid;
+    place-items: center;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.card__ribbon-label::before,
+.card__ribbon-label::after {
+    content: "";
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    bottom: 50%;
+}
+
+.card__ribbon-label::before {
+    right: calc(100% + 7px);
+    border-bottom-right-radius: 20px;
+    box-shadow: 5px 5px 0 var(--main-color);
+}
+
+.card__ribbon-label::after {
+    left: calc(100% + 7px);
+    border-bottom-left-radius: 20px;
+    box-shadow: -5px 5px 0 var(--main-color);
+}

@@ -52,7 +52,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
                 Response.WelcomeMessage = result.WelcomeMessage;
                 Response.ResponseCode = 200;
                 Response.ResponseMessage = "تم تسجيل الدخول بنجاح";
-                return ApiResponseModel<BeneFactorLoginModel>.Success(GenericErrors.SuccessLogin);
+                return ApiResponseModel<BeneFactorLoginModel>.Success(GenericErrors.SuccessLogin, Response);
             }
             else
                 return ApiResponseModel<BeneFactorLoginModel>.Failure(GenericErrors.InvalidBeneFactorCredentials);

@@ -54,7 +54,7 @@ export class LoginComponent {
           this.showError.set(false);
           this.isLoading.set(false);
           localStorage.setItem('UserModel', JSON.stringify(data.results));
-          this.router.navigateByUrl('/home');
+          this.router.navigateByUrl('admin/home');
         } else {
           this.showError.set(true);
           this.isLoading.set(false);

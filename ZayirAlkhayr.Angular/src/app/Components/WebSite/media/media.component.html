@@ -1,0 +1,51 @@
+<ng-container *ngIf="isCarousel">
+    <div class="wrapper-carousel">
+        <div class="carousel">
+            <header class="carousel-logo">
+                <div class="img-logo-box">
+                    <img src="logo-2.png" class="logo-img" loading="lazy" alt="" />
+                </div>
+            </header>
+            <ng-container *ngFor="let slide of slides; index as i">
+                <img *ngIf="i === currentSlide" [src]="slide.src" class="slide hover_effect" [@slideAnimation]="animationTypeImg" />
+                <div *ngIf="i === currentSlide" class="heading justify-content-center justify-content-lg-start">
+                    <span class="heading-name" [@slideAnimation]="animationTypeText">{{ slide.headline }}</span>
+                </div>
+                <div class="indicators">
+                    <div class="indicat" (click)="currentSlide = i" [class.active]="currentSlide === i" *ngFor="let slide of slides; index as i"></div>
+                </div>
+            </ng-container>
+            <button class="control prev" (click)="onPreviousClick()">
+        <span class="arrow left"></span>
+      </button>
+            <button class="control next" (click)="onNextClick()">
+        <span class="arrow right"></span>
+      </button>
+        </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="isGallery">
+    <div class="wrapper-gallery" [class.show]="isGallery" (click)="closeGAllery($event)">
+        <div class="gallery noClose">
+            <ng-container *ngFor="let slide of slides; index as i">
+                <img class="slide hover_effect noClose" *ngIf="i === currentGallery" [src]="slide.src" [style.rotate]="rotating + 'deg'" [style.scale]="initZooming + '.' + zooming" [@slideAnimation]="animationTypeImg" />
+            </ng-container>
+            <button class="control prev noClose" (click)="onPreviousClickGallery()">
+        <span class="arrow left noClose"></span>
+      </button>
+            <button class="control next noClose" (click)="onNextClickGallery()">
+        <span class="arrow right noClose"></span>
+      </button>
+        </div>
+        <div class="gallery-options noClose d-flex align-items-center justify-content-between px-3 py-2">
+            <div class="d-flex align-items-center noClose">
+                <i class="fas fa-times gallery-close-btn gallery-options-item" (click)="closeGAllery($event)"></i>
+                <i class="fas fa-undo rotate-left gallery-options-item noClose" (click)="onRotate('left')"></i>
+                <i class="fas fa-undo rotate-right gallery-options-item noClose" (click)="onRotate('right')"></i>
+                <i class="uil uil-search-plus gallery-options-item fs-5 noClose" (click)="onZoom('in')"></i>
+                <i class="uil uil-search-minus gallery-options-item fs-5 noClose" (click)="onZoom('out')"></i>
+            </div>
+            <div class="gallery-count fs-5 noClose">{{ currentGallery + 1 }} / {{ slides.length }}</div>
+        </div>
+    </div>
+</ng-container>

@@ -1,0 +1,98 @@
+.login-wrapper {
+    min-height: 100vh;
+    background: var(--main-color-radial);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .login-box {
+    width: 100%;
+    max-width: 500px;
+    background-color: #FFF;
+    padding: 30px 25px;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    -ms-border-radius: 20px;
+    -o-border-radius: 20px;
+  }
+  .login-box input:not([type="checkbox"]) {
+    background-color: transparent !important;
+  }
+  .input-box:has(input:focus) > .input-group {
+    border-color: var(--main-color) !important;
+  }
+  
+  .login-box input:not([type="checkbox"]):focus,
+  .login-box input:not([type="checkbox"]):active,
+  .login-box input:not([type="checkbox"]):visited,
+  .login-box input:not([type="checkbox"]):focus-within,
+  .login-box input:not([type="checkbox"]):target {
+      background-color: transparent !important;
+  }
+  
+  .login-box input:not([type="checkbox"]):-webkit-autofill,
+  .login-box input:not([type="checkbox"]):-webkit-autofill:hover,
+  .login-box input:not([type="checkbox"]):-webkit-autofill:focus,
+  .login-box input:not([type="checkbox"]):-webkit-autofill:active,
+  .login-box input:not([type="checkbox"]):-webkit-autofill:visited,
+  .login-box input[data-autocompleted] {
+      box-shadow: 0 0 0 1000px transparent inset;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: #000;
+      background-color: transparent !important;
+  }
+  .login-box input::placeholder {
+    color: #000;
+  }
+  .form-control:focus {
+    box-shadow: none;
+  }
+  input[type="checkbox"]:checked {
+    background-color: var(--main-color);
+    color: #FFF;
+    border-color: var(--main-color);
+    box-shadow: none;
+  }
+  input[type="checkbox"] {
+    box-shadow: none;
+    border-color: var(--main-color);
+  }
+  .login-logo {
+    position: absolute;
+    top: -70px;
+    left: 50%;
+    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+  }
+  .img-logo-box {
+    border: 2px solid var(--secondary-color);
+    border-radius: 50%;
+    background-color: #FFF;
+    --dim: 120px;
+    width: var(--dim);
+    height: var(--dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-logo .logo-img {
+    --dim: 100px;
+    width: var(--dim);
+    height: var(--dim);
+    margin-top: -15px;
+  }
+  .form-title .form-title-text::before {
+    content: '';
+    width: 100%;
+    height: 5px;
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    border-radius: 5px;
+    background-color: var(--main-color);
+  }

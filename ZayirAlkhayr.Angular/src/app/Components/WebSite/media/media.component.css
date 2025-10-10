@@ -1,0 +1,288 @@
+.wrapper-carousel {
+  height: var(--carousel_height);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.carousel {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+.carousel::before {
+  content: '';
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* background-color: rgba(0, 0, 0, .7); */
+  transition: background-color 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+  -webkit-transition: background-color 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+  -moz-transition: background-color 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+  -ms-transition: background-color 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+  -o-transition: background-color 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+}
+/* .carousel:hover::before {
+  background-color: rgba(0, 0, 0, .4);
+} */
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* object-fit: cover; */
+}
+.hover_effect {
+  transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+  -webkit-transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+  -moz-transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+  -ms-transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+  -o-transition: transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+}
+.hover_effect:hover {
+  transform: scale(1.025);
+  -webkit-transform: scale(1.025);
+  -moz-transform: scale(1.025);
+  -ms-transform: scale(1.025);
+  -o-transform: scale(1.025);
+}
+.carousel:hover .slide {
+  transform: scale(1.030);
+  -webkit-transform: scale(1.030);
+  -moz-transform: scale(1.030);
+  -ms-transform: scale(1.030);
+  -o-transform: scale(1.030);
+}
+.heading {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 100%;
+  color: #fff;
+  font-size: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 1.8em;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+}
+.heading-name {
+  padding: 10px;
+  background-color: var(--main-color);
+  border-radius: 0.35rem;
+}
+.indicators {
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.indicat {
+  --dim: 30px;
+  width: var(--dim);
+  height: 10px;
+  background-color: #FFF;
+  cursor: pointer;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  transition: all .3s ease-in-out;
+  -webkit-transition: all .3s ease-in-out;
+  -moz-transition: all .3s ease-in-out;
+  -ms-transition: all .3s ease-in-out;
+  -o-transition: all .3s ease-in-out;
+}
+.indicat:not(:last-child) {
+  margin-left: 8px;
+}
+.indicat.active {
+  background-color: var(--main-color);
+  --dim: 20px;
+  width: var(--dim);
+  height: var(--dim);
+}
+.indicat:hover {
+  transform: scale(1.2);
+  -webkit-transform: scale(1.2);
+  -moz-transform: scale(1.2);
+  -ms-transform: scale(1.2);
+  -o-transform: scale(1.2);
+}
+.control {
+  border: none;
+  background-color: transparent;
+  outline: 0;
+  position: absolute;
+  top: 0;
+  z-index: 3;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.5em;
+  color: white;
+  font-weight: bold;
+  font-size: 3em;
+  user-select: none;
+  height: 100%;
+  opacity: 80%;
+  transition: opacity 150ms cubic-bezier(0.25, 0.46, 0.45, 0.84);
+
+  &:hover {
+    opacity: 1;
+    background-color: rgba(255,255,255, .1);
+  }
+
+  &.next {
+    right: 0;
+  }
+  &.prev {
+    left: 0;
+  }
+}
+.arrow {
+  display: block;
+  border-left: 0.1em solid white;
+  border-bottom: 0.1em solid white;
+  width: 0.5em;
+  height: 0.5em;
+
+  &.left {
+    transform: rotate(45deg);
+  }
+  &.right {
+    transform: rotate(225deg);
+  }
+}
+
+.carousel-logo {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 15px;
+}
+.img-logo-box {
+  /* border: 2px solid var(--main-color); */
+  border-radius: 50%;
+  /* background-color: #FFF; */
+  --dim: 120px;
+  width: var(--dim);
+  height: var(--dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.carousel-logo .logo-img {
+  --dim: 100px;
+  width: var(--dim);
+  height: var(--dim);
+  margin-top: -5px;
+}
+
+@media (min-width: 992px) {
+  .carousel-logo .logo-img {
+    --dim: 120px;
+    width: var(--dim);
+    height: var(--dim);
+  }
+}
+
+@media (max-width: 991px) {
+  .heading {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 575px) {
+  .wrapper-carousel {
+    height: 70vh;
+  }
+  .indicators {
+    display: none;
+  }
+  /* .carousel .slide {
+    object-fit: cover;
+  } */
+}
+
+
+
+/* GALLERY STYLES */
+.wrapper-gallery {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background-color: rgba(0, 0, 0, .9);
+  overflow: hidden;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.wrapper-gallery.show {
+  display: flex;
+}
+.gallery {
+  width: 100%;
+  max-width: 850px;
+  height: 600px;
+  position: relative;
+}
+.gallery-options {
+  position: absolute;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+  font-size: 1rem;
+  color: #FFF;
+  cursor: pointer;
+}
+.fa-undo.rotate-right {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  -ms-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+}
+.gallery-options-item {
+  --dim: 3rem;
+  width: var(--dim);
+  height: var(--dim);
+  background-color: transparent;
+  color: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+     border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, outline-color 0.2s;
+  -webkit-transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, outline-color 0.2s;
+  -moz-transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, outline-color 0.2s;
+  -ms-transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, outline-color 0.2s;
+  -o-transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s, outline-color 0.2s;
+}
+.gallery-options-item:hover {
+  /* background-color: rgba(255,255,255, .1); */
+  background-color: var(--main-color-rgba);
+}
