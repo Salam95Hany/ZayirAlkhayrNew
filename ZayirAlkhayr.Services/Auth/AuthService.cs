@@ -27,11 +27,11 @@ namespace ZayirAlkhayr.Services.Auth
             _sQLHelper = sQLHelper;
         }
 
-        public async Task<DataTable> GetAllUsers()
+        public async Task<ApiResponseModel<DataTable>> GetAllUsers()
         {
             var Params = new SqlParameter[0];
             var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllUsersData", Params);
-            return dt;
+            return ApiResponseModel<DataTable>.Success(GenericErrors.SuccessLogin, dt);
         }
 
         public async Task<ApiResponseModel<ApplicationUserRespone>> AdminLogin(LoginModel request)
@@ -174,7 +174,7 @@ namespace ZayirAlkhayr.Services.Auth
 
             var result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)
-                return ApiResponseModel<string>.Failure(GenericErrors.DeleteSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
             else
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
         }

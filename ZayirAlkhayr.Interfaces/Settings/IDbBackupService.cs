@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
 
-namespace ZayirAlkhayr.Interfaces.ZAInstitution.Settings
+namespace ZayirAlkhayr.Interfaces.Settings
 {
     public interface IDbBackupService
     {

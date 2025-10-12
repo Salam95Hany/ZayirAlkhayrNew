@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
-using ZayirAlkhayr.Interfaces.ZAInstitution.Settings;
+using ZayirAlkhayr.Interfaces.Settings;
 using ZayirAlkhayr.Services.Common;
 
-namespace ZayirAlkhayr.Controllers.ZAInstitution.Settings
+namespace ZayirAlkhayr.Controllers.Settings
 {
     [Route("api/[controller]")]
     [ApiController]

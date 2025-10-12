@@ -1,18 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../Auth/auth.service';
 
 @Component({
   selector: 'app-za-header',
   standalone: true,
-  imports: [RouterLink,CommonModule,NgbModule],
+  imports: [RouterLink, CommonModule, NgbModule],
   templateUrl: './za-header.component.html',
   styleUrl: './za-header.component.css'
 })
 export class ZaHeaderComponent {
   private authService = inject(AuthService);
+  private router = inject(Router);
   @Input() showToggler: boolean = true;
   @Output() toggler = new EventEmitter<boolean>();
   collapsed = true;
@@ -38,7 +39,12 @@ export class ZaHeaderComponent {
   }
 
   logout() {
-    // this.authService.logout();
+    this.authService.AdminLogout(this.UserModel?.userId).subscribe(data => {
+      if (data) {
+        localStorage.removeItem('UserModel');
+        this.router.navigateByUrl('/admin');
+      }
+    });
   }
 
 

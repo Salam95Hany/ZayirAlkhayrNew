@@ -43,7 +43,9 @@ export enum RegexType {
     currency,
     addressLine,
     noSpace,
-    phoneNumber
+    phoneNumber,
+    englishLettersOnly,
+    FourMinLength,
 
 }
 export const regexList: RegexModel[] = [
@@ -131,5 +133,15 @@ export const regexList: RegexModel[] = [
         pattern: /^(?:01[0125]\d{8}|00[1-9]\d{5,13})$/,
         message: "رقم التلفون غير صحيح.",
         type: RegexType.phoneNumber
+    },
+     {
+        pattern: /^[a-zA-Z \-\']+/,
+        message: "يُسمح فقط بالحروف الإنجليزية.",
+        type: RegexType.englishLettersOnly
+    },
+    {
+        pattern: /^.{4,}$/,
+        message: "كلمة المرور لا تقل عن اربع ارقام او احرف",
+        type: RegexType.FourMinLength
     }
 ];

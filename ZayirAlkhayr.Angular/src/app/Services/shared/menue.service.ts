@@ -24,41 +24,47 @@ export class MenueService {
           description: 'إدارة موقع زائر الخير',
           icon: 'fa-solid fa-exchange-alt',
           route: '/admin/za-institution/home/1',
+          role: ['WebSite', 'SupperAdmin', 'Admin'],
           subMenus: [
             {
               displayName: 'شريط الصور',
               menuItem: 'slide-image',
               description: 'تتبع و إدارة شريط الصور',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/slide-image'
+              route: '/admin/za-institution/slide-image',
+              role: ['WebSite', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'الأنشطة',
               menuItem: 'activity',
               description: 'تتبع و إدارة الأنشطة',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/activity'
+              route: '/admin/za-institution/activity',
+              role: ['WebSite', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'الفعاليات',
               menuItem: 'event',
               description: 'تتبع و إدارة الفعاليات',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/event'
+              route: '/admin/za-institution/event',
+              role: ['WebSite', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'الصور',
               menuItem: 'photo',
               description: 'تتبع و إدارة الصور',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/photo'
+              route: '/admin/za-institution/photo',
+              role: ['WebSite', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'المشاريع',
               menuItem: 'project',
               description: 'تتبع و إدارة المشاريع',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/project'
+              route: '/admin/za-institution/project',
+              role: ['WebSite', 'SupperAdmin', 'Admin'],
             }
           ]
         },
@@ -69,41 +75,47 @@ export class MenueService {
           description: 'إدارة و عرض بيانات المتبرعين',
           icon: 'fa-solid fa-file-invoice-dollar',
           route: '/admin/za-institution/home/2',
+          role: ['BeneFactors', 'SupperAdmin', 'Admin'],
           subMenus: [
             {
               displayName: 'المتبرعين',
               menuItem: 'benefactors',
               description: 'إدارة و عرض بيانات المتبرعين',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/benefactors'
+              route: '/admin/za-institution/benefactors',
+              role: ['BeneFactors', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'تفاصيل المتبرعين',
               menuItem: 'benefactor-detail',
               description: 'عرض تفاصيل المتبرعين',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/benefactor-detail'
+              route: '/admin/za-institution/benefactor-detail',
+              role: ['BeneFactors', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'ملاحظات المتبرعين',
               menuItem: 'benefactor-note',
               description: 'عرض ملاحظات المتبرعين',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/benefactor-note'
+              route: '/admin/za-institution/benefactor-note',
+              role: ['BeneFactors', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'جنسيات المتبرعين',
               menuItem: 'benefactor-nationality',
               description: 'إدارة و عرض جنسيات المتبرعين',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/benefactor-nationality'
+              route: '/admin/za-institution/benefactor-nationality',
+              role: ['BeneFactors', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'أنواع التبرع',
               menuItem: 'benefactor-type',
               description: 'إدارة و عرض أنواع التبرع',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/benefactor-type'
+              route: '/admin/za-institution/benefactor-type',
+              role: ['BeneFactors', 'SupperAdmin', 'Admin'],
             },
           ]
         },
@@ -120,7 +132,8 @@ export class MenueService {
               menuItem: 'general-tasks',
               description: 'إدارة و عرض المهام العامة',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/general-tasks'
+              route: '/admin/za-institution/general-tasks',
+              role: ['SupperAdmin', 'Admin'],
             },
             {
               displayName: 'المهام اليومية',
@@ -138,20 +151,23 @@ export class MenueService {
           description: 'تتبع و إدارة الحسابات',
           icon: 'uil uil-credit-card',
           route: '/admin/za-institution/home/4',
+          role: ['Accounts', 'SupperAdmin', 'Admin'],
           subMenus: [
             {
               displayName: 'الايرادات',
               menuItem: 'account-import-money',
               description: 'تتبع و إدارة الايرادات اليومية',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/account-import-money'
+              route: '/admin/za-institution/account-import-money',
+              role: ['Accounts', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'المصروفات',
               menuItem: 'account-export-money',
               description: 'تتبع و إدارة المصروفات اليومية',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/account-export-money'
+              route: '/admin/za-institution/account-export-money',
+              role: ['Accounts', 'SupperAdmin', 'Admin'],
             },
           ]
         },
@@ -162,73 +178,107 @@ export class MenueService {
           description: 'إدارة بيانات المحتاجين',
           icon: 'fa-solid fa-users',
           route: '/admin/za-institution/home/5',
+          role: ['Services', 'SupperAdmin', 'Admin'],
           subMenus: [
             {
               displayName: 'حالات عامة',
               menuItem: 'family-status',
               description: 'إدارة بيانات المحتاجين ومعلوماتهم',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/family-status'
+              route: '/admin/za-institution/family-status',
+              role: ['Services', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'الجنسيات',
               menuItem: 'family-nationality',
               description: 'عرض وإدارة الجنسيات',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/family-nationality'
+              route: '/admin/za-institution/family-nationality',
+              role: ['Services', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'الاحتياجات',
               menuItem: 'family-needs',
               description: 'عرض وإدارة الاحتياجات',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/family-needs'
+              route: '/admin/za-institution/family-needs',
+              role: ['Services', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'الفئات',
               menuItem: 'family-categories',
               description: 'عرض وإدارة الفئات',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/family-categories'
+              route: '/admin/za-institution/family-categories',
+              role: ['Services', 'SupperAdmin', 'Admin'],
             },
             {
               displayName: 'أنواع المرض',
               menuItem: 'family-patientTypes',
               description: 'عرض وإدارة أنواع المرض',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/family-patientTypes'
+              route: '/admin/za-institution/family-patientTypes',
+              role: ['Services', 'SupperAdmin', 'Admin'],
             },
-          ]
-        },
-        {
-          menuItemId: MenuType.ZAInstitution,
-          displayName: 'الاعدادات',
-          menuItem: '6',
-          description: 'التحكم في المستخدمين والنسخ الاحتياطية',
-          icon: 'fa-solid fa-tools',
-          route: '/admin/za-institution/home/6',
-
-          subMenus: [
-            {
-              displayName: 'المستخدمين',
-              menuItem: 'user',
-              description: 'عرض وإدارة المستخدمين',
-              icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/user'
-            },
-            {
-              displayName: 'النسخ الاحتياطية',
-              menuItem: 'backup',
-              description: 'عرض وإدارة النسخ الاحتياطية',
-              icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/backup'
-            }
           ]
         }
       ]
+    },
+    {
+      menuItemId: MenuType.Settings,
+      displayName: 'الاعدادات',
+      menuItem: 'Settings',
+      role: ['SupperAdmin'],
+      subMenus: [
+        {
+          displayName: 'المستخدمين',
+          menuItem: 'user',
+          description: 'تتبع و إدارة المستخدمين',
+          icon: 'uil uil-user',
+          route: '/admin/settings/user',
+          role: ['SupperAdmin'],
+        },
+        {
+          displayName: 'النسخ الاحتياطية',
+          menuItem: 'backup',
+          description: 'تتبع و إدارة النسخ الاحتياطية',
+          icon: 'uil uil-archive',
+          route: '/admin/settings/backup',
+          role: ['SupperAdmin'],
+        },
+      ]
     }
   ];
+
+  filterMenusByUserRole(menus: MenuSidebarItem, userRole: string): MenuSidebarItem {
+    menus.subMenus = menus.subMenus?.filter(x => x.role?.includes(userRole) || !x.role || x.role.length == 0);
+    menus.subMenus?.forEach(subMenu => {
+      this.filterMenusByUserRole(subMenu, userRole);
+    });
+
+    return menus;
+  }
+
+  getAllRoutesFromMenu(menu: MenuSidebarItem): string[] {
+    let routes: string[] = [];
+
+    if (menu.route) {
+      const lastPart = menu.route.split('/').pop();
+      if (lastPart) {
+        routes.push(lastPart);
+      }
+    }
+
+    if (menu.subMenus && menu.subMenus.length > 0) {
+      menu.subMenus.forEach(sub => {
+        routes = routes.concat(this.getAllRoutesFromMenu(sub));
+      });
+    }
+
+    return routes;
+  }
 }
 export enum MenuType {
   ZAInstitution = 1,
+  Settings = 2
 }

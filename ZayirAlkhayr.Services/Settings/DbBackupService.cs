@@ -1,31 +1,32 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
 using System.IO.Compression;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Interfaces.Common;
-using ZayirAlkhayr.Interfaces.ZAInstitution.Settings;
-using ZayirAlkhayr.Services.Common;
+using ZayirAlkhayr.Interfaces.Settings;
 
-namespace ZayirAlkhayr.Services.ZAInstitution.Settings
+namespace ZayirAlkhayr.Services.Settings
 {
-    public class DbBackupService : IDbBackupService
+    public class DbBackupService: IDbBackupService
     {
+        private readonly IWebHostEnvironment _environment;
         private readonly IAppSettings _appSettings;
-        private readonly string _webRootPath;
-        private string ConnectionString;
-
-        public DbBackupService(IAppSettings appSettings, IOptions<AppPaths> options)
+        public DbBackupService(IWebHostEnvironment environment, IAppSettings appSettings)
         {
+            _environment = environment;
             _appSettings = appSettings;
-            _webRootPath = options.Value.WebRootPath;
-            ConnectionString = _appSettings.ConnectionStrings.DBConnection;
         }
-
         public string SaveDbBackupFile()
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(ConnectionString))
+                using (SqlConnection connection = new SqlConnection(_appSettings.ConnectionStrings.DBConnection))
                 {
                     connection.Open();
                     var backupFilePath = "";
@@ -46,7 +47,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Settings
         {
             try
             {
-                string folderPath = Path.Combine(_webRootPath, Folder.ToString());
+                string folderPath = Path.Combine(_environment.WebRootPath, Folder.ToString());
                 string zipFilePath = GetBackupImageFilePath(Folder);
                 using (var zipArchive = new ZipArchive(File.Create(zipFilePath), ZipArchiveMode.Create))
                 {
@@ -74,7 +75,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Settings
 
         private string GetBackupImageFilePath(ImageFiles Folder)
         {
-            var FullPath = Path.Combine(_webRootPath, ImageFiles.ExportFiles.ToString());
+            var FullPath = Path.Combine(_environment.WebRootPath, ImageFiles.ExportFiles.ToString());
             var FileName = DateTime.Now.ToString("dd-MM-yyyy") + "_" + Folder.ToString() + ".zip";
             return Path.Combine(FullPath, FileName);
         }

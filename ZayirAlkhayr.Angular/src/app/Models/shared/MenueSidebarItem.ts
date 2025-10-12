@@ -5,5 +5,6 @@ export class MenuSidebarItem {
     description?: string;
     route?: string;
     icon?: string;
+    role?: string[];
     subMenus?: MenuSidebarItem[] = [];
   }

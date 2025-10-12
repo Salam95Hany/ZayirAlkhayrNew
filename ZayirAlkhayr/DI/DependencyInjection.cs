@@ -10,10 +10,10 @@ using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
+using ZayirAlkhayr.Interfaces.Settings;
 using ZayirAlkhayr.Interfaces.Shared;
 using ZayirAlkhayr.Interfaces.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Interfaces.ZAInstitution.GeneralServices;
-using ZayirAlkhayr.Interfaces.ZAInstitution.Settings;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Tasks;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Reports.Interface;
@@ -21,10 +21,10 @@ using ZayirAlkhayr.Reports.Service;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
+using ZayirAlkhayr.Services.Settings;
 using ZayirAlkhayr.Services.Shared;
 using ZayirAlkhayr.Services.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Services.ZAInstitution.GeneralServices;
-using ZayirAlkhayr.Services.ZAInstitution.Settings;
 using ZayirAlkhayr.Services.ZAInstitution.Tasks;
 using ZayirAlkhayr.Services.ZAInstitution.WebSite;
 
@@ -135,7 +135,12 @@ namespace ZayirAlkhayr.DI
 
             services.Configure<IdentityOptions>(options =>
             {
-                options.Password.RequiredLength = 8;
+                options.Password.RequiredLength = 4;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequiredUniqueChars = 0;
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+/ ";
                 options.User.RequireUniqueEmail = true;
             });
