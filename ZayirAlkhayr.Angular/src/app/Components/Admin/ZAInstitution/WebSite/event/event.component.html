@@ -4,7 +4,7 @@
     <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
         <div class="col-md-8 mb-2">
             <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)">
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="ZAInstitution_Event" action="canAdd" (click)="openItemModal(OpenItemModal,null)">
                     <i class="fas fa-plus-circle"></i>
                     <span>إضافة</span>
                 </button>
@@ -61,15 +61,15 @@
                             </td>
                             <td>
                                 <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
+                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_Event" action="canEdit" (click)="openItemModal(OpenItemModal,item)">
                                         <i class="uil uil-pen"></i>
                                         <span>تعديل</span>
                                     </button>
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openAddImagesModal(OpenAddImagesModal,item)">
+                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_Event" action="canAdd" (click)="openAddImagesModal(OpenAddImagesModal,item)">
                                         <i class="uil uil-plus"></i>
                                         <span>اضافة</span>
                                     </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item)">
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" appRole pageKey="ZAInstitution_Event" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
                                     <i class="uil uil-trash-alt"></i>
                                     <span>حذف</span>
                                 </button>

@@ -41,8 +41,7 @@ export class ZaHeaderComponent {
   logout() {
     this.authService.AdminLogout(this.UserModel?.userId).subscribe(data => {
       if (data) {
-        localStorage.removeItem('UserModel');
-        this.router.navigateByUrl('/admin');
+        this.authService.loginRedirect();
       }
     });
   }

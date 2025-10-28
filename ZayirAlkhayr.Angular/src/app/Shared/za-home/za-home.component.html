@@ -53,7 +53,7 @@
                             <h4 class="fw-bold m-0">اختر نظام</h4>
                         </div>
                         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-6 gy-4">
-                            <div class="col" routerLink="/admin/za-institution">
+                            <div class="col" routerLink="/admin/za-institution" *ngIf="HideApplication('ZAInstitution')">
                                 <div class="erp-prod-item prod-blue box-hover cursor-pointer">
                                     <div class="d-flex flex-column align-items-center justify-content-between">
                                         <div class="erp-prod-icon shadow-sm erp-icon-blue">
@@ -63,7 +63,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col" routerLink="/admin/general-accounts">
+                            <div class="col" routerLink="/admin/general-accounts" *ngIf="HideApplication('GeneralAccount')">
                                 <div class="erp-prod-item prod-orange box-hover cursor-pointer">
                                     <div class="d-flex flex-column align-items-center justify-content-between">
                                         <div class="erp-prod-icon shadow-sm erp-icon-orange">
@@ -75,7 +75,7 @@
                                 </div>
                             </div>
 
-                            <div class="col" routerLink="/admin/purchases">
+                            <div class="col" routerLink="/admin/purchases" *ngIf="HideApplication('QuranHome')">
                                 <div class="erp-prod-item prod-gray box-hover cursor-pointer">
                                     <div class="d-flex flex-column align-items-center justify-content-between">
                                         <div class="erp-prod-icon shadow-sm erp-icon-gray">
@@ -85,7 +85,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col" routerLink="/admin/sales">
+                            <div class="col" routerLink="/admin/sales" *ngIf="HideApplication('School')">
                                 <div class="erp-prod-item prod-red box-hover cursor-pointer">
                                     <div class="d-flex flex-column align-items-center justify-content-between">
                                         <div class="erp-prod-icon shadow-sm erp-icon-red">
@@ -106,7 +106,7 @@
                                     </div>
                                 </div>
                             </div> -->
-                            <div class="col" routerLink="/admin/settings">
+                            <div class="col" routerLink="/admin/settings" *ngIf="HideApplication('Settings')">
                                 <div class="erp-prod-item prod-green box-hover cursor-pointer">
                                     <div class="d-flex flex-column align-items-center justify-content-between">
                                         <div class="erp-prod-icon shadow-sm erp-icon-green">

@@ -15,12 +15,13 @@ import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-wit
 import { ZaEmptyDataComponent } from '../../../../../../Shared/za-empty-data/za-empty-data.component';
 import { NgFor, NgIf } from '@angular/common';
 import { AuthService } from '../../../../../../Auth/auth.service';
+import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
 
 @Component({
   selector: 'app-family-categories',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaLoaderComponent, ZaInputWithLabelComponent, ZaEmptyDataComponent, ReactiveFormsModule,
-    NgFor, NgIf, NgbModule
+    NgFor, NgIf, NgbModule,RoleCheckerDirective
   ],
   templateUrl: './family-categories.component.html',
   styleUrl: './family-categories.component.css'

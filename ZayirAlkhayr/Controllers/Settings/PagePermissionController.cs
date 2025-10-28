@@ -33,9 +33,9 @@ namespace ZayirAlkhayr.Controllers.Settings
         }
 
         [HttpPost("AssignApplicationToUser")]
-        public async Task<ApiResponseModel<string>> AssignApplicationToUser(List<UserApplicationRequest> Model)
+        public async Task<ApiResponseModel<string>> AssignApplicationToUser(List<UserApplicationRequest> Model, string UserId, bool IsSuperAdmin)
         {
-            var results = await _pagePermissionService.AssignApplicationToUser(Model);
+            var results = await _pagePermissionService.AssignApplicationToUser(Model, UserId, IsSuperAdmin);
             return results;
         }
     }

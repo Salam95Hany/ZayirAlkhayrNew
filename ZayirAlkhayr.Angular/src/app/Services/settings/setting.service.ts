@@ -70,7 +70,7 @@ export class SettingService {
     return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'PagePermission/GetApplicationsByUserId?UserId=' + UserId);
   }
 
-  AssignApplicationToUser(Model: any) {
-    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'PagePermission/AssignApplicationToUser', Model);
+  AssignApplicationToUser(Model: any, UserId: string, IsSuperAdmin: boolean) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'PagePermission/AssignApplicationToUser?UserId=' + UserId + '&IsSuperAdmin=' + IsSuperAdmin, Model);
   }
 }

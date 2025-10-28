@@ -38,7 +38,7 @@
     <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
         <div class="col-md-8 mb-2">
             <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)">
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="ZAInstitution_BenefactorDetail" action="canAdd" (click)="openItemModal(OpenItemModal,null)">
                     <i class="fas fa-plus-circle"></i>
                     <span>إضافة</span>
                 </button>
@@ -78,7 +78,7 @@
                             <td>{{item.insertUser}}</td>
                             <td>{{item.insertDate}}</td>
                             <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="item.beneFactorTypeId != 1 || (BeneFactorValueId && BenefactorType == 'Cash')">
+                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="item.beneFactorTypeId != 1 || (BeneFactorValueId && BenefactorType == 'Cash')" appRole pageKey="ZAInstitution_BenefactorDetail" action="canDelete">
                                     <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item.id)">
                                         <i class="uil uil-trash-alt"></i>
                                         <span>حذف</span>

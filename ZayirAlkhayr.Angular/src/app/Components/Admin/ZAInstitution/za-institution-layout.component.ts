@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MenueService, MenuType } from '../../../Services/shared/menue.service';
 import { MenuSidebarItem } from '../../../Models/shared/MenueSidebarItem';
-import { AuthService } from '../../../Auth/auth.service';
 
 @Component({
   selector: 'app-za-institution-layout',
@@ -18,9 +17,10 @@ export class ZaInstitutionLayoutComponent {
   toggler = false;
   menuItem: MenuSidebarItem;
 
-  constructor(private menuService: MenueService, private authService: AuthService) {
+  constructor(private menuService: MenueService) {
     debugger;
-    this.menuItem = this.menuService.filterMenusByUserRole(this.menuService.getMenuById(MenuType.ZAInstitution), this.authService.userRole);
+    let menue = JSON.parse(JSON.stringify(this.menuService.getMenuById(MenuType.ZAInstitution)));
+    this.menuItem = this.menuService.filterMenusByUserPermissions(menue);
   }
 
   onToggleContent() {

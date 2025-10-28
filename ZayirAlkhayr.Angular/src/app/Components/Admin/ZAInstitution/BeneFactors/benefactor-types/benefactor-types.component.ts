@@ -15,11 +15,12 @@ import { FormService } from '../../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../../Auth/auth.service';
 import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
+import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
 
 @Component({
   selector: 'app-benefactor-types',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
     ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
   templateUrl: './benefactor-types.component.html',
   styleUrl: './benefactor-types.component.css'

@@ -32,7 +32,7 @@
                 <tbody>
                     <ng-container>
                         <tr *ngFor="let item of UsersData">
-                            <td>{{item.userName}}</td>
+                            <td class="text-info cursor-pointer" (click)="OpenUserPermissionSidePanel(item)">{{item.userName}}</td>
                             <td>{{item.email}}</td>
                             <td>{{item.phoneNumber}}</td>
                             <td>{{item?.address}}</td>
@@ -109,16 +109,6 @@
                         <td class="table-feature">عنوان المستخدم</td>
                         <td class="table-value">
                             <app-za-input-with-label [type]="'text'" [placeholder]="'عنوان المستخدم...'" formControlName="address" [error]="formErrors.address"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الصلاحيات</td>
-                        <td class="table-value">
-                            <app-za-drop-down-form-control [data]="Roles" [showSearch]="true" [placeholder]="'الصلاحيات'" formControlName="role" [hasError]="formErrors.role"></app-za-drop-down-form-control>
-                            <div class="error-message" *ngIf="formErrors.role">
-                                {{ formErrors.role }}
-                            </div>
-
                         </td>
                     </tr>
                 </tbody>

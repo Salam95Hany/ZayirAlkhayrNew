@@ -17,12 +17,13 @@ import { TaskService } from '../../../../../Services/zainstitution/task.service'
 import { FormService } from '../../../../../Services/shared/form.service';
 import { SharedService } from '../../../../../Services/shared/shared.service';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
+import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
 
 @Component({
   selector: 'app-general-tasks',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
-    CommonModule, FormsModule, ReactiveFormsModule, NgbModule, ZaInputWithLabelComponent,
+    CommonModule, FormsModule, ReactiveFormsModule, NgbModule, ZaInputWithLabelComponent,RoleCheckerDirective,
     NgIf, NgFor, ZaDropDownFormControlComponent, ZaLoaderComponent],
   templateUrl: './general-tasks.component.html',
   styleUrl: './general-tasks.component.css',

@@ -10,7 +10,7 @@ import { ArabicDayDatePipe } from '../../../../Pipes/arabic-day-date.pipe';
 @Component({
   selector: 'app-za-institution-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgbDropdownModule, OverviewCardComponent,ArabicDayDatePipe],
+  imports: [CommonModule, RouterModule, NgbDropdownModule, OverviewCardComponent, ArabicDayDatePipe],
   providers: [DatePipe],
   templateUrl: './za-institution-home.component.html',
   styleUrl: './za-institution-home.component.css'
@@ -61,12 +61,12 @@ export class ZaInstitutionHomeComponent implements OnInit {
   constructor(private route: ActivatedRoute, private datePipe: DatePipe, private menuService: MenueService) { }
 
   ngOnInit(): void {
-
     this.route.params.subscribe(params => {
       this.menuItem = null;
       if (params['tabName']) {
         this.selectedTabName = params['tabName'];
-        this.menuItem = this.menuService.getMenuById(MenuType.ZAInstitution, this.selectedTabName);
+        let menue = JSON.parse(JSON.stringify(this.menuService.getMenuById(MenuType.ZAInstitution, this.selectedTabName)))
+        this.menuItem = this.menuService.filterMenusByUserPermissions(menue);
       }
     });
     this.getGeneralAccountsStatistics();

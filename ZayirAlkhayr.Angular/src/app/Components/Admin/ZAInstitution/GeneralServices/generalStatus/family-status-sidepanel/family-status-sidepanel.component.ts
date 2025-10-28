@@ -11,7 +11,7 @@ import { AddFamilyStatusModel, FamilyDetails } from '../../../../../../Models/za
 import { GeneralStatusService } from '../../../../../../Services/zainstitution/general-status.service';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
-import { NgFor, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-family-status-sidepanel',

@@ -4,11 +4,11 @@
     <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
         <div class="col-md-8 mb-2">
             <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)">
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="ZAInstitution_Benefactors" action="canAdd" (click)="openItemModal(OpenItemModal,null)">
                     <i class="fas fa-plus-circle"></i>
                     <span>إضافة</span>
                 </button>
-                <div ngbDropdown class="d-inline-block">
+                <div ngbDropdown class="d-inline-block" appRole pageKey="ZAInstitution_Benefactors" action="canExport">
                     <button type="button" class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" id="dropdownBasic1" ngbDropdownToggle>
                         <i class="uil uil-export"></i>
                         <span>تنزيل</span>
@@ -82,15 +82,15 @@
                             <td>{{item.insertDate}}</td>
                             <td>
                                 <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
+                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_Benefactors" action="canEdit" (click)="openItemModal(OpenItemModal,item)">
                                         <i class="uil uil-pen"></i>
                                         <span>تعديل</span>
                                     </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" (click)="openDeleteItemModal(deleteItemModal,item)">
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_Benefactors" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
                                         <i class="uil uil-trash-alt"></i>
                                         <span>حذف</span>
                                     </button>
-                                    <button class="button-table-action btn-details d-flex align-items-center justify-content-center gap-2" (click)="openCashSidePanel(CashSidePanel,item)">
+                                    <button class="button-table-action btn-details d-flex align-items-center justify-content-center gap-2" appRole pageKey="ZAInstitution_Benefactors" action="canAdd" (click)="openCashSidePanel(CashSidePanel,item)">
                                         <i class="uil uil-document-info"></i>
                                         <span>معاينة</span>
                                     </button>

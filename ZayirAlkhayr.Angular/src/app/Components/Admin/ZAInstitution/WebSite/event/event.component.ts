@@ -17,11 +17,12 @@ import { CustomValidators, RegexType } from '../../../../../Services/shared/cust
 import { FormService } from '../../../../../Services/shared/form.service';
 import { AuthService } from '../../../../../Auth/auth.service';
 import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
+import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
 
 @Component({
   selector: 'app-event',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
     ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
   templateUrl: './event.component.html',
   styleUrl: './event.component.css'

@@ -1,33 +1,41 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SettingService } from '../../../../Services/settings/setting.service';
+import { ZaLoaderComponent } from "../../../../Shared/za-loader/za-loader.component";
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-page-permission',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ZaLoaderComponent, FormsModule],
   templateUrl: './page-permission.component.html',
   styleUrl: './page-permission.component.css'
 })
-export class PagePermissionComponent implements OnInit, OnChanges {
+export class PagePermissionComponent implements OnInit {
+  @ViewChild('sidepanelEditStatus') sidepanelEditStatus: ElementRef;
   @Input() UserId: string;
-  @Output() ApplicationChange = new EventEmitter<any>();
+  @Input() UserName: string;
+  @Input() RoleName: string;
 
   Applications = [];
   SelectedApplications = [];
   flatApplications: any[] = [];
+  showLoader = false;
+  IsSuperAdmin = false;
 
-  constructor(private settingService: SettingService, private toaster: ToastrService) { }
+  constructor(private settingService: SettingService, private toaster: ToastrService, private offcanvasService: NgbOffcanvas, private injector: Injector) { }
 
   ngOnInit() {
-    if (this.UserId)
-      this.GetAllApplicationsWithParents();
+    this.UserId = this.injector.get('UserId');
+    this.UserName = this.injector.get('UserName');
+    this.RoleName = this.injector.get('RoleName');
+    this.GetAllApplicationsWithParents();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.UserId)
-      this.GetAllApplicationsWithParents();
+  dismissSidePanel() {
+    this.offcanvasService.dismiss();
   }
 
   GetAllApplicationsWithParents() {
@@ -36,6 +44,7 @@ export class PagePermissionComponent implements OnInit, OnChanges {
       this.flatApplications = this.flattenApplications(this.Applications);
       this.settingService.GetApplicationsByUserId(this.UserId).subscribe(res => {
         this.SelectedApplications = res.results;
+        this.IsSuperAdmin = this.SelectedApplications.some(i => i.applicationId == 'c4d473a1-0820-4701-a386-bebf90f05df7');
         this.SelectedApplications.forEach(item => {
           let obj = this.flatApplications.find(i => i.applicationId == item.applicationId);
           if (obj) {
@@ -149,19 +158,9 @@ export class PagePermissionComponent implements OnInit, OnChanges {
 
   togglePermission(item: any, prop: string, applications: any[]) {
     item[prop] = !item[prop];
+    item.active = true;
+    this.setParentActive(item, applications);
 
-    if (item[prop]) {
-      item.active = true;
-      this.setParentActive(item, applications);
-    } else {
-      const anyActive =
-        item.canAdd || item.canEdit || item.canDelete || item.canExport;
-      item.active = anyActive;
-
-      if (!anyActive) {
-        this.checkAndDeactivateParents(item, applications);
-      }
-    }
   }
 
   checkAndDeactivateParents(item: any, applications: any[]) {
@@ -191,7 +190,6 @@ export class PagePermissionComponent implements OnInit, OnChanges {
     let selected = this.flatApplications.filter(i => i.active).map(i => {
       return {
         applicationId: i.applicationId,
-        userId: this.UserId,
         applicationName: i.applicationName,
         canAdd: i.canAdd,
         canEdit: i.canEdit,
@@ -200,15 +198,17 @@ export class PagePermissionComponent implements OnInit, OnChanges {
       }
     });
 
-    if (selected.length == 0) {
+    if (selected.length == 0 && !this.IsSuperAdmin) {
       this.toaster.warning('برجاء اختيار صفحة واحدة على الاقل');
       return;
     }
-
-    this.settingService.AssignApplicationToUser(selected).subscribe(data => {
+    
+    this.showLoader = true;
+    this.settingService.AssignApplicationToUser(selected, this.UserId, this.IsSuperAdmin).subscribe(data => {
+      this.showLoader = false;
       if (data.isSuccess) {
         this.toaster.success(data.message);
-        this.ApplicationChange.emit(true);
+        this.offcanvasService.dismiss();
       } else
         this.toaster.error(data.message);
     });

@@ -17,12 +17,13 @@ import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-wit
 import { SharedService } from '../../../../../../Services/shared/shared.service';
 import { ZaDropDownFormControlComponent } from '../../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 import { AuthService } from '../../../../../../Auth/auth.service';
+import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
 
 @Component({
   selector: 'app-family-needs',
   standalone: true,
   imports: [ZaLoaderComponent, ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
-    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule,ZaDropDownFormControlComponent],
+    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule,ZaDropDownFormControlComponent,RoleCheckerDirective],
   templateUrl: './family-needs.component.html',
   styleUrl: './family-needs.component.css'
 })

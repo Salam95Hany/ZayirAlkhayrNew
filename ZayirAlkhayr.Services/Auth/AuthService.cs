@@ -31,7 +31,7 @@ namespace ZayirAlkhayr.Services.Auth
         public async Task<ApiResponseModel<DataTable>> GetAllUsers()
         {
             var Params = new SqlParameter[0];
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllUsersData", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllUsersData_Test", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.SuccessLogin, dt);
         }
 
@@ -46,27 +46,18 @@ namespace ZayirAlkhayr.Services.Auth
             {
                 var (token, expiresIn) = _jwtProvider.GenerateToken(user);
 
-                var roles = await _userManager.GetRolesAsync(user);
-                var roleNme = roles.FirstOrDefault();
                 user.IsActive = true;
                 user.LoginDate = DateTime.UtcNow;
                 await _userManager.UpdateAsync(user);
 
-                string roleId = null;
-
-                if (!string.IsNullOrEmpty(roleNme))
-                {
-                    var role = await _roleManager.FindByNameAsync(roleNme);
-                    roleId = role?.Id;
-                }
-
                 var UserApps = await GetAllUserApplications(user.Id);
+
+                bool IsSuperAdmin = UserApps.Any(i => i.PageKey == "SupperAdmin");
 
                 ApplicationUserRespone userModel = new ApplicationUserRespone
                 {
                     UserName = user.UserName,
-                    Role = roleNme,
-                    RoleId = roleId,
+                    Role = IsSuperAdmin ? "SupperAdmin" : "",
                     UserId = user.Id,
                     UserApps = UserApps,
                     Token = token,
@@ -98,17 +89,7 @@ namespace ZayirAlkhayr.Services.Auth
                 var result = await _userManager.CreateAsync(appUser, model.Password);
 
                 if (result.Succeeded)
-                {
-                    bool adminRoleExists = await _roleManager.RoleExistsAsync(model.Role);
-                    if (!adminRoleExists)
-                        await _roleManager.CreateAsync(new IdentityRole(model.Role));
-
-                    var roleAssignResult = await _userManager.AddToRoleAsync(appUser, model.Role);
-                    if (!roleAssignResult.Succeeded)
-                        return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
-
                     return ApiResponseModel<string>.Success(GenericErrors.SuccessRegister);
-                }
                 else
                     return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
@@ -150,10 +131,6 @@ namespace ZayirAlkhayr.Services.Auth
                 if (!updateResult.Succeeded)
                     return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
 
-                var roleAssignResult = await AssignNewRoleToUser(model.UserId, model.Role);
-                if (!roleAssignResult)
-                    return ApiResponseModel<string>.Failure(GenericErrors.UpdateRoleFailed);
-
                 return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
             }
             catch (Exception)
@@ -167,14 +144,6 @@ namespace ZayirAlkhayr.Services.Auth
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return ApiResponseModel<string>.Failure(GenericErrors.UserNotFound);
-
-            var roles = await _userManager.GetRolesAsync(user);
-            if (roles.Any())
-            {
-                var removeRolesResult = await _userManager.RemoveFromRolesAsync(user, roles);
-                if (!removeRolesResult.Succeeded)
-                    return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
-            }
 
             var result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)
@@ -199,19 +168,6 @@ namespace ZayirAlkhayr.Services.Auth
             await _signInManager.SignOutAsync();
 
             return ApiResponseModel<string>.Success(GenericErrors.GetSuccess);
-        }
-
-        private async Task<bool> AssignNewRoleToUser(string userId, string newRole)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return false;
-
-            var currentRoles = await _userManager.GetRolesAsync(user);
-            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
-            if (!removeResult.Succeeded) return false;
-
-            var addResult = await _userManager.AddToRoleAsync(user, newRole);
-            return addResult.Succeeded;
         }
 
         public async Task<List<UserAppModel>> GetAllUserApplications(string UserId)

@@ -21,11 +21,12 @@ import { ZaDropDownFormControlComponent } from '../../../../../Shared/za-drop-do
 import { AuthService } from '../../../../../Auth/auth.service';
 import { SearchReportModel } from '../../../../../Models/shared/SearchReportModel';
 import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
+import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
 
 @Component({
   selector: 'app-benefactor',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
     ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaDropDownFormControlComponent, ZaLoaderComponent],
   providers: [DatePipe],
   templateUrl: './benefactor.component.html',

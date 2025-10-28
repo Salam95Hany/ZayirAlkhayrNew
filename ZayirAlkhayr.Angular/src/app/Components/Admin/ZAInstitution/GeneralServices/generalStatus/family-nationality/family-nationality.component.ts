@@ -15,12 +15,13 @@ import { CustomValidators, RegexType } from '../../../../../../Services/shared/c
 import { NgFor, NgIf } from '@angular/common';
 import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { AuthService } from '../../../../../../Auth/auth.service';
+import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
 
 @Component({
   selector: 'app-family-nationality',
   standalone: true,
   imports: [ZaLoaderComponent, ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,NgbModule,
-    NgIf,NgFor,ZaInputWithLabelComponent,ReactiveFormsModule
+    NgIf,NgFor,ZaInputWithLabelComponent,ReactiveFormsModule,RoleCheckerDirective
   ],
   templateUrl: './family-nationality.component.html',
   styleUrl: './family-nationality.component.css'

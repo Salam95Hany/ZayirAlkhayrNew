@@ -12,9 +12,18 @@ export class AuthService {
   apiURL = environment.apiUrl;
   private http = inject(HttpClient);
   private router = inject(Router);
+  private _userModel: any;
 
   get UserModel() {
-    return JSON.parse(localStorage.getItem('UserModel'));
+    if (!this._userModel) {
+      const json = localStorage.getItem('UserModel');
+      this._userModel = json ? JSON.parse(json) : null;
+    }
+    return this._userModel;
+  }
+
+  get UserApps(): any[] {
+    return this.UserModel?.userApps;
   }
 
   AdminLogin(model: any) {
@@ -59,8 +68,31 @@ export class AuthService {
   }
 
   loginRedirect(): void {
+    this._userModel = null;
     localStorage.removeItem('UserModel');
     this.router.navigateByUrl('/admin');
+  }
+
+  getPagePermission(pageKey: string): any {
+    return this.UserApps.find(p => p.pageKey === pageKey) || null;
+  }
+
+  hasPermission(pageKey: string, action: string): boolean {
+    const page = this.getPagePermission(pageKey);
+    if (!page) return false;
+    return (page as any)[action] === true;
+  }
+
+  hasPagePermission(pageKey: string): boolean {
+    const page = this.getPagePermission(pageKey);
+    if (!page) return false;
+
+    return true;
+  }
+
+  hasPageAccess(pageKey: string): boolean {
+    if (this.isSupperAdmin) return true;
+    return this.UserApps?.some(p => p.pageKey === pageKey);
   }
 
   getUserInfo() {
@@ -77,5 +109,9 @@ export class AuthService {
 
   get userRole(): string {
     return this.UserModel?.role;
+  }
+
+  get isSupperAdmin(): boolean {
+    return this.UserModel?.role == 'SupperAdmin';
   }
 }

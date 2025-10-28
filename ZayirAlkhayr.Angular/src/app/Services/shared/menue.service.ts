@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { MenuSidebarItem } from '../../Models/shared/MenueSidebarItem';
+import { AuthService } from '../../Auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MenueService {
+  authService = inject(AuthService);
   getMenuById(menuId: MenuType, subItemName: string = null): MenuSidebarItem {
     if (subItemName) {
       return this.menus.find(x => x.menuItemId == menuId)?.subMenus?.find(x => x.menuItem == subItemName);
@@ -24,7 +26,7 @@ export class MenueService {
           description: 'إدارة موقع زائر الخير',
           icon: 'fa-solid fa-exchange-alt',
           route: '/admin/za-institution/home/1',
-          role: ['WebSite', 'SupperAdmin', 'Admin'],
+          pageKey: 'ZAInstitution_ManageWebSite',
           subMenus: [
             {
               displayName: 'شريط الصور',
@@ -32,7 +34,7 @@ export class MenueService {
               description: 'تتبع و إدارة شريط الصور',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/slide-image',
-              role: ['WebSite', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_SlideImage',
             },
             {
               displayName: 'الأنشطة',
@@ -40,7 +42,7 @@ export class MenueService {
               description: 'تتبع و إدارة الأنشطة',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/activity',
-              role: ['WebSite', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_Activity',
             },
             {
               displayName: 'الفعاليات',
@@ -48,7 +50,7 @@ export class MenueService {
               description: 'تتبع و إدارة الفعاليات',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/event',
-              role: ['WebSite', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_Event',
             },
             {
               displayName: 'الصور',
@@ -56,7 +58,7 @@ export class MenueService {
               description: 'تتبع و إدارة الصور',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/photo',
-              role: ['WebSite', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_Photo',
             },
             {
               displayName: 'المشاريع',
@@ -64,7 +66,7 @@ export class MenueService {
               description: 'تتبع و إدارة المشاريع',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/project',
-              role: ['WebSite', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_Project',
             }
           ]
         },
@@ -75,7 +77,7 @@ export class MenueService {
           description: 'إدارة و عرض بيانات المتبرعين',
           icon: 'fa-solid fa-file-invoice-dollar',
           route: '/admin/za-institution/home/2',
-          role: ['BeneFactors', 'SupperAdmin', 'Admin'],
+          pageKey: 'ZAInstitution_ManageBenefactors',
           subMenus: [
             {
               displayName: 'المتبرعين',
@@ -83,7 +85,7 @@ export class MenueService {
               description: 'إدارة و عرض بيانات المتبرعين',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/benefactors',
-              role: ['BeneFactors', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_Benefactors',
             },
             {
               displayName: 'تفاصيل المتبرعين',
@@ -91,7 +93,7 @@ export class MenueService {
               description: 'عرض تفاصيل المتبرعين',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/benefactor-detail',
-              role: ['BeneFactors', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_BenefactorDetail',
             },
             {
               displayName: 'ملاحظات المتبرعين',
@@ -99,7 +101,7 @@ export class MenueService {
               description: 'عرض ملاحظات المتبرعين',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/benefactor-note',
-              role: ['BeneFactors', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_BenefactorNote',
             },
             {
               displayName: 'جنسيات المتبرعين',
@@ -107,7 +109,7 @@ export class MenueService {
               description: 'إدارة و عرض جنسيات المتبرعين',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/benefactor-nationality',
-              role: ['BeneFactors', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_BenefactorNationality',
             },
             {
               displayName: 'أنواع التبرع',
@@ -115,7 +117,7 @@ export class MenueService {
               description: 'إدارة و عرض أنواع التبرع',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/benefactor-type',
-              role: ['BeneFactors', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_BenefactorType',
             },
           ]
         },
@@ -126,6 +128,7 @@ export class MenueService {
           description: 'إدارة المهام و الحسابات',
           icon: 'uil uil-list-ul',
           route: '/admin/za-institution/home/3',
+          pageKey: 'ZAInstitution_ManageTasks',
           subMenus: [
             {
               displayName: 'المهام العامة',
@@ -133,14 +136,15 @@ export class MenueService {
               description: 'إدارة و عرض المهام العامة',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/general-tasks',
-              role: ['SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_GeneralTasks',
             },
             {
               displayName: 'المهام اليومية',
               menuItem: 'daily-tasks',
               description: 'إدارة و عرض المهام اليومية',
               icon: 'uil uil-sliders-v-alt',
-              route: '/admin/za-institution/daily-tasks'
+              route: '/admin/za-institution/daily-tasks',
+              pageKey: 'ZAInstitution_DailyTasks'
             }
           ]
         },
@@ -151,7 +155,7 @@ export class MenueService {
           description: 'تتبع و إدارة الحسابات',
           icon: 'uil uil-credit-card',
           route: '/admin/za-institution/home/4',
-          role: ['Accounts', 'SupperAdmin', 'Admin'],
+          pageKey: 'ZAInstitution_ManageAccounts',
           subMenus: [
             {
               displayName: 'الايرادات',
@@ -159,7 +163,7 @@ export class MenueService {
               description: 'تتبع و إدارة الايرادات اليومية',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/account-import-money',
-              role: ['Accounts', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_AccountImportMoney',
             },
             {
               displayName: 'المصروفات',
@@ -167,7 +171,7 @@ export class MenueService {
               description: 'تتبع و إدارة المصروفات اليومية',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/account-export-money',
-              role: ['Accounts', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_AccountExportMoney',
             },
           ]
         },
@@ -178,7 +182,7 @@ export class MenueService {
           description: 'إدارة بيانات المحتاجين',
           icon: 'fa-solid fa-users',
           route: '/admin/za-institution/home/5',
-          role: ['Services', 'SupperAdmin', 'Admin'],
+          pageKey: 'ZAInstitution_ManageServices',
           subMenus: [
             {
               displayName: 'حالات عامة',
@@ -186,7 +190,7 @@ export class MenueService {
               description: 'إدارة بيانات المحتاجين ومعلوماتهم',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/family-status',
-              role: ['Services', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_FamilyStatus',
             },
             {
               displayName: 'الجنسيات',
@@ -194,7 +198,7 @@ export class MenueService {
               description: 'عرض وإدارة الجنسيات',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/family-nationality',
-              role: ['Services', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_FamilyNationality',
             },
             {
               displayName: 'الاحتياجات',
@@ -202,7 +206,7 @@ export class MenueService {
               description: 'عرض وإدارة الاحتياجات',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/family-needs',
-              role: ['Services', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_FamilyNeeds',
             },
             {
               displayName: 'الفئات',
@@ -210,7 +214,7 @@ export class MenueService {
               description: 'عرض وإدارة الفئات',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/family-categories',
-              role: ['Services', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_FamilyCategories',
             },
             {
               displayName: 'أنواع المرض',
@@ -218,7 +222,7 @@ export class MenueService {
               description: 'عرض وإدارة أنواع المرض',
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/family-patientTypes',
-              role: ['Services', 'SupperAdmin', 'Admin'],
+              pageKey: 'ZAInstitution_FamilyPatientTypes',
             },
           ]
         }
@@ -228,7 +232,6 @@ export class MenueService {
       menuItemId: MenuType.Settings,
       displayName: 'الاعدادات',
       menuItem: 'Settings',
-      role: ['SupperAdmin'],
       subMenus: [
         {
           displayName: 'المستخدمين',
@@ -236,7 +239,6 @@ export class MenueService {
           description: 'تتبع و إدارة المستخدمين',
           icon: 'uil uil-user',
           route: '/admin/settings/user',
-          role: ['SupperAdmin'],
         },
         {
           displayName: 'النسخ الاحتياطية',
@@ -244,16 +246,15 @@ export class MenueService {
           description: 'تتبع و إدارة النسخ الاحتياطية',
           icon: 'uil uil-archive',
           route: '/admin/settings/backup',
-          role: ['SupperAdmin'],
         }
       ]
     }
   ];
 
-  filterMenusByUserRole(menus: MenuSidebarItem, userRole: string): MenuSidebarItem {
-    menus.subMenus = menus.subMenus?.filter(x => x.role?.includes(userRole) || !x.role || x.role.length == 0);
+  filterMenusByUserPermissions(menus: MenuSidebarItem) {
+    menus.subMenus = menus.subMenus?.filter(x => this.authService.hasPageAccess(x.pageKey));
     menus.subMenus?.forEach(subMenu => {
-      this.filterMenusByUserRole(subMenu, userRole);
+      this.filterMenusByUserPermissions(subMenu);
     });
 
     return menus;

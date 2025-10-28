@@ -16,11 +16,12 @@ import { FileService } from '../../../../../Services/shared/file.service';
 import { SharedService } from '../../../../../Services/shared/shared.service';
 import { AuthService } from '../../../../../Auth/auth.service';
 import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
+import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
 
 @Component({
   selector: 'app-benefactor-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
     ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaDropDownFormControlComponent, ZaLoaderComponent],
   templateUrl: './benefactor-details.component.html',
   styleUrl: './benefactor-details.component.css'

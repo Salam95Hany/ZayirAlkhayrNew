@@ -12,7 +12,7 @@
 .settings-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 30px;
+    padding: 10px;
     border-bottom: 4px solid #5568d3;
 }
 
@@ -171,4 +171,102 @@
 .level-3 .level-badge {
     background: #f3e8ff;
     color: #7c3aed;
+}
+
+
+/* ================================= Side Panel Design ================================= */
+
+.scroll-body {
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+.btn-color {
+    background-color: #157347;
+    color: white;
+    align-items: center;
+    border: 0;
+    letter-spacing: 0.5px;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+    font-weight: bold;
+    height: 50px;
+    font-size: 12px;
+    border-radius: 5px;
+    --bs-btn-padding-y: 0.75rem;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+}
+
+
+/* ================================= Role Box Design ================================= */
+
+.role-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.role-header {
+    color: #2d3748;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.form-check {
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: 2px solid #e2e8f0;
+    margin-bottom: 0.75rem;
+}
+
+.form-check:hover {
+    background-color: #f7fafc;
+    border-color: #667eea;
+}
+
+.form-check-input {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: 0;
+    cursor: pointer;
+    border: 2px solid #cbd5e0;
+    transition: all 0.3s ease;
+}
+
+.form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+}
+
+.form-check-label {
+    font-size: 1rem;
+    color: #4a5568;
+    font-weight: 500;
+    cursor: pointer;
+    margin-left: 0.5rem;
+}
+
+.form-check-input:checked~.form-check-label {
+    color: #667eea;
+    font-weight: 600;
+}
+
+.role-description {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-top: 0.25rem;
+    margin-left: 2rem;
 }

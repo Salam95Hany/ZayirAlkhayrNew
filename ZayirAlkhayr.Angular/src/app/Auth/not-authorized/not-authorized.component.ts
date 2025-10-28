@@ -2,6 +2,7 @@ import { animate, keyframes, query, stagger, state, style, transition, trigger }
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-not-authorized',
@@ -70,7 +71,7 @@ export class NotAuthorizedComponent {
     duration: Math.random() * 3 + 4
   }));
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private authService: AuthService) { }
 
   ngOnInit() {
     this.createGlowEffect();
@@ -85,11 +86,11 @@ export class NotAuthorizedComponent {
   }
 
   goToHome() {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/admin/home']);
   }
 
   goToLogin() {
-    this.router.navigate(['/']);
+    this.authService.loginRedirect();
   }
 
   private createGlowEffect() {

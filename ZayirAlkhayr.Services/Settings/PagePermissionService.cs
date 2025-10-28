@@ -38,11 +38,10 @@ namespace ZayirAlkhayr.Services.Settings
             return ApiResponseModel<List<PagePermission>>.Success(GenericErrors.GetSuccess, Results);
         }
 
-        public async Task<ApiResponseModel<string>> AssignApplicationToUser(List<UserApplicationRequest> Model)
+        public async Task<ApiResponseModel<string>> AssignApplicationToUser(List<UserApplicationRequest> Model, string UserId, bool IsSuperAdmin)
         {
             try
             {
-                string UserId = Model.FirstOrDefault()?.UserId;
                 await _unitOfWork.Repository<PagePermission>().DeleteWhereAsync(x => x.UserId == UserId);
                 var Apps = new List<PagePermission>();
                 foreach (var app in Model)
@@ -50,11 +49,26 @@ namespace ZayirAlkhayr.Services.Settings
                     var App = new PagePermission
                     {
                         ApplicationId = app.ApplicationId,
-                        UserId = app.UserId,
+                        UserId = UserId,
                         CanAdd = app.CanAdd,
                         CanEdit = app.CanEdit,
                         CanDelete = app.CanDelete,
                         CanExport = app.CanExport,
+                    };
+
+                    Apps.Add(App);
+                }
+
+                if (IsSuperAdmin)
+                {
+                    var App = new PagePermission
+                    {
+                        ApplicationId = "c4d473a1-0820-4701-a386-bebf90f05df7",
+                        UserId = UserId,
+                        CanAdd = false,
+                        CanEdit = false,
+                        CanDelete = false,
+                        CanExport = false
                     };
 
                     Apps.Add(App);
@@ -69,7 +83,7 @@ namespace ZayirAlkhayr.Services.Settings
             {
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
-            
+
         }
 
         private List<ApplicationWithParentDto> BuildTree(List<Application> AllApps, string? ParentId)

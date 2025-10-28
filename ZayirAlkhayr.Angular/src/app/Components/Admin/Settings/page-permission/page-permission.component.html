@@ -1,75 +1,106 @@
-<div class="container">
-    <div class="settings-card mb-3" *ngFor="let app of Applications">
-        <div class="settings-header">
-            <h2>
-                <i class="fas fa-shield-alt"></i> {{ app.applicationName }}
-            </h2>
-        </div>
-        <div class="menu-item level-1" *ngFor="let subApp of app.children">
-            <div class="menu-header" [class.active]="subApp.active" (click)="toggleExpand(subApp, $event)">
-                <div class="left-section">
-                    <i class="fas fa-file-alt"></i>
-                    <span>{{ subApp.applicationName }}</span>
-                    <span class="expand-icon" [class.expanded]="subApp.expanded">▶</span>
-                </div>
-                <div class="toggle-switch" [class.active]="subApp.active" (click)="toggleSwitch(subApp, $event)">
-                    <div class="toggle-slider"></div>
+<div class="offcanvas-header justify-content-between gap-3 fs-4 border-bottom py-3">
+    <div class="d-flex align-items-center gap-2">
+        <i class="fas fa-info-circle offcanvas-header-icon"></i>
+        <span>
+            {{ UserName }} - {{ RoleName }}
+        </span>
+    </div>
+    <div class="cursor-pointer text-danger fs-2" (click)="dismissSidePanel()">
+        <i class="uil uil-times-circle"></i>
+    </div>
+</div>
+<div class="offcanvas-body pt-4 bg-light scroll-body" #sidepanelEditStatus>
+    <div class="mb-5">
+        <div class="container">
+            <div class="mb-3">
+                <div class="role-card">
+                    <div class="role-header">
+                        الصلاحيات
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input me-2" type="checkbox" [(ngModel)]="IsSuperAdmin" id="adminRole">
+                        <label class="form-check-label" for="adminRole">
+                            مدير
+                        </label>
+                        <div class="role-description">
+                            الوصول الكامل إلى جميع ميزات النظام و الإعدادات
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="submenu" [class.expanded]="subApp.expanded">
-                <div class="menu-item level-2" *ngFor="let subsubApp of subApp.children">
-                    <div class="menu-header" [class.active]="subsubApp.active" (click)="toggleExpand(subsubApp, $event)">
+            <div class="settings-card mb-3" *ngFor="let app of Applications">
+                <div class="settings-header">
+                    <h2>
+                        <i class="fas fa-shield-alt"></i> {{ app.applicationName }}
+                    </h2>
+                </div>
+                <div class="menu-item level-1" *ngFor="let subApp of app.children">
+                    <div class="menu-header" [class.active]="subApp.active" (click)="toggleExpand(subApp, $event)">
                         <div class="left-section">
                             <i class="fas fa-file-alt"></i>
-                            <span>{{ subsubApp.applicationName }}</span>
-                            <span class="expand-icon" [class.expanded]="subsubApp.expanded">▶</span>
+                            <span>{{ subApp.applicationName }}</span>
+                            <span class="expand-icon" [class.expanded]="subApp.expanded">▶</span>
                         </div>
-                        <div class="toggle-switch" [class.active]="subsubApp.active" (click)="toggleSwitch(subsubApp, $event)">
+                        <div class="toggle-switch" [class.active]="subApp.active" (click)="toggleSwitch(subApp, $event)">
                             <div class="toggle-slider"></div>
                         </div>
                     </div>
-                    <div class="submenu" [class.expanded]="subsubApp.expanded">
-                        <div class="menu-item level-3">
-                            <div class="menu-header" [class.active]="subsubApp.canAdd">
-                                <div>
-                                    <i class="fas fa-circle me-2"></i>
-                                    <span>إضافة</span>
+                    <div class="submenu" [class.expanded]="subApp.expanded">
+                        <div class="menu-item level-2" *ngFor="let subsubApp of subApp.children">
+                            <div class="menu-header" [class.active]="subsubApp.active" (click)="toggleExpand(subsubApp, $event)">
+                                <div class="left-section">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>{{ subsubApp.applicationName }}</span>
+                                    <span class="expand-icon" [class.expanded]="subsubApp.expanded">▶</span>
                                 </div>
-                                <div class="toggle-switch" [class.active]="subsubApp.canAdd" (click)="togglePermission(subsubApp, 'canAdd', Applications)">
+                                <div class="toggle-switch" [class.active]="subsubApp.active" (click)="toggleSwitch(subsubApp, $event)">
                                     <div class="toggle-slider"></div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="menu-item level-3">
-                            <div class="menu-header" [class.active]="subsubApp.canEdit">
-                                <div>
-                                    <i class="fas fa-circle me-2"></i>
-                                    <span>تعديل</span>
+                            <div class="submenu" [class.expanded]="subsubApp.expanded">
+                                <div class="menu-item level-3">
+                                    <div class="menu-header" [class.active]="subsubApp.canAdd">
+                                        <div>
+                                            <i class="fas fa-circle me-2"></i>
+                                            <span>إضافة</span>
+                                        </div>
+                                        <div class="toggle-switch" [class.active]="subsubApp.canAdd" (click)="togglePermission(subsubApp, 'canAdd', Applications)">
+                                            <div class="toggle-slider"></div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="toggle-switch" [class.active]="subsubApp.canEdit" (click)="togglePermission(subsubApp, 'canEdit', Applications)">
-                                    <div class="toggle-slider"></div>
+                                <div class="menu-item level-3">
+                                    <div class="menu-header" [class.active]="subsubApp.canEdit">
+                                        <div>
+                                            <i class="fas fa-circle me-2"></i>
+                                            <span>تعديل</span>
+                                        </div>
+                                        <div class="toggle-switch" [class.active]="subsubApp.canEdit" (click)="togglePermission(subsubApp, 'canEdit', Applications)">
+                                            <div class="toggle-slider"></div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="menu-item level-3">
-                            <div class="menu-header" [class.active]="subsubApp.canDelete">
-                                <div>
-                                    <i class="fas fa-circle me-2"></i>
-                                    <span>حذف</span>
+                                <div class="menu-item level-3">
+                                    <div class="menu-header" [class.active]="subsubApp.canDelete">
+                                        <div>
+                                            <i class="fas fa-circle me-2"></i>
+                                            <span>حذف</span>
+                                        </div>
+                                        <div class="toggle-switch" [class.active]="subsubApp.canDelete" (click)="togglePermission(subsubApp, 'canDelete', Applications)">
+                                            <div class="toggle-slider"></div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="toggle-switch" [class.active]="subsubApp.canDelete" (click)="togglePermission(subsubApp, 'canDelete', Applications)">
-                                    <div class="toggle-slider"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="menu-item level-3">
-                            <div class="menu-header" [class.active]="subsubApp.canExport">
-                                <div>
-                                    <i class="fas fa-circle me-2"></i>
-                                    <span>تنزيل</span>
-                                </div>
-                                <div class="toggle-switch" [class.active]="subsubApp.canExport" (click)="togglePermission(subsubApp, 'canExport', Applications)">
-                                    <div class="toggle-slider"></div>
+                                <div class="menu-item level-3">
+                                    <div class="menu-header" [class.active]="subsubApp.canExport">
+                                        <div>
+                                            <i class="fas fa-circle me-2"></i>
+                                            <span>تنزيل</span>
+                                        </div>
+                                        <div class="toggle-switch" [class.active]="subsubApp.canExport" (click)="togglePermission(subsubApp, 'canExport', Applications)">
+                                            <div class="toggle-slider"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -78,6 +109,8 @@
             </div>
         </div>
     </div>
-
-    <button *ngIf="Applications.length > 0" class="btn btn-primary w-100 d-flex align-items-center justify-content-center" (click)="AssignApplicationToUser()">Save</button>
+    <hr>
+    <button class="w-100 btn-color" (click)="AssignApplicationToUser()">حفظ</button>
 </div>
+
+<app-za-loader [show]="showLoader"></app-za-loader>

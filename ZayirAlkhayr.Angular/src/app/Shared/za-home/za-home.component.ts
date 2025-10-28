@@ -46,6 +46,11 @@ export class ZaHomeComponent {
     this.createClock();
   }
 
+  HideApplication(pageKey: string): boolean {
+    if (this.authService.isSupperAdmin) return true;
+    return this.authService.hasPagePermission(pageKey);
+  }
+
 
   createClock() {
     this.intervalClock = setInterval(() => {

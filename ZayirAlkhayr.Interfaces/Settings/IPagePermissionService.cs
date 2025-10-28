@@ -14,6 +14,6 @@ namespace ZayirAlkhayr.Interfaces.Settings
     {
         Task<ApiResponseModel<List<ApplicationWithParentDto>>> GetAllApplicationsWithParents();
         Task<ApiResponseModel<List<PagePermission>>> GetApplicationsByUserId(string UserId);
-        Task<ApiResponseModel<string>> AssignApplicationToUser(List<UserApplicationRequest> Model);
+        Task<ApiResponseModel<string>> AssignApplicationToUser(List<UserApplicationRequest> Model, string UserId, bool IsSuperAdmin);
     }
 }

@@ -15,12 +15,13 @@ import { FormService } from '../../../../../../Services/shared/form.service';
 import { ToastrService } from 'ngx-toastr';
 import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../../../Auth/auth.service';
+import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
 
 @Component({
   selector: 'app-family-patienttypes',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaLoaderComponent, ZaInputWithLabelComponent, ZaEmptyDataComponent, ReactiveFormsModule,
-    NgFor, NgIf, NgbModule],
+    NgFor, NgIf, NgbModule,RoleCheckerDirective],
   templateUrl: './family-patienttypes.component.html',
   styleUrl: './family-patienttypes.component.css'
 })

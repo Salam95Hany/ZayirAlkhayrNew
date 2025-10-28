@@ -6,12 +6,14 @@ import { AuthService } from '../Auth/auth.service';
   standalone: true
 })
 export class RoleCheckerDirective {
-  @Input() roles: string[];
+  @Input() pageKey: string;
+  @Input() action: string;
 
   constructor(private ref: ElementRef<HTMLElement>, private authService: AuthService) { }
 
   ngOnInit(): void {
-    if (!this.authService.isInRole(this.roles))
-      this.ref.nativeElement?.remove();
+    if (!this.authService.isSupperAdmin)
+      if (!this.authService.hasPermission(this.pageKey, this.action))
+        this.ref.nativeElement?.remove();
   }
 }

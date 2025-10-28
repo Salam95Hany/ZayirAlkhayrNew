@@ -17,12 +17,13 @@ import { GeneralStatusService } from '../../../../../../Services/zainstitution/g
 import { PdfDownloadService } from '../../../../../../Services/shared/pdf-download.service';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { FamilyStatusSidepanelComponent } from '../family-status-sidepanel/family-status-sidepanel.component';
+import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
 
 @Component({
   selector: 'app-all-family-status',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
-    CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RouterModule,
+    CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RouterModule,RoleCheckerDirective,
     NgIf, NgFor, ZaLoaderComponent],
   templateUrl: './all-family-status.component.html',
   styleUrl: './all-family-status.component.css',
