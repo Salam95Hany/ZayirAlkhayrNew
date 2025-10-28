@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ZayirAlkhayr.Entities.Auth;
+using ZayirAlkhayr.Entities.Models.Settings;
 
 namespace ZayirAlkhayr.Entities.Models;
 
@@ -15,6 +16,7 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     {
     }
 
+    #region ZAInstitution
     public virtual DbSet<AccountsExportMony> AccountsExportMony { get; set; }
     public virtual DbSet<AccountsImportMony> AccountsImportMony { get; set; }
     public virtual DbSet<ActivitiesSliderImage> ActivitiesSliderImage { get; set; }
@@ -49,4 +51,13 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     public virtual DbSet<SliderImage> SliderImages { get; set; }
     public virtual DbSet<TaskStatus> TaskStatuses { get; set; }
     public virtual DbSet<WebSiteVisitor> WebSiteVisitors { get; set; }
+    #endregion
+
+    #region Settings
+    public virtual DbSet<Application> Applications { get; set; }
+    public virtual DbSet<PagePermission> PagePermission { get; set; }
+    
+    #endregion
+
+
 }

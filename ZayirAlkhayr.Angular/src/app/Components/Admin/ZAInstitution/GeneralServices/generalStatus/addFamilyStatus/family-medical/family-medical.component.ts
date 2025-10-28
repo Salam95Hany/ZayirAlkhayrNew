@@ -11,11 +11,12 @@ import { FormDropdownModel } from '../../../../../../../Models/shared/FormDropdo
 import { ZaDropDownFormControlComponent } from '../../../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 import { ZaInputWithLabelComponent } from '../../../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { NgFor, NgIf } from '@angular/common';
+import { ZaEmptyDataComponent } from '../../../../../../../Shared/za-empty-data/za-empty-data.component';
 
 @Component({
   selector: 'app-family-medical',
   standalone: true,
-  imports: [ReactiveFormsModule, ZaDropDownFormControlComponent, ZaInputWithLabelComponent, NgIf, NgFor],
+  imports: [ReactiveFormsModule, ZaDropDownFormControlComponent, ZaInputWithLabelComponent, NgIf, NgFor,ZaEmptyDataComponent],
   templateUrl: './family-medical.component.html',
   styleUrl: './family-medical.component.css'
 })

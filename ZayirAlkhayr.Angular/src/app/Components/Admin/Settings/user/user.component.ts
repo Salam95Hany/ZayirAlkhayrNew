@@ -13,12 +13,13 @@ import { NgFor, NgIf } from '@angular/common';
 import { ZaInputWithLabelComponent } from '../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { ZaDropDownFormControlComponent } from '../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
+import { PagePermissionComponent } from "../page-permission/page-permission.component";
 
 @Component({
   selector: 'app-user',
   standalone: true,
   imports: [ZaLoaderComponent, ZaBreadcrumbComponent, ZaPaginationComponent, ZaEmptyDataComponent, NgbModule,
-    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, ZaDropDownFormControlComponent],
+    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, ZaDropDownFormControlComponent, PagePermissionComponent],
   templateUrl: './user.component.html',
   styleUrl: './user.component.css'
 })

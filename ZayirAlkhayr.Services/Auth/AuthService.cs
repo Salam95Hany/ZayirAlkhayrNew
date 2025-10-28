@@ -4,13 +4,14 @@ using System.Data;
 using System.Globalization;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.Settings;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Services.Auth
 {
-    public class AuthService: IAuthService
+    public class AuthService : IAuthService
     {
         private readonly UserManager<AdminUser> _userManager;
         private readonly SignInManager<AdminUser> _signInManager;
@@ -59,12 +60,15 @@ namespace ZayirAlkhayr.Services.Auth
                     roleId = role?.Id;
                 }
 
+                var UserApps = await GetAllUserApplications(user.Id);
+
                 ApplicationUserRespone userModel = new ApplicationUserRespone
                 {
                     UserName = user.UserName,
                     Role = roleNme,
                     RoleId = roleId,
                     UserId = user.Id,
+                    UserApps = UserApps,
                     Token = token,
                     LoginDate = DateTime.UtcNow,
                     LoginDateAr = DateTime.UtcNow.ToString("dddd d MMMM , yyyy", new CultureInfo("ar-AE")),
@@ -208,6 +212,14 @@ namespace ZayirAlkhayr.Services.Auth
 
             var addResult = await _userManager.AddToRoleAsync(user, newRole);
             return addResult.Succeeded;
+        }
+
+        public async Task<List<UserAppModel>> GetAllUserApplications(string UserId)
+        {
+            var Params = new SqlParameter[1];
+            Params[0] = new SqlParameter("@UserId", UserId);
+            var UserApp = await _sQLHelper.SQLQueryAsync<UserAppModel>("config.SP_GetAllUserApplications", Params);
+            return UserApp;
         }
 
         //public StatisticsHomeModel GetStatisticsHome()

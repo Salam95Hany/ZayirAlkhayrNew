@@ -1,0 +1,16 @@
+input.input-box {
+    overflow: hidden;
+    overscroll-behavior: contain;
+}
+
+input.input-box::-webkit-scrollbar {
+    display: none;
+}
+
+input.input-box:hover {
+    pointer-events: none;
+}
+
+input.input-box:focus {
+    pointer-events: auto;
+}

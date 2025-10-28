@@ -245,7 +245,7 @@ export class MenueService {
           icon: 'uil uil-archive',
           route: '/admin/settings/backup',
           role: ['SupperAdmin'],
-        },
+        }
       ]
     }
   ];

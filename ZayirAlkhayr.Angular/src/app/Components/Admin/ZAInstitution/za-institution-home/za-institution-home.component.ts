@@ -21,20 +21,20 @@ export class ZaInstitutionHomeComponent implements OnInit {
   today = new Date();
   statisticsCardList: any[] = [
     {
-      title: 'عدد المتبرعين',
-      number: 56,
+      title: 'إجمالي الزائرين',
+      number: 682,
       statusIcon: 'fa-arrow-circle-up fas',
       statusBgClass: 'bg-success-gradient',
     },
     {
-      title: 'إجمالي الايرادات',
-      number: 150000,
+      title: 'إجمالي المتبرعين',
+      number: 84,
       statusIcon: 'fa-arrow-circle-up fas',
       statusBgClass: 'bg-primary-gradient',
     },
     {
-      title: 'إجمالي الصادرات',
-      number: 25000,
+      title: 'إجمالي المستخدمين النشطين',
+      number: 7,
       statusIcon: 'fa-arrow-circle-up fas',
       statusBgClass: 'bg-secondary-gradient',
     }

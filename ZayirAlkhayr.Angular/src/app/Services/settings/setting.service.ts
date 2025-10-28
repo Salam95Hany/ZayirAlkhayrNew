@@ -12,11 +12,13 @@ export class SettingService {
   apiURL = environment.apiUrl;
   constructor(private http: HttpClient) { }
 
+  // ========================================= Auth =========================================
+
   GetAllUsers() {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Auth/GetAllUsers');
   }
 
-    CreateUser(Model: any) {
+  CreateUser(Model: any) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Auth/CreateUser', Model);
   }
 
@@ -28,7 +30,9 @@ export class SettingService {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Auth/DeleteUser?UserId=' + UserId);
   }
 
-   DownloadBackupFile(fileName: string) {
+  // ========================================= DbBackup =========================================
+
+  DownloadBackupFile(fileName: string) {
     return this.http.get(this.apiURL + 'DbBackup/SaveDbBackupFile', {
       responseType: 'blob',
       observe: 'response'
@@ -54,5 +58,19 @@ export class SettingService {
         downloadLink.click();
       })
     );
+  }
+
+  // ========================================= PagePermission =========================================
+
+  GetAllApplicationsWithParents() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'PagePermission/GetAllApplicationsWithParents');
+  }
+
+  GetApplicationsByUserId(UserId: string) {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'PagePermission/GetApplicationsByUserId?UserId=' + UserId);
+  }
+
+  AssignApplicationToUser(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'PagePermission/AssignApplicationToUser', Model);
   }
 }

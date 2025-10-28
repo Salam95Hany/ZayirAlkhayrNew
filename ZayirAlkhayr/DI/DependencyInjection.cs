@@ -86,6 +86,8 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IOrphansService, OrphansService>();
             services.AddScoped<IBeneFactorService, BeneFactorService>();
             services.AddScoped<ISharedService, SharedService>();
+            services.AddScoped<IPagePermissionService, PagePermissionService>();
+            
 
             #region ReportsDI
 

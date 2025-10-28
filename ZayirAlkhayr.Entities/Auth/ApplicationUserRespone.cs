@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZayirAlkhayr.Entities.Contracts.DTOs.Settings;
 
 namespace ZayirAlkhayr.Entities.Auth
 {
@@ -17,6 +18,7 @@ namespace ZayirAlkhayr.Entities.Auth
         public string Role { get; set; }
         public string RoleId { get; set; }
         public int ExpiresIn { get; set; }
+        public List<UserAppModel> UserApps { get; set; }
     }
 
     public class LoginModel
