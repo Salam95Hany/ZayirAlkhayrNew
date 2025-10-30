@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Entities.Specifications.ZAInstitution.Tasks;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Tasks;
@@ -16,7 +17,7 @@ using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
 {
-    public class GeneralTasksService: IGeneralTasksService
+    public class GeneralTasksService : IGeneralTasksService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISQLHelper _sQLHelper;
@@ -51,12 +52,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetAllUserTasks(string UserId)
+        public async Task<ApiResponseModel<(List<GeneralTask> List, int FinishedCount)>> GetAllUserTasks(PagingFilterModel PagingFilter)
         {
-            var Params = new SqlParameter[1];
-            Params[0] = new SqlParameter("@UserId", UserId);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllUserTasks", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var Spec = new UserTasksSpecification(PagingFilter);
+            var SpecCount = new UserTasksSpecification(PagingFilter, false);
+            var FinishedSpecCount = new UserTaskFinishedSpecification(PagingFilter.UserId);
+            var Results = await _unitOfWork.Repository<GeneralTask>().GetAllWithSpecAsync(Spec);
+            var FinishedCount = await _unitOfWork.Repository<GeneralTask>().GetCountAsync(FinishedSpecCount);
+            var TotalCount = await _unitOfWork.Repository<GeneralTask>().GetCountAsync(SpecCount);
+            return ApiResponseModel<(List<GeneralTask> List, int FinishedCount)>.Success(GenericErrors.GetSuccess, (Results, FinishedCount), TotalCount);
         }
 
         public async Task<ApiResponseModel<string>> AddNewGeneralTask(GeneralTask Model)
@@ -65,13 +69,33 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             {
                 var TaskObj = new GeneralTask();
                 TaskObj.StatusId = 1;
-                TaskObj.Task = Model.Task;
+                TaskObj.Title = Model.Title;
+                TaskObj.Description = Model.Description;
+                TaskObj.Priority = Model.Priority;
                 TaskObj.AssignTo = Model.AssignTo == null ? Model.InsertUser : Model.AssignTo;
                 TaskObj.InsertUser = Model.InsertUser;
                 TaskObj.TaskAddedDate = Model.TaskAddedDate;
+                TaskObj.DueDate = Model.DueDate;
                 TaskObj.InsertDate = DateTime.UtcNow;
 
                 await _unitOfWork.Repository<GeneralTask>().AddAsync(TaskObj);
+                await _unitOfWork.CompleteAsync();
+
+                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
+            }
+            catch (Exception)
+            {
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
+            }
+        }
+
+        public async Task<ApiResponseModel<string>> AddEditTaskComment(int TaskId, string Comment)
+        {
+            try
+            {
+                var TaskObj = await _unitOfWork.Repository<GeneralTask>().GetByIdAsync(TaskId);
+                TaskObj.Comment = Comment;
+
                 await _unitOfWork.CompleteAsync();
 
                 return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
@@ -87,10 +111,13 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             try
             {
                 var TaskObj = await _unitOfWork.Repository<GeneralTask>().GetByIdAsync(Model.Id);
-                TaskObj.Task = Model.Task;
+                TaskObj.Title = Model.Title;
+                TaskObj.Description = Model.Description;
+                TaskObj.Priority = Model.Priority;
                 TaskObj.AssignTo = Model.AssignTo == null ? Model.InsertUser : Model.AssignTo;
                 TaskObj.UpdateUser = Model.InsertUser;
                 TaskObj.TaskAddedDate = Model.TaskAddedDate;
+                TaskObj.DueDate = Model.DueDate;
                 TaskObj.UpdateDate = DateTime.UtcNow;
 
                 await _unitOfWork.CompleteAsync();
@@ -128,6 +155,12 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             try
             {
                 var Task = await _unitOfWork.Repository<GeneralTask>().GetByIdAsync(TaskId);
+                if (StatusId == 2)
+                    StatusId = 3;
+
+                if (StatusId == 1)
+                    StatusId = 2;
+                
                 Task.StatusId = StatusId;
                 await _unitOfWork.CompleteAsync();
                 return ApiResponseModel<string>.Success(GenericErrors.ChangeStatusSuccess);

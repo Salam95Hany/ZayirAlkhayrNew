@@ -19,4 +19,18 @@ namespace ZayirAlkhayr.Entities.Common
         BeneFactorDetailsImages = 8,
         ProjectSliderImages = 9
     }
+
+    public enum TaskPriority
+    {
+        HighPriority = 1,
+        MediumPriority = 2,
+        LowPriority = 3,
+    }
+
+    public enum TaskStatus
+    {
+        Completed = 1,
+        InProgress = 2,
+        Finished = 3
+    }
 }

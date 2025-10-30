@@ -31,10 +31,10 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.Tasks
             return results;
         }
 
-        [HttpGet("GetAllUserTasks")]
-        public async Task<ApiResponseModel<DataTable>> GetAllUserTasks(string UserId)
+        [HttpPost("GetAllUserTasks")]
+        public async Task<ApiResponseModel<(List<GeneralTask> List, int FinishedCount)>> GetAllUserTasks(PagingFilterModel PagingFilter)
         {
-            var results = await _generalTasksService.GetAllUserTasks(UserId);
+            var results = await _generalTasksService.GetAllUserTasks(PagingFilter);
             return results;
         }
 
@@ -42,6 +42,13 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.Tasks
         public async Task<ApiResponseModel<string>> AddNewGeneralTask(GeneralTask Model)
         {
             var results = await _generalTasksService.AddNewGeneralTask(Model);
+            return results;
+        }
+
+        [HttpGet("AddEditTaskComment")]
+        public async Task<ApiResponseModel<string>> AddEditTaskComment(int TaskId, string Comment)
+        {
+            var results = await _generalTasksService.AddEditTaskComment(TaskId, Comment);
             return results;
         }
 

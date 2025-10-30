@@ -18,7 +18,6 @@ export class ZaInstitutionLayoutComponent {
   menuItem: MenuSidebarItem;
 
   constructor(private menuService: MenueService) {
-    debugger;
     let menue = JSON.parse(JSON.stringify(this.menuService.getMenuById(MenuType.ZAInstitution)));
     this.menuItem = this.menuService.filterMenusByUserPermissions(menue);
   }

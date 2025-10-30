@@ -13,8 +13,9 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.Tasks
     {
         Task<ApiResponseModel<DataTable>> GetAllGeneralTasksData(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<List<FilterModel>>> GetAllGeneralTasksFilter(PagingFilterModel PagingFilter);
-        Task<ApiResponseModel<DataTable>> GetAllUserTasks(string UserId);
+        Task<ApiResponseModel<(List<GeneralTask> List, int FinishedCount)>> GetAllUserTasks(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<string>> AddNewGeneralTask(GeneralTask Model);
+        Task<ApiResponseModel<string>> AddEditTaskComment(int TaskId, string Comment);
         Task<ApiResponseModel<string>> UpdateGeneralTask(GeneralTask Model);
         Task<ApiResponseModel<string>> DeleteGeneralTask(int TaskId);
         Task<ApiResponseModel<string>> ConvertTaskStatus(int TaskId, int StatusId);

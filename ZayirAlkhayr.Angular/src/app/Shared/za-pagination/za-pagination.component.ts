@@ -38,12 +38,12 @@ export class ZaPaginationComponent implements OnInit, OnChanges {
     if (lPage >= this.totalCount) {
       const fNum = (this.pageSize * (this.currentPage - 1)) + 1;
       const lNum = (this.totalCount - fNum);
-      showingStr = (fNum) + '-' + (lNum + fNum);
+      showingStr = (fNum) + ' - ' + (lNum + fNum);
 
     } else {
       if (this.totalPages === this.currentPage) {
         if (this.currentPage === 1 || this.currentPage === 0) {
-          showingStr = this.currentPage + '-' + this.totalCount;
+          showingStr = this.currentPage + ' - ' + this.totalCount;
         }
         const fNum = (this.pageSize * (this.currentPage - 1));
         const lNum = (this.totalCount - fNum);
@@ -51,12 +51,12 @@ export class ZaPaginationComponent implements OnInit, OnChanges {
       } else {
         if (this.currentPage === 1 || this.currentPage === 0) {
           if (this.totalCount !== 0 && (this.pageSize > this.totalCount)) {
-            showingStr = this.currentPage + '-' + this.totalCount;
+            showingStr = this.currentPage + ' - ' + this.totalCount;
           } else {
-            showingStr = '1-' + this.pageSize;
+            showingStr = '1 - ' + this.pageSize;
           }
         } else {
-          showingStr = (this.pageSize * (this.currentPage - 1)) + 1 + '-' + (this.currentPage * this.pageSize);
+          showingStr = (this.pageSize * (this.currentPage - 1)) + 1 + ' - ' + (this.currentPage * this.pageSize);
         }
       }
     }

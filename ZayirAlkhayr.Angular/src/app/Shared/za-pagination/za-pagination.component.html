@@ -17,7 +17,7 @@
         <nav>
             <ul class="table-pagination pagination m-0 p-0 gap-2">
                 <li *ngIf="totalPages>3" class="page-item" [class.disabled]="currentPage === 1">
-                    <a (click)="setPage(1)" class="page-link">الأولي</a>
+                    <a (click)="setPage(1)" class="page-link">الأول</a>
                 </li>
                 <li class="page-item" [class.disabled]="currentPage === 1">
                     <a class="page-link" aria-label="Previous" (click)="setPage(currentPage - 1)">
@@ -33,7 +33,7 @@
                     </a>
                 </li>
                 <li *ngIf="totalPages>3" class="page-item" [class.disabled]="currentPage === totalPages">
-                    <a (click)="setPage(totalPages)" class="page-link">الأخيرة</a>
+                    <a (click)="setPage(totalPages)" class="page-link">الأخير</a>
                 </li>
             </ul>
         </nav>

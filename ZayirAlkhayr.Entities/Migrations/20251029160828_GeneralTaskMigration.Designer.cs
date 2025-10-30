@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZayirAlkhayr.Entities.Models;
 
@@ -11,9 +12,11 @@ using ZayirAlkhayr.Entities.Models;
 namespace ZayirAlkhayr.Entities.Migrations
 {
     [DbContext(typeof(ZADbContext))]
-    partial class ZADbContextModelSnapshot : ModelSnapshot
+    [Migration("20251029160828_GeneralTaskMigration")]
+    partial class GeneralTaskMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

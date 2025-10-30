@@ -1,17 +1,24 @@
 import { Component } from '@angular/core';
 import { ZaBreadcrumbComponent } from "../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
 import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
-import { NgFor, NgIf } from '@angular/common';
 import { TaskService } from '../../../../../Services/zainstitution/task.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../../Auth/auth.service';
-import { ZaEmptyDataComponent } from '../../../../../Shared/za-empty-data/za-empty-data.component';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ZaPaginationComponent } from "../../../../../Shared/za-pagination/za-pagination.component";
+import { PagingFilterModel } from '../../../../../Models/shared/PagingFilterModel ';
+import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ZaInputWithLabelComponent } from '../../../../../Shared/za-input-with-label/za-input-with-label.component';
+import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
+import { FormService } from '../../../../../Services/shared/form.service';
 
 @Component({
   selector: 'app-daily-tasks',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaLoaderComponent, FormsModule,NgFor],
+  imports: [FormsModule, NgClass, NgIf, ZaBreadcrumbComponent, ZaLoaderComponent, FormsModule, ZaPaginationComponent, NgFor, CommonModule,
+    ZaInputWithLabelComponent, ReactiveFormsModule, NgbModule
+  ],
   templateUrl: './daily-tasks.component.html',
   styleUrl: './daily-tasks.component.css'
 })
@@ -23,21 +30,146 @@ export class DailyTasksComponent {
   TotalCount = 0;
   UserId: any;
   TaskId: any;
+  currentDate: string = '';
+  currentTime: string = '';
+  StatusFilterActive = 'All';
+  CompletedCount = 0;
+  InProgressCount = 0;
+  FinishedCount = 0;
+  ItemForm: FormGroup;
+  PagingFilter: PagingFilterModel = {
+    currentPage: 1,
+    pageSize: 10,
+    filterList: []
+  }
+  formErrors = {
+    comment: '',
+  };
 
-  constructor(private taskService: TaskService, private toaster: ToastrService, private authService: AuthService) { }
+  constructor(private taskService: TaskService, private toaster: ToastrService, private authService: AuthService, private modalService: NgbModal,
+    private fb: FormBuilder, private formService: FormService
+  ) { }
 
   ngOnInit(): void {
-    // this.CurrentUserId = this.authService.userId;
-    // this.GetAllUserTasks();
+    this.CurrentUserId = this.authService.userId;
+    this.PagingFilter.userId = this.CurrentUserId;
+    this.FormInit();
+    this.GetAllUserTasks();
     this.updateDateTime();
     setInterval(() => this.updateDateTime(), 1000);
   }
 
-  GetAllUserTasks() {
-    this.taskService.GetAllUserTasks(this.CurrentUserId).subscribe(data => {
-      this.TasksData = data.results;
-      this.TotalCount = data.totalCount;
+  updateDateTime() {
+    const now = new Date();
+    const dateOptions: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+
+    this.currentDate = now.toLocaleDateString('ar-EG', dateOptions);
+    this.currentTime = now.toLocaleTimeString('ar-EG', { hour12: true });
+  }
+
+  FormInit() {
+    this.ItemForm = this.fb.group({
+      comment: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
     });
+
+    this.ItemForm.valueChanges.subscribe((data) => {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
+    });
+  }
+
+  FillEditForm(item: any) {
+    this.ItemForm.patchValue({
+      comment: item?.comment ?? '',
+    });
+  }
+
+  OpenItemModal(content: any, item: any) {
+    this.ItemForm.reset();
+    this.TaskId = item.id;
+    this.FillEditForm(item);
+    this.modalService.open(content, {
+      size: 'xl',
+      scrollable: true,
+      centered: true
+    });
+  }
+
+  GetAllUserTasks() {
+    this.taskService.GetAllUserTasks(this.PagingFilter).subscribe(data => {
+      this.TasksData = data.results.item1;
+      this.TotalCount = data.totalCount;
+      this.CompletedCount = this.TasksData.filter(i => i.statusId == 1)?.length ?? 0;
+      this.InProgressCount = this.TasksData.filter(i => i.statusId == 2)?.length ?? 0;
+      if (data.results.item2 > 0) {
+        this.FinishedCount = data.results.item2;
+      } else {
+        this.FinishedCount = 0;
+      }
+    });
+  }
+
+  OnPageChange(obj: any) {
+    this.PagingFilter.currentPage = obj.page;
+    this.GetAllUserTasks();
+  }
+
+  OnFilterClick(status: string) {
+    this.PagingFilter.filterList = [];
+    if (status != 'SearchText') {
+      this.StatusFilterActive = status;
+      this.PagingFilter.searchText = '';
+      this.PagingFilter.filterList.push({
+        categoryName: 'TaskStatus',
+        itemId: status
+      });
+      this.GetAllUserTasks();
+    }
+    else {
+      if (this.PagingFilter.searchText.length > 2 || !this.PagingFilter.searchText) {
+        this.StatusFilterActive = 'All';
+        this.PagingFilter.filterList.push({
+          categoryName: 'SearchText',
+          itemId: this.PagingFilter.searchText
+        });
+        this.GetAllUserTasks();
+      }
+    }
+  }
+
+  validateForm(): boolean {
+    this.formService.markFormGroupTouched(this.ItemForm);
+    if (this.ItemForm.valid) {
+      return true;
+    } else {
+      this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, false)
+      return false;
+    }
+  }
+
+  AddEditTaskComment() {
+    this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
+    let isValid = this.validateForm();
+
+    if (!isValid)
+      return;
+
+    this.showLoader = true;
+    this.taskService.AddEditTaskComment(this.TaskId, this.ItemForm.value?.comment).subscribe(data => {
+      if (data.isSuccess) {
+        this.toaster.success(data.message);
+        this.GetAllUserTasks();
+        this.modalService.dismissAll();
+      }
+      else
+        this.toaster.error(data.message);
+      this.showLoader = false;
+    });
+
   }
 
   ConvertTaskStatus(taskId: any, statusId: any) {
@@ -51,114 +183,5 @@ export class DailyTasksComponent {
         this.toaster.error(data.message);
       this.showLoader = false;
     });
-  }
-
-   currentDate: string = '';
-  currentTime: string = '';
-
-  tasks: any[] = [
-    {
-      title: 'Complete project presentation',
-      description: "Finalize slides and prepare speaking notes for tomorrow's meeting",
-      priority: 'High',
-      dueTime: '14:00',
-      category: 'Work',
-      completed: false
-    },
-    {
-      title: 'Review team progress reports',
-      description: 'Check weekly updates from all team members',
-      priority: 'Medium',
-      dueTime: '16:00',
-      category: 'Management',
-      completed: false
-    },
-    {
-      title: 'Morning workout session',
-      description: '30 minutes cardio and strength training',
-      priority: 'Low',
-      dueTime: '07:30',
-      category: 'Personal',
-      completed: true
-    },
-    {
-      title: 'Grocery shopping',
-      description: 'Buy vegetables, fruits, and household items',
-      priority: 'Medium',
-      dueTime: '18:00',
-      category: 'Shopping',
-      completed: false
-    },
-    {
-      title: 'Read 30 pages of book',
-      description: 'Continue reading "Atomic Habits"',
-      priority: 'Low',
-      dueTime: '22:00',
-      category: 'Personal',
-      completed: false
-    }
-  ];
-
-  searchText: string = '';
-  activeFilter: string = 'all';
-
-
-  updateDateTime() {
-    const now = new Date();
-    const dateOptions: Intl.DateTimeFormatOptions = {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    };
-    this.currentDate = now.toLocaleDateString('en-US', dateOptions);
-    this.currentTime = now.toLocaleTimeString('en-US');
-  }
-
-  toggleComplete(task: any) {
-    task.completed = !task.completed;
-  }
-
-  get totalTasks() {
-    return this.tasks.length;
-  }
-
-  get completedTasks() {
-    return this.tasks.filter(t => t.completed).length;
-  }
-
-  get inProgressTasks() {
-    return this.tasks.filter(t => !t.completed).length;
-  }
-
-  get completionRate() {
-    return this.totalTasks ? Math.round((this.completedTasks / this.totalTasks) * 100) : 0;
-  }
-
-  setFilter(filter: string) {
-    this.activeFilter = filter;
-  }
-
-  get filteredTasks(): any[] {
-    return this.tasks.filter(task => {
-      const matchesSearch = task.title.toLowerCase().includes(this.searchText.toLowerCase());
-      if (!matchesSearch) return false;
-
-      switch (this.activeFilter) {
-        case 'completed':
-          return task.completed;
-        case 'active':
-          return !task.completed;
-        case 'high':
-          return task.priority === 'High';
-        default:
-          return true;
-      }
-    });
-  }
-
-  addTask(newTask: any) {
-    this.tasks.push(newTask);
-  }
-
-  deleteTask(task: any) {
-    this.tasks = this.tasks.filter(t => t !== task);
   }
 }

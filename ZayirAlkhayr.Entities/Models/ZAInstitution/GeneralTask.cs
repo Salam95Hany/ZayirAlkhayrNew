@@ -12,14 +12,14 @@ namespace ZayirAlkhayr.Entities.Models;
 public partial class GeneralTask : AuditableEntity
 {
     public int Id { get; set; }
-
     public int StatusId { get; set; }
-
-    public string Task { get; set; }
-
+    public string Title { get; set; }
+    public string Description { get; set; }
+    public string Comment { get; set; }
+    public string Priority { get; set; }
     public string AssignTo { get; set; }
-
     public DateTime TaskAddedDate { get; set; }
+    public DateTime DueDate { get; set; }
 
     public TaskStatus Status { get; set; }
 }

@@ -59,19 +59,19 @@ export class TaskService {
 
   // ============================= GeneralTasks ==============================
 
-  GetAllUserTasks(UserId: string) {
-    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'GeneralTasks/GetAllUserTasks?UserId=' + UserId);
+  GetAllUserTasks(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/GetAllUserTasks', PagingFilter);
   }
 
   ConvertTaskStatus(TaskId: number, StatusId: number) {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/ConvertTaskStatus?TaskId=' + TaskId + '&StatusId=' + StatusId);
   }
 
-   GetAllGeneralTasksData(PagingFilter: PagingFilterModel) {
+  GetAllGeneralTasksData(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'GeneralTasks/GetAllGeneralTasksData', PagingFilter);
   }
 
-    GetAllGeneralTasksFilter(PagingFilter: PagingFilterModel) {
+  GetAllGeneralTasksFilter(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'GeneralTasks/GetAllGeneralTasksFilter', PagingFilter);
   }
 
@@ -79,11 +79,15 @@ export class TaskService {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/AddNewGeneralTask', Model);
   }
 
-   UpdateGeneralTask(Model: any) {
+  AddEditTaskComment(TaskId: number, Comment: string) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/AddEditTaskComment?TaskId=' + TaskId + '&Comment=' + Comment);
+  }
+
+  UpdateGeneralTask(Model: any) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/UpdateGeneralTask', Model);
   }
 
-   DeleteGeneralTask(TaskId: number) {
+  DeleteGeneralTask(TaskId: number) {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/DeleteGeneralTask?TaskId=' + TaskId);
   }
 }

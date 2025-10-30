@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { ZAInstitutionRoutes } from './ZAInstitution/za-institution.routes';
 import { SettingRoutes } from './Settings/setting.routes';
+import { homeAuthGuard } from '../../Auth/home-auth.guard';
 
 export const AdminRoutes: Routes = [
     {
@@ -9,7 +10,8 @@ export const AdminRoutes: Routes = [
     },
     {
         path: 'home',
-        loadComponent: () => import('../../Shared/za-home/za-home.component').then(m => m.ZaHomeComponent)
+        loadComponent: () => import('../../Shared/za-home/za-home.component').then(m => m.ZaHomeComponent),
+        canActivate: [homeAuthGuard]
     },
     {
         path: 'not-authorized',
