@@ -31,6 +31,13 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.Tasks
             return results;
         }
 
+        [HttpGet("GetAllGeneralTaskStatistics")]
+        public async Task<ApiResponseModel<DataTable>> GetAllGeneralTaskStatistics()
+        {
+            var results = await _generalTasksService.GetAllGeneralTaskStatistics();
+            return results;
+        }
+
         [HttpPost("GetAllUserTasks")]
         public async Task<ApiResponseModel<(List<GeneralTask> List, int FinishedCount)>> GetAllUserTasks(PagingFilterModel PagingFilter)
         {

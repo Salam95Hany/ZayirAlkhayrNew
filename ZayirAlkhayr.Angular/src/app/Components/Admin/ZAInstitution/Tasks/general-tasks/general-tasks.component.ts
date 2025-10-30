@@ -8,7 +8,6 @@ import { PagingFilterModel } from '../../../../../Models/shared/PagingFilterMode
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
-import { ZaEmptyDataComponent } from '../../../../../Shared/za-empty-data/za-empty-data.component';
 import { ZaInputWithLabelComponent } from '../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { ZaLoaderComponent } from '../../../../../Shared/za-loader/za-loader.component';
 import { ZaDropDownFormControlComponent } from '../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
@@ -18,12 +17,13 @@ import { FormService } from '../../../../../Services/shared/form.service';
 import { SharedService } from '../../../../../Services/shared/shared.service';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
+import { FormDropdownModel } from '../../../../../Models/shared/FormDropdownModel';
 
 @Component({
   selector: 'app-general-tasks',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
-    CommonModule, FormsModule, ReactiveFormsModule, NgbModule, ZaInputWithLabelComponent,RoleCheckerDirective,
+  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent,
+    CommonModule, FormsModule, ReactiveFormsModule, NgbModule, ZaInputWithLabelComponent, RoleCheckerDirective,
     NgIf, NgFor, ZaDropDownFormControlComponent, ZaLoaderComponent],
   templateUrl: './general-tasks.component.html',
   styleUrl: './general-tasks.component.css',
@@ -31,46 +31,79 @@ import { RoleCheckerDirective } from '../../../../../Directives/role-checker.dir
 })
 export class GeneralTasksComponent {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المهام', 'المهام العامة'];
+  PriorityList: FormDropdownModel[] = [
+    { value: 'HighPriority', name: 'أولوية عالية' },
+    { value: 'MediumPriority', name: 'أولوية متوسطة' },
+    { value: 'LowPriority', name: 'أولوية منخفضة' },
+  ];
   TasksData: any[] = [];
-  UsersData: any[] = [];
+  UsersData: FormDropdownModel[] = [];
   filterList: FilterModel[] = [];
   CurrentUserId: any;
-  ItemForm: FormGroup;
-  TotalCount = 0;
-  isFilter = true;
   showLoader = false;
-  UserName = 'تعيين ل';
+  TotalCount = 0;
+  UserId: any;
   TaskId: any;
+  currentDate: string = '';
+  currentTime: string = '';
+  StatusFilterActive = 'All';
+  CompletedCount = 0;
+  InProgressCount = 0;
+  FinishedCount = 0;
+  ItemForm: FormGroup;
   PagingFilter: PagingFilterModel = {
-    filterList: [],
     currentPage: 1,
-    pageSize: 20
-  };
+    pageSize: 10,
+    filterList: []
+  }
   formErrors = {
-    task: '',
-    taskAddedDate: ''
+    title: '',
+    description: '',
+    taskAddedDate: '',
+    dueDate: '',
+    priority: '',
+    assignTo: ''
   };
 
-  constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private authService: AuthService,
-    private formService: FormService, private taskService: TaskService, private datepipe: DatePipe, private sharedService: SharedService,
-    private datePipe: DatePipe
+  constructor(private taskService: TaskService, private toaster: ToastrService, private authService: AuthService, private modalService: NgbModal,
+    private fb: FormBuilder, private formService: FormService, private sharedService: SharedService, private datePipe: DatePipe
   ) { }
 
   ngOnInit(): void {
     this.CurrentUserId = this.authService.userId;
+    this.PagingFilter.userId = this.CurrentUserId;
     this.FormInit();
-    this.GetAllUsers();
     this.GetAllGeneralTasksData();
     this.GetAllGeneralTasksFilter();
+    this.GetAllGeneralTaskStatistics();
+    this.GetAllUsers();
+    this.updateDateTime();
+    setInterval(() => this.updateDateTime(), 1000);
+  }
+
+  updateDateTime() {
+    const now = new Date();
+    const dateOptions: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+
+    this.currentDate = now.toLocaleDateString('ar-EG', dateOptions);
+    this.currentTime = now.toLocaleTimeString('ar-EG', { hour12: true });
   }
 
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
-      task: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      taskAddedDate: ['', Validators.required],
-      assignTo: null,
-      InsertUser: null
+      title: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      description: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      taskAddedDate: ['', [Validators.required]],
+      dueDate: ['', [Validators.required]],
+      priority: ['', [Validators.required]],
+      assignTo: ['', [Validators.required]],
+      insertUser: null
     });
 
     this.ItemForm.valueChanges.subscribe((data) => {
@@ -79,23 +112,21 @@ export class GeneralTasksComponent {
   }
 
   FillEditForm(item: any) {
-    this.ItemForm.setValue({
+    this.ItemForm.patchValue({
       id: item.id,
-      task: item.task,
-      assignTo: item?.assignToId,
-      taskAddedDate: this.datePipe.transform(item?.taskAddedDate, 'yyyy-MM-dd'),
-      InsertUser: this.CurrentUserId,
+      title: item?.title ?? '',
+      description: item?.description ?? '',
+      taskAddedDate: this.datePipe.transform(item?.taskAddedDate, 'yyyy-MM-dd') ?? null,
+      dueDate: this.datePipe.transform(item?.dueDate, 'yyyy-MM-dd') ?? null,
+      priority: item?.priority ?? '',
+      assignTo: item?.assignToId ?? '',
+      insertUser: item?.insertUser
     });
   }
 
-  ResetForm() {
+  OpenItemModal(content: any, item: any) {
     this.ItemForm.reset();
-    this.ItemForm.get('id').setValue(0);
-    this.ItemForm.get('InsertUser').setValue(this.CurrentUserId);
-  }
-
-  openItemModal(content: any, item: any) {
-    this.ResetForm();
+    this.TaskId = item?.id;
     if (item)
       this.FillEditForm(item);
     this.modalService.open(content, {
@@ -105,21 +136,9 @@ export class GeneralTasksComponent {
     });
   }
 
-  openDeleteItemModal(content: any, item: any) {
-    this.TaskId = item.id;
-    this.modalService.open(content, {
-      size: 'md',
-      scrollable: true,
-      centered: true
-    });
-  }
-
   GetAllGeneralTasksData() {
     this.taskService.GetAllGeneralTasksData(this.PagingFilter).subscribe(data => {
       this.TasksData = data.results;
-      this.TasksData.forEach(i => {
-        i.showButtonStatus = this.CurrentUserId == i.assignToId;
-      })
       this.TotalCount = data.totalCount;
     });
   }
@@ -130,21 +149,29 @@ export class GeneralTasksComponent {
     });
   }
 
-  GetAllUsers() {
-    this.sharedService.GetAllUsersSelector().subscribe(data => {
-      this.UsersData = data.results;
+  GetAllGeneralTaskStatistics() {
+    this.taskService.GetAllGeneralTaskStatistics().subscribe(data => {
+      this.CompletedCount = data.results[0].completedCount;
+      this.InProgressCount = data.results[0].inProgressCount;
+      this.FinishedCount = data.results[0].finishedCount;
     });
   }
 
-  PageChange(obj: any) {
+  OnPageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
     this.GetAllGeneralTasksData();
   }
 
-  FilterChecked(filterList: FilterModel[]) {
+  OnFilterClick(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
     this.PagingFilter.currentPage = 1;
     this.GetAllGeneralTasksData();
+  }
+
+  GetAllUsers() {
+    this.sharedService.GetAllUsersSelector().subscribe(data => {
+      this.UsersData = data.results;
+    });
   }
 
   validateForm(): boolean {
@@ -157,20 +184,23 @@ export class GeneralTasksComponent {
     }
   }
 
-  AddNewItem() {
+  AddItem() {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
     let isValid = this.validateForm();
 
     if (!isValid)
       return;
 
-    if (this.ItemForm.controls['id'].value == 0) {
+    this.ItemForm.patchValue({ insertUser: this.CurrentUserId });
+
+    if (!this.TaskId) {
       this.showLoader = true;
       this.taskService.AddNewGeneralTask(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllGeneralTasksData();
           this.GetAllGeneralTasksFilter();
+          this.GetAllGeneralTaskStatistics();
           this.modalService.dismissAll();
         }
         else
@@ -184,6 +214,7 @@ export class GeneralTasksComponent {
           this.toaster.success(data.message);
           this.GetAllGeneralTasksData();
           this.GetAllGeneralTasksFilter();
+          this.GetAllGeneralTaskStatistics();
           this.modalService.dismissAll();
         }
         else
@@ -191,30 +222,17 @@ export class GeneralTasksComponent {
         this.showLoader = false;
       });
     }
+
   }
 
-  DeleteItem() {
+  DeleteItem(taskId: any) {
     this.showLoader = true;
-    this.taskService.DeleteGeneralTask(this.TaskId).subscribe(data => {
+    this.taskService.DeleteGeneralTask(taskId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllGeneralTasksData();
         this.GetAllGeneralTasksFilter();
-        this.modalService.dismissAll();
-      }
-      else
-        this.toaster.error(data.message);
-      this.showLoader = false;
-    });
-  }
-
-  ConvertTaskStatus(taskId: any, statusId: any) {
-    this.showLoader = true;
-    this.taskService.ConvertTaskStatus(taskId, statusId).subscribe(data => {
-      if (data.isSuccess) {
-        this.toaster.success(data.message);
-        this.GetAllGeneralTasksData();
-        this.GetAllGeneralTasksFilter();
+        this.GetAllGeneralTaskStatistics();
         this.modalService.dismissAll();
       }
       else

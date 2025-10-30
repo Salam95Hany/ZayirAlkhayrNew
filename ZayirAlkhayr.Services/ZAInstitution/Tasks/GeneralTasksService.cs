@@ -39,6 +39,12 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
+        public async Task<ApiResponseModel<DataTable>> GetAllGeneralTaskStatistics()
+        {
+            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllGeneralTaskStatistics", Array.Empty<SqlParameter>());
+            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+        }
+
         public async Task<ApiResponseModel<List<FilterModel>>> GetAllGeneralTasksFilter(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
@@ -160,7 +166,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
 
                 if (StatusId == 1)
                     StatusId = 2;
-                
+
                 Task.StatusId = StatusId;
                 await _unitOfWork.CompleteAsync();
                 return ApiResponseModel<string>.Success(GenericErrors.ChangeStatusSuccess);

@@ -75,6 +75,10 @@ export class TaskService {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'GeneralTasks/GetAllGeneralTasksFilter', PagingFilter);
   }
 
+  GetAllGeneralTaskStatistics() {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/GetAllGeneralTaskStatistics');
+  }
+
   AddNewGeneralTask(Model: any) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/AddNewGeneralTask', Model);
   }
