@@ -14,14 +14,14 @@ import { BenefactorService } from '../../../../../Services/zainstitution/benefac
 import { FormService } from '../../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../../Auth/auth.service';
-import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
 import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-benefactor-types',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, NgxLoadingModule],
   templateUrl: './benefactor-types.component.html',
   styleUrl: './benefactor-types.component.css'
 })
@@ -105,7 +105,9 @@ export class BenefactorTypesComponent implements OnInit {
   }
 
   GetAllBeneFactorTypes() {
+    this.showLoader = true;
     this.benefactorService.GetAllBeneFactorTypes(this.pagingFilterModel).subscribe(data => {
+      this.showLoader = false;
       this.pagedResponseModel.results = data.results;
       this.pagedResponseModel.totalCount = data.totalCount;
     });

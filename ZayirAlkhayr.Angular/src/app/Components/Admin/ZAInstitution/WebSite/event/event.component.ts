@@ -16,14 +16,14 @@ import { FileService } from '../../../../../Services/shared/file.service';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { FormService } from '../../../../../Services/shared/form.service';
 import { AuthService } from '../../../../../Auth/auth.service';
-import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
 import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-event',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, NgxLoadingModule],
   templateUrl: './event.component.html',
   styleUrl: './event.component.css'
 })
@@ -147,7 +147,9 @@ export class EventComponent implements OnInit {
   }
 
   GetAllEvents() {
+    this.showLoader = true;
     this.websiteService.GetAllEvents(this.pagingFilterModel).subscribe(data => {
+      this.showLoader = false;
       this.pagedResponseModel.results = data.results;
       this.pagedResponseModel.totalCount = data.totalCount;
     });

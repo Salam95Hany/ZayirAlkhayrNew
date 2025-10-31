@@ -74,9 +74,9 @@ export class FamilyStatusComponent implements OnInit {
     this.FamilyStatus.insertUser = this.UserId;
 
     this.ItemForm = this.fb.group({
-      name: [{ value: this.FamilyStatus.name, disabled: this.DetailsMode ? true : false }, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      fname: [{ value: this.FamilyStatus.fname, disabled: this.DetailsMode ? true : false }, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      phone: [{ value: this.FamilyStatus.phone, disabled: this.DetailsMode ? true : false }, Validators.required],
+      name: [{ value: this.FamilyStatus.name ?? '', disabled: this.DetailsMode ? true : false }, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      fname: [{ value: this.FamilyStatus.fname ?? '', disabled: this.DetailsMode ? true : false }, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      phone: [{ value: this.FamilyStatus.phone ?? '', disabled: this.DetailsMode ? true : false }, Validators.required],
       phone1: [{ value: this.FamilyStatus.phone1 ?? '', disabled: this.DetailsMode ? true : false }],
       address: [{ value: this.FamilyStatus.address ?? '', disabled: this.DetailsMode ? true : false }, CustomValidators.regexPattern(RegexType.noSpace)],
       relevance: [{ value: this.FamilyStatus.relevance ?? '', disabled: this.DetailsMode ? true : false }, CustomValidators.regexPattern(RegexType.noSpace)],

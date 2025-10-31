@@ -1,6 +1,5 @@
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ZaLoaderComponent } from "../../../../../../Shared/za-loader/za-loader.component";
 import { FamilyStatusComponent } from './family-status/family-status.component';
 import { FamilyDataComponent } from './family-data/family-data.component';
 import { FamilyIncomeDataComponent } from './family-income-data/family-income-data.component';
@@ -13,13 +12,13 @@ import { Router } from '@angular/router';
 import { FamilyStatusLookups } from '../../../../../../Models/zainstitution/GeneralStatus/FamilyStatusLookups';
 import { AddFamilyStatusModel } from '../../../../../../Models/zainstitution/GeneralStatus/AddFamilyStatusModel';
 import { GeneralStatusService } from '../../../../../../Services/zainstitution/general-status.service';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-add-family-status',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, ZaLoaderComponent, FamilyStatusComponent, FamilyDataComponent, FamilyIncomeDataComponent, FamilyExpensesDataComponent,
-    FamilyMedicalComponent, FamilyNeedComponent, ReviewersComponent
-  ],
+  imports: [NgFor, NgIf, NgClass, FamilyStatusComponent, FamilyDataComponent, FamilyIncomeDataComponent, FamilyExpensesDataComponent,
+    FamilyMedicalComponent, FamilyNeedComponent, ReviewersComponent, NgxLoadingModule],
   templateUrl: './add-family-status.component.html',
   styleUrl: './add-family-status.component.css'
 })

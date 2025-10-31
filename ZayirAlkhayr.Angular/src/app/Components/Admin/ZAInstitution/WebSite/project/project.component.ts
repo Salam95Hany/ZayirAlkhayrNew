@@ -16,14 +16,14 @@ import { FileService } from '../../../../../Services/shared/file.service';
 import { FormService } from '../../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../../Auth/auth.service';
-import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
 import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from 'ngx-loading';
 
 @Component({
   selector: 'app-project',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, NgxLoadingModule],
   templateUrl: './project.component.html',
   styleUrl: './project.component.css'
 })
@@ -36,7 +36,7 @@ export class ProjectComponent implements OnInit {
   multiImagesFile: any[] = [];
   FileSotingModel: FileSortingModel[] = [];
   ItemForm: FormGroup;
-  showLoader: boolean = false;
+  ShowLoader: boolean = false;
   isFilter = true;
   isFileExist = false;
   ProjectId: any;
@@ -55,7 +55,7 @@ export class ProjectComponent implements OnInit {
     results: [],
   };
 
-   formErrors = {
+  formErrors = {
     title: '',
     description: '',
     totalDonationAmount: '',
@@ -64,7 +64,7 @@ export class ProjectComponent implements OnInit {
     remainingAmount: ''
   };
 
-  constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,private authService: AuthService,
+  constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private authService: AuthService,
     private fileService: FileService, private websiteService: ZaWebsiteService, private formService: FormService
   ) { }
 
@@ -153,7 +153,9 @@ export class ProjectComponent implements OnInit {
   }
 
   GetAllProjects() {
+    this.ShowLoader = true;
     this.websiteService.GetAllProjects(this.pagingFilterModel).subscribe(data => {
+      this.ShowLoader = false;
       this.pagedResponseModel.results = data.results;
       this.pagedResponseModel.totalCount = data.totalCount;
     });
@@ -216,7 +218,7 @@ export class ProjectComponent implements OnInit {
     this.FileModel.files = this.multiImagesFile.map(i => i.file);
     const formData = new FormData();
     this.formService.buildFormData(formData, this.FileModel);
-    this.showLoader = true;
+    this.ShowLoader = true;
     this.websiteService.AddProjectsSliderImage(formData).subscribe(data => {
       if (data.isSuccess) {
         this.modalService.dismissAll();
@@ -224,11 +226,11 @@ export class ProjectComponent implements OnInit {
       }
       else
         this.toaster.error(data.message);
-      this.showLoader = false;
+      this.ShowLoader = false;
     });
   }
 
-   validateForm(): boolean {
+  validateForm(): boolean {
     this.formService.markFormGroupTouched(this.ItemForm);
     if (this.ItemForm.valid) {
       return true;
@@ -245,7 +247,7 @@ export class ProjectComponent implements OnInit {
     if (!isValid)
       return;
 
-    this.showLoader = true;
+    this.ShowLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
       this.websiteService.AddNewProjects(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
@@ -256,7 +258,7 @@ export class ProjectComponent implements OnInit {
         }
         else
           this.toaster.error(data.message);
-        this.showLoader = false;
+        this.ShowLoader = false;
       });
     } else {
       this.websiteService.UpdateProjects(this.ItemForm.value).subscribe(data => {
@@ -267,13 +269,13 @@ export class ProjectComponent implements OnInit {
         }
         else
           this.toaster.error(data.message);
-        this.showLoader = false;
+        this.ShowLoader = false;
       });
     }
   }
 
   DeleteItem() {
-    this.showLoader = true;
+    this.ShowLoader = true;
     this.websiteService.DeleteProjects(this.ProjectId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
@@ -283,7 +285,7 @@ export class ProjectComponent implements OnInit {
       }
       else
         this.toaster.error(data.message);
-      this.showLoader = false;
+      this.ShowLoader = false;
     });
   }
 }

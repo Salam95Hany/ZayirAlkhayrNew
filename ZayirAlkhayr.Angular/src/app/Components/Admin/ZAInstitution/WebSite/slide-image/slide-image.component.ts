@@ -15,14 +15,14 @@ import { FileService } from '../../../../../Services/shared/file.service';
 import { FormService } from '../../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../../Auth/auth.service';
-import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
 import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-slide-image',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, NgxLoadingModule],
   templateUrl: './slide-image.component.html',
   styleUrl: './slide-image.component.css'
 })
@@ -130,7 +130,9 @@ export class SlideImageComponent implements OnInit {
   }
 
   GetHomeSliderImages() {
+    this.showLoader = true;
     this.websiteService.GetHomeSliderImages(this.pagingFilterModel).subscribe(data => {
+      this.showLoader = false;
       this.pagedResponseModel.results = data.results;
       this.pagedResponseModel.totalCount = data.totalCount;
     });

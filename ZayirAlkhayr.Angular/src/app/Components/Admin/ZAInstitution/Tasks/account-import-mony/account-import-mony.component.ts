@@ -19,14 +19,14 @@ import { SharedService } from '../../../../../Services/shared/shared.service';
 import { PdfDownloadService } from '../../../../../Services/shared/pdf-download.service';
 import { SearchReportModel } from '../../../../../Models/shared/SearchReportModel';
 import { ZaDropDownFormControlComponent } from '../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
-import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-account-import-mony',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RoleCheckerDirective, ZaInputWithLabelComponent,
-    NgIf, NgFor, ZaDropDownFormControlComponent, ZaLoaderComponent],
+    NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule],
   templateUrl: './account-import-mony.component.html',
   styleUrl: './account-import-mony.component.css',
   providers: [DatePipe]
@@ -135,7 +135,9 @@ export class AccountImportMonyComponent {
   }
 
   GetAllAccountsImportMonyData() {
+    this.showLoader = true;
     this.taskService.GetAllAccountsImportMonyData(this.PagingFilter).subscribe(data => {
+      this.showLoader = false;
       this.AccountMoneyList = data.results;
       this.TotalCount = data.totalCount;
     });

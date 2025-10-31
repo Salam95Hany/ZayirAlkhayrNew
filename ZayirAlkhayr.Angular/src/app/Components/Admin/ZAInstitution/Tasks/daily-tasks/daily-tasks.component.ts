@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ZaBreadcrumbComponent } from "../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
-import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
 import { TaskService } from '../../../../../Services/zainstitution/task.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../../Auth/auth.service';
@@ -12,13 +11,13 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ZaInputWithLabelComponent } from '../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { FormService } from '../../../../../Services/shared/form.service';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-daily-tasks',
   standalone: true,
-  imports: [FormsModule, NgClass, NgIf, ZaBreadcrumbComponent, ZaLoaderComponent, FormsModule, ZaPaginationComponent, NgFor, CommonModule,
-    ZaInputWithLabelComponent, ReactiveFormsModule, NgbModule
-  ],
+  imports: [FormsModule, NgClass, NgIf, ZaBreadcrumbComponent, FormsModule, ZaPaginationComponent, NgFor, CommonModule,
+    ZaInputWithLabelComponent, ReactiveFormsModule, NgbModule, NgxLoadingModule],
   templateUrl: './daily-tasks.component.html',
   styleUrl: './daily-tasks.component.css'
 })
@@ -100,7 +99,9 @@ export class DailyTasksComponent {
   }
 
   GetAllUserTasks() {
+    this.showLoader = true;
     this.taskService.GetAllUserTasks(this.PagingFilter).subscribe(data => {
+      this.showLoader = false;
       this.TasksData = data.results.item1;
       this.TotalCount = data.totalCount;
       this.CompletedCount = this.TasksData.filter(i => i.statusId == 1)?.length ?? 0;

@@ -9,12 +9,13 @@ import { PagingFilterModel } from '../../../../../Models/shared/PagingFilterMode
 import { PagedResponseModel } from '../../../../../Models/shared/PagedResponseModel';
 import { FilterModel } from '../../../../../Models/shared/FilterModel';
 import { BenefactorService } from '../../../../../Services/zainstitution/benefactor.service';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-benefactor-notes',
   standalone: true,
   imports: [CommonModule, ZaBreadcrumbComponent, ZaPaginationComponent,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule],
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, NgxLoadingModule],
   templateUrl: './benefactor-notes.component.html',
   styleUrl: './benefactor-notes.component.css'
 })
@@ -22,6 +23,7 @@ export class BenefactorNotesComponent implements OnInit {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'ملاحظات المتبرعين'];
   filterList: FilterModel[] = [];
   isFilter = true;
+  showLoader = false;
   pagingFilterModel: PagingFilterModel = {
     currentPage: 1,
     pageSize: 20,
@@ -39,7 +41,9 @@ export class BenefactorNotesComponent implements OnInit {
   }
 
   GetBeneFactorNotes() {
+    this.showLoader = true;
     this.benefactorService.GetBeneFactorNotes(this.pagingFilterModel).subscribe(data => {
+      this.showLoader = false;
       this.pagedResponseModel.results = data.results;
       this.pagedResponseModel.totalCount = data.totalCount;
     });

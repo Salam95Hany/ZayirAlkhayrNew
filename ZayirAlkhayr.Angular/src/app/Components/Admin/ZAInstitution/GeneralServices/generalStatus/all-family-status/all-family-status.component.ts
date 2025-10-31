@@ -2,7 +2,6 @@ import { Component, Injector } from '@angular/core';
 import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../../Shared/za-filters/za-filters.component";
 import { ZaBreadcrumbComponent } from "../../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
-import { ZaLoaderComponent } from "../../../../../../Shared/za-loader/za-loader.component";
 import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
 import { ZaEmptyDataComponent } from '../../../../../../Shared/za-empty-data/za-empty-data.component';
 import { NgbModal, NgbModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
@@ -18,13 +17,14 @@ import { PdfDownloadService } from '../../../../../../Services/shared/pdf-downlo
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { FamilyStatusSidepanelComponent } from '../family-status-sidepanel/family-status-sidepanel.component';
 import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-all-family-status',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
-    CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RouterModule,RoleCheckerDirective,
-    NgIf, NgFor, ZaLoaderComponent],
+    CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RouterModule, RoleCheckerDirective,
+    NgIf, NgFor, NgxLoadingModule],
   templateUrl: './all-family-status.component.html',
   styleUrl: './all-family-status.component.css',
   providers: [DatePipe]
@@ -202,7 +202,8 @@ export class AllFamilyStatusComponent {
       this.toaster.warning('لا يوجد بيانات للتنزيل');
       return;
     }
-
+    
+    debugger;
     let today = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     let fileName = 'الحالات' + '_' + today;
     this.SearchReport.headers = this.pdfService.ConverHeaderToPDFModel(this.FamilyStatusHeaders);

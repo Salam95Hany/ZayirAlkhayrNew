@@ -20,14 +20,14 @@ import { SharedService } from '../../../../../Services/shared/shared.service';
 import { ZaDropDownFormControlComponent } from '../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 import { AuthService } from '../../../../../Auth/auth.service';
 import { SearchReportModel } from '../../../../../Models/shared/SearchReportModel';
-import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
 import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-benefactor',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaDropDownFormControlComponent, ZaLoaderComponent],
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaDropDownFormControlComponent, NgxLoadingModule],
   providers: [DatePipe],
   templateUrl: './benefactor.component.html',
   styleUrl: './benefactor.component.css'
@@ -111,6 +111,7 @@ export class BenefactorComponent {
   }
 
   FillEditForm(item: any) {
+    debugger;
     this.fileURL = [];
     this.fileURL.push(item);
     let fileName = item.image.split('/');
@@ -121,7 +122,7 @@ export class BenefactorComponent {
       phone: item?.phone,
       phone2: item?.phone2,
       address: item?.address,
-      nationalityId: item?.nationalityId,
+      nationalityId: item?.nationalityId.toString(),
       faceBook: item?.faceBook,
       welcomeMessage: item?.welcomeMessage,
       oldFileName: fileName[fileName.length - 1],
@@ -199,12 +200,13 @@ export class BenefactorComponent {
   GetAllBeneFactorParentById() {
     this.benefactorService.GetAllBeneFactorParentById(this.BeneFactorValues.beneFactorId).subscribe(data => {
       this.BeneFactorValuesData = data.results;
-      this.BeneFactorValuesData.forEach(i => i.isCollapsed = false);
     });
   }
 
   GetAllBeneFactorData() {
+    this.showLoader = true;
     this.benefactorService.GetAllBeneFactorData(this.pagingFilterModel).subscribe(data => {
+      this.showLoader = false;
       this.pagedResponseModel.results = data.results.table;
       this.BeneFactorHeaders = data.results.table1;
       this.pagedResponseModel.totalCount = data.totalCount;
@@ -214,6 +216,7 @@ export class BenefactorComponent {
   GetAllBeneFactorNationalitiesSelector() {
     this.sharedService.GetAllBeneFactorNationalitiesSelector().subscribe(data => {
       this.NationalityList = data.results;
+      this.NationalityList.forEach(i => Number(i.id));
     });
   }
 

@@ -73,7 +73,7 @@
                 <span class="input-group-text bg-white border-end-0 cursor-pointer" style="border-radius: 0 2rem 2rem 0; border: 2px solid #e2e8f0; border-right: none;" (click)="OnFilterClick('SearchText')">
                     <i class="fas fa-search text-muted"></i>
                 </span>
-                <input type="text" class="form-control search-box border-start-0 ps-0" [(ngModel)]="PagingFilter.searchText" (keyup.enter)="OnFilterClick('SearchText')" placeholder="Search tasks..." style="border-left: none;">
+                <input type="text" class="form-control search-box border-start-0 ps-0" [(ngModel)]="PagingFilter.searchText" (keyup.enter)="OnFilterClick('SearchText')" placeholder="بحث ب العنوان, الوصف" style="border-left: none;">
             </div>
         </div>
         <!-- <div class="col-md-2">
@@ -180,4 +180,4 @@
 </ng-template>
 
 
-<app-za-loader [show]="showLoader"></app-za-loader>
+<ngx-loading [show]="showLoader"></ngx-loading>

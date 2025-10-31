@@ -34,6 +34,7 @@ export class PdfDownloadService {
       observe: 'response'
     }).pipe(
       map((response: any) => {
+        debugger;
         const downloadLink = document.createElement('a');
         downloadLink.href = URL.createObjectURL(new Blob([response.body], { type: response.body.type }));
         downloadLink.download = fileName;

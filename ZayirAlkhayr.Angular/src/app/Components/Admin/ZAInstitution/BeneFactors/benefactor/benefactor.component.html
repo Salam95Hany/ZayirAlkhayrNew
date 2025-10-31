@@ -359,20 +359,11 @@
                         </div>
                     </td>
                 </tr>
-                <!-- <tr>
-                    <td class="table-feature">عدد الاسطر في الصفحة الواحدة</td>
-                    <td class="table-value">
-                        <input type="text" class="form-control" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="RowCount">
-                    </td>
-                </tr> -->
                 <tr>
                     <td class="table-feature">تنبيه هام</td>
                     <td class="table-value">
                         <ul>
                             <li class="fs-5">لا يمكن اختيار أكثر من 6 أعمدة في الصفحة الواحدة</li>
-                            <!-- <li class="fs-5">لا يمكن اختيار اكثر من 15 سطر في الصفحة الواحدة</li>
-                            <li class="fs-5">إذا كان احد الأعمدة يحتوي على نص طويل برجاء تقليل عدد الأسطر والأعمدة</li> -->
-                            <!-- <li class="fs-5">لا يمكن اختيار جمع قيم العامود الا لعامود واحد فقط</li> -->
                         </ul>
                     </td>
                 </tr>
@@ -416,4 +407,4 @@
 </ng-template>
 
 <input type="file" #InputFile class="choose-file-input" (change)="onFileChange($event)" hidden />
-<app-za-loader [show]="showLoader"></app-za-loader>
+<ngx-loading [show]="showLoader"></ngx-loading>

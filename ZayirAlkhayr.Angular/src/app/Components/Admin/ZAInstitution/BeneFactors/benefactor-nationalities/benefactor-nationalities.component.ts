@@ -14,14 +14,14 @@ import { BenefactorService } from '../../../../../Services/zainstitution/benefac
 import { FormService } from '../../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../../Auth/auth.service';
-import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
 import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-benefactor-nationalities',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, NgxLoadingModule],
   templateUrl: './benefactor-nationalities.component.html',
   styleUrl: './benefactor-nationalities.component.css'
 })
@@ -106,7 +106,9 @@ export class BenefactorNationalitiesComponent implements OnInit {
   }
 
   GetAllBeneFactorNationalities() {
+    this.showLoader = true;
     this.benefactorService.GetAllBeneFactorNationalities(this.pagingFilterModel).subscribe(data => {
+      this.showLoader = false;
       this.pagedResponseModel.results = data.results;
       this.pagedResponseModel.totalCount = data.totalCount;
     });

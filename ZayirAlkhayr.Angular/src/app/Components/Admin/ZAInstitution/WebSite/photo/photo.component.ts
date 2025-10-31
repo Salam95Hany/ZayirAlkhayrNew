@@ -16,14 +16,14 @@ import { FileService } from '../../../../../Services/shared/file.service';
 import { FormService } from '../../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../../Auth/auth.service';
-import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
 import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-photo',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, NgxLoadingModule],
   templateUrl: './photo.component.html',
   styleUrl: './photo.component.css'
 })
@@ -154,7 +154,9 @@ export class PhotoComponent implements OnInit {
   }
 
   GetAllPhotos() {
+    this.showLoader = true;
     this.websiteService.GetAllPhotos(this.pagingFilterModel).subscribe(data => {
+      this.showLoader = false;
       this.pagedResponseModel.results = data.results;
       this.pagedResponseModel.totalCount = data.totalCount;
     });

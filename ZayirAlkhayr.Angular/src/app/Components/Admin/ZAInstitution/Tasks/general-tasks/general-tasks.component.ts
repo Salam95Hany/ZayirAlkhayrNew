@@ -9,7 +9,6 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
 import { ZaInputWithLabelComponent } from '../../../../../Shared/za-input-with-label/za-input-with-label.component';
-import { ZaLoaderComponent } from '../../../../../Shared/za-loader/za-loader.component';
 import { ZaDropDownFormControlComponent } from '../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 import { AuthService } from '../../../../../Auth/auth.service';
 import { TaskService } from '../../../../../Services/zainstitution/task.service';
@@ -18,13 +17,14 @@ import { SharedService } from '../../../../../Services/shared/shared.service';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
 import { FormDropdownModel } from '../../../../../Models/shared/FormDropdownModel';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-general-tasks',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, ZaInputWithLabelComponent, RoleCheckerDirective,
-    NgIf, NgFor, ZaDropDownFormControlComponent, ZaLoaderComponent],
+    NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule],
   templateUrl: './general-tasks.component.html',
   styleUrl: './general-tasks.component.css',
   providers: [DatePipe]
@@ -137,7 +137,9 @@ export class GeneralTasksComponent {
   }
 
   GetAllGeneralTasksData() {
+    this.showLoader = true;
     this.taskService.GetAllGeneralTasksData(this.PagingFilter).subscribe(data => {
+      this.showLoader = false;
       this.TasksData = data.results;
       this.TotalCount = data.totalCount;
     });
@@ -151,9 +153,9 @@ export class GeneralTasksComponent {
 
   GetAllGeneralTaskStatistics() {
     this.taskService.GetAllGeneralTaskStatistics().subscribe(data => {
-      this.CompletedCount = data.results[0].completedCount;
-      this.InProgressCount = data.results[0].inProgressCount;
-      this.FinishedCount = data.results[0].finishedCount;
+      this.CompletedCount = data.results[0].completedCount ?? 0;
+      this.InProgressCount = data.results[0].inProgressCount ?? 0;
+      this.FinishedCount = data.results[0].finishedCount ?? 0;
     });
   }
 

@@ -2,14 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, Injector, Input, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SettingService } from '../../../../Services/settings/setting.service';
-import { ZaLoaderComponent } from "../../../../Shared/za-loader/za-loader.component";
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-page-permission',
   standalone: true,
-  imports: [CommonModule, ZaLoaderComponent, FormsModule],
+  imports: [CommonModule, FormsModule, NgxLoadingModule],
   templateUrl: './page-permission.component.html',
   styleUrl: './page-permission.component.css'
 })
@@ -39,10 +39,12 @@ export class PagePermissionComponent implements OnInit {
   }
 
   GetAllApplicationsWithParents() {
+    this.showLoader = true;
     this.settingService.GetAllApplicationsWithParents().subscribe(data => {
       this.Applications = data.results;
       this.flatApplications = this.flattenApplications(this.Applications);
       this.settingService.GetApplicationsByUserId(this.UserId).subscribe(res => {
+        this.showLoader = false;
         this.SelectedApplications = res.results;
         this.IsSuperAdmin = this.SelectedApplications.some(i => i.applicationId == 'c4d473a1-0820-4701-a386-bebf90f05df7');
         this.SelectedApplications.forEach(item => {

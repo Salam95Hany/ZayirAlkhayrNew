@@ -1,5 +1,4 @@
 import { Component, ElementRef, Injector, Input, OnInit, ViewChild } from '@angular/core';
-import { ZaLoaderComponent } from "../../../../../../Shared/za-loader/za-loader.component";
 import { FamilyStatusComponent } from "../addFamilyStatus/family-status/family-status.component";
 import { FamilyDataComponent } from "../addFamilyStatus/family-data/family-data.component";
 import { FamilyIncomeDataComponent } from "../addFamilyStatus/family-income-data/family-income-data.component";
@@ -12,12 +11,13 @@ import { GeneralStatusService } from '../../../../../../Services/zainstitution/g
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { NgIf } from '@angular/common';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-family-status-sidepanel',
   standalone: true,
-  imports: [ZaLoaderComponent, FamilyStatusComponent, FamilyDataComponent, FamilyIncomeDataComponent, FamilyExpensesDataComponent, 
-    FamilyMedicalComponent, FamilyNeedComponent, ReviewersComponent,NgIf],
+  imports: [FamilyStatusComponent, FamilyDataComponent, FamilyIncomeDataComponent, FamilyExpensesDataComponent,
+    FamilyMedicalComponent, FamilyNeedComponent, ReviewersComponent, NgIf, NgxLoadingModule],
   templateUrl: './family-status-sidepanel.component.html',
   styleUrl: './family-status-sidepanel.component.css'
 })

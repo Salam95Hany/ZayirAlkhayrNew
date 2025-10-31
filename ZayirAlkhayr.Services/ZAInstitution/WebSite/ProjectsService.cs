@@ -84,7 +84,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Project.BenefactorCount = Model.BenefactorCount;
                 Project.TotalAmount = Model.TotalAmount;
                 Project.RemainingAmount = Model.RemainingAmount;
-                Project.ProjectUrl = UiHost + "projects/events/" + Id;
+                Project.ProjectUrl = UiHost + "/projects/events/" + Id;
                 Project.IsVisible = Model.IsVisible;
                 Project.InsertUser = Model.InsertUser;
                 Project.InsertDate = DateTime.UtcNow;

@@ -19,8 +19,8 @@
             <div class="erp-filter-box small-scroll">
                 <div class="check-row px-2" *ngFor="let filterItem of filter.filterItems | searchArry: filterSearch:['itemFlag'];let x = index">
                     <div class="form-check">
-                        <input class="form-check-input" [(ngModel)]="filterItem.isChecked" (change)="filterChecked()" type="checkbox" id="filter-input_{{i}}_{{x}}">
-                        <label class="form-check-label d-flex align-items-center justify-content-between w-100 pe-2" for="filter-input_{{i}}_{{x}}">
+                        <input class="form-check-input" [(ngModel)]="filterItem.isChecked" (change)="filterChecked()" type="checkbox" id="filter-input_{{filterItem.itemValue}}_{{i}}_{{x}}">
+                        <label class="form-check-label d-flex align-items-center justify-content-between w-100 pe-2" for="filter-input_{{filterItem.itemValue}}_{{i}}_{{x}}">
               <span>{{filterItem.itemKey}}</span>
               <span>{{filterItem.itemValue}}</span>
             </label>

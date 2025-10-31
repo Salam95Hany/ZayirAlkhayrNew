@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ZaBreadcrumbComponent } from "../../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
 import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../../Shared/za-filters/za-filters.component";
-import { ZaLoaderComponent } from "../../../../../../Shared/za-loader/za-loader.component";
 import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { ZaEmptyDataComponent } from '../../../../../../Shared/za-empty-data/za-empty-data.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,12 +15,13 @@ import { ToastrService } from 'ngx-toastr';
 import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-family-patienttypes',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaLoaderComponent, ZaInputWithLabelComponent, ZaEmptyDataComponent, ReactiveFormsModule,
-    NgFor, NgIf, NgbModule,RoleCheckerDirective],
+  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaInputWithLabelComponent, ZaEmptyDataComponent, ReactiveFormsModule,
+    NgFor, NgIf, NgbModule, RoleCheckerDirective, NgxLoadingModule],
   templateUrl: './family-patienttypes.component.html',
   styleUrl: './family-patienttypes.component.css'
 })
@@ -101,7 +101,9 @@ export class FamilyPatienttypesComponent {
   }
 
   GetAllFamilyPatientData() {
+    this.showLoader = true;
     this.generalStatusService.GetAllFamilyPatientData(this.PagingFilter).subscribe(data => {
+      this.showLoader = false;
       this.FamilyNationalityData = data.results;
       this.TotalCount = data.totalCount;
     });

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ZaLoaderComponent } from "../../../../../../Shared/za-loader/za-loader.component";
 import { ZaBreadcrumbComponent } from "../../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
 import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../../Shared/za-filters/za-filters.component";
@@ -16,13 +15,13 @@ import { NgFor, NgIf } from '@angular/common';
 import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-family-nationality',
   standalone: true,
-  imports: [ZaLoaderComponent, ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,NgbModule,
-    NgIf,NgFor,ZaInputWithLabelComponent,ReactiveFormsModule,RoleCheckerDirective
-  ],
+  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
+    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule],
   templateUrl: './family-nationality.component.html',
   styleUrl: './family-nationality.component.css'
 })
@@ -102,7 +101,9 @@ export class FamilyNationalityComponent implements OnInit {
   }
 
   GetAllFamilyNationalitiesData() {
+    this.showLoader = true;
     this.generalStatusService.GetAllFamilyNationalitiesData(this.PagingFilter).subscribe(data => {
+      this.showLoader = false;
       this.FamilyNationalityData = data.results;
       this.TotalCount = data.totalCount;
     });

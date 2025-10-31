@@ -16,14 +16,14 @@ import { FileService } from '../../../../../Services/shared/file.service';
 import { FormService } from '../../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { AuthService } from '../../../../../Auth/auth.service';
-import { ZaLoaderComponent } from "../../../../../Shared/za-loader/za-loader.component";
 import { RoleCheckerDirective } from '../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-activity',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent,RoleCheckerDirective,
-    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaLoaderComponent],
+  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
+    ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, NgxLoadingModule],
   templateUrl: './activity.component.html',
   styleUrl: './activity.component.css'
 })
@@ -37,7 +37,7 @@ export class ActivityComponent implements OnInit {
   multiImagesFile: any[] = [];
   FileSotingModel: FileSortingModel[] = [];
   ItemForm: FormGroup;
-  showLoader: boolean = false;
+  ShowLoader = false;
   isFilter = true;
   isFileExist = false;
   ActivityId: any;
@@ -154,7 +154,9 @@ export class ActivityComponent implements OnInit {
   }
 
   GetAllActivities() {
+    this.ShowLoader = true;
     this.websiteService.GetAllActivities(this.pagingFilterModel).subscribe(data => {
+      this.ShowLoader = false;
       this.pagedResponseModel.results = data.results;
       this.pagedResponseModel.totalCount = data.totalCount;
     });
@@ -239,7 +241,7 @@ export class ActivityComponent implements OnInit {
     this.FileModel.files = this.multiImagesFile.map(i => i.file);
     const formData = new FormData();
     this.formService.buildFormData(formData, this.FileModel);
-    this.showLoader = true;
+    this.ShowLoader = true;
     this.websiteService.AddActivitySliderImage(formData).subscribe(data => {
       if (data.isSuccess) {
         this.modalService.dismissAll();
@@ -247,7 +249,7 @@ export class ActivityComponent implements OnInit {
       }
       else
         this.toaster.error(data.message);
-      this.showLoader = false;
+      this.ShowLoader = false;
     });
   }
 
@@ -272,7 +274,7 @@ export class ActivityComponent implements OnInit {
     this.ItemForm.patchValue({ file: this.ImageFile });
     const formData = new FormData();
     this.formService.buildFormData(formData, this.ItemForm.value);
-    this.showLoader = true;
+    this.ShowLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
       this.websiteService.AddNewActivity(formData).subscribe(data => {
         if (data.isSuccess) {
@@ -283,7 +285,7 @@ export class ActivityComponent implements OnInit {
         }
         else
           this.toaster.error(data.message);
-        this.showLoader = false;
+        this.ShowLoader = false;
       });
     } else {
       this.websiteService.UpdateActivity(formData).subscribe(data => {
@@ -294,13 +296,13 @@ export class ActivityComponent implements OnInit {
         }
         else
           this.toaster.error(data.message);
-        this.showLoader = false;
+        this.ShowLoader = false;
       });
     }
   }
 
   DeleteItem() {
-    this.showLoader = true;
+    this.ShowLoader = true;
     this.websiteService.DeleteActivity(this.ActivityId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
@@ -310,7 +312,7 @@ export class ActivityComponent implements OnInit {
       }
       else
         this.toaster.error(data.message);
-      this.showLoader = false;
+      this.ShowLoader = false;
     });
   }
 
@@ -322,7 +324,7 @@ export class ActivityComponent implements OnInit {
     }
 
     this.FileSotingModel = this.multiFileURL.map<FileSortingModel>(i => { return { fileId: i.id, displayOrder: i.displayOrder } });
-    this.showLoader = true;
+    this.ShowLoader = true;
     this.websiteService.ApplyFilesSorting(this.FileSotingModel, this.ActivityId).subscribe(data => {
       if (data.isSuccess) {
         this.modalService.dismissAll();
@@ -330,7 +332,7 @@ export class ActivityComponent implements OnInit {
       }
       else
         this.toaster.error(data.message);
-      this.showLoader = false;
+      this.ShowLoader = false;
     });
   }
 }

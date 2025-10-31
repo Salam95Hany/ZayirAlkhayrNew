@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ZaBreadcrumbComponent } from "../../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
 import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../../Shared/za-filters/za-filters.component";
-import { ZaLoaderComponent } from "../../../../../../Shared/za-loader/za-loader.component";
 import { FilterModel } from '../../../../../../Models/shared/FilterModel';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PagingFilterModel } from '../../../../../../Models/shared/PagingFilterModel ';
@@ -18,12 +17,13 @@ import { SharedService } from '../../../../../../Services/shared/shared.service'
 import { ZaDropDownFormControlComponent } from '../../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-family-needs',
   standalone: true,
-  imports: [ZaLoaderComponent, ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
-    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule,ZaDropDownFormControlComponent,RoleCheckerDirective],
+  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
+    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, ZaDropDownFormControlComponent, RoleCheckerDirective, NgxLoadingModule],
   templateUrl: './family-needs.component.html',
   styleUrl: './family-needs.component.css'
 })
@@ -35,8 +35,8 @@ export class FamilyNeedsComponent implements OnInit {
   NeedFilterList: FilterModel[] = [];
   CategoryFilterList: FilterModel[] = [];
   showLoader = false;
-  NeedIsFilter = false;
-  CategoryIsFilter = false;
+  NeedIsFilter = true;
+  CategoryIsFilter = true;
   CategoryValidation = false;
   CategoryName = 'الفئات';
   CategoryId: any;
@@ -177,7 +177,9 @@ export class FamilyNeedsComponent implements OnInit {
   }
 
   GetAllFamilyNeedTypesData() {
+    this.showLoader = true;
     this.generalStatusService.GetAllFamilyNeedTypesData(this.NeedsPagingFilter).subscribe(data => {
+      this.showLoader = false;
       this.FamilyNeedsData = data.results;
       this.NeedTotalCount = data.totalCount;
     });
@@ -191,6 +193,7 @@ export class FamilyNeedsComponent implements OnInit {
 
   GetAllFamilyNeedTypesFilters() {
     this.generalStatusService.GetAllFamilyNeedTypesFilters().subscribe(data => {
+      debugger
       this.NeedFilterList = data.results;
     });
   }
@@ -201,6 +204,7 @@ export class FamilyNeedsComponent implements OnInit {
   }
 
   NeedFilterChecked(filterList: FilterModel[]) {
+    debugger;
     this.NeedsPagingFilter.filterList = filterList;
     this.GetAllFamilyNeedTypesData();
   }
@@ -214,6 +218,7 @@ export class FamilyNeedsComponent implements OnInit {
 
   GetAllFamilyNeedCategoriesFilters() {
     this.generalStatusService.GetAllFamilyNeedCategoriesFilters().subscribe(data => {
+      debugger
       this.CategoryFilterList = data.results;
     });
   }
@@ -224,6 +229,7 @@ export class FamilyNeedsComponent implements OnInit {
   }
 
   CategoryFilterChecked(filterList: FilterModel[]) {
+    debugger;
     this.CategoriesPagingFilter.filterList = filterList;
     this.GetAllFamilyNeedCategoriesData();
   }

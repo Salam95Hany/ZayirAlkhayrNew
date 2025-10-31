@@ -1,7 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { ZaBreadcrumbComponent } from "../../../../Shared/za-breadcrumb/za-breadcrumb.component";
 import { ZaPaginationComponent } from "../../../../Shared/za-pagination/za-pagination.component";
-import { ZaLoaderComponent } from "../../../../Shared/za-loader/za-loader.component";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { SettingService } from '../../../../Services/settings/setting.service';
@@ -12,12 +11,13 @@ import { NgFor, NgIf } from '@angular/common';
 import { ZaInputWithLabelComponent } from '../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 import { PagePermissionComponent } from "../page-permission/page-permission.component";
+import { NgxLoadingModule } from "ngx-loading";
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [ZaLoaderComponent, ZaBreadcrumbComponent, ZaPaginationComponent, ZaEmptyDataComponent, NgbModule,
-    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule],
+  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaEmptyDataComponent, NgbModule,
+    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, NgxLoadingModule],
   templateUrl: './user.component.html',
   styleUrl: './user.component.css'
 })
@@ -123,7 +123,9 @@ export class UserComponent implements OnInit {
   }
 
   GetAllUsers() {
+    this.showLoader = true;
     this.settingService.GetAllUsers().subscribe(data => {
+      this.showLoader = false;
       this.UsersData = data.results;
       this.UsersData.forEach(item => {
         let role = this.Roles.find(i => i.value == item.role);
@@ -150,8 +152,10 @@ export class UserComponent implements OnInit {
       return;
     }
 
+    this.showLoader = true;
     if (!this.ItemForm.controls['userId'].value) {
       this.settingService.CreateUser(this.ItemForm.value).subscribe(data => {
+        this.showLoader = false;
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllUsers();
@@ -166,6 +170,7 @@ export class UserComponent implements OnInit {
         return;
       }
       this.settingService.EditUser(this.ItemForm.value).subscribe(data => {
+        this.showLoader = false;
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllUsers();
@@ -182,7 +187,10 @@ export class UserComponent implements OnInit {
       this.toaster.warning('لا يمكن حذف هذا المستخدم');
       return;
     }
+
+    this.showLoader = true;
     this.settingService.DeleteUser(this.UserId).subscribe(data => {
+      this.showLoader = false;
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllUsers();
