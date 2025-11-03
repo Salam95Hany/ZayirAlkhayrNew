@@ -62,7 +62,8 @@ export class AccountImportMonyComponent {
     beneFactorTypeId: '',
     details: '',
     totalValue: '',
-    insertDate: ''
+    insertDate: '',
+    donationMethod: ''
   };
 
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private authService: AuthService,
@@ -87,6 +88,7 @@ export class AccountImportMonyComponent {
       beneFactorTypeId: ['', Validators.required],
       details: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       totalValue: ['', Validators.required],
+      donationMethod: ['', Validators.required],
       insertUser: null,
       insertDate: ['', Validators.required]
     });
@@ -103,6 +105,7 @@ export class AccountImportMonyComponent {
       beneFactorTypeId: item?.beneFactorTypeId,
       details: item?.details,
       totalValue: item?.totalValue,
+      donationMethod: item?.donationMethod,
       insertUser: this.UserId,
       insertDate: this.datepipe.transform(item?.insertDate, 'yyyy-MM-dd')
     });

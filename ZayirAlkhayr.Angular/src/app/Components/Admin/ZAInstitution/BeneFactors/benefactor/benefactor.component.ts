@@ -232,6 +232,7 @@ export class BenefactorComponent {
   }
 
   filterChecked(filterList: FilterModel[]) {
+    debugger;
     this.pagingFilterModel.filterList = filterList;
     this.SearchReport.filterItems = filterList;
     this.pagingFilterModel.currentPage = 1;

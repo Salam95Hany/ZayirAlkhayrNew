@@ -9,7 +9,7 @@
                 </div>
                 <div class="column-card-title">إجمالي الايرادات</div>
                 <div class="column-card-description text-muted fs-4">
-                    {{TotalImportValue}}
+                    {{TotalImportValue | number }}
                 </div>
             </div>
         </div>
@@ -20,7 +20,7 @@
                 </div>
                 <div class="column-card-title">عدد العمليات</div>
                 <div class="column-card-description text-muted fs-4">
-                    {{TotalCount}}
+                    {{TotalCount | number}}
                 </div>
             </div>
         </div>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="column-card-title">إجمالي الايرادات للشهر الحالي</div>
                 <div class="column-card-description text-muted fs-4">
-                    {{ImportValueMonth}}
+                    {{ImportValueMonth | number}}
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
         <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
             <div class="d-flex align-items-center">
                 <ng-container>
-                    <app-za-filters [FilterList]="filterList" (filterChanged)="FilterChecked($event)" [searchPlaceholder]="'البحث ب اسم المتبرع ...'"></app-za-filters>
+                    <app-za-filters [FilterList]="filterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
                 </ng-container>
             </div>
         </div>
@@ -82,6 +82,7 @@
                     <tr>
                         <th>اسم المتبرع</th>
                         <th>نوع التبرع</th>
+                        <th>طريقة التبرع</th>
                         <th>المبلغ</th>
                         <th>التفاصيل</th>
                         <th>تمت الاضافة من قبل</th>
@@ -94,6 +95,7 @@
                         <tr *ngFor="let item of AccountMoneyList">
                             <td>{{item.fullName}}</td>
                             <td>{{item.name}}</td>
+                            <td>{{item.donationMethod}}</td>
                             <td>{{item.totalValue}}</td>
                             <td>{{item.details}}</td>
                             <td>{{item.createdBy}}</td>
@@ -147,6 +149,12 @@
                         <td class="table-feature">التفاصيل</td>
                         <td class="table-value">
                             <app-za-input-with-label [type]="'text'" [placeholder]="'التفاصيل...'" [error]="formErrors.details" formControlName="details"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">طريقة التبرع</td>
+                        <td class="table-value">
+                            <app-za-input-with-label [type]="'text'" [placeholder]="'طريقة التبرع...'" [error]="formErrors.donationMethod" formControlName="donationMethod"></app-za-input-with-label>
                         </td>
                     </tr>
                     <tr>

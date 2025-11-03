@@ -16,7 +16,7 @@
         <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
             <div class="d-flex align-items-center">
                 <ng-container>
-                    <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)" [searchPlaceholder]="'البحث بالكود, الاسم ...'"></app-za-filters>
+                    <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)"></app-za-filters>
                 </ng-container>
             </div>
         </div>

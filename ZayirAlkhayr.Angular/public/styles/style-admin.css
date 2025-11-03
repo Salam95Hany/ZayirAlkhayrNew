@@ -2338,3 +2338,15 @@ td {
     color: #d8a408;
     ;
 }
+
+.search-icon-input {
+    position: absolute;
+    top: 30%;
+    left: 12px;
+    cursor: pointer;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+}

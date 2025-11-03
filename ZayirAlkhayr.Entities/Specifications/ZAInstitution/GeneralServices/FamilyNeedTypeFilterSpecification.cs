@@ -12,8 +12,8 @@ namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.GeneralServices
     {
         public FamilyNeedTypeFilterSpecification(PagingFilterModel filterModel, bool applyPaging = true)
         {
-            var userIds = filterModel.FilterList.Where(f => f.CategoryName == "المستخدمين").Select(f => f.ItemId).ToList();
-            var Categories = filterModel.FilterList.Where(f => f.CategoryName == "الفئة").Select(f => f.ItemId).ToList();
+            var userIds = filterModel.FilterList.Where(f => f.CategoryName == "Users").Select(f => f.ItemId).ToList();
+            var Categories = filterModel.FilterList.Where(f => f.CategoryName == "Category").Select(f => f.ItemId).ToList();
 
             if (userIds.Any())
                 AddCriteria(fc => userIds.Contains(fc.InsertUser));

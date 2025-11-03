@@ -58,9 +58,17 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
 
             var filterRequests = new List<FilterRequest<FamilyPatientType>>
             {
+                  new()
+                {
+                    CategoryDisplayName = "بالاسم",
+                    CategoryName = "SearchText",
+                    FilterType = "SearchText",
+                },
                 new()
                 {
-                    CategoryName = "المستخدمين",
+                    CategoryDisplayName = "المستخدمين",
+                    CategoryName = "Users",
+                    FilterType = "Checkbox",
                     Source = data,
                     ItemIdSelector = x => x.InsertUser,
                     ItemKeySelector = x => x.CreatedBy?.UserName ?? ""

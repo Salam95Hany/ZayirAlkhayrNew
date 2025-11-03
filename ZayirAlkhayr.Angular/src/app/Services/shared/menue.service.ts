@@ -173,6 +173,14 @@ export class MenueService {
               route: '/admin/za-institution/account-export-money',
               pageKey: 'ZAInstitution_AccountExportMoney',
             },
+            {
+              displayName: 'الباقي',
+              menuItem: 'net-value',
+              description: 'تعرف على المبلغ المتبقي بعد خصم المصروفات من الإيرادات',
+              icon: 'uil uil-sliders-v-alt',
+              route: '/admin/za-institution/net-value',
+              pageKey: 'ZAInstitution_NetValue',
+            }
           ]
         },
         {

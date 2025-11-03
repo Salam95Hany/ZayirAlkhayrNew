@@ -56,14 +56,24 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             {
                 new()
                 {
-                    CategoryName = "المستخدمين",
+                    CategoryDisplayName = "بالاسم",
+                    CategoryName = "SearchText",
+                    FilterType = "SearchText",
+                },
+                new()
+                {
+                    CategoryDisplayName = "المستخدمين",
+                    CategoryName = "Users",
+                    FilterType = "Checkbox",
                     Source = data,
                     ItemIdSelector = x => x.InsertUser,
                     ItemKeySelector = x => x.CreatedBy?.UserName ?? ""
                 },
                 new()
                 {
-                    CategoryName = "الفئة",
+                    CategoryDisplayName = "الفئة",
+                    CategoryName = "Category",
+                    FilterType = "Checkbox",
                     Source = data,
                     ItemIdSelector = x => x.CategoryId.ToString(),
                     ItemKeySelector = x => x.Category?.Name ?? ""
@@ -106,7 +116,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             {
                 new()
                 {
-                    CategoryName = "المستخدمين",
+                    CategoryDisplayName = "بالاسم",
+                    CategoryName = "SearchText",
+                    FilterType = "SearchText",
+                },
+                new()
+                {
+                    CategoryDisplayName = "المستخدمين",
+                    CategoryName = "Users",
+                    FilterType = "Checkbox",
                     Source = data,
                     ItemIdSelector = x => x.InsertUser,
                     ItemKeySelector = x => x.CreatedBy?.UserName ?? ""

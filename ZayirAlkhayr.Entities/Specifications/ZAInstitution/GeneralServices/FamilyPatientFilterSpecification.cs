@@ -12,7 +12,7 @@ namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.GeneralServices
     {
         public FamilyPatientFilterSpecification(PagingFilterModel filterModel, bool applyPaging = true) : base()
         {
-            var userIds = filterModel.FilterList.Where(f => f.CategoryName == "المستخدمين").Select(f => f.ItemId).ToList();
+            var userIds = filterModel.FilterList.Where(f => f.CategoryName == "Users").Select(f => f.ItemId).ToList();
 
             if (userIds.Any())
                 AddCriteria(fc => userIds.Contains(fc.InsertUser));

@@ -12,38 +12,6 @@
     color: #FFF;
 }
 
-.user-dropdown-link i {
-    font-size: 20px;
-    --dim: 40px;
-    width: var(--dim);
-    height: var(--dim);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #FFF;
-    color: var(--main-color) !important;
-    cursor: pointer;
-    border-radius: 50%;
-    -webkit-border-radius: 50%;
-    -moz-border-radius: 50%;
-    -ms-border-radius: 50%;
-    -o-border-radius: 50%;
-}
-
-.user-dropdown-link i:hover {
-    background-color: #FFF;
-    color: var(--main-color) !important;
-}
-
-
-/* .user-dropdown-link.dropdown-toggle::after {
-    content: unset;
-  } */
-
-.dropdown-menu a {
-    font-size: 14px;
-}
-
 .logo-menu-area {
     min-width: 225px;
 }
@@ -58,6 +26,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.img-logo-box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .login-logo .logo-img {
@@ -67,86 +42,122 @@
     margin-top: -15px;
 }
 
+
+/* ===================================
+   MAIN SECTION
+=================================== */
+
 .section-wtih-fixed-header {
     position: relative;
     top: calc(var(--admin-header-height) + 10px);
     min-height: calc(100vh - var(--admin-header-height) - 10px);
+    padding: 2rem 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+
+/* ===================================
+   IMAGE SLIDER
+=================================== */
+
+.benfactory-slider {
+    background: #000;
 }
 
 .benfactory-box .benfactory-img img {
     width: 100%;
     height: calc(100vh / 1.7);
-    object-fit: cover;
+    object-fit: fill;
     object-position: center;
+    transition: transform 0.3s ease;
 }
 
-.max-width-60-per {
-    max-width: 60%;
+.benfactory-box:hover .benfactory-img img {
+    transform: scale(1.02);
 }
 
-.bg-thin-light {
-    background-color: #f7f7f7;
-}
+
+/* ===================================
+   STATISTICS CARDS
+=================================== */
 
 .details__card {
-    width: min(280px, 100%);
+    width: 100%;
+    max-width: 280px;
     margin: auto;
     background-color: #FFF;
     text-align: center;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 4rem;
-    border-bottom-left-radius: 2rem;
-    border-bottom-right-radius: 2rem;
-    border: 1px solid #ebebeb;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border: 1px solid #e0e0e0;
     position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
 }
 
-.col-box:not(:last-child) .details__card {
-    margin-bottom: 20px;
+.details__card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
 }
 
 .details__card::before {
     content: "";
     position: absolute;
-    height: 30px;
-    width: 100px;
-    background-color: var(--main-color);
+    height: 35px;
+    width: 110px;
+    background: var(--main-color-gradient);
     top: 32px;
     right: -2.5px;
-    -webkit-clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
     clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .card__body {
-    padding: 2rem 1.5rem;
+    padding: 2.5rem 1.5rem;
     max-width: 25ch;
     margin: auto;
 }
 
-.card__title {
-    font-weight: 800;
-    color: #121513;
-    font-size: 1.25rem;
-    margin-block: 1.5rem 0.75rem;
+.card__icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.5rem;
+    background: var(--main-color-gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    transition: all 0.3s ease;
 }
 
-.card__paragraph {
-    color: #303830;
-    font-size: 0.875rem;
+.details__card:hover .card__icon {
+    transform: rotateY(360deg);
+}
+
+.card__icon i {
+    color: #fff;
+}
+
+.card__title {
+    font-weight: 700;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    margin-top: 1rem;
 }
 
 .card__ribbon {
     margin-top: 1.5rem;
     display: grid;
     place-items: center;
-    height: 50px;
-    background-color: var(--main-color);
+    height: 55px;
+    background: var(--main-color-gradient);
     position: relative;
     width: 101%;
     left: 2px;
-    top: 0;
-    position: relative;
-    border-radius: 0 0 2rem 2rem;
+    border-radius: 0 0 20px 20px;
 }
 
 .card__ribbon::after,
@@ -157,7 +168,7 @@
     aspect-ratio: 1/1;
     bottom: 100%;
     z-index: -2;
-    background-color: red;
+    background-color: transparent;
 }
 
 .card__ribbon::before {
@@ -173,37 +184,81 @@
 }
 
 .card__ribbon-label {
-    min-width: 90px;
-    padding: 0 10px;
-    height: 70px;
+    min-width: 100px;
+    padding: 0 15px;
+    height: 75px;
     background-color: #fff;
     position: relative;
     transform: translateY(-50%);
-    border: 8px solid var(--main-color);
-    border-radius: 5px;
+    border: 8px solid transparent;
+    border-image: var(--main-color-gradient) 1;
+    border-radius: 8px;
     display: grid;
     place-items: center;
     font-weight: 900;
     line-height: 1;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .card__ribbon-label::before,
 .card__ribbon-label::after {
     content: "";
     position: absolute;
-    width: 25px;
-    height: 25px;
+    width: 28px;
+    height: 28px;
     bottom: 50%;
 }
 
 .card__ribbon-label::before {
     right: calc(100% + 7px);
-    border-bottom-right-radius: 20px;
-    box-shadow: 5px 5px 0 var(--main-color);
+    border-bottom-right-radius: 25px;
+    box-shadow: 6px 6px 0 var(--main-color);
 }
 
 .card__ribbon-label::after {
     left: calc(100% + 7px);
-    border-bottom-left-radius: 20px;
-    box-shadow: -5px 5px 0 var(--main-color);
+    border-bottom-left-radius: 25px;
+    box-shadow: -6px 6px 0 var(--main-color);
+}
+
+
+/* ===================================
+   RESPONSIVE DESIGN
+=================================== */
+
+@media (max-width: 768px) {
+    .benfactory-box .benfactory-img img {
+        height: 40vh;
+    }
+    .section-wtih-fixed-header {
+        padding: 1rem 0;
+    }
+    .details__card {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .benfactory-box .benfactory-img img {
+        height: 50vh;
+    }
+}
+
+@media (min-width: 1025px) {
+    .benfactory-box .benfactory-img img {
+        height: 60vh;
+    }
+}
+
+
+/* ===================================
+   UTILITY CLASSES
+=================================== */
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.lh-lg {
+    line-height: 1.8 !important;
 }

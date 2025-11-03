@@ -9,7 +9,7 @@
                 </div>
                 <div class="column-card-title">إجمالي المصروفات</div>
                 <div class="column-card-description text-muted fs-4">
-                    {{TotalExportValue}}
+                    {{TotalExportValue | number}}
                 </div>
             </div>
         </div>
@@ -20,7 +20,7 @@
                 </div>
                 <div class="column-card-title">عدد العمليات</div>
                 <div class="column-card-description text-muted fs-4">
-                    {{TotalCount}}
+                    {{TotalCount | number}}
                 </div>
             </div>
         </div>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="column-card-title">إجمالي المصروفات للشهر الحالي</div>
                 <div class="column-card-description text-muted fs-4">
-                    {{ExportValueMonth}}
+                    {{ExportValueMonth | number}}
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
         <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
             <div class="d-flex align-items-center">
                 <ng-container>
-                    <app-za-filters [FilterList]="filterList" (filterChanged)="FilterChecked($event)" [searchPlaceholder]="'البحث ب اسم المتبرع ...'"></app-za-filters>
+                    <app-za-filters [FilterList]="filterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
                 </ng-container>
             </div>
         </div>

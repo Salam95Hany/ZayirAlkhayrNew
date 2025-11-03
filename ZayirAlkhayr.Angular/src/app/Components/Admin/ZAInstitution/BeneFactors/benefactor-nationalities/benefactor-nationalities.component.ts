@@ -27,7 +27,13 @@ import { NgxLoadingModule } from "ngx-loading";
 })
 export class BenefactorNationalitiesComponent implements OnInit {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'جنسيات المتبرعين'];
-  filterList: FilterModel[] = [];
+  filterList: FilterModel[] = [
+    {
+      categoryDisplayName:'بالاسم',
+      categoryName:'SearchText',
+      filterType:'SearchText'
+    }
+  ];
   ItemForm: FormGroup;
   showLoader: boolean = false;
   isFilter = true;

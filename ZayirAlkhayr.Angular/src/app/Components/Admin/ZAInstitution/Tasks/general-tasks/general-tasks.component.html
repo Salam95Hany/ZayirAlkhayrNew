@@ -69,7 +69,7 @@
     </div>
     <div class="row mb-2 align-items-center">
         <div class="col-md-8">
-            <app-za-filters (filterChanged)="OnFilterClick($event)" [FilterList]="filterList" [searchPlaceholder]="'البحث بالعنوان, الوصف ...'"></app-za-filters>
+            <app-za-filters (filterChanged)="OnFilterClick($event)" [FilterList]="filterList"></app-za-filters>
         </div>
         <div class="col-md-4">
             <app-za-pagination (pageChanged)="OnPageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>

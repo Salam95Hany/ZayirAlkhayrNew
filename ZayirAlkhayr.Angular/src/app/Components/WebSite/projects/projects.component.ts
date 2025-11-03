@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { ZaWebsiteService } from '../../../Services/zainstitution/za-website.service';
 import { NgFor, NgIf } from '@angular/common';
@@ -7,7 +7,7 @@ import { NgFor, NgIf } from '@angular/common';
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [NgIf,NgFor],
+  imports: [NgIf,NgFor,RouterLink],
   templateUrl: './projects.component.html',
   styleUrls: ['./projects.component.css'],
   animations: [

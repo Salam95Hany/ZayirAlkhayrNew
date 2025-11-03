@@ -22,117 +22,111 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
 
         public async Task<ApiResponseModel<DataTable>> GetAllAccountsExportMonyData(PagingFilterModel PagingFilter)
         {
-            int MonthNum = 0;
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Date = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "Date")?.ItemId;
-            var Month = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "Month")?.ItemId;
-            if (!string.IsNullOrEmpty(Month))
-                MonthNum = DateTime.Parse(Month).Month;
+            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
+            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
+
             var Params = new SqlParameter[6];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@Date", Date);
-            Params[2] = new SqlParameter("@Month", MonthNum);
+            Params[1] = new SqlParameter("@FromDate", FromDate);
+            Params[2] = new SqlParameter("@ToDate", ToDate);
             Params[3] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[4] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[5] = new SqlParameter("@IsFilter", false);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllAccountsExportMonyDataWithFilter", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllAccountsExportMonyDataWithFilter_New", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
         public async Task<ApiResponseModel<List<FilterModel>>> GetAllAccountsExportMonyFilters(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Date = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "Date")?.ItemId;
-            var Params = new SqlParameter[5];
+            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
+            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
+
+            var Params = new SqlParameter[6];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@Date", Date);
-            Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            Params[4] = new SqlParameter("@IsFilter", true);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllAccountsExportMonyDataWithFilter", Params);
+            Params[1] = new SqlParameter("@FromDate", FromDate);
+            Params[2] = new SqlParameter("@ToDate", ToDate);
+            Params[3] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
+            Params[4] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
+            Params[5] = new SqlParameter("@IsFilter", true);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllAccountsExportMonyDataWithFilter_New", Params);
             var Filters = dt.ToGroupedFilters();
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
         public async Task<ApiResponseModel<DataTable>> GetAllAccountsImportMonyData(PagingFilterModel PagingFilter)
         {
-            int MonthNum = 0;
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Date = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "Date")?.ItemId;
-            var Month = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "Month")?.ItemId;
-            if (!string.IsNullOrEmpty(Month))
-                MonthNum = DateTime.Parse(Month).Month;
+            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
+            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
+
             var Params = new SqlParameter[6];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@Date", Date);
-            Params[2] = new SqlParameter("@Month", MonthNum);
+            Params[1] = new SqlParameter("@FromDate", FromDate);
+            Params[2] = new SqlParameter("@ToDate", ToDate);
             Params[3] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[4] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[5] = new SqlParameter("@IsFilter", false);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllAccountsImportMonyDataWithFilter", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllAccountsImportMonyDataWithFilter_New", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
         public async Task<ApiResponseModel<List<FilterModel>>> GetAllAccountsImportMonyFilters(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Date = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "Date")?.ItemId;
-            var Params = new SqlParameter[5];
+            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
+            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
+            var Params = new SqlParameter[6];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@Date", Date);
-            Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            Params[4] = new SqlParameter("@IsFilter", true);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllAccountsImportMonyDataWithFilter", Params);
+            Params[1] = new SqlParameter("@FromDate", FromDate);
+            Params[2] = new SqlParameter("@ToDate", ToDate);
+            Params[3] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
+            Params[4] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
+            Params[5] = new SqlParameter("@IsFilter", true);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllAccountsImportMonyDataWithFilter_New", Params);
             var Filters = dt.ToGroupedFilters();
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
         public async Task<ApiResponseModel<DataTable>> GetAllImportExportMonyStatistics(PagingFilterModel PagingFilter)
         {
-            int MonthNum = 0;
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Date = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "Date")?.ItemId;
-            var Month = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "Month")?.ItemId;
-            if (!string.IsNullOrEmpty(Month))
-                MonthNum = DateTime.Parse(Month).Month;
+            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
+            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
+
             var Params = new SqlParameter[3];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@Date", Date);
-            Params[2] = new SqlParameter("@Month", MonthNum);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllImportExportMonyStatistics", Params);
+            Params[1] = new SqlParameter("@FromDate", FromDate);
+            Params[2] = new SqlParameter("@ToDate", ToDate);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllImportExportMonyStatistics_New", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
         public async Task<ApiResponseModel<DataSet>> GetExportAccountsImportMonyData(SearchReportModel Model)
         {
-            int MonthNum = 0;
             var FilterDt = Model.FilterItems.ToDataTableFromFilterModel();
-            var Date = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "Date")?.ItemId;
-            var Month = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "Month")?.ItemId;
-            if (!string.IsNullOrEmpty(Month))
-                MonthNum = DateTime.Parse(Month).Month;
+            var FromDate = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
+            var ToDate = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
 
             var Params = new SqlParameter[3];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@Date", Date);
-            Params[2] = new SqlParameter("@Month", MonthNum);
+            Params[1] = new SqlParameter("@FromDate", FromDate);
+            Params[2] = new SqlParameter("@ToDate", ToDate);
             var dt = await _sQLHelper.ExecuteDatasetAsync("admin.SP_ExportAccountsImportMonyData", Params);
             return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
         }
 
         public async Task<ApiResponseModel<DataSet>> GetExportAccountsExportMonyData(SearchReportModel Model)
         {
-            int MonthNum = 0;
             var FilterDt = Model.FilterItems.ToDataTableFromFilterModel();
-            var Date = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "Date")?.ItemId;
-            var Month = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "Month")?.ItemId;
-            if (!string.IsNullOrEmpty(Month))
-                MonthNum = DateTime.Parse(Month).Month;
+            var FromDate = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
+            var ToDate = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
+
             var Params = new SqlParameter[3];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@Date", Date);
-            Params[2] = new SqlParameter("@Month", MonthNum);
+            Params[1] = new SqlParameter("@FromDate", FromDate);
+            Params[2] = new SqlParameter("@ToDate", ToDate);
             var dt = await _sQLHelper.ExecuteDatasetAsync("admin.SP_ExportAccountsExportMonyData", Params);
             return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
         }
@@ -146,6 +140,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                 ImportObj.BeneFactorTypeId = Model.BeneFactorTypeId;
                 ImportObj.TotalValue = Model.TotalValue;
                 ImportObj.Details = Model.Details;
+                ImportObj.DonationMethod = Model.DonationMethod;
                 ImportObj.InsertUser = Model.InsertUser;
                 ImportObj.InsertDate = Model.InsertDate;
 
@@ -171,6 +166,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                     ImportObj.BeneFactorTypeId = Model.BeneFactorTypeId;
                     ImportObj.TotalValue = Model.TotalValue;
                     ImportObj.Details = Model.Details;
+                    ImportObj.DonationMethod = Model.DonationMethod;
                     ImportObj.InsertDate = Model.InsertDate;
                     ImportObj.UpdateUser = Model.InsertUser;
                     ImportObj.UpdateDate = DateTime.UtcNow;

@@ -21,7 +21,13 @@ import { NgxLoadingModule } from "ngx-loading";
 })
 export class BenefactorNotesComponent implements OnInit {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'ملاحظات المتبرعين'];
-  filterList: FilterModel[] = [];
+  filterList: FilterModel[] = [
+    {
+      categoryDisplayName:'بالكود, الاسم',
+      categoryName:'SearchText',
+      filterType:'SearchText'
+    }
+  ];
   isFilter = true;
   showLoader = false;
   pagingFilterModel: PagingFilterModel = {

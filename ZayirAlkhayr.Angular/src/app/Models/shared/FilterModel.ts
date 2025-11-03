@@ -6,6 +6,7 @@ export interface FilterModel {
     itemValue?: string;
     from?: string;
     to?: string;
+    filterType?: string;
     isChecked?: boolean;
     filterItems?: FilterModel[];
 }

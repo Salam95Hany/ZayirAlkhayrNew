@@ -60,6 +60,8 @@ namespace ZayirAlkhayr.Services.Common
                 .Select(group => new FilterModel
                 {
                     CategoryName = group.Key.CategoryName,
+                    CategoryDisplayName = group.FirstOrDefault().Field<string>("CategoryDisplayName"),
+                    FilterType = group.FirstOrDefault().Field<string>("FilterType"),
                     FilterItems = group.Select(s => new FilterModel
                     {
                         CategoryName = s.Field<string>("CategoryName"),
@@ -78,6 +80,8 @@ namespace ZayirAlkhayr.Services.Common
                 .Select(group => new FilterModel
                 {
                     CategoryName = group.Key,
+                    CategoryDisplayName = group?.FirstOrDefault()?.CategoryDisplayName,
+                    FilterType = group?.FirstOrDefault()?.FilterType,
                     FilterItems = group.Select(f => new FilterModel
                     {
                         CategoryName = f.CategoryName,
@@ -138,7 +142,19 @@ namespace ZayirAlkhayr.Services.Common
 
             foreach (var request in filterRequests)
             {
-                var data = request.Source.Where(x => !string.IsNullOrEmpty(request.ItemIdSelector(x)) && !string.IsNullOrEmpty(request.ItemKeySelector(x)))
+                if (request.Source == null || request.Source.Count == 0 || request.ItemIdSelector == null || request.ItemKeySelector == null)
+                {
+                    allFilters.Add(new FilterModel
+                    {
+                        CategoryName = request.CategoryName,
+                        CategoryDisplayName = request.CategoryDisplayName,
+                        FilterType = request.FilterType,
+                    });
+                    continue;
+                }
+
+                var data = request.Source
+                    .Where(x => !string.IsNullOrEmpty(request.ItemIdSelector(x)) && !string.IsNullOrEmpty(request.ItemKeySelector(x)))
                     .GroupBy(x => new
                     {
                         ItemId = request.ItemIdSelector(x),
@@ -147,6 +163,8 @@ namespace ZayirAlkhayr.Services.Common
                     .Select(g => new FilterModel
                     {
                         CategoryName = request.CategoryName,
+                        CategoryDisplayName = request.CategoryDisplayName,
+                        FilterType = request.FilterType,
                         ItemId = g.Key.ItemId,
                         ItemKey = g.Key.ItemKey,
                         ItemValue = g.Count().ToString(),

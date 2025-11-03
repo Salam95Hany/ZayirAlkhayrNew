@@ -13,7 +13,7 @@ using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
 {
-    public class FamilyNationalityService: IFamilyNationalityService
+    public class FamilyNationalityService : IFamilyNationalityService
     {
         private readonly IUnitOfWork _unitOfWork;
         public FamilyNationalityService(IUnitOfWork unitOfWork)
@@ -53,11 +53,20 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             {
                 new()
                 {
-                    CategoryName = "المستخدمين",
+                    CategoryDisplayName = "بالاسم",
+                    CategoryName = "SearchText",
+                    FilterType = "SearchText",
+                },
+                new()
+                {
+                    CategoryDisplayName = "المستخدمين",
+                    CategoryName = "Users",
+                    FilterType = "Checkbox",
                     Source = data,
                     ItemIdSelector = x => x.InsertUser,
                     ItemKeySelector = x => x.CreatedBy?.UserName ?? ""
                 }
+                
             };
 
             var results = await filterRequests.GenerateManyAsync(cancellationToken);
@@ -98,7 +107,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                     PatientObj.UpdateUser = Model.InsertUser;
                     PatientObj.UpdateDate = DateTime.UtcNow;
 
-                   await _unitOfWork.CompleteAsync();
+                    await _unitOfWork.CompleteAsync();
 
                     return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
                 }

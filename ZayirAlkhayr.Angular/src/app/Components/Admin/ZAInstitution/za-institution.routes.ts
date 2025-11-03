@@ -162,6 +162,15 @@ export const ZAInstitutionRoutes: Routes = [
                 canActivate: [authGuard],
                 data: { pageKey: 'ZAInstitution_FamilyPatientTypes' }
             },
+            {
+                path: 'net-value',
+                loadComponent: () =>
+                    import('./Tasks/net-value/net-value.component').then(m => m.NetValueComponent),
+                canActivate: [authGuard],
+                data: { pageKey: 'ZAInstitution_NetValue' }
+            },
+
+            
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: '**', redirectTo: 'home', pathMatch: 'full' },
         ]
