@@ -9,7 +9,7 @@ namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.BeneFactor
 {
     public class BeneFactorTypesWithoutCashSpecification : BaseSpecification<BeneFactorType>
     {
-        public BeneFactorTypesWithoutCashSpecification() : base(i => i.Id != 1)
+        public BeneFactorTypesWithoutCashSpecification() : base()
         {
 
         }

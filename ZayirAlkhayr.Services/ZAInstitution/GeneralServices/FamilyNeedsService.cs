@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Globalization;
 using ZayirAlkhayr.Entities.Auth;
@@ -145,6 +146,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<FamilyNeedType>().AnyAsync(i => i.Name == Model.Name);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var NeedObj = new FamilyNeedType
                 {
                     CategoryId = Model.CategoryId,
@@ -168,6 +173,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<FamilyNeedCategory>().AnyAsync(i => i.Name == Model.Name);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var CategoryObj = new FamilyNeedCategory
                 {
                     Name = Model.Name,
@@ -190,6 +199,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<FamilyNeedType>().AnyAsync(i => i.Name == Model.Name && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var NeedObj = await _unitOfWork.Repository<FamilyNeedType>().GetByIdAsync(Model.Id);
                 if (NeedObj != null)
                 {
@@ -216,6 +229,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<FamilyNeedCategory>().AnyAsync(i => i.Name == Model.Name && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var NeedObj = await _unitOfWork.Repository<FamilyNeedCategory>().GetByIdAsync(Model.Id);
                 if (NeedObj != null)
                 {
@@ -252,8 +269,16 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                if (ex.InnerException is SqlException sqlEx)
+                {
+                    if (sqlEx.Message.Contains("REFERENCE constraint"))
+                    {
+                        return ApiResponseModel<string>.Failure(GenericErrors.DeleteRelationRow);
+                    }
+                }
+
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
@@ -273,8 +298,16 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                if (ex.InnerException is SqlException sqlEx)
+                {
+                    if (sqlEx.Message.Contains("REFERENCE constraint"))
+                    {
+                        return ApiResponseModel<string>.Failure(GenericErrors.DeleteRelationRow);
+                    }
+                }
+
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }

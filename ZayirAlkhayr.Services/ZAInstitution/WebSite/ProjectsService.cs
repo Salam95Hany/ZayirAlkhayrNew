@@ -76,6 +76,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<Project>().AnyAsync(i => i.Title == Model.Title);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var Project = new Project();
                 var Id = await _unitOfWork.Repository<Project>().AnyAsync() ? await _unitOfWork.Repository<Project>().MaxAsync(i => i.Id) + 1 : 1;
                 Project.Title = Model.Title;
@@ -104,6 +108,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<Project>().AnyAsync(i => i.Title == Model.Title && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var Project = await _unitOfWork.Repository<Project>().GetByIdAsync(Model.Id);
                 Project.Title = Model.Title;
                 Project.Description = Model.Description;

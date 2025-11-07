@@ -29,16 +29,16 @@ export class BenefactorNationalitiesComponent implements OnInit {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'جنسيات المتبرعين'];
   filterList: FilterModel[] = [
     {
-      categoryDisplayName:'بالاسم',
-      categoryName:'SearchText',
-      filterType:'SearchText'
+      categoryDisplayName: 'بالاسم',
+      categoryName: 'SearchText',
+      filterType: 'SearchText'
     }
   ];
   ItemForm: FormGroup;
   showLoader: boolean = false;
   isFilter = true;
   UserId: any;
-  SliderId: number;
+  NationalityId: number;
   pagingFilterModel: PagingFilterModel = {
     currentPage: 1,
     pageSize: 20,
@@ -103,7 +103,7 @@ export class BenefactorNationalitiesComponent implements OnInit {
   }
 
   openDeleteItemModal(content: any, item: any) {
-    this.SliderId = item.id;
+    this.NationalityId = item.id;
     this.modalService.open(content, {
       size: 'md',
       scrollable: true,
@@ -149,11 +149,38 @@ export class BenefactorNationalitiesComponent implements OnInit {
       return;
 
     this.showLoader = true;
-    this.benefactorService.AddNewBeneFactorNationality(this.ItemForm.value).subscribe(data => {
+    if (this.ItemForm.controls['id'].value == 0) {
+      this.benefactorService.AddNewBeneFactorNationality(this.ItemForm.value).subscribe(data => {
+        if (data.isSuccess) {
+          this.toaster.success(data.message);
+          this.GetAllBeneFactorNationalities();
+          this.modalService.dismissAll();
+        }
+        else
+          this.toaster.error(data.message);
+        this.showLoader = false;
+      });
+    }else{
+        this.benefactorService.UpdateBeneFactorNationality(this.ItemForm.value).subscribe(data => {
+        if (data.isSuccess) {
+          this.toaster.success(data.message);
+          this.GetAllBeneFactorNationalities();
+          this.modalService.dismissAll();
+        }
+        else
+          this.toaster.error(data.message);
+        this.showLoader = false;
+      });
+    }
+  }
+
+    DeleteItem() {
+    this.showLoader = true;
+    this.benefactorService.DeleteBeneFactorNationality(this.NationalityId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
-        this.GetAllBeneFactorNationalities();
-        this.modalService.dismissAll();
+          this.GetAllBeneFactorNationalities();
+          this.modalService.dismissAll();
       }
       else
         this.toaster.error(data.message);

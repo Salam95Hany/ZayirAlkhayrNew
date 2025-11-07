@@ -25,7 +25,11 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.BeneFactor
         Task<ApiResponseModel<List<BeneFactorType>>> GetBeneFactorTypeByIds(List<int> Ids);
         Task<ApiResponseModel<string>> AddNewBeneFactor(ZayirAlkhayr.Entities.Models.BeneFactor Model);
         Task<ApiResponseModel<string>> AddNewBeneFactorType(BeneFactorType Model);
+        Task<ApiResponseModel<string>> UpdateBeneFactorType(BeneFactorType Model);
+        Task<ApiResponseModel<string>> DeleteBeneFactorType(int TypeId);
         Task<ApiResponseModel<string>> AddNewBeneFactorNationality(BeneFactorNationality Model);
+        Task<ApiResponseModel<string>> UpdateBeneFactorNationality(BeneFactorNationality Model);
+        Task<ApiResponseModel<string>> DeleteBeneFactorNationality(int NationalityId);
         Task<ApiResponseModel<string>> AddNewBeneFactorDetails(BeneFactorDetail Model);
         Task<ApiResponseModel<string>> AddNewBeneFactorNotes(BeneFactorNote Model);
         Task<ApiResponseModel<string>> UpdateBeneFactor(ZayirAlkhayr.Entities.Models.BeneFactor Model);

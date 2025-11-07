@@ -83,6 +83,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<FamilyPatientType>().AnyAsync(i => i.Name == Model.Name);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var PatientObj = new FamilyPatientType
                 {
                     Name = Model.Name,
@@ -106,6 +110,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<FamilyPatientType>().AnyAsync(i => i.Name == Model.Name && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var PatientObj = await _unitOfWork.Repository<FamilyPatientType>().GetByIdAsync(Model.Id);
                 if (PatientObj != null)
                 {
@@ -113,7 +121,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                     PatientObj.UpdateUser = Model.InsertUser;
                     PatientObj.UpdateDate = DateTime.UtcNow;
 
-                  await  _unitOfWork.CompleteAsync();
+                    await _unitOfWork.CompleteAsync();
 
                     return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
                 }
@@ -142,8 +150,16 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                if (ex.InnerException is SqlException sqlEx)
+                {
+                    if (sqlEx.Message.Contains("REFERENCE constraint"))
+                    {
+                        return ApiResponseModel<string>.Failure(GenericErrors.DeleteRelationRow);
+                    }
+                }
+
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }

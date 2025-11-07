@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 })
 export class BenefactorService {
   apiURL = environment.apiUrl;
-  constructor(private http: HttpClient,private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   GetAllBeneFactorData(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/GetAllBeneFactorData', PagingFilter);
@@ -68,6 +68,14 @@ export class BenefactorService {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/AddNewBeneFactorType', Model);
   }
 
+  UpdateBeneFactorType(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/UpdateBeneFactorType', Model);
+  }
+
+  DeleteBeneFactorType(TypeId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/DeleteBeneFactorType?TypeId=' + TypeId);
+  }
+
   AddNewBeneFactorDetails(Model: any) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/AddNewBeneFactorDetails', Model);
   }
@@ -78,6 +86,14 @@ export class BenefactorService {
 
   AddNewBeneFactorNationality(Model: any) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/AddNewBeneFactorNationality', Model);
+  }
+
+  UpdateBeneFactorNationality(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/UpdateBeneFactorNationality', Model);
+  }
+
+  DeleteBeneFactorNationality(NationalityId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/DeleteBeneFactorNationality?NationalityId=' + NationalityId);
   }
 
   UpdateBeneFactor(Model: any) {

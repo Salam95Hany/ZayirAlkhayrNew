@@ -78,6 +78,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<Photo>().AnyAsync(i => i.Title == Model.Title);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var PhotoObj = new Photo();
                 PhotoObj.Title = Model.Title;
                 PhotoObj.Description = Model.Description;
@@ -106,6 +110,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<Photo>().AnyAsync(i => i.Title == Model.Title && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var PhotoObj = await _unitOfWork.Repository<Photo>().GetByIdAsync(Model.Id);
                 PhotoObj.Title = Model.Title;
                 PhotoObj.Description = Model.Description;

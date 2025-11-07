@@ -65,6 +65,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<SliderImage>().AnyAsync(i => i.Title == Model.Title);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var Slider = new SliderImage();
                 Slider.Title = Model.Title;
                 Slider.IsVisible = Model.IsVisible;
@@ -92,6 +96,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<SliderImage>().AnyAsync(i => i.Title == Model.Title && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var Slider = await _unitOfWork.Repository<SliderImage>().GetByIdAsync(Model.Id);
                 Slider.Title = Model.Title;
                 Slider.IsVisible = Model.IsVisible;

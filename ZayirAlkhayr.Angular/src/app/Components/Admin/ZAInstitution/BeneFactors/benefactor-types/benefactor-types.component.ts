@@ -29,16 +29,16 @@ export class BenefactorTypesComponent implements OnInit {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'أنواع التبرع'];
   filterList: FilterModel[] = [
     {
-      categoryDisplayName:'بالاسم',
-      categoryName:'SearchText',
-      filterType:'SearchText'
+      categoryDisplayName: 'بالاسم',
+      categoryName: 'SearchText',
+      filterType: 'SearchText'
     }
   ];
   ItemForm: FormGroup;
   showLoader: boolean = false;
   isFilter = true;
   UserId: any;
-  SliderId: number;
+  TypeId: number;
   pagingFilterModel: PagingFilterModel = {
     currentPage: 1,
     pageSize: 20,
@@ -53,7 +53,7 @@ export class BenefactorTypesComponent implements OnInit {
   };
 
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
-    private formService: FormService, private benefactorService: BenefactorService,private authService: AuthService) {
+    private formService: FormService, private benefactorService: BenefactorService, private authService: AuthService) {
 
   }
 
@@ -70,7 +70,7 @@ export class BenefactorTypesComponent implements OnInit {
       InsertUser: null
     });
 
-     this.ItemForm.valueChanges.subscribe((data) => {
+    this.ItemForm.valueChanges.subscribe((data) => {
       this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
     });
   }
@@ -102,7 +102,7 @@ export class BenefactorTypesComponent implements OnInit {
   }
 
   openDeleteItemModal(content: any, item: any) {
-    this.SliderId = item.id;
+    this.TypeId = item.id;
     this.modalService.open(content, {
       size: 'md',
       scrollable: true,
@@ -146,13 +146,40 @@ export class BenefactorTypesComponent implements OnInit {
 
     if (!isValid)
       return;
-    
+
     this.showLoader = true;
-    this.benefactorService.AddNewBeneFactorType(this.ItemForm.value).subscribe(data => {
+    if (this.ItemForm.controls['id'].value == 0) {
+      this.benefactorService.AddNewBeneFactorType(this.ItemForm.value).subscribe(data => {
+        if (data.isSuccess) {
+          this.toaster.success(data.message);
+          this.GetAllBeneFactorTypes();
+          this.modalService.dismissAll();
+        }
+        else
+          this.toaster.error(data.message);
+        this.showLoader = false;
+      });
+    } else {
+      this.benefactorService.UpdateBeneFactorType(this.ItemForm.value).subscribe(data => {
+        if (data.isSuccess) {
+          this.toaster.success(data.message);
+          this.GetAllBeneFactorTypes();
+          this.modalService.dismissAll();
+        }
+        else
+          this.toaster.error(data.message);
+        this.showLoader = false;
+      });
+    }
+  }
+
+   DeleteItem() {
+    this.showLoader = true;
+    this.benefactorService.DeleteBeneFactorType(this.TypeId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
-        this.GetAllBeneFactorTypes();
-        this.modalService.dismissAll();
+          this.GetAllBeneFactorTypes();
+          this.modalService.dismissAll();
       }
       else
         this.toaster.error(data.message);

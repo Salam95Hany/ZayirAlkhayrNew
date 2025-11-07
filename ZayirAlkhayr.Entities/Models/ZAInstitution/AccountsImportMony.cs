@@ -16,7 +16,7 @@ public partial class AccountsImportMony : AuditableEntity
 
     public string Details { get; set; }
 
-    public string DonationMethod { get; set; }
+    public int DonationMethodId { get; set; }
 
     public int BeneFactorId { get; set; }
 

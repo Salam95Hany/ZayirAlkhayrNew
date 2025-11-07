@@ -19,6 +19,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
+                var ValueExist = await _unitOfWork.Repository<FamilyStatus>().AnyAsync(i => i.Name == Model.FamilyStatus.Name && i.Fname == Model.FamilyStatus.Fname && i.Id != Model.FamilyStatus.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var FamilyObj = await _unitOfWork.Repository<FamilyStatus>().GetByIdAsync(Model.FamilyStatus.Id);
                 if (FamilyObj != null)
                 {

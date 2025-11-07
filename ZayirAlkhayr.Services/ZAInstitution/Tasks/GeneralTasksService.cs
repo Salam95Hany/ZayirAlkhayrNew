@@ -73,6 +73,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<GeneralTask>().AnyAsync(i => i.Title == Model.Title);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var TaskObj = new GeneralTask();
                 TaskObj.StatusId = 1;
                 TaskObj.Title = Model.Title;
@@ -116,6 +120,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<GeneralTask>().AnyAsync(i => i.Title == Model.Title && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var TaskObj = await _unitOfWork.Repository<GeneralTask>().GetByIdAsync(Model.Id);
                 TaskObj.Title = Model.Title;
                 TaskObj.Description = Model.Description;

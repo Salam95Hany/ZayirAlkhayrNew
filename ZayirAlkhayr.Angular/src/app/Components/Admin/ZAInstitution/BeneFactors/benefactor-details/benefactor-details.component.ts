@@ -250,7 +250,7 @@ export class BenefactorDetailsComponent implements OnInit {
 
   GetAllBeneFactorTypesSelector() {
     this.sharedService.GetAllBeneFactorTypesSelector().subscribe(data => {
-      this.BeneFactorTypesData = data.results;
+      this.BeneFactorTypesData = data.results.filter(i => i.value != 1);
     });
   }
 

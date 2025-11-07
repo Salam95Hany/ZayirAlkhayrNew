@@ -63,8 +63,6 @@ namespace ZayirAlkhayr.Services.Common
 
         public static Error ChangeStatusSuccess = new("تم تغيير الحالة بنجاح");
 
-
-
-
+        public static Error DeleteRelationRow = new("لا يمكن حذف هذا السجل لأنه مرتبط ببيانات أخرى.");
     }
 }

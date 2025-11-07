@@ -140,7 +140,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                 ImportObj.BeneFactorTypeId = Model.BeneFactorTypeId;
                 ImportObj.TotalValue = Model.TotalValue;
                 ImportObj.Details = Model.Details;
-                ImportObj.DonationMethod = Model.DonationMethod;
+                ImportObj.DonationMethodId = Model.DonationMethodId;
                 ImportObj.InsertUser = Model.InsertUser;
                 ImportObj.InsertDate = Model.InsertDate;
 
@@ -166,7 +166,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                     ImportObj.BeneFactorTypeId = Model.BeneFactorTypeId;
                     ImportObj.TotalValue = Model.TotalValue;
                     ImportObj.Details = Model.Details;
-                    ImportObj.DonationMethod = Model.DonationMethod;
+                    ImportObj.DonationMethodId = Model.DonationMethodId;
                     ImportObj.InsertDate = Model.InsertDate;
                     ImportObj.UpdateUser = Model.InsertUser;
                     ImportObj.UpdateDate = DateTime.UtcNow;

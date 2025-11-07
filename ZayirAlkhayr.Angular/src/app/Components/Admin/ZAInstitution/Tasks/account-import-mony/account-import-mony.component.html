@@ -95,7 +95,7 @@
                         <tr *ngFor="let item of AccountMoneyList">
                             <td>{{item.fullName}}</td>
                             <td>{{item.name}}</td>
-                            <td>{{item.donationMethod}}</td>
+                            <td>{{item.donationMethodId | donationMethod}}</td>
                             <td>{{item.totalValue}}</td>
                             <td>{{item.details}}</td>
                             <td>{{item.createdBy}}</td>
@@ -152,12 +152,6 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="table-feature">طريقة التبرع</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'طريقة التبرع...'" [error]="formErrors.donationMethod" formControlName="donationMethod"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
                         <td class="table-feature">تاريخ الاضافة</td>
                         <td class="table-value">
                             <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ الاضافة...'" [error]="formErrors.insertDate" formControlName="insertDate"></app-za-input-with-label>
@@ -182,6 +176,17 @@
                             </div>
                             <div class="error-message" *ngIf="formErrors.beneFactorTypeId">
                                 {{ formErrors.beneFactorTypeId }}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">طريقة التبرع</td>
+                        <td class="table-value">
+                            <div class="form-floating">
+                                <app-za-drop-down-form-control [data]="DonationMethods" [showSearch]="true" [placeholder]="'طريقة التبرع'" formControlName="donationMethodId" [hasError]="formErrors.donationMethodId"></app-za-drop-down-form-control>
+                            </div>
+                            <div class="error-message" *ngIf="formErrors.donationMethodId">
+                                {{ formErrors.donationMethodId }}
                             </div>
                         </td>
                     </tr>

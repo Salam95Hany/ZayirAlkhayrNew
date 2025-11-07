@@ -77,6 +77,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<Activity>().AnyAsync(i => i.Name == Model.Name);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var ActivityObj = new Activity();
                 ActivityObj.Name = Model.Name;
                 ActivityObj.Description = Model.Description;
@@ -105,6 +109,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<Activity>().AnyAsync(i => i.Name == Model.Name && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var ActivityObj = await _unitOfWork.Repository<Activity>().GetByIdAsync(Model.Id);
                 if (ActivityObj != null)
                 {

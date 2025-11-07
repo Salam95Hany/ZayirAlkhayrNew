@@ -52,7 +52,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                                     Description = i.Description,
                                     FromDateStr = i.FromDate?.ToString("d MMMM , yyyy @ hh:mm t", new CultureInfo("ar-AE")) ?? "",
                                     ToDateStr = i.ToDate?.ToString("d MMMM , yyyy @ hh:mm t", new CultureInfo("ar-AE")) ?? "",
-                                    Images = images
+                                    Images = images.OrderBy(x => x.DisplayOrder)
                                         .Select(img => Path.Combine(ApiLocalUrl, ImageFiles.EventSliderImages.ToString(), img.Image))
                                         .ToList(),
                                 };
@@ -102,6 +102,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<Event>().AnyAsync(i => i.Title == Model.Title);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var MonthFrom = Model?.FromDate.Value.Month;
                 var MonthTo = Model?.ToDate.Value.Month;
                 var Event = new Event();
@@ -132,6 +136,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<Event>().AnyAsync(i => i.Title == Model.Title && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var MonthFrom = Model.FromDate.Value.Month;
                 var MonthTo = Model.ToDate.Value.Month;
                 var Event = await _unitOfWork.Repository<Event>().GetByIdAsync(Model.Id);

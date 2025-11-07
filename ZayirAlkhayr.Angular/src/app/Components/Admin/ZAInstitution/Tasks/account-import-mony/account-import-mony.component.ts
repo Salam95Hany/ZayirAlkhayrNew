@@ -20,13 +20,14 @@ import { PdfDownloadService } from '../../../../../Services/shared/pdf-download.
 import { SearchReportModel } from '../../../../../Models/shared/SearchReportModel';
 import { ZaDropDownFormControlComponent } from '../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 import { NgxLoadingModule } from "ngx-loading";
+import { DonationMethodPipe } from '../../../../../Pipes/donation-method.pipe';
 
 @Component({
   selector: 'app-account-import-mony',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RoleCheckerDirective, ZaInputWithLabelComponent,
-    NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule],
+    NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule,DonationMethodPipe],
   templateUrl: './account-import-mony.component.html',
   styleUrl: './account-import-mony.component.css',
   providers: [DatePipe]
@@ -47,6 +48,11 @@ export class AccountImportMonyComponent {
   ImageFile: any;
   UserId: any;
   AccountId: any;
+  DonationMethods: any[] = [
+    { value: 1, name: 'فودافون كاش' },
+    { value: 2, name: 'انستا باي' },
+    { value: 3, name: 'نقداً' }
+  ];
   PagingFilter: PagingFilterModel = {
     currentPage: 1,
     pageSize: 20,
@@ -63,7 +69,7 @@ export class AccountImportMonyComponent {
     details: '',
     totalValue: '',
     insertDate: '',
-    donationMethod: ''
+    donationMethodId: ''
   };
 
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private authService: AuthService,
@@ -88,7 +94,7 @@ export class AccountImportMonyComponent {
       beneFactorTypeId: ['', Validators.required],
       details: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       totalValue: ['', Validators.required],
-      donationMethod: ['', Validators.required],
+      donationMethodId: ['', Validators.required],
       insertUser: null,
       insertDate: ['', Validators.required]
     });
@@ -105,7 +111,7 @@ export class AccountImportMonyComponent {
       beneFactorTypeId: item?.beneFactorTypeId,
       details: item?.details,
       totalValue: item?.totalValue,
-      donationMethod: item?.donationMethod,
+      donationMethodId: item?.donationMethodId,
       insertUser: this.UserId,
       insertDate: this.datepipe.transform(item?.insertDate, 'yyyy-MM-dd')
     });

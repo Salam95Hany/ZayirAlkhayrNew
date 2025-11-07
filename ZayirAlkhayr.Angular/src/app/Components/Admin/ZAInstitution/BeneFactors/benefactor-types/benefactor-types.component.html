@@ -33,7 +33,7 @@
                         <th>الاسم</th>
                         <th>تمت الاضافة من قبل</th>
                         <th>تاريخ الاضافة</th>
-                        <!-- <th>عمليات</th> -->
+                        <th>عمليات</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,18 +42,18 @@
                             <td>{{item.name}}</td>
                             <td>{{item.createdBy}}</td>
                             <td>{{item.insertDate}}</td>
-                            <!-- <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center">
+                            <td>
+                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="item.id != 1">
                                     <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
                                         <i class="uil uil-pen"></i>
                                         <span>تعديل</span>
                                     </button>
                                     <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item)">
-                                    <i class="uil uil-trash-alt"></i>
-                                    <span>حذف</span>
-                                </button>
+                                        <i class="uil uil-trash-alt"></i>
+                                        <span>حذف</span>
+                                    </button>
                                 </div>
-                            </td> -->
+                            </td>
                         </tr>
                         <tr *ngIf="!pagedResponseModel.results.length">
                             <td colspan="12" class="text-right">
@@ -119,7 +119,7 @@
         <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
     </div>
     <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success">
+        <button type="button" class="btn btn-success" (click)="DeleteItem()">
             <i class="fas fa-check"></i>
             <span class="ms-2">نعم</span>
         </button>

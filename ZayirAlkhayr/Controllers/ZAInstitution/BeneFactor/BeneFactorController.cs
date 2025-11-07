@@ -116,10 +116,38 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.BeneFactor
             return results;
         }
 
+        [HttpPost("UpdateBeneFactorType")]
+        public async Task<ApiResponseModel<string>> UpdateBeneFactorType(BeneFactorType Model)
+        {
+            var results = await _beneFactorService.UpdateBeneFactorType(Model);
+            return results;
+        }
+
+        [HttpGet("DeleteBeneFactorType")]
+        public async Task<ApiResponseModel<string>> DeleteBeneFactorType(int TypeId)
+        {
+            var results = await _beneFactorService.DeleteBeneFactorType(TypeId);
+            return results;
+        }
+
         [HttpPost("AddNewBeneFactorNationality")]
         public async Task<ApiResponseModel<string>> AddNewBeneFactorNationality(BeneFactorNationality Model)
         {
             var results = await _beneFactorService.AddNewBeneFactorNationality(Model);
+            return results;
+        }
+
+        [HttpPost("UpdateBeneFactorNationality")]
+        public async Task<ApiResponseModel<string>> UpdateBeneFactorNationality(BeneFactorNationality Model)
+        {
+            var results = await _beneFactorService.UpdateBeneFactorNationality(Model);
+            return results;
+        }
+
+        [HttpGet("DeleteBeneFactorNationality")]
+        public async Task<ApiResponseModel<string>> DeleteBeneFactorNationality(int NationalityId)
+        {
+            var results = await _beneFactorService.DeleteBeneFactorNationality(NationalityId);
             return results;
         }
 

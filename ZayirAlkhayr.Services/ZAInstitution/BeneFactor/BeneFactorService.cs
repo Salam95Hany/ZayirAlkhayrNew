@@ -184,8 +184,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
         {
             try
             {
-                var NameExist = await _unitOfWork.Repository<ZayirAlkhayr.Entities.Models.BeneFactor>().GetByIdAsync(i => i.FullName == Model.FullName);
-                if (NameExist != null)
+                var ValueExist = await _unitOfWork.Repository<ZayirAlkhayr.Entities.Models.BeneFactor>().AnyAsync(i => i.FullName == Model.FullName);
+                if (ValueExist)
                     return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
 
                 var Code = await _sQLHelper.GenerateCode("web.SP_GetBeneFactorCodeSequences");
@@ -226,6 +226,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<BeneFactorType>().AnyAsync(i => i.Name == Model.Name);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var BeneFactorObj = new BeneFactorType();
                 BeneFactorObj.Name = Model.Name;
                 BeneFactorObj.InsertUser = Model.InsertUser;
@@ -242,10 +246,68 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
             }
         }
 
+        public async Task<ApiResponseModel<string>> UpdateBeneFactorType(BeneFactorType Model)
+        {
+            try
+            {
+                var ValueExist = await _unitOfWork.Repository<BeneFactorType>().AnyAsync(i => i.Name == Model.Name && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
+                var Entity = await _unitOfWork.Repository<BeneFactorType>().GetByIdAsync(Model.Id);
+                if (Entity == null)
+                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+
+                Entity.Name = Model.Name;
+                Entity.UpdateUser = Model.InsertUser;
+                Entity.UpdateDate = DateTime.UtcNow;
+
+                await _unitOfWork.CompleteAsync();
+
+                return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
+            }
+            catch (Exception)
+            {
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
+            }
+        }
+
+        public async Task<ApiResponseModel<string>> DeleteBeneFactorType(int TypeId)
+        {
+            try
+            {
+                var Entity = await _unitOfWork.Repository<BeneFactorType>().GetByIdAsync(TypeId);
+                if (Entity == null)
+                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+
+
+                _unitOfWork.Repository<BeneFactorType>().Delete(Entity);
+                await _unitOfWork.CompleteAsync();
+
+                return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException is SqlException sqlEx)
+                {
+                    if (sqlEx.Message.Contains("REFERENCE constraint"))
+                    {
+                        return ApiResponseModel<string>.Failure(GenericErrors.DeleteRelationRow);
+                    }
+                }
+
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
+            }
+        }
+
         public async Task<ApiResponseModel<string>> AddNewBeneFactorNationality(BeneFactorNationality Model)
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<BeneFactorNationality>().AnyAsync(i => i.Name == Model.Name);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var BeneFactorObj = new BeneFactorNationality();
                 BeneFactorObj.Name = Model.Name;
                 BeneFactorObj.InsertUser = Model.InsertUser;
@@ -258,6 +320,60 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
             }
             catch (Exception)
             {
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
+            }
+        }
+
+        public async Task<ApiResponseModel<string>> UpdateBeneFactorNationality(BeneFactorNationality Model)
+        {
+            try
+            {
+                var ValueExist = await _unitOfWork.Repository<BeneFactorNationality>().AnyAsync(i => i.Name == Model.Name && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
+                var Entity = await _unitOfWork.Repository<BeneFactorNationality>().GetByIdAsync(Model.Id);
+                if (Entity == null)
+                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+
+                Entity.Name = Model.Name;
+                Entity.UpdateUser = Model.InsertUser;
+                Entity.UpdateDate = DateTime.UtcNow;
+
+
+                await _unitOfWork.CompleteAsync();
+
+                return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
+            }
+            catch (Exception)
+            {
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
+            }
+        }
+
+        public async Task<ApiResponseModel<string>> DeleteBeneFactorNationality(int NationalityId)
+        {
+            try
+            {
+                var Entity = await _unitOfWork.Repository<BeneFactorNationality>().GetByIdAsync(NationalityId);
+                if (Entity == null)
+                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+
+                _unitOfWork.Repository<BeneFactorNationality>().Delete(Entity);
+                await _unitOfWork.CompleteAsync();
+
+                return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException is SqlException sqlEx)
+                {
+                    if (sqlEx.Message.Contains("REFERENCE constraint"))
+                    {
+                        return ApiResponseModel<string>.Failure(GenericErrors.DeleteRelationRow);
+                    }
+                }
+
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
@@ -329,6 +445,10 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
         {
             try
             {
+                var ValueExist = await _unitOfWork.Repository<ZayirAlkhayr.Entities.Models.BeneFactor>().AnyAsync(i => i.FullName == Model.FullName && i.Id != Model.Id);
+                if (ValueExist)
+                    return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
+
                 var BeneFactorObj = await _unitOfWork.Repository<ZayirAlkhayr.Entities.Models.BeneFactor>().GetByIdAsync(x => x.Id == Model.Id);
                 if (BeneFactorObj == null)
                     return ApiResponseModel<string>.Failure(GenericErrors.NotFound);

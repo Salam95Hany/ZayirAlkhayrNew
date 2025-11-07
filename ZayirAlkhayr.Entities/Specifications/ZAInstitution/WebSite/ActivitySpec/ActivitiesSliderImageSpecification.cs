@@ -9,6 +9,9 @@ namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.ActivitySpe
 {
     public class ActivitiesSliderImageSpecification : BaseSpecification<ActivitiesSliderImage>
     {
-        public ActivitiesSliderImageSpecification(int Id) : base(p => p.ActivityId == Id) { }
+        public ActivitiesSliderImageSpecification(int Id) : base(p => p.ActivityId == Id) 
+        {
+            ApplyOrderBy(i => i.DisplayOrder);
+        }
     }
 }

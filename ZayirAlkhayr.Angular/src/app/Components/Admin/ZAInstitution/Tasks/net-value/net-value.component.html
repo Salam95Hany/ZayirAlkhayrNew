@@ -5,7 +5,7 @@
 
     <!-- Filter Section -->
     <div class="filter-section">
-        <app-za-filters></app-za-filters>
+        <app-za-filters [FilterList]="filterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
     </div>
 
     <!-- Statistics Cards -->
