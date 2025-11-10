@@ -7,13 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
 using ZayirAlkhayr.Entities.Models;
 
 namespace ZayirAlkhayr.Interfaces.ZAInstitution.WebSite
 {
     public interface IActivityService
     {
-        Task<ApiResponseModel<DataTable>> GetAllActivities(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<List<ActivityDto>>> GetAllActivities(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<List<FilterModel>>> GetActivityFilters();
         Task<ApiResponseModel<List<ActivitiesSliderImage>>> GetActivitySliderImagesById(int ActivityId);
         Task<ApiResponseModel<ActivityModel>> GetActivityWithSliderImagesById(int ActivityId);
         Task<ApiResponseModel<string>> AddNewActivity(Entities.Models.Activity Model);

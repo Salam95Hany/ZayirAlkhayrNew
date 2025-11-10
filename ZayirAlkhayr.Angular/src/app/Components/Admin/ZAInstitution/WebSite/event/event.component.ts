@@ -70,7 +70,7 @@ export class EventComponent implements OnInit {
     this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllEvents();
-    this.GetWebsiteAdminFilters();
+    this.GetEventFilters();
   }
 
   FormInit() {
@@ -160,8 +160,8 @@ export class EventComponent implements OnInit {
     this.GetAllEvents();
   }
 
-  GetWebsiteAdminFilters() {
-    this.websiteService.GetAllWebPagesFilters('Event').subscribe(data => {
+  GetEventFilters() {
+    this.websiteService.GetEventFilters().subscribe(data => {
       this.filterList = data.results;
     });
   }
@@ -247,7 +247,7 @@ export class EventComponent implements OnInit {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllEvents();
-          this.GetWebsiteAdminFilters();
+          this.GetEventFilters();
           this.modalService.dismissAll();
         }
         else
@@ -274,7 +274,7 @@ export class EventComponent implements OnInit {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllEvents();
-        this.GetWebsiteAdminFilters();
+        this.GetEventFilters();
         this.modalService.dismissAll();
       }
       else

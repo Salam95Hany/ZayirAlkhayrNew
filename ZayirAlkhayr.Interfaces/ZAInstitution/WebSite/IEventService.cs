@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
 using ZayirAlkhayr.Entities.Models;
 
 namespace ZayirAlkhayr.Interfaces.ZAInstitution.WebSite
@@ -12,7 +13,8 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.WebSite
     public interface IEventService
     {
         Task<ApiResponseModel<List<EventGroupingModel>>> GetAllWebSiteEvents();
-        Task<ApiResponseModel<DataTable>> GetAllEvents(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<List<EventDto>>> GetAllEvents(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<List<FilterModel>>> GetEventFilters();
         Task<ApiResponseModel<List<EventSliderImage>>> GetEventSliderImagesById(int EventId);
         Task<ApiResponseModel<string>> AddNewEvent(Event Model);
         Task<ApiResponseModel<string>> UpdateEvent(Event Model);

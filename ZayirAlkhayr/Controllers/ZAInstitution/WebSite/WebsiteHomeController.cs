@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 
@@ -19,16 +20,16 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
         }
 
         [HttpPost("GetHomeSliderImages")]
-        public async Task<ApiResponseModel<DataTable>> GetHomeSliderImages(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<SliderImagDto>>> GetHomeSliderImages(PagingFilterModel PagingFilter)
         {
             var result = await _websiteHomeService.GetHomeSliderImages(PagingFilter);
             return result;
         }
 
-        [HttpGet("GetAllWebPagesFilters")]
-        public async Task<ApiResponseModel<List<FilterModel>>> GetAllWebPagesFilters(string PageName)
+        [HttpGet("GetHomeSliderImageFilters")]
+        public async Task<ApiResponseModel<List<FilterModel>>> GetHomeSliderImageFilters()
         {
-            var result = await _websiteHomeService.GetAllWebPagesFilters(PageName);
+            var result = await _websiteHomeService.GetHomeSliderImageFilters();
             return result;
         }
 

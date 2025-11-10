@@ -19,8 +19,8 @@ export class ZaWebsiteService {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'WebsiteHome/GetHomeSliderImages', PagingFilter);
   }
 
-  GetAllWebPagesFilters(PageName: string) {
-    return this.http.get<ApiResponseModel<FilterModel[]>>(this.apiURL + 'WebsiteHome/GetAllWebPagesFilters?PageName=' + PageName);
+  GetHomeSliderImageFilters() {
+    return this.http.get<ApiResponseModel<FilterModel[]>>(this.apiURL + 'WebsiteHome/GetHomeSliderImageFilters');
   }
 
   GetPagesAutoSearch(SearchText: string) {
@@ -43,6 +43,10 @@ export class ZaWebsiteService {
 
   GetAllActivities(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'Activity/GetAllActivities', PagingFilter);
+  }
+
+  GetActivityFilters() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'Activity/GetActivityFilters');
   }
 
   GetActivitySliderImagesById(ActivityId: number) {
@@ -77,6 +81,10 @@ export class ZaWebsiteService {
 
   GetAllPhotos(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'Photo/GetAllPhotos', PagingFilter);
+  }
+
+  GetPhotoFilters() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'Photo/GetPhotoFilters');
   }
 
   GetPhotoDetails(PhotoId: number) {
@@ -117,6 +125,10 @@ export class ZaWebsiteService {
     return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'Event/GetAllWebSiteEvents');
   }
 
+  GetEventFilters() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'Event/GetEventFilters');
+  }
+
   GetEventSliderImagesById(EventId: number) {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Event/GetEventSliderImagesById?EventId=' + EventId);
   }
@@ -145,6 +157,10 @@ export class ZaWebsiteService {
 
   GetAllProjects(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'Projects/GetAllProjects', PagingFilter);
+  }
+
+  GetProjectFilters() {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Projects/GetProjectFilters');
   }
 
   GetProjectsSliderImagesById(ProjectId: number) {

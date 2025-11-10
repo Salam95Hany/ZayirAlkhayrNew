@@ -72,7 +72,7 @@ export class ProjectComponent implements OnInit {
     this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllProjects();
-    this.GetWebsiteAdminFilters();
+    this.GetProjectFilters();
   }
 
   FormInit() {
@@ -166,8 +166,8 @@ export class ProjectComponent implements OnInit {
     this.GetAllProjects();
   }
 
-  GetWebsiteAdminFilters() {
-    this.websiteService.GetAllWebPagesFilters('Project').subscribe(data => {
+  GetProjectFilters() {
+    this.websiteService.GetProjectFilters().subscribe(data => {
       this.filterList = data.results;
 
     });
@@ -253,7 +253,7 @@ export class ProjectComponent implements OnInit {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllProjects();
-          this.GetWebsiteAdminFilters();
+          this.GetProjectFilters();
           this.modalService.dismissAll();
         }
         else
@@ -280,7 +280,7 @@ export class ProjectComponent implements OnInit {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllProjects();
-        this.GetWebsiteAdminFilters();
+        this.GetProjectFilters();
         this.modalService.dismissAll();
       }
       else

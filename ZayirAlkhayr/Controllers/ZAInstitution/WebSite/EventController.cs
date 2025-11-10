@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 
@@ -25,9 +26,16 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
         }
 
         [HttpPost("GetAllEvents")]
-        public async Task<ApiResponseModel<DataTable>> GetAllEvents(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<EventDto>>> GetAllEvents(PagingFilterModel PagingFilter)
         {
             var result = await _eventService.GetAllEvents(PagingFilter);
+            return result;
+        }
+
+        [HttpGet("GetEventFilters")]
+        public async Task<ApiResponseModel<List<FilterModel>>> GetEventFilters()
+        {
+            var result = await _eventService.GetEventFilters();
             return result;
         }
 

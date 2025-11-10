@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
+﻿using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Common;
@@ -13,6 +6,10 @@ using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.WebSiteHomeSpec;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
+using System.Globalization;
+using Microsoft.EntityFrameworkCore;
+using ZayirAlkhayr.Entities.Auth;
 
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
@@ -21,36 +18,63 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IManageFileService _manageFileService;
-        private readonly ISQLHelper _sQLHelper;
         private readonly IAppSettings _appSettings;
         private string ApiLocalUrl;
-        public WebsiteHomeService(IManageFileService manageFileService, ISQLHelper sQLHelper, IUnitOfWork unitOfWork, IAppSettings appSettings)
+        public WebsiteHomeService(IManageFileService manageFileService, IUnitOfWork unitOfWork, IAppSettings appSettings)
         {
             _manageFileService = manageFileService;
-            _sQLHelper = sQLHelper;
             _appSettings = appSettings;
             _unitOfWork = unitOfWork;
             ApiLocalUrl = _appSettings.ApiUrlLocal;
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetHomeSliderImages(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<SliderImagDto>>> GetHomeSliderImages(PagingFilterModel PagingFilter)
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[4];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@ApiUrl", ApiLocalUrl);
-            Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetHomeSliderImages", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var DataSpec = new SliderImagesSpecification(PagingFilter);
+            var CountSpec = new SliderImagesSpecification(PagingFilter, false);
+            var Entity = _unitOfWork.Repository<SliderImage>();
+            var TotalCount = await Entity.GetCountAsync(CountSpec);
+            var Data = await Entity.GetAllWithSpecAsync(DataSpec);
+            var Results = Data.Select(fc => new SliderImagDto
+            {
+                Id = fc.Id,
+                Title = fc.Title,
+                CreatedBy = fc.CreatedBy.UserName,
+                IsVisible = fc.IsVisible,
+                Image = Path.Combine(ApiLocalUrl, ImageFiles.SliderImages.ToString(), fc.Image),
+                InsertDate = fc.InsertDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? ""
+            }).ToList();
+            return ApiResponseModel<List<SliderImagDto>>.Success(GenericErrors.GetSuccess, Results, TotalCount);
         }
 
-        public async Task<ApiResponseModel<List<FilterModel>>> GetAllWebPagesFilters(string PageName)
+        public async Task<ApiResponseModel<List<FilterModel>>> GetHomeSliderImageFilters()
         {
-            var Params = new SqlParameter[1];
-            Params[0] = new SqlParameter("@PageName", PageName);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllWebPagesFilter", Params);
-            var Filters = dt.ToGroupedFilters();
+            var Data = await _unitOfWork.Repository<SliderImage>().GetAllAsQueryable().Include(x => x.CreatedBy).Select(x => new SliderImage
+            {
+                InsertUser = x.InsertUser,
+                CreatedBy = new AdminUser { UserName = x.CreatedBy.UserName }
+            }).ToListAsync();
+
+            var FilterRequests = new List<FilterRequest<SliderImage>>
+            {
+                 new()
+                 {
+                    CategoryDisplayName = "بالوصف",
+                    CategoryName = "SearchText",
+                    FilterType = "SearchText",
+                 },
+                new()
+                {
+                    CategoryDisplayName = "المستخدمين",
+                    CategoryName = "Users",
+                    FilterType = "Checkbox",
+                    Source = Data,
+                    ItemIdSelector = x => x.InsertUser,
+                    ItemKeySelector = x => x.CreatedBy?.UserName ?? ""
+                }
+            };
+
+            var Filters = await FilterRequests.GenerateManyAsync();
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 

@@ -70,7 +70,7 @@ export class PhotoComponent implements OnInit {
     this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllPhotos();
-    this.GetWebsiteAdminFilters();
+    this.GetPhotoFilters();
   }
 
   FormInit() {
@@ -167,8 +167,8 @@ export class PhotoComponent implements OnInit {
     this.GetAllPhotos();
   }
 
-  GetWebsiteAdminFilters() {
-    this.websiteService.GetAllWebPagesFilters('Photo').subscribe(data => {
+  GetPhotoFilters() {
+    this.websiteService.GetPhotoFilters().subscribe(data => {
       this.filterList = data.results;
 
     });
@@ -281,7 +281,7 @@ export class PhotoComponent implements OnInit {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllPhotos();
-          this.GetWebsiteAdminFilters();
+          this.GetPhotoFilters();
           this.modalService.dismissAll();
         }
         else
@@ -308,7 +308,7 @@ export class PhotoComponent implements OnInit {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllPhotos();
-        this.GetWebsiteAdminFilters();
+        this.GetPhotoFilters();
         this.modalService.dismissAll();
       }
       else

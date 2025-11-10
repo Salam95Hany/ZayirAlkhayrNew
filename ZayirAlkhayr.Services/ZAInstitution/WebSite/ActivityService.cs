@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data;
-using Microsoft.Data.SqlClient;
+﻿using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Common;
@@ -9,6 +7,11 @@ using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.ActivitySpec;
 using Microsoft.Extensions.Options;
+using System.Globalization;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
+using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.WebSiteHomeSpec;
+using Microsoft.EntityFrameworkCore;
+using ZayirAlkhayr.Entities.Auth;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
@@ -16,30 +19,67 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAppSettings _appSettings;
-        private readonly ISQLHelper _sQLHelper;
         private readonly IManageFileService _manageFileService;
         private readonly string _webRootPath;
         private string ApiLocalUrl;
-        public ActivityService(IUnitOfWork unitOfWork, IAppSettings appSettings, ISQLHelper sQLHelper, IManageFileService manageFileService, IOptions<AppPaths> options)
+        public ActivityService(IUnitOfWork unitOfWork, IAppSettings appSettings, IManageFileService manageFileService, IOptions<AppPaths> options)
         {
             _unitOfWork = unitOfWork;
             _appSettings = appSettings;
-            _sQLHelper = sQLHelper;
             _manageFileService = manageFileService;
             _webRootPath = options.Value.WebRootPath;
             ApiLocalUrl = _appSettings.ApiUrlLocal;
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetAllActivities(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<ActivityDto>>> GetAllActivities(PagingFilterModel PagingFilter)
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[4];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@ApiUrl", ApiLocalUrl);
-            Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllActivities", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var DataSpec = new ActivityDataSpecification(PagingFilter);
+            var CountSpec = new ActivityDataSpecification(PagingFilter, false);
+            var Entity = _unitOfWork.Repository<Activity>();
+            var TotalCount = await Entity.GetCountAsync(CountSpec);
+            var Data = await Entity.GetAllWithSpecAsync(DataSpec);
+            var Results = Data.Select(fc => new ActivityDto
+            {
+                Id = fc.Id,
+                Name = fc.Name,
+                Description = fc.Description,
+                CreatedBy = fc.CreatedBy.UserName,
+                IsVisible = fc.IsVisible,
+                Image = Path.Combine(ApiLocalUrl, ImageFiles.ActivityImages.ToString(), fc.Image),
+                InsertDate = fc.InsertDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? ""
+            }).ToList();
+            return ApiResponseModel<List<ActivityDto>>.Success(GenericErrors.GetSuccess, Results, TotalCount);
+        }
+
+        public async Task<ApiResponseModel<List<FilterModel>>> GetActivityFilters()
+        {
+            var Data = await _unitOfWork.Repository<Activity>().GetAllAsQueryable().Include(x => x.CreatedBy).Select(x => new Activity
+            {
+                InsertUser = x.InsertUser,
+                CreatedBy = new AdminUser { UserName = x.CreatedBy.UserName }
+            }).ToListAsync();
+
+            var FilterRequests = new List<FilterRequest<Activity>>
+            {
+                 new()
+                 {
+                    CategoryDisplayName = "بالاسم",
+                    CategoryName = "SearchText",
+                    FilterType = "SearchText",
+                 },
+                new()
+                {
+                    CategoryDisplayName = "المستخدمين",
+                    CategoryName = "Users",
+                    FilterType = "Checkbox",
+                    Source = Data,
+                    ItemIdSelector = x => x.InsertUser,
+                    ItemKeySelector = x => x.CreatedBy?.UserName ?? ""
+                }
+            };
+
+            var Filters = await FilterRequests.GenerateManyAsync();
+            return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
         public async Task<ApiResponseModel<List<ActivitiesSliderImage>>> GetActivitySliderImagesById(int ActivityId)

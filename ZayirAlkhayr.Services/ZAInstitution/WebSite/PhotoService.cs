@@ -9,6 +9,11 @@ using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.PhotoSpec;
 using Microsoft.Extensions.Options;
+using System.Globalization;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
+using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.WebSiteHomeSpec;
+using Microsoft.EntityFrameworkCore;
+using ZayirAlkhayr.Entities.Auth;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {
@@ -17,29 +22,65 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         private readonly IUnitOfWork _unitOfWork;
         private readonly IManageFileService _manageFileService;
         private readonly IAppSettings _appSettings;
-        private readonly ISQLHelper _sQLHelper;
         private readonly string _webRootPath;
         private string ApiLocalUrl;
-        public PhotoService(IManageFileService manageFileService, ISQLHelper sQLHelper, IUnitOfWork unitOfWork, IAppSettings appSettings, IOptions<AppPaths> options)
+        public PhotoService(IManageFileService manageFileService, IUnitOfWork unitOfWork, IAppSettings appSettings, IOptions<AppPaths> options)
         {
             _manageFileService = manageFileService;
-            _sQLHelper = sQLHelper;
             _unitOfWork = unitOfWork;
             _appSettings = appSettings;
             _webRootPath = options.Value.WebRootPath;
             ApiLocalUrl = appSettings.ApiUrlLocal;
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetAllPhotos(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<PhotoDto>>> GetAllPhotos(PagingFilterModel PagingFilter)
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[4];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@ApiUrl", ApiLocalUrl);
-            Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllPhotos", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var DataSpec = new PhotoSpecification(PagingFilter);
+            var CountSpec = new PhotoSpecification(PagingFilter, false);
+            var Entity = _unitOfWork.Repository<Photo>();
+            var TotalCount = await Entity.GetCountAsync(CountSpec);
+            var Data = await Entity.GetAllWithSpecAsync(DataSpec);
+            var Results = Data.Select(fc => new PhotoDto
+            {
+                Id = fc.Id,
+                Title = fc.Title,
+                Image = Path.Combine(ApiLocalUrl, ImageFiles.PhotoImages.ToString(), fc.Image),
+                Description = fc.Description,
+                CreatedBy = fc.CreatedBy.UserName,
+                InsertDate = fc.InsertDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? ""
+            }).ToList();
+            return ApiResponseModel<List<PhotoDto>>.Success(GenericErrors.GetSuccess, Results, TotalCount);
+        }
+
+        public async Task<ApiResponseModel<List<FilterModel>>> GetPhotoFilters()
+        {
+            var Data = await _unitOfWork.Repository<Photo>().GetAllAsQueryable().Include(x => x.CreatedBy).Select(x => new Photo
+            {
+                InsertUser = x.InsertUser,
+                CreatedBy = new AdminUser { UserName = x.CreatedBy.UserName }
+            }).ToListAsync();
+
+            var FilterRequests = new List<FilterRequest<Photo>>
+            {
+                 new()
+                 {
+                    CategoryDisplayName = "بالعنوان",
+                    CategoryName = "SearchText",
+                    FilterType = "SearchText",
+                 },
+                new()
+                {
+                    CategoryDisplayName = "المستخدمين",
+                    CategoryName = "Users",
+                    FilterType = "Checkbox",
+                    Source = Data,
+                    ItemIdSelector = x => x.InsertUser,
+                    ItemKeySelector = x => x.CreatedBy?.UserName ?? ""
+                }
+            };
+
+            var Filters = await FilterRequests.GenerateManyAsync();
+            return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
         public async Task<ApiResponseModel<List<PhotoDetail>>> GetPhotoDetails(int PhotoId)

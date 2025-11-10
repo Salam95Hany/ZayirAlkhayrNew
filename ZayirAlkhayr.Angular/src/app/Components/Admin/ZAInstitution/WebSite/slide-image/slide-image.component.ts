@@ -61,7 +61,7 @@ export class SlideImageComponent implements OnInit {
     this.UserId = this.authService.userId;
     this.FormInit();
     this.GetHomeSliderImages();
-    this.GetWebsiteAdminFilters();
+    this.GetHomeSliderImageFilters();
   }
 
   FormInit() {
@@ -143,14 +143,13 @@ export class SlideImageComponent implements OnInit {
     this.GetHomeSliderImages();
   }
 
-  GetWebsiteAdminFilters() {
-    this.websiteService.GetAllWebPagesFilters('Home').subscribe(data => {
+  GetHomeSliderImageFilters() {
+    this.websiteService.GetHomeSliderImageFilters().subscribe(data => {
       this.filterList = data.results;
     });
   }
 
   filterChecked(filterItems: FilterModel[]) {
-    debugger;
     this.pagingFilterModel.filterList = filterItems;
     this.pagingFilterModel.currentPage = 1;
     this.GetHomeSliderImages();
@@ -207,7 +206,7 @@ export class SlideImageComponent implements OnInit {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetHomeSliderImages();
-          this.GetWebsiteAdminFilters();
+          this.GetHomeSliderImageFilters();
           this.modalService.dismissAll();
         }
         else
@@ -234,7 +233,7 @@ export class SlideImageComponent implements OnInit {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetHomeSliderImages();
-        this.GetWebsiteAdminFilters();
+        this.GetHomeSliderImageFilters();
         this.modalService.dismissAll();
       }
       else

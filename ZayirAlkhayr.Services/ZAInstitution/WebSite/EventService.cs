@@ -1,11 +1,13 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Globalization;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.EventSpec;
+using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.WebSiteHomeSpec;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
@@ -17,14 +19,12 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IManageFileService _manageFileService;
-        private readonly ISQLHelper _sQLHelper;
         private readonly IAppSettings _appSettings;
         private readonly string _webRootPath;
         private string ApiLocalUrl;
-        public EventService(ZADbContext Context, IManageFileService manageFileService, ISQLHelper sQLHelper, IAppSettings appSettings, IOptions<AppPaths> options, IUnitOfWork unitOfWork)
+        public EventService(ZADbContext Context, IManageFileService manageFileService, IAppSettings appSettings, IOptions<AppPaths> options, IUnitOfWork unitOfWork)
         {
             _manageFileService = manageFileService;
-            _sQLHelper = sQLHelper;
             _appSettings = appSettings;
             _unitOfWork = unitOfWork;
             _webRootPath = options.Value.WebRootPath;
@@ -71,16 +71,59 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetAllEvents(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<EventDto>>> GetAllEvents(PagingFilterModel PagingFilter)
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[4];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@ApiUrl", ApiLocalUrl);
-            Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllEvents", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var DataSpec = new EventSpecification(PagingFilter);
+            var CountSpec = new EventSpecification(PagingFilter, false);
+            var Entity = _unitOfWork.Repository<Event>();
+            var TotalCount = await Entity.GetCountAsync(CountSpec);
+            var Data = await Entity.GetAllWithSpecAsync(DataSpec);
+            var Results = Data.Select(fc => new EventDto
+            {
+                Id = fc.Id,
+                Title = fc.Title,
+                Description = fc.Description,
+                FromDate = fc.FromDate,
+                ToDate = fc.ToDate,
+                Month = fc.Month,
+                FromDateStr = fc.FromDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? "",
+                ToDateStr = fc.ToDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? "",
+                CreatedBy = fc.CreatedBy.UserName,
+                IsVisible = fc.IsVisible,
+                InsertDate = fc.InsertDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? ""
+            }).ToList();
+            return ApiResponseModel<List<EventDto>>.Success(GenericErrors.GetSuccess, Results, TotalCount);
+        }
+
+        public async Task<ApiResponseModel<List<FilterModel>>> GetEventFilters()
+        {
+            var Data = await _unitOfWork.Repository<Event>().GetAllAsQueryable().Include(x => x.CreatedBy).Select(x => new Event
+            {
+                InsertUser = x.InsertUser,
+                CreatedBy = new AdminUser { UserName = x.CreatedBy.UserName }
+            }).ToListAsync();
+
+            var FilterRequests = new List<FilterRequest<Event>>
+            {
+                 new()
+                 {
+                    CategoryDisplayName = "بالعنوان",
+                    CategoryName = "SearchText",
+                    FilterType = "SearchText",
+                 },
+                new()
+                {
+                    CategoryDisplayName = "المستخدمين",
+                    CategoryName = "Users",
+                    FilterType = "Checkbox",
+                    Source = Data,
+                    ItemIdSelector = x => x.InsertUser,
+                    ItemKeySelector = x => x.CreatedBy?.UserName ?? ""
+                }
+            };
+
+            var Filters = await FilterRequests.GenerateManyAsync();
+            return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
         public async Task<ApiResponseModel<List<EventSliderImage>>> GetEventSliderImagesById(int EventId)

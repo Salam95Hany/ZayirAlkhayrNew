@@ -70,7 +70,7 @@ export class ActivityComponent implements OnInit {
     this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllActivities();
-    this.GetWebsiteAdminFilters();
+    this.GetActivityFilters();
   }
 
   FormInit() {
@@ -167,8 +167,8 @@ export class ActivityComponent implements OnInit {
     this.GetAllActivities();
   }
 
-  GetWebsiteAdminFilters() {
-    this.websiteService.GetAllWebPagesFilters('Activity').subscribe(data => {
+  GetActivityFilters() {
+    this.websiteService.GetActivityFilters().subscribe(data => {
       this.filterList = data.results;
     });
   }
@@ -280,7 +280,7 @@ export class ActivityComponent implements OnInit {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllActivities();
-          this.GetWebsiteAdminFilters();
+          this.GetActivityFilters();
           this.modalService.dismissAll();
         }
         else
@@ -307,7 +307,7 @@ export class ActivityComponent implements OnInit {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllActivities();
-        this.GetWebsiteAdminFilters();
+        this.GetActivityFilters();
         this.modalService.dismissAll();
       }
       else
@@ -317,6 +317,7 @@ export class ActivityComponent implements OnInit {
   }
 
   ApplyFilesSorting() {
+    debugger;
     let checked = this.multiFileURL.every(i => i.id);
     if (!checked) {
       this.toaster.warning('برجاء اضافة الصور الجديدة اولا');

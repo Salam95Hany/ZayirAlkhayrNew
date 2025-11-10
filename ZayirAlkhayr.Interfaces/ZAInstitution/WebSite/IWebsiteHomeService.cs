@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
 using ZayirAlkhayr.Entities.Models;
 
 
@@ -12,8 +13,8 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.WebSite
 {
     public interface IWebsiteHomeService
     {
-        Task<ApiResponseModel<DataTable>> GetHomeSliderImages(PagingFilterModel PagingFilter);
-        Task<ApiResponseModel<List<FilterModel>>> GetAllWebPagesFilters(string PageName);
+        Task<ApiResponseModel<List<SliderImagDto>>> GetHomeSliderImages(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<List<FilterModel>>> GetHomeSliderImageFilters();
         Task<List<PagesAutoSearch>> GetPagesAutoSearch(string SearchText);
         Task<ApiResponseModel<string>> AddNewSliderImage(SliderImage Model);
         Task<ApiResponseModel<string>> UpdateSliderImage(SliderImage Model);

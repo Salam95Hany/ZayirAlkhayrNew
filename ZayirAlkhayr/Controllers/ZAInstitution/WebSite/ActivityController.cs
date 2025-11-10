@@ -2,6 +2,7 @@
 using System.Data;
 using System.Diagnostics;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 
@@ -19,9 +20,16 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
         }
 
         [HttpPost("GetAllActivities")]
-        public async Task<ApiResponseModel<DataTable>> GetAllActivities(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<ActivityDto>>> GetAllActivities(PagingFilterModel PagingFilter)
         {
             var results = await _activityService.GetAllActivities(PagingFilter);
+            return results;
+        }
+
+        [HttpGet("GetActivityFilters")]
+        public async Task<ApiResponseModel<List<FilterModel>>> GetActivityFilters()
+        {
+            var results = await _activityService.GetActivityFilters();
             return results;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 
@@ -17,9 +18,16 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
         }
 
         [HttpPost("GetAllPhotos")]
-        public async Task<ApiResponseModel<DataTable>> GetAllPhotos(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<PhotoDto>>> GetAllPhotos(PagingFilterModel PagingFilter)
         {
             var results = await _photoService.GetAllPhotos(PagingFilter);
+            return results;
+        }
+
+        [HttpGet("GetPhotoFilters")]
+        public async Task<ApiResponseModel<List<FilterModel>>> GetPhotoFilters()
+        {
+            var results = await _photoService.GetPhotoFilters();
             return results;
         }
 

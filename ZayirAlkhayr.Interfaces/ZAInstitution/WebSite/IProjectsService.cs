@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
 using ZayirAlkhayr.Entities.Models;
 
 namespace ZayirAlkhayr.Interfaces.ZAInstitution.WebSite
@@ -12,7 +13,8 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.WebSite
     public interface IProjectsService
     {
         Task<ApiResponseModel<Project>> GetWebSiteProjectsById(int ProjectId);
-        Task<ApiResponseModel<DataTable>> GetAllProjects(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<List<ProjectDto>>> GetAllProjects(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<List<FilterModel>>> GetProjectFilters();
         Task<ApiResponseModel<List<ProjectDetail>>> GetProjectsSliderImagesById(int ProjectId);
         Task<ApiResponseModel<string>> AddNewProjects(Project Model);
         Task<ApiResponseModel<string>> UpdateProjects(Project Model);
