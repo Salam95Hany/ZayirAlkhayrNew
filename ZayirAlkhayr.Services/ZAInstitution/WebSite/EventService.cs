@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
-using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.WebSite;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.EventSpec;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.WebSiteHomeSpec;

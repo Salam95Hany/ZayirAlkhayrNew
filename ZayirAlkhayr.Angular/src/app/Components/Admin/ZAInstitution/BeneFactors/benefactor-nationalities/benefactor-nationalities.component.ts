@@ -27,13 +27,7 @@ import { NgxLoadingModule } from "ngx-loading";
 })
 export class BenefactorNationalitiesComponent implements OnInit {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'جنسيات المتبرعين'];
-  filterList: FilterModel[] = [
-    {
-      categoryDisplayName: 'بالاسم',
-      categoryName: 'SearchText',
-      filterType: 'SearchText'
-    }
-  ];
+  filterList: FilterModel[] = [];
   ItemForm: FormGroup;
   showLoader: boolean = false;
   isFilter = true;
@@ -62,6 +56,7 @@ export class BenefactorNationalitiesComponent implements OnInit {
     this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllBeneFactorNationalities();
+    this.GetAllBeneFactorNationalityFilters();
   }
 
   FormInit() {
@@ -120,6 +115,12 @@ export class BenefactorNationalitiesComponent implements OnInit {
     });
   }
 
+  GetAllBeneFactorNationalityFilters() {
+    this.benefactorService.GetAllBeneFactorNationalityFilters().subscribe(data => {
+      this.filterList = data.results;
+    });
+  }
+
   pageChanged(obj: any) {
     this.pagingFilterModel.currentPage = obj.page;
     this.GetAllBeneFactorNationalities();
@@ -154,17 +155,19 @@ export class BenefactorNationalitiesComponent implements OnInit {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllBeneFactorNationalities();
+          this.GetAllBeneFactorNationalityFilters();
           this.modalService.dismissAll();
         }
         else
           this.toaster.error(data.message);
         this.showLoader = false;
       });
-    }else{
-        this.benefactorService.UpdateBeneFactorNationality(this.ItemForm.value).subscribe(data => {
+    } else {
+      this.benefactorService.UpdateBeneFactorNationality(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllBeneFactorNationalities();
+          this.GetAllBeneFactorNationalityFilters();
           this.modalService.dismissAll();
         }
         else
@@ -174,13 +177,14 @@ export class BenefactorNationalitiesComponent implements OnInit {
     }
   }
 
-    DeleteItem() {
+  DeleteItem() {
     this.showLoader = true;
     this.benefactorService.DeleteBeneFactorNationality(this.NationalityId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
-          this.GetAllBeneFactorNationalities();
-          this.modalService.dismissAll();
+        this.GetAllBeneFactorNationalities();
+        this.GetAllBeneFactorNationalityFilters();
+        this.modalService.dismissAll();
       }
       else
         this.toaster.error(data.message);

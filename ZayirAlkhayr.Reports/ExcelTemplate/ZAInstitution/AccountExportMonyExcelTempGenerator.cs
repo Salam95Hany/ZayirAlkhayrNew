@@ -6,7 +6,7 @@ using ZayirAlkhayr.Reports.Model;
 
 namespace ZayirAlkhayr.Reports.ExcelTemplate.ZAInstitution
 {
-    public class AccountExportMonyExcelTempGenerator: IReportGenerator
+    public class AccountExportMonyExcelTempGenerator : IReportGenerator
     {
         private readonly IExportManagerService _exportManagerService;
         private readonly IAccountsMonyService _accountsMonyService;
@@ -20,7 +20,7 @@ namespace ZayirAlkhayr.Reports.ExcelTemplate.ZAInstitution
 
         public async Task<string> Generate(SearchReportModel Model)
         {
-            var DT = await _accountsMonyService.GetExportAccountsExportMonyData(Model);
+            var DT = await _accountsMonyService.GetExportFinancialTransactionData(Model, "Income");
             Model.Headers = DT.Results.Tables[1].AsEnumerable().Select(i => new PDFHeaderSelected
             {
                 NameEn = i.Field<string>("DisplayValue"),

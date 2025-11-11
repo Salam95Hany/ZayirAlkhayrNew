@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZayirAlkhayr.Entities.Contracts.DTOs.Settings
+namespace ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.Settings
 {
     public class UserAppModel
     {

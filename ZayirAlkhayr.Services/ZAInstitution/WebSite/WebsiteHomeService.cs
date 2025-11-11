@@ -6,10 +6,10 @@ using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.WebSiteHomeSpec;
-using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using ZayirAlkhayr.Entities.Auth;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.WebSite;
 
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite

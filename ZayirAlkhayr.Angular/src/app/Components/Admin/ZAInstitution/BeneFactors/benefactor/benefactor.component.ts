@@ -207,8 +207,8 @@ export class BenefactorComponent {
     this.showLoader = true;
     this.benefactorService.GetAllBeneFactorData(this.pagingFilterModel).subscribe(data => {
       this.showLoader = false;
-      this.pagedResponseModel.results = data.results.table;
-      this.BeneFactorHeaders = data.results.table1;
+      this.pagedResponseModel.results = data.results.data;
+      this.BeneFactorHeaders = data.results.header;
       this.pagedResponseModel.totalCount = data.totalCount;
     });
   }
@@ -226,13 +226,12 @@ export class BenefactorComponent {
   }
 
   GetAllBeneFactorFilters() {
-    this.benefactorService.GetAllBeneFactorFilters(this.pagingFilterModel).subscribe(data => {
+    this.benefactorService.GetAllBeneFactorFilters().subscribe(data => {
       this.filterList = data.results;
     });
   }
 
   filterChecked(filterList: FilterModel[]) {
-    debugger;
     this.pagingFilterModel.filterList = filterList;
     this.SearchReport.filterItems = filterList;
     this.pagingFilterModel.currentPage = 1;

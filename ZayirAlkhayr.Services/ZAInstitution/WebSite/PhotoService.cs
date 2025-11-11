@@ -10,10 +10,10 @@ using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.PhotoSpec;
 using Microsoft.Extensions.Options;
 using System.Globalization;
-using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.WebSite.WebSiteHomeSpec;
 using Microsoft.EntityFrameworkCore;
 using ZayirAlkhayr.Entities.Auth;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.WebSite;
 
 namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
 {

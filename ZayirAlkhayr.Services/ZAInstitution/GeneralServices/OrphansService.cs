@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
-using ZayirAlkhayr.Entities.Contracts.DTOs;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Entities.Contracts.Requests;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.GeneralServices;

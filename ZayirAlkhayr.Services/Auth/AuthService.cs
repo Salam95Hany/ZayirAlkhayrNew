@@ -4,7 +4,7 @@ using System.Data;
 using System.Globalization;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
-using ZayirAlkhayr.Entities.Contracts.DTOs.Settings;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.Settings;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Services.Common;
@@ -31,7 +31,7 @@ namespace ZayirAlkhayr.Services.Auth
         public async Task<ApiResponseModel<DataTable>> GetAllUsers()
         {
             var Params = new SqlParameter[0];
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllUsersData_Test", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllUsersData", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.SuccessLogin, dt);
         }
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
-using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.WebSite;
 using ZayirAlkhayr.Entities.Models;
 
 

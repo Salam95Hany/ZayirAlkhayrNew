@@ -17,8 +17,7 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     }
 
     #region ZAInstitution
-    public virtual DbSet<AccountsExportMony> AccountsExportMony { get; set; }
-    public virtual DbSet<AccountsImportMony> AccountsImportMony { get; set; }
+    public virtual DbSet<FinancialTransaction> FinancialTransactions { get; set; }
     public virtual DbSet<ActivitiesSliderImage> ActivitiesSliderImage { get; set; }
     public virtual DbSet<Activity> Activities { get; set; }
     public virtual DbSet<BeneFactor> BeneFactors { get; set; }

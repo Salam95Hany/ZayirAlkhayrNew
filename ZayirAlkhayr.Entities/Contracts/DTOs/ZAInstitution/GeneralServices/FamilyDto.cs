@@ -4,14 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ZayirAlkhayr.Entities.Contracts.DTOs
+namespace ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.GeneralServices
 {
-    public class FamilyNeedTypeDto
+    public class FamilyDto
     {
         public int Id { get; set; }
-        public int CategoryId { get; set; }
         public string Name { get; set; }
-        public string CategoryName { get; set; }
         public string CreatedBy { get; set; }
         public string UserId { get; set; }
         public DateTime? InsertDate { get; set; }

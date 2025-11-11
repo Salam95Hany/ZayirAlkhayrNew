@@ -16,8 +16,8 @@ export class BenefactorService {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'BeneFactor/GetAllBeneFactorData', PagingFilter);
   }
 
-  GetAllBeneFactorFilters(PagingFilter: PagingFilterModel) {
-    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'BeneFactor/GetAllBeneFactorFilters', PagingFilter);
+  GetAllBeneFactorFilters() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'BeneFactor/GetAllBeneFactorFilters');
   }
 
   GetAllBeneFactorParentById(BeneFactorId: number) {
@@ -26,6 +26,10 @@ export class BenefactorService {
 
   GetAllBeneFactorTypes(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'BeneFactor/GetAllBeneFactorTypes', PagingFilter);
+  }
+
+  GetAllBeneFactorTypeFilters() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'BeneFactor/GetAllBeneFactorTypeFilters');
   }
 
   GetAllBeneFactorDetails(PagingFilter: PagingFilterModel, BeneFactorId: number) {
@@ -54,6 +58,10 @@ export class BenefactorService {
 
   GetAllBeneFactorNationalities(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'BeneFactor/GetAllBeneFactorNationalities', PagingFilter);
+  }
+
+  GetAllBeneFactorNationalityFilters() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'BeneFactor/GetAllBeneFactorNationalityFilters');
   }
 
   AddNewBeneFactor(Model: any) {

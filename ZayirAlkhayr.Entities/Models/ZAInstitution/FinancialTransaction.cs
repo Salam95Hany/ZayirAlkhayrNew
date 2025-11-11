@@ -7,8 +7,8 @@ using ZayirAlkhayr.Entities.Common;
 
 namespace ZayirAlkhayr.Entities.Models;
 
-[Table(name: "AccountsImportMony", Schema = "admin")]
-public partial class AccountsImportMony : AuditableEntity
+[Table(name: "FinancialTransactions", Schema = "admin")]
+public partial class FinancialTransaction : AuditableEntity
 {
     public int Id { get; set; }
 
@@ -21,5 +21,7 @@ public partial class AccountsImportMony : AuditableEntity
     public int BeneFactorId { get; set; }
 
     public int BeneFactorTypeId { get; set; }
+
+    public string TransactionType { get; set; }
 
 }

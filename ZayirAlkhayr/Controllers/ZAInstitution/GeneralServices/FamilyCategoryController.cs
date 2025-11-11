@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
-using ZayirAlkhayr.Entities.Contracts.DTOs;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.ZAInstitution.GeneralServices;
 

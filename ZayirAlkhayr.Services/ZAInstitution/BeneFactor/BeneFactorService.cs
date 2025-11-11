@@ -1,17 +1,12 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Entities.Models;
-using ZayirAlkhayr.Entities.Reports;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
@@ -38,6 +33,14 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
             ApiLocalUrl = _appSettings.ApiUrlLocal;
         }
 
+        public async Task<ApiResponseModel<DataTable>> GetBeneFactorDetailsStatistics(int BeneFactorId)
+        {
+            var Params = new SqlParameter[1];
+            Params[0] = new SqlParameter("@BeneFactorId", BeneFactorId);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetBeneFactorDetailsStatistics", Params);
+            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+        }
+
         public async Task<ApiResponseModel<BeneFactorLoginModel>> BeneFactorLogin(int Code, string BeneFactorName)
         {
             var Response = new BeneFactorLoginModel();
@@ -59,43 +62,138 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
 
         }
 
-        public async Task<ApiResponseModel<DataSet>> GetAllBeneFactorData(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<BeneFactorDto>> GetAllBeneFactorData(PagingFilterModel PagingFilter)
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[5];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@ApiUrl", ApiLocalUrl);
-            Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            Params[4] = new SqlParameter("@IsFilter", false);
-            var dt = await _sQLHelper.ExecuteDatasetAsync("web.SP_GetAllBeneFactorsDataWithFilters", Params);
-            var TotalCount = dt.Tables[0].Rows.Count > 0 && dt.Tables[0].Columns.Contains("TotalCount") ? int.Parse(dt.Tables[0].Rows[0]["TotalCount"].ToString()) : 0;
-            return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt, TotalCount);
+            var DataSpec = new BeneFactorDataSpecification(PagingFilter);
+            var CountSpec = new BeneFactorDataSpecification(PagingFilter, false);
+            var Entity = _unitOfWork.Repository<ZayirAlkhayr.Entities.Models.BeneFactor>();
+            var TotalCount = await Entity.GetCountAsync(CountSpec);
+            var Data = await Entity.GetAllWithSpecAsync(DataSpec);
+            var Results = new BeneFactorDto
+            {
+                Data = Data.Select(i => new BeneFactorData
+                {
+                    Id = i.Id,
+                    NationalityId = i.NationalityId,
+                    UserId = i.InsertUser,
+                    Address = i.Address,
+                    Code = i.Code,
+                    Description = i.Description,
+                    FaceBook = i.FaceBook,
+                    FullName = i.FullName,
+                    Nationality = i.Nationality.Name,
+                    Phone = i.Phone,
+                    Phone2 = i.Phone2,
+                    WelcomeMessage = i.WelcomeMessage,
+                    Image = string.IsNullOrEmpty(i.Image) ? null : Path.Combine(ApiLocalUrl, ImageFiles.BeneFactorImages.ToString(), i?.Image),
+                    InsertDate = i.InsertDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? "",
+                    CreatedBy = i.CreatedBy?.UserName
+                }).ToList(),
+
+                Header = new List<PDFHeader>
+                {
+                    new PDFHeader{DisplayName = "Code",DisplayValue = "الكود",ValueType = "Text"},
+                    new PDFHeader{DisplayName = "FullName",DisplayValue = "الاسم",ValueType = "Text"},
+                    new PDFHeader{DisplayName = "Description",DisplayValue = "الوصف",ValueType = "Text"},
+                    new PDFHeader{DisplayName = "Phone",DisplayValue = "رقم التلفون",ValueType = "Text"},
+                    new PDFHeader{DisplayName = "Phone2",DisplayValue = "رقم التلفون 2",ValueType = "Text"},
+                    new PDFHeader{DisplayName = "Address",DisplayValue = "العنوان",ValueType = "TextText"},
+                    new PDFHeader{DisplayName = "Nationality",DisplayValue = "الجنسية",ValueType = ""},
+                    new PDFHeader{DisplayName = "FaceBook",DisplayValue = "صفحة الفيس بوك",ValueType = "Text"}
+                }
+            };
+            return ApiResponseModel<BeneFactorDto>.Success(GenericErrors.GetSuccess, Results, TotalCount);
         }
 
-        public async Task<ApiResponseModel<List<FilterModel>>> GetAllBeneFactorFilters(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<FilterModel>>> GetAllBeneFactorFilters()
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[5];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@ApiUrl", ApiLocalUrl);
-            Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            Params[4] = new SqlParameter("@IsFilter", true);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllBeneFactorsDataWithFilters", Params);
-            var Filters = dt.ToGroupedFilters();
+            var Data = await _unitOfWork.Repository<ZayirAlkhayr.Entities.Models.BeneFactor>().GetAllAsQueryable().Include(x => x.CreatedBy).Include(x => x.Nationality).Select(x => new ZayirAlkhayr.Entities.Models.BeneFactor
+            {
+                InsertUser = x.InsertUser,
+                NationalityId = x.NationalityId,
+                Nationality = new BeneFactorNationality { Name = x.Nationality.Name },
+                CreatedBy = new AdminUser { UserName = x.CreatedBy.UserName }
+            }).ToListAsync();
+
+            var FilterRequests = new List<FilterRequest<ZayirAlkhayr.Entities.Models.BeneFactor>>
+            {
+                 new()
+                 {
+                    CategoryDisplayName = "بالاسم",
+                    CategoryName = "SearchText",
+                    FilterType = "SearchText",
+                 },
+                new()
+                {
+                    CategoryDisplayName = "المستخدمين",
+                    CategoryName = "Users",
+                    FilterType = "Checkbox",
+                    Source = Data,
+                    ItemIdSelector = x => x.InsertUser,
+                    ItemKeySelector = x => x.CreatedBy?.UserName ?? ""
+                },
+                 new()
+                {
+                    CategoryDisplayName = "الجنسية",
+                    CategoryName = "Nationalities",
+                    FilterType = "Checkbox",
+                    Source = Data,
+                    ItemIdSelector = x => x.NationalityId.ToString(),
+                    ItemKeySelector = x => x.Nationality?.Name ?? ""
+                }
+            };
+
+            var Filters = await FilterRequests.GenerateManyAsync();
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetAllBeneFactorTypes(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<BeneFactorTypeDto>>> GetAllBeneFactorTypes(PagingFilterModel PagingFilter)
         {
-            var SearchText = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "SearchText");
-            var Params = new SqlParameter[3];
-            Params[0] = new SqlParameter("@SearchText", SearchText?.ItemId);
-            Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllBeneFactorTypes", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var DataSpec = new BeneFactorTypeSpecification(PagingFilter);
+            var CountSpec = new BeneFactorTypeSpecification(PagingFilter, false);
+            var Entity = _unitOfWork.Repository<BeneFactorType>();
+            var TotalCount = await Entity.GetCountAsync(CountSpec);
+            var Data = await Entity.GetAllWithSpecAsync(DataSpec);
+            var Results = Data.Select(i => new BeneFactorTypeDto
+            {
+                Id = i.Id,
+                Name = i.Name,
+                InsertDate = i.InsertDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? "",
+                CreatedBy = i.CreatedBy.UserName
+            }).ToList();
+
+            return ApiResponseModel<List<BeneFactorTypeDto>>.Success(GenericErrors.GetSuccess, Results, TotalCount);
+        }
+
+        public async Task<ApiResponseModel<List<FilterModel>>> GetAllBeneFactorTypeFilters()
+        {
+            var Data = await _unitOfWork.Repository<BeneFactorType>().GetAllAsQueryable().Include(x => x.CreatedBy).Select(x => new BeneFactorType
+            {
+                InsertUser = x.InsertUser,
+                CreatedBy = new AdminUser { UserName = x.CreatedBy.UserName }
+            }).ToListAsync();
+
+            var FilterRequests = new List<FilterRequest<BeneFactorType>>
+            {
+                 new()
+                 {
+                    CategoryDisplayName = "بالاسم",
+                    CategoryName = "SearchText",
+                    FilterType = "SearchText",
+                 },
+                new()
+                {
+                    CategoryDisplayName = "المستخدمين",
+                    CategoryName = "Users",
+                    FilterType = "Checkbox",
+                    Source = Data,
+                    ItemIdSelector = x => x.InsertUser,
+                    ItemKeySelector = x => x.CreatedBy?.UserName ?? ""
+                }
+            };
+
+            var Filters = await FilterRequests.GenerateManyAsync();
+            return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
         public async Task<ApiResponseModel<List<BeneFactorDetail>>> GetAllBeneFactorParentById(int BeneFactorId)
@@ -112,65 +210,142 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
             return ApiResponseModel<List<BeneFactorDetail>>.Success(GenericErrors.GetSuccess, Results);
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetAllBeneFactorDetails(PagingFilterModel PagingFilter, int BeneFactorId)
+        public async Task<ApiResponseModel<List<BeneFactorDetailDto>>> GetAllBeneFactorDetails(PagingFilterModel PagingFilter, int BeneFactorId)
         {
-            var Params = new SqlParameter[4];
-            Params[0] = new SqlParameter("@ApiUrl", ApiLocalUrl);
-            Params[1] = new SqlParameter("@BeneFactorId", BeneFactorId);
-            Params[2] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[3] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllBeneFactorDetails", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var DataSpec = new BeneFactorDetailDataSpecification(BeneFactorId, PagingFilter);
+            var CountSpec = new BeneFactorDetailDataSpecification(BeneFactorId, PagingFilter, false);
+            var Entity = _unitOfWork.Repository<BeneFactorDetail>();
+            var TotalCount = await Entity.GetCountAsync(CountSpec);
+            var Data = await Entity.GetAllWithSpecAsync(DataSpec);
+            var Results = Data.Select(i => new BeneFactorDetailDto
+            {
+                Id = i.Id,
+                Code = i.BeneFactor.Code,
+                BeneFactorTypeId = i.BeneFactorTypeId,
+                Name = i.BeneFactorType.Name,
+                TotalValue = i.TotalValue,
+                Details = i.Details,
+                InsertUser = i.CreatedBy.UserName,
+                Image = string.IsNullOrEmpty(i.Image) ? null : Path.Combine(ApiLocalUrl, ImageFiles.BeneFactorDetailsImages.ToString(), i.Image),
+                InsertDate = i.InsertDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? "",
+                PaymentDate = i.PaymentDate.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? ""
+            }).ToList();
+
+            return ApiResponseModel<List<BeneFactorDetailDto>>.Success(GenericErrors.GetSuccess, Results, TotalCount);
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetAllBeneFactorCashDetails(int BeneFactorId, int ParentId)
+        public async Task<ApiResponseModel<List<BeneFactorDetailDto>>> GetAllBeneFactorCashDetails(int BeneFactorId, int ParentId)
         {
-            var Params = new SqlParameter[3];
-            Params[0] = new SqlParameter("@ApiUrl", ApiLocalUrl);
-            Params[1] = new SqlParameter("@BeneFactorId", BeneFactorId);
-            Params[2] = new SqlParameter("@ParentId", ParentId);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllBeneFactorCashDetails", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var DataSpec = new BeneFactorDetailDataSpecification(BeneFactorId, null, true, ParentId);
+            var CountSpec = new BeneFactorDetailDataSpecification(BeneFactorId, null, false, ParentId);
+            var Entity = _unitOfWork.Repository<BeneFactorDetail>();
+            var TotalCount = await Entity.GetCountAsync(CountSpec);
+            var Data = await Entity.GetAllWithSpecAsync(DataSpec);
+            var Results = Data.Select(i => new BeneFactorDetailDto
+            {
+                Id = i.Id,
+                Code = i.BeneFactor.Code,
+                BeneFactorTypeId = i.BeneFactorTypeId,
+                Name = i.BeneFactorType.Name,
+                TotalValue = i.TotalValue,
+                Details = i.Details,
+                InsertUser = i.CreatedBy.UserName,
+                Image = string.IsNullOrEmpty(i.Image) ? null : Path.Combine(ApiLocalUrl, ImageFiles.BeneFactorDetailsImages.ToString(), i.Image),
+                InsertDate = i.InsertDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? "",
+                PaymentDate = i.PaymentDate.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? ""
+            }).ToList();
+
+            return ApiResponseModel<List<BeneFactorDetailDto>>.Success(GenericErrors.GetSuccess, Results, TotalCount);
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetBeneFactorDetailsByBeneFactorId(int BeneFactorId, int BeneFactorTypeId)
+        public async Task<ApiResponseModel<List<BeneFactorDetailDto>>> GetBeneFactorDetailsByBeneFactorId(int BeneFactorId, int BeneFactorTypeId)
         {
-            var Params = new SqlParameter[3];
-            Params[0] = new SqlParameter("@ApiUrl", ApiLocalUrl);
-            Params[1] = new SqlParameter("@BeneFactorId", BeneFactorId);
-            Params[2] = new SqlParameter("@BeneFactorTypeId", BeneFactorTypeId);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetBeneFactorDetailsByBeneFactorId", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var DataSpec = new BeneFactorDetailByBeneFactorIdSpecification(BeneFactorId, BeneFactorTypeId);
+            var Entity = _unitOfWork.Repository<BeneFactorDetail>();
+            var Data = await Entity.GetAllWithSpecAsync(DataSpec);
+            var Results = Data.Select(i => new BeneFactorDetailDto
+            {
+                Id = i.Id,
+                BeneFactorTypeId = i.BeneFactorTypeId,
+                Name = i.BeneFactorType.Name,
+                TotalValue = i.TotalValue ?? 0,
+                Details = i.Details ?? "---",
+                IsActive = i.IsActive ?? false,
+                Image = string.IsNullOrEmpty(i.Image) ? null : Path.Combine(ApiLocalUrl, ImageFiles.BeneFactorDetailsImages.ToString(), i.Image),
+                PaymentDate = i.PaymentDate.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? ""
+            }).ToList();
+
+            return ApiResponseModel<List<BeneFactorDetailDto>>.Success(GenericErrors.GetSuccess, Results);
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetBeneFactorDetailsStatistics(int BeneFactorId)
+        public async Task<ApiResponseModel<List<BeneFactorNoteDto>>> GetBeneFactorNotes(PagingFilterModel PagingFilter)
         {
-            var Params = new SqlParameter[1];
-            Params[0] = new SqlParameter("@BeneFactorId", BeneFactorId);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetBeneFactorDetailsStatistics", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var DataSpec = new BeneFactorNoteSpecification(PagingFilter);
+            var CountSpec = new BeneFactorNoteSpecification(PagingFilter, false);
+            var Entity = _unitOfWork.Repository<BeneFactorNote>();
+            var TotalCount = await Entity.GetCountAsync(CountSpec);
+            var Data = await Entity.GetAllWithSpecAsync(DataSpec);
+            var Results = Data.Select(i => new BeneFactorNoteDto
+            {
+                Code = i.BeneFactor.Code,
+                FullName = i.BeneFactor.FullName,
+                Nationality = i.BeneFactor.Nationality.Name,
+                Note = i.Note,
+                Phone = i.BeneFactor.Phone,
+                Suggestion = i.Suggestion,
+                InsertDate = i.InsertDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? "",
+            }).ToList();
+
+            return ApiResponseModel<List<BeneFactorNoteDto>>.Success(GenericErrors.GetSuccess, Results, TotalCount);
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetBeneFactorNotes(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<BeneFactorNationalityDto>>> GetAllBeneFactorNationalities(PagingFilterModel PagingFilter)
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[3];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetBeneFactorNotes", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var DataSpec = new BeneFactorNationalitySpecification(PagingFilter);
+            var CountSpec = new BeneFactorNationalitySpecification(PagingFilter, false);
+            var Entity = _unitOfWork.Repository<BeneFactorNationality>();
+            var TotalCount = await Entity.GetCountAsync(CountSpec);
+            var Data = await Entity.GetAllWithSpecAsync(DataSpec);
+            var Results = Data.Select(i => new BeneFactorNationalityDto
+            {
+                Id = i.Id,
+                Name = i.Name,
+                CreatedBy = i.CreatedBy.UserName,
+                InsertDate = i.InsertDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? "",
+            }).ToList();
+
+            return ApiResponseModel<List<BeneFactorNationalityDto>>.Success(GenericErrors.GetSuccess, Results, TotalCount);
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetAllBeneFactorNationalities(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<FilterModel>>> GetAllBeneFactorNationalityFilters()
         {
-            var SearchText = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "SearchText");
-            var Params = new SqlParameter[3];
-            Params[0] = new SqlParameter("@SearchText", SearchText?.ItemId);
-            Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllBeneFactorNationalities", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var Data = await _unitOfWork.Repository<BeneFactorNationality>().GetAllAsQueryable().Include(x => x.CreatedBy).Select(x => new BeneFactorNationality
+            {
+                InsertUser = x.InsertUser,
+                CreatedBy = new AdminUser { UserName = x.CreatedBy.UserName }
+            }).ToListAsync();
+
+            var FilterRequests = new List<FilterRequest<BeneFactorNationality>>
+            {
+                 new()
+                 {
+                    CategoryDisplayName = "بالاسم",
+                    CategoryName = "SearchText",
+                    FilterType = "SearchText",
+                 },
+                new()
+                {
+                    CategoryDisplayName = "المستخدمين",
+                    CategoryName = "Users",
+                    FilterType = "Checkbox",
+                    Source = Data,
+                    ItemIdSelector = x => x.InsertUser,
+                    ItemKeySelector = x => x.CreatedBy?.UserName ?? ""
+                }
+            };
+
+            var Filters = await FilterRequests.GenerateManyAsync();
+            return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
         public async Task<ApiResponseModel<List<BeneFactorType>>> GetBeneFactorTypeByIds(List<int> Ids)

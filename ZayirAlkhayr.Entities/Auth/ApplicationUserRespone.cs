@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ZayirAlkhayr.Entities.Contracts.DTOs.Settings;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.Settings;
 
 namespace ZayirAlkhayr.Entities.Auth
 {

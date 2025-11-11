@@ -27,7 +27,7 @@ import { DonationMethodPipe } from '../../../../../Pipes/donation-method.pipe';
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RoleCheckerDirective, ZaInputWithLabelComponent,
-    NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule,DonationMethodPipe],
+    NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule, DonationMethodPipe],
   templateUrl: './account-import-mony.component.html',
   styleUrl: './account-import-mony.component.css',
   providers: [DatePipe]
@@ -80,9 +80,9 @@ export class AccountImportMonyComponent {
   ngOnInit(): void {
     this.UserId = this.authService.userId;
     this.FormInit();
-    this.GetAllAccountsImportMonyData();
-    this.GetAllAccountsImportMonyFilters();
-    this.GetAllImportExportMonyStatistics();
+    this.GetFinancialTransactionData();
+    this.GetFinancialTransactionFilters();
+    this.GetFinancialTransactionStatistics();
     this.GetAllBeneFactorData();
     this.GetAllBeneFactorTypes();
   }
@@ -96,7 +96,8 @@ export class AccountImportMonyComponent {
       totalValue: ['', Validators.required],
       donationMethodId: ['', Validators.required],
       insertUser: null,
-      insertDate: ['', Validators.required]
+      insertDate: ['', Validators.required],
+      transactionType: null
     });
 
     this.ItemForm.valueChanges.subscribe((data) => {
@@ -113,7 +114,8 @@ export class AccountImportMonyComponent {
       totalValue: item?.totalValue,
       donationMethodId: item?.donationMethodId,
       insertUser: this.UserId,
-      insertDate: this.datepipe.transform(item?.insertDate, 'yyyy-MM-dd')
+      insertDate: this.datepipe.transform(item?.insertDate, 'yyyy-MM-dd'),
+      transactionType: null
     });
   }
 
@@ -143,17 +145,17 @@ export class AccountImportMonyComponent {
     })
   }
 
-  GetAllAccountsImportMonyData() {
+  GetFinancialTransactionData() {
     this.showLoader = true;
-    this.taskService.GetAllAccountsImportMonyData(this.PagingFilter).subscribe(data => {
+    this.taskService.GetFinancialTransactionData(this.PagingFilter, 'Income').subscribe(data => {
       this.showLoader = false;
       this.AccountMoneyList = data.results;
       this.TotalCount = data.totalCount;
     });
   }
 
-  GetAllAccountsImportMonyFilters() {
-    this.taskService.GetAllAccountsImportMonyFilters(this.PagingFilter).subscribe(data => {
+  GetFinancialTransactionFilters() {
+    this.taskService.GetFinancialTransactionFilters(this.PagingFilter, 'Income').subscribe(data => {
       this.filterList = data.results;
     });
   }
@@ -173,23 +175,23 @@ export class AccountImportMonyComponent {
     });
   }
 
-  GetAllImportExportMonyStatistics() {
-    this.taskService.GetAllImportExportMonyStatistics(this.PagingFilter).subscribe(data => {
-      this.TotalImportValue = data.results[0].importMoney ?? 0;
-      this.ImportValueMonth = data.results[0].thisMonthImport ?? 0;
+  GetFinancialTransactionStatistics() {
+    this.taskService.GetFinancialTransactionStatistics(this.PagingFilter, 'Income').subscribe(data => {
+      this.TotalImportValue = data.results[0].totalMoney ?? 0;
+      this.ImportValueMonth = data.results[0].currentMonthMony ?? 0;
     });
   }
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
-    this.GetAllAccountsImportMonyData();
+    this.GetFinancialTransactionData();
   }
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
     this.SearchReport.filterItems = filterList;
-    this.GetAllAccountsImportMonyData();
-    this.GetAllImportExportMonyStatistics();
+    this.GetFinancialTransactionData();
+    this.GetFinancialTransactionStatistics();
   }
 
   validateForm(): boolean {
@@ -208,14 +210,16 @@ export class AccountImportMonyComponent {
     if (!isValid)
       return;
 
+    this.ItemForm.patchValue({ transactionType: 'Income' });
+
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.taskService.AddNewAccountsImportMony(this.ItemForm.value).subscribe(data => {
+      this.taskService.AddNewFinancialTransaction(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
-          this.GetAllAccountsImportMonyData();
-          this.GetAllAccountsImportMonyFilters();
-          this.GetAllImportExportMonyStatistics();
+          this.GetFinancialTransactionData();
+          this.GetFinancialTransactionFilters();
+          this.GetFinancialTransactionStatistics();
           this.modalService.dismissAll();
         }
         else
@@ -224,12 +228,12 @@ export class AccountImportMonyComponent {
       });
     } else {
       this.showLoader = true;
-      this.taskService.UpdateAccountsImportMony(this.ItemForm.value).subscribe(data => {
+      this.taskService.UpdateFinancialTransaction(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
-          this.GetAllAccountsImportMonyData();
-          this.GetAllAccountsImportMonyFilters();
-          this.GetAllImportExportMonyStatistics();
+          this.GetFinancialTransactionData();
+          this.GetFinancialTransactionFilters();
+          this.GetFinancialTransactionStatistics();
           this.modalService.dismissAll();
         }
         else
@@ -241,12 +245,12 @@ export class AccountImportMonyComponent {
 
   DeleteItem() {
     this.showLoader = true;
-    this.taskService.DeleteAccountsImportMony(this.AccountId).subscribe(data => {
+    this.taskService.DeleteFinancialTransaction(this.AccountId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
-        this.GetAllAccountsImportMonyData();
-        this.GetAllAccountsImportMonyFilters();
-        this.GetAllImportExportMonyStatistics();
+        this.GetFinancialTransactionData();
+        this.GetFinancialTransactionFilters();
+        this.GetFinancialTransactionStatistics();
         this.modalService.dismissAll();
       }
       else

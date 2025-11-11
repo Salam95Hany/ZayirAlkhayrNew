@@ -13,48 +13,36 @@ export class TaskService {
 
   // ============================= AccountsMony ==============================
 
-  GetAllAccountsExportMonyData(PagingFilter: PagingFilterModel) {
-    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'AccountsMony/GetAllAccountsExportMonyData', PagingFilter);
+  GetFinancialTransactionData(PagingFilter: PagingFilterModel, TransactionType: string) {
+    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'AccountsMony/GetFinancialTransactionData?TransactionType=' + TransactionType, PagingFilter);
   }
 
-  GetAllAccountsExportMonyFilters(PagingFilter: PagingFilterModel) {
-    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'AccountsMony/GetAllAccountsExportMonyFilters', PagingFilter);
+  GetFinancialTransactionFilters(PagingFilter: PagingFilterModel, TransactionType: string) {
+    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'AccountsMony/GetFinancialTransactionFilters?TransactionType=' + TransactionType, PagingFilter);
   }
 
-  GetAllImportExportMonyStatistics(PagingFilter: PagingFilterModel) {
-    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/GetAllImportExportMonyStatistics', PagingFilter);
+  GetFinancialTransactionStatistics(PagingFilter: PagingFilterModel, TransactionType: string) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/GetFinancialTransactionStatistics?TransactionType=' + TransactionType, PagingFilter);
   }
 
-  AddNewAccountsExportMony(Model: any) {
-    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/AddNewAccountsExportMony', Model);
+  AddNewFinancialTransaction(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/AddNewFinancialTransaction', Model);
   }
 
-  UpdateAccountsExportMony(Model: any) {
-    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/UpdateAccountsExportMony', Model);
+  UpdateFinancialTransaction(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/UpdateFinancialTransaction', Model);
   }
 
-  DeleteAccountsExportMony(AccountId: number) {
-    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/DeleteAccountsExportMony?AccountId=' + AccountId);
+  DeleteFinancialTransaction(AccountId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/DeleteFinancialTransaction?AccountId=' + AccountId);
   }
 
-  GetAllAccountsImportMonyData(PagingFilter: PagingFilterModel) {
-    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'AccountsMony/GetAllAccountsImportMonyData', PagingFilter);
+   GetFinancialTransactionStatisticsNetValue(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/GetFinancialTransactionStatisticsNetValue', PagingFilter);
   }
 
-  GetAllAccountsImportMonyFilters(PagingFilter: PagingFilterModel) {
-    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'AccountsMony/GetAllAccountsImportMonyFilters', PagingFilter);
-  }
-
-  AddNewAccountsImportMony(Model: any) {
-    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/AddNewAccountsImportMony', Model);
-  }
-
-  UpdateAccountsImportMony(Model: any) {
-    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/UpdateAccountsImportMony', Model);
-  }
-
-  DeleteAccountsImportMony(AccountId: number) {
-    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/DeleteAccountsImportMony?AccountId=' + AccountId);
+   GetFinancialTransactionStatisticFilter() {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/GetFinancialTransactionStatisticFilter');
   }
 
   // ============================= GeneralTasks ==============================

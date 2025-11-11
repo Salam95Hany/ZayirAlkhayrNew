@@ -73,9 +73,9 @@ export class AccountExportMonyComponent implements OnInit {
   ngOnInit(): void {
     this.UserId = this.authService.userId;
     this.FormInit();
-    this.GetAllAccountsExportMonyData();
-    this.GetAllAccountsExportMonyFilters();
-    this.GetAllImportExportMonyStatistics();
+    this.GetFinancialTransactionData();
+    this.GetFinancialTransactionFilters();
+    this.GetFinancialTransactionStatistics();
     this.GetAllBeneFactorData();
     this.GetAllBeneFactorTypes();
   }
@@ -88,7 +88,8 @@ export class AccountExportMonyComponent implements OnInit {
       details: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       totalValue: ['', Validators.required],
       insertUser: null,
-      insertDate: ['', Validators.required]
+      insertDate: ['', Validators.required],
+      transactionType: null
     });
 
     this.ItemForm.valueChanges.subscribe((data) => {
@@ -104,7 +105,8 @@ export class AccountExportMonyComponent implements OnInit {
       details: item?.details,
       totalValue: item?.totalValue,
       insertUser: this.UserId,
-      insertDate: this.datepipe.transform(item?.insertDate, 'yyyy-MM-dd')
+      insertDate: this.datepipe.transform(item?.insertDate, 'yyyy-MM-dd'),
+      transactionType: null
     });
   }
 
@@ -134,17 +136,17 @@ export class AccountExportMonyComponent implements OnInit {
     })
   }
 
-  GetAllAccountsExportMonyData() {
+  GetFinancialTransactionData() {
     this.showLoader = true;
-    this.taskService.GetAllAccountsExportMonyData(this.PagingFilter).subscribe(data => {
+    this.taskService.GetFinancialTransactionData(this.PagingFilter, 'Expenses').subscribe(data => {
       this.showLoader = false;
       this.AccountMoneyList = data.results;
       this.TotalCount = data.totalCount;
     });
   }
 
-  GetAllAccountsExportMonyFilters() {
-    this.taskService.GetAllAccountsExportMonyFilters(this.PagingFilter).subscribe(data => {
+  GetFinancialTransactionFilters() {
+    this.taskService.GetFinancialTransactionFilters(this.PagingFilter, 'Expenses').subscribe(data => {
       this.filterList = data.results;
     });
   }
@@ -164,23 +166,23 @@ export class AccountExportMonyComponent implements OnInit {
     });
   }
 
-  GetAllImportExportMonyStatistics() {
-    this.taskService.GetAllImportExportMonyStatistics(this.PagingFilter).subscribe(data => {
-      this.TotalExportValue = data.results[0].allExportMoney ?? 0;
-      this.ExportValueMonth = data.results[0].thisMonthExport ?? 0;
+  GetFinancialTransactionStatistics() {
+    this.taskService.GetFinancialTransactionStatistics(this.PagingFilter, 'Expenses').subscribe(data => {
+      this.TotalExportValue = data.results[0].totalMoney ?? 0;
+      this.ExportValueMonth = data.results[0].currentMonthMony ?? 0;
     });
   }
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
-    this.GetAllAccountsExportMonyData();
+    this.GetFinancialTransactionData();
   }
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
     this.SearchReport.filterItems = filterList;
-    this.GetAllAccountsExportMonyData();
-    this.GetAllImportExportMonyStatistics();
+    this.GetFinancialTransactionData();
+    this.GetFinancialTransactionStatistics();
   }
 
   validateForm(): boolean {
@@ -199,14 +201,16 @@ export class AccountExportMonyComponent implements OnInit {
     if (!isValid)
       return;
 
+    this.ItemForm.patchValue({ transactionType: 'Expenses' });
+
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.taskService.AddNewAccountsExportMony(this.ItemForm.value).subscribe(data => {
+      this.taskService.AddNewFinancialTransaction(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
-          this.GetAllAccountsExportMonyData();
-          this.GetAllAccountsExportMonyFilters();
-          this.GetAllImportExportMonyStatistics();
+          this.GetFinancialTransactionData();
+          this.GetFinancialTransactionFilters();
+          this.GetFinancialTransactionStatistics();
           this.modalService.dismissAll();
         }
         else
@@ -215,12 +219,12 @@ export class AccountExportMonyComponent implements OnInit {
       });
     } else {
       this.showLoader = true;
-      this.taskService.UpdateAccountsExportMony(this.ItemForm.value).subscribe(data => {
+      this.taskService.UpdateFinancialTransaction(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
-          this.GetAllAccountsExportMonyData();
-          this.GetAllAccountsExportMonyFilters();
-          this.GetAllImportExportMonyStatistics();
+          this.GetFinancialTransactionData();
+          this.GetFinancialTransactionFilters();
+          this.GetFinancialTransactionStatistics();
           this.modalService.dismissAll();
         }
         else
@@ -232,12 +236,12 @@ export class AccountExportMonyComponent implements OnInit {
 
   DeleteItem() {
     this.showLoader = true;
-    this.taskService.DeleteAccountsExportMony(this.AccountId).subscribe(data => {
+    this.taskService.DeleteFinancialTransaction(this.AccountId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
-        this.GetAllAccountsExportMonyData();
-        this.GetAllAccountsExportMonyFilters();
-        this.GetAllImportExportMonyStatistics();
+        this.GetFinancialTransactionData();
+        this.GetFinancialTransactionFilters();
+        this.GetFinancialTransactionStatistics();
         this.modalService.dismissAll();
       }
       else

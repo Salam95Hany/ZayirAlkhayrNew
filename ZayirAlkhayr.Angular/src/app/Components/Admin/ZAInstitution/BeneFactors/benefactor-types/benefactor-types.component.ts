@@ -27,13 +27,7 @@ import { NgxLoadingModule } from "ngx-loading";
 })
 export class BenefactorTypesComponent implements OnInit {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'أنواع التبرع'];
-  filterList: FilterModel[] = [
-    {
-      categoryDisplayName: 'بالاسم',
-      categoryName: 'SearchText',
-      filterType: 'SearchText'
-    }
-  ];
+  filterList: FilterModel[] = [];
   ItemForm: FormGroup;
   showLoader: boolean = false;
   isFilter = true;
@@ -61,6 +55,7 @@ export class BenefactorTypesComponent implements OnInit {
     this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllBeneFactorTypes();
+    this.GetAllBeneFactorTypeFilters();
   }
 
   FormInit() {
@@ -119,6 +114,12 @@ export class BenefactorTypesComponent implements OnInit {
     });
   }
 
+  GetAllBeneFactorTypeFilters() {
+    this.benefactorService.GetAllBeneFactorTypeFilters().subscribe(data => {
+      this.filterList = data.results;
+    });
+  }
+
   pageChanged(obj: any) {
     this.pagingFilterModel.currentPage = obj.page;
     this.GetAllBeneFactorTypes();
@@ -153,6 +154,7 @@ export class BenefactorTypesComponent implements OnInit {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllBeneFactorTypes();
+          this.GetAllBeneFactorTypeFilters();
           this.modalService.dismissAll();
         }
         else
@@ -164,6 +166,7 @@ export class BenefactorTypesComponent implements OnInit {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllBeneFactorTypes();
+          this.GetAllBeneFactorTypeFilters();
           this.modalService.dismissAll();
         }
         else
@@ -173,13 +176,14 @@ export class BenefactorTypesComponent implements OnInit {
     }
   }
 
-   DeleteItem() {
+  DeleteItem() {
     this.showLoader = true;
     this.benefactorService.DeleteBeneFactorType(this.TypeId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
-          this.GetAllBeneFactorTypes();
-          this.modalService.dismissAll();
+        this.GetAllBeneFactorTypes();
+        this.GetAllBeneFactorTypeFilters();
+        this.modalService.dismissAll();
       }
       else
         this.toaster.error(data.message);

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Services.Common;
@@ -26,49 +27,63 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.BeneFactor
         }
 
         [HttpPost("GetAllBeneFactorData")]
-        public async Task<ApiResponseModel<DataSet>> GetAllBeneFactorData(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<BeneFactorDto>> GetAllBeneFactorData(PagingFilterModel PagingFilter)
         {
             var results = await _beneFactorService.GetAllBeneFactorData(PagingFilter);
             return results;
         }
 
-        [HttpPost("GetAllBeneFactorFilters")]
-        public async Task<ApiResponseModel<List<FilterModel>>> GetAllBeneFactorFilters(PagingFilterModel PagingFilter)
+        [HttpGet("GetAllBeneFactorFilters")]
+        public async Task<ApiResponseModel<List<FilterModel>>> GetAllBeneFactorFilters()
         {
-            var results = await _beneFactorService.GetAllBeneFactorFilters(PagingFilter);
+            var results = await _beneFactorService.GetAllBeneFactorFilters();
             return results;
         }
 
         [HttpPost("GetAllBeneFactorTypes")]
-        public async Task<ApiResponseModel<DataTable>> GetAllBeneFactorTypes(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<BeneFactorTypeDto>>> GetAllBeneFactorTypes(PagingFilterModel PagingFilter)
         {
             var results = await _beneFactorService.GetAllBeneFactorTypes(PagingFilter);
             return results;
         }
 
+        [HttpGet("GetAllBeneFactorTypeFilters")]
+        public async Task<ApiResponseModel<List<FilterModel>>> GetAllBeneFactorTypeFilters()
+        {
+            var results = await _beneFactorService.GetAllBeneFactorTypeFilters();
+            return results;
+        }
+
         [HttpPost("GetAllBeneFactorNationalities")]
-        public async Task<ApiResponseModel<DataTable>> GetAllBeneFactorNationalities(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<BeneFactorNationalityDto>>> GetAllBeneFactorNationalities(PagingFilterModel PagingFilter)
         {
             var results = await _beneFactorService.GetAllBeneFactorNationalities(PagingFilter);
             return results;
         }
 
+        [HttpGet("GetAllBeneFactorNationalityFilters")]
+        public async Task<ApiResponseModel<List<FilterModel>>> GetAllBeneFactorNationalityFilters()
+        {
+            var results = await _beneFactorService.GetAllBeneFactorNationalityFilters();
+            return results;
+        }
+
         [HttpPost("GetAllBeneFactorDetails")]
-        public async Task<ApiResponseModel<DataTable>> GetAllBeneFactorDetails(PagingFilterModel PagingFilter, int BeneFactorId)
+        public async Task<ApiResponseModel<List<BeneFactorDetailDto>>> GetAllBeneFactorDetails(PagingFilterModel PagingFilter, int BeneFactorId)
         {
             var results = await _beneFactorService.GetAllBeneFactorDetails(PagingFilter, BeneFactorId);
             return results;
         }
 
         [HttpGet("GetAllBeneFactorCashDetails")]
-        public async Task<ApiResponseModel<DataTable>> GetAllBeneFactorCashDetails(int BeneFactorId, int ParentId)
+        public async Task<ApiResponseModel<List<BeneFactorDetailDto>>> GetAllBeneFactorCashDetails(int BeneFactorId, int ParentId)
         {
             var results = await _beneFactorService.GetAllBeneFactorCashDetails(BeneFactorId, ParentId);
             return results;
         }
 
         [HttpGet("GetBeneFactorDetailsByBeneFactorId")]
-        public async Task<ApiResponseModel<DataTable>> GetBeneFactorDetailsByBeneFactorId(int BeneFactorId, int BeneFactorTypeId)
+        public async Task<ApiResponseModel<List<BeneFactorDetailDto>>> GetBeneFactorDetailsByBeneFactorId(int BeneFactorId, int BeneFactorTypeId)
         {
             var results = await _beneFactorService.GetBeneFactorDetailsByBeneFactorId(BeneFactorId, BeneFactorTypeId);
             return results;
@@ -96,7 +111,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.BeneFactor
         }
 
         [HttpPost("GetBeneFactorNotes")]
-        public async Task<ApiResponseModel<DataTable>> GetBeneFactorNotes(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<BeneFactorNoteDto>>> GetBeneFactorNotes(PagingFilterModel PagingFilter)
         {
             var results = await _beneFactorService.GetBeneFactorNotes(PagingFilter);
             return results;

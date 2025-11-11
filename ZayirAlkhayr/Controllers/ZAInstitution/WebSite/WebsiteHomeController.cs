@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
-using ZayirAlkhayr.Entities.Contracts.DTOs.WebSite;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.WebSite;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 

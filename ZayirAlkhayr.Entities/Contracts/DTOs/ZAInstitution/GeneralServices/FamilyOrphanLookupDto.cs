@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Models;
 
-namespace ZayirAlkhayr.Entities.Contracts.DTOs
+namespace ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.GeneralServices
 {
     public class FamilyOrphanLookupDto
     {

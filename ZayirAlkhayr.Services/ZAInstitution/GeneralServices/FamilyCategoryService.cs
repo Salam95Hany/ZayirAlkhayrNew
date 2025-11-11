@@ -4,7 +4,7 @@ using System.Data;
 using System.Globalization;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
-using ZayirAlkhayr.Entities.Contracts.DTOs;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Interfaces.Common;

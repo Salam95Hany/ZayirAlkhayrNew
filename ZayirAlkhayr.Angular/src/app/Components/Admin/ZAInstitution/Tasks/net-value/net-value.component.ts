@@ -30,28 +30,28 @@ export class NetValueComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.GetAllImportExportMonyStatistics();
-    this.GetAllAccountsImportMonyFilters();
+    this.GetFinancialTransactionStatisticsNetValue();
+    this.GetFinancialTransactionStatisticFilter();
 
   }
 
-  GetAllImportExportMonyStatistics() {
-    this.taskService.GetAllImportExportMonyStatistics(this.PagingFilter).subscribe(data => {
-      this.TotalExportValue = data.results[0].allExportMoney ?? 0;
-      this.TotalImportValue = data.results[0].importMoney ?? 0;
-      this.NetValue = this.TotalImportValue - this.TotalExportValue;
+  GetFinancialTransactionStatisticsNetValue() {
+    this.taskService.GetFinancialTransactionStatisticsNetValue(this.PagingFilter).subscribe(data => {
+      this.TotalExportValue = data.results.totalExpenses ?? 0;
+      this.TotalImportValue = data.results.totalIncome ?? 0;
+      this.NetValue = data.results.netValue ?? 0;
     });
   }
 
-  GetAllAccountsImportMonyFilters() {
-    this.taskService.GetAllAccountsImportMonyFilters(this.PagingFilter).subscribe(data => {
-      this.filterList = data.results.filter(i => i.categoryName != 'SearchText');
+  GetFinancialTransactionStatisticFilter() {
+    this.taskService.GetFinancialTransactionStatisticFilter().subscribe(data => {
+      this.filterList = data.results
     });
   }
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
-    this.GetAllImportExportMonyStatistics();
+    this.GetFinancialTransactionStatisticsNetValue();
   }
 
 }

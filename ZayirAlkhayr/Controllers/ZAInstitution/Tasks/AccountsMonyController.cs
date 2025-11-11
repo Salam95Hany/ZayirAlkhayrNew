@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.Tasks;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Tasks;
 
@@ -16,80 +17,59 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.Tasks
             _accountsMonyService = accountsMonyService;
         }
 
-        [HttpPost("GetAllAccountsImportMonyData")]
-        public async Task<ApiResponseModel<DataTable>> GetAllAccountsImportMonyData(PagingFilterModel PagingFilter)
+        [HttpPost("GetFinancialTransactionData")]
+        public async Task<ApiResponseModel<DataTable>> GetFinancialTransactionData(PagingFilterModel PagingFilter, string TransactionType)
         {
-            var results = await _accountsMonyService.GetAllAccountsImportMonyData(PagingFilter);
+            var results = await _accountsMonyService.GetFinancialTransactionData(PagingFilter, TransactionType);
             return results;
         }
 
-        [HttpPost("GetAllAccountsImportMonyFilters")]
-        public async Task<ApiResponseModel<List<FilterModel>>> GetAllAccountsImportMonyFilters(PagingFilterModel PagingFilter)
+        [HttpPost("GetFinancialTransactionFilters")]
+        public async Task<ApiResponseModel<List<FilterModel>>> GetFinancialTransactionFilters(PagingFilterModel PagingFilter, string TransactionType)
         {
-            var results = await _accountsMonyService.GetAllAccountsImportMonyFilters(PagingFilter);
+            var results = await _accountsMonyService.GetFinancialTransactionFilters(PagingFilter, TransactionType);
             return results;
         }
 
-        [HttpPost("GetAllAccountsExportMonyData")]
-        public async Task<ApiResponseModel<DataTable>> GetAllAccountsExportMonyData(PagingFilterModel PagingFilter)
+        [HttpPost("GetFinancialTransactionStatistics")]
+        public async Task<ApiResponseModel<DataTable>> GetFinancialTransactionStatistics(PagingFilterModel PagingFilter, string TransactionType)
         {
-            var results = await _accountsMonyService.GetAllAccountsExportMonyData(PagingFilter);
+            var results = await _accountsMonyService.GetFinancialTransactionStatistics(PagingFilter, TransactionType);
             return results;
         }
 
-        [HttpPost("GetAllAccountsExportMonyFilters")]
-        public async Task<ApiResponseModel<List<FilterModel>>> GetAllAccountsExportMonyFilters(PagingFilterModel PagingFilter)
+        [HttpPost("GetFinancialTransactionStatisticsNetValue")]
+        public async Task<ApiResponseModel<FinancialTransactionStatisticsDto>> GetFinancialTransactionStatisticsNetValue(PagingFilterModel PagingFilter)
         {
-            var results = await _accountsMonyService.GetAllAccountsExportMonyFilters(PagingFilter);
+            var results = await _accountsMonyService.GetFinancialTransactionStatisticsNetValue(PagingFilter);
             return results;
         }
 
-        [HttpPost("GetAllImportExportMonyStatistics")]
-        public async Task<ApiResponseModel<DataTable>> GetAllImportExportMonyStatistics(PagingFilterModel PagingFilter)
+        [HttpGet("GetFinancialTransactionStatisticFilter")]
+        public async Task<ApiResponseModel<List<FilterModel>>> GetFinancialTransactionStatisticFilter()
         {
-            var results = await _accountsMonyService.GetAllImportExportMonyStatistics(PagingFilter);
+            var results = await _accountsMonyService.GetFinancialTransactionStatisticFilter();
             return results;
         }
 
-        [HttpPost("AddNewAccountsImportMony")]
-        public async Task<ApiResponseModel<string>> AddNewAccountsImportMony(AccountsImportMony Model)
+        [HttpPost("AddNewFinancialTransaction")]
+        public async Task<ApiResponseModel<string>> AddNewFinancialTransaction(FinancialTransaction Model)
         {
-            var results = await _accountsMonyService.AddNewAccountsImportMony(Model);
+            var results = await _accountsMonyService.AddNewFinancialTransaction(Model);
             return results;
         }
 
-        [HttpPost("UpdateAccountsImportMony")]
-        public async Task<ApiResponseModel<string>> UpdateAccountsImportMony(AccountsImportMony Model)
+        [HttpPost("UpdateFinancialTransaction")]
+        public async Task<ApiResponseModel<string>> UpdateFinancialTransaction(FinancialTransaction Model)
         {
-            var results = await _accountsMonyService.UpdateAccountsImportMony(Model);
+            var results = await _accountsMonyService.UpdateFinancialTransaction(Model);
             return results;
         }
 
-        [HttpGet("DeleteAccountsImportMony")]
-        public async Task<ApiResponseModel<string>> DeleteAccountsImportMony(int AccountId)
+        [HttpGet("DeleteFinancialTransaction")]
+        public async Task<ApiResponseModel<string>> DeleteFinancialTransaction(int AccountId)
         {
-            var results = await _accountsMonyService.DeleteAccountsImportMony(AccountId);
-            return results;
-        }
-
-        [HttpPost("AddNewAccountsExportMony")]
-        public async Task<ApiResponseModel<string>> AddNewAccountsExportMony(AccountsExportMony Model)
-        {
-            var results = await _accountsMonyService.AddNewAccountsExportMony(Model);
-            return results;
-        }
-
-        [HttpPost("UpdateAccountsExportMony")]
-        public async Task<ApiResponseModel<string>> UpdateAccountsExportMony(AccountsExportMony Model)
-        {
-            var results = await _accountsMonyService.UpdateAccountsExportMony(Model);
-            return results;
-        }
-
-        [HttpGet("DeleteAccountsExportMony")]
-        public async Task<ApiResponseModel<string>> DeleteAccountsExportMony(int AccountId)
-        {
-            var results = await _accountsMonyService.DeleteAccountsExportMony(AccountId);
+            var results = await _accountsMonyService.DeleteFinancialTransaction(AccountId);
             return results;
         }
     }
