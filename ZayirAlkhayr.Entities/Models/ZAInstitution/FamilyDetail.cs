@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace ZayirAlkhayr.Entities.Models;
 
-[Table(name: "FamilyDetails", Schema = "admin")]
+[Table(name: "FamilyDetails", Schema = "institution")]
 public partial class FamilyDetail
 {
     public int Id { get; set; }

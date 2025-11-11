@@ -7,7 +7,7 @@ using ZayirAlkhayr.Entities.Common;
 
 namespace ZayirAlkhayr.Entities.Models;
 
-[Table(name: "FinancialTransactions", Schema = "admin")]
+[Table(name: "FinancialTransactions", Schema = "institution")]
 public partial class FinancialTransaction : AuditableEntity
 {
     public int Id { get; set; }

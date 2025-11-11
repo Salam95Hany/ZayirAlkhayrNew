@@ -36,7 +36,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             Params[4] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[5] = new SqlParameter("@IsFilter", false);
             Params[6] = new SqlParameter("@TransactionType", TransactionType);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllFinancialTransactionDataWithFilter", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetAllFinancialTransactionDataWithFilter", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
@@ -53,7 +53,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             Params[4] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[5] = new SqlParameter("@IsFilter", true);
             Params[6] = new SqlParameter("@TransactionType", TransactionType);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllFinancialTransactionDataWithFilter", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetAllFinancialTransactionDataWithFilter", Params);
             var Filters = dt.ToGroupedFilters();
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
@@ -69,7 +69,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             Params[1] = new SqlParameter("@FromDate", FromDate);
             Params[2] = new SqlParameter("@ToDate", ToDate);
             Params[3] = new SqlParameter("@TransactionType", TransactionType);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetFinancialTransactionStatistics", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetFinancialTransactionStatistics", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
@@ -84,7 +84,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             Params[1] = new SqlParameter("@FromDate", FromDate);
             Params[2] = new SqlParameter("@ToDate", ToDate);
             Params[3] = new SqlParameter("@TransactionType", TransactionType);
-            var dt = await _sQLHelper.ExecuteDatasetAsync("admin.SP_ExportFinancialTransactionData", Params);
+            var dt = await _sQLHelper.ExecuteDatasetAsync("institution.SP_ExportFinancialTransactionData", Params);
             return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
         }
 
@@ -92,15 +92,15 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
         {
             var Spec = new FinancialTransactionStatisticsSpecification(PagingFilter);
             var StatisticsDto = new FinancialTransactionStatisticsDto();
-            StatisticsDto.TotalIncome = await _unitOfWork.Repository<FinancialTransaction>().GetCountAsync(Spec);
-            StatisticsDto.TotalExpenses = await _unitOfWork.Repository<FinancialTransaction>().GetCountAsync(Spec);
+            StatisticsDto.TotalIncome = await _unitOfWork.Repository<FinancialTransaction>().SumAsync(Spec, i => i.TotalValue);
+            StatisticsDto.TotalExpenses = await _unitOfWork.Repository<FinancialTransaction>().SumAsync(Spec, i => i.TotalValue);
             StatisticsDto.NetValue = StatisticsDto.TotalIncome - StatisticsDto.TotalExpenses;
             return ApiResponseModel<FinancialTransactionStatisticsDto>.Success(GenericErrors.GetSuccess, StatisticsDto);
         }
 
         public async Task<ApiResponseModel<List<FilterModel>>> GetFinancialTransactionStatisticFilter()
         {
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetFinancialTransactionStatisticFilter", Array.Empty<SqlParameter>());
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetFinancialTransactionStatisticFilter", Array.Empty<SqlParameter>());
             var Filters = dt.ToGroupedFilters();
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }

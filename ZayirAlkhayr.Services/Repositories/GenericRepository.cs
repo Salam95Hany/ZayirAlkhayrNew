@@ -109,5 +109,11 @@ namespace ZayirAlkhayr.Services.Repositories
         {
             return await _dbContext.Set<T>().MaxAsync(selector, cancellationToken);
         }
+
+        public async Task<double> SumAsync(ISpecification<T> spec, Expression<Func<T, double>> selector, CancellationToken cancellationToken = default)
+        {
+            var query = ApplySecifications(spec);
+            return await query.SumAsync(selector, cancellationToken);
+        }
     }
 }

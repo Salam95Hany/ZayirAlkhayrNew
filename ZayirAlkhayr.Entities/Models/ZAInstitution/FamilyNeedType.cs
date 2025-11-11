@@ -8,7 +8,7 @@ using ZayirAlkhayr.Entities.Common;
 namespace ZayirAlkhayr.Entities.Models;
 
 
-[Table(name: "FamilyNeedTypes", Schema = "admin")]
+[Table(name: "FamilyNeedTypes", Schema = "institution")]
 public partial class FamilyNeedType : AuditableEntity
 {
     public int Id { get; set; }

@@ -35,13 +35,13 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[3] = new SqlParameter("@IsFilter", false);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllGeneralTasksDataWithFilter", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetAllGeneralTasksDataWithFilter", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
         public async Task<ApiResponseModel<DataTable>> GetAllGeneralTaskStatistics()
         {
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllGeneralTaskStatistics", Array.Empty<SqlParameter>());
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetAllGeneralTaskStatistics", Array.Empty<SqlParameter>());
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
@@ -53,7 +53,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[3] = new SqlParameter("@IsFilter", true);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllGeneralTasksDataWithFilter", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetAllGeneralTasksDataWithFilter", Params);
             var Filters = dt.ToGroupedFilters();
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }

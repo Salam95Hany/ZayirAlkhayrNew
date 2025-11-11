@@ -9,7 +9,7 @@ using ZayirAlkhayr.Entities.Common;
 namespace ZayirAlkhayr.Entities.Models;
 
 
-[Table(name: "SliderImages", Schema = "web")]
+[Table(name: "SliderImages", Schema = "institution")]
 public partial class SliderImage : AuditableEntity
 {
     public int Id { get; set; }

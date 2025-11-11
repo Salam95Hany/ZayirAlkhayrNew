@@ -37,7 +37,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
         {
             var Params = new SqlParameter[1];
             Params[0] = new SqlParameter("@BeneFactorId", BeneFactorId);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetBeneFactorDetailsStatistics", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetBeneFactorDetailsStatistics", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
@@ -363,7 +363,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
                 if (ValueExist)
                     return ApiResponseModel<string>.Failure(GenericErrors.AlreadyExists);
 
-                var Code = await _sQLHelper.GenerateCode("web.SP_GetBeneFactorCodeSequences");
+                var Code = await _sQLHelper.GenerateCode("institution.SP_GetBeneFactorCodeSequences");
                 var BeneFactorObj = new ZayirAlkhayr.Entities.Models.BeneFactor();
                 BeneFactorObj.Code = Code;
                 BeneFactorObj.FullName = Model.FullName;
@@ -730,7 +730,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
             var FilterDt = FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[1];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_ExportBeneFactorsData", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_ExportBeneFactorsData", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
     }

@@ -8,7 +8,7 @@ using ZayirAlkhayr.Entities.Common;
 namespace ZayirAlkhayr.Entities.Models;
 
 
-[Table(name: "Events", Schema = "web")]
+[Table(name: "Events", Schema = "institution")]
 public partial class Event : AuditableEntity
 {
     public int Id { get; set; }

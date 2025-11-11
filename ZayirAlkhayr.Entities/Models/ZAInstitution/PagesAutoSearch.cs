@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ZayirAlkhayr.Entities.Models;
 
 
-[Table(name: "PagesAutoSearch", Schema = "admin")]
+[Table(name: "PagesAutoSearch", Schema = "institution")]
 public partial class PagesAutoSearch
 {
     public int Id { get; set; }

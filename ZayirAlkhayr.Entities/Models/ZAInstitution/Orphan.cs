@@ -7,7 +7,7 @@ using ZayirAlkhayr.Entities.Common;
 
 namespace ZayirAlkhayr.Entities.Models;
 
-[Table(name: "Orphans", Schema = "admin")]
+[Table(name: "Orphans", Schema = "institution")]
 public partial class Orphan : AuditableEntity
 {
     public int Id { get; set; }

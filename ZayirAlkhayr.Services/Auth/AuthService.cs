@@ -31,7 +31,7 @@ namespace ZayirAlkhayr.Services.Auth
         public async Task<ApiResponseModel<DataTable>> GetAllUsers()
         {
             var Params = new SqlParameter[0];
-            var dt = await _sQLHelper.ExecuteDataTableAsync("web.SP_GetAllUsersData", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("config.SP_GetAllUsersData", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.SuccessLogin, dt);
         }
 

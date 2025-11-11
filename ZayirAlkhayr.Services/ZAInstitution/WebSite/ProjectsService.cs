@@ -22,14 +22,12 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
         private readonly IUnitOfWork _unitOfWork;
         private readonly IManageFileService _manageFileService;
         private readonly IAppSettings _appSettings;
-        private readonly ISQLHelper _sQLHelper;
         private readonly string _webRootPath;
         private string ApiLocalUrl;
         private string UiHost;
-        public ProjectsService(IManageFileService manageFileService, ISQLHelper sQLHelper, IUnitOfWork unitOfWork, IAppSettings appSettings, IOptions<AppPaths> options)
+        public ProjectsService(IManageFileService manageFileService, IUnitOfWork unitOfWork, IAppSettings appSettings, IOptions<AppPaths> options)
         {
             _manageFileService = manageFileService;
-            _sQLHelper = sQLHelper;
             _unitOfWork = unitOfWork;
             _appSettings = appSettings;
             _webRootPath = options.Value.WebRootPath;

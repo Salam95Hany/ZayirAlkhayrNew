@@ -7,7 +7,7 @@ using ZayirAlkhayr.Entities.Common;
 
 namespace ZayirAlkhayr.Entities.Models;
 
-[Table(name: "BeneFactorTypes", Schema = "web")]
+[Table(name: "BeneFactorTypes", Schema = "institution")]
 public partial class BeneFactorType : AuditableEntity
 {
     public int Id { get; set; }

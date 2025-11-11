@@ -33,7 +33,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
         {
             var Params = new SqlParameter[1];
             Params[0] = new SqlParameter("@SearchText", SearchText);
-            var Model = await _sQLHelper.SQLQueryAsync<OrphansMappingModel>("admin.SP_GetAllFamilyStatusOrphansType", Params);
+            var Model = await _sQLHelper.SQLQueryAsync<OrphansMappingModel>("institution.SP_GetAllFamilyStatusOrphansType", Params);
             var Data = Model.GroupBy(i => i.FamilyStatusId).Select(i => new OrphansDetailDto
             {
                 FamilyStatusId = i.Key,
@@ -56,7 +56,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[3] = new SqlParameter("@IsFilter", false);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllOrphansDataWithFilters", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetAllOrphansDataWithFilters", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
@@ -68,7 +68,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[3] = new SqlParameter("@IsFilter", true);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllOrphansDataWithFilters", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetAllOrphansDataWithFilters", Params);
             var Filters = dt.ToGroupedFilters();
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }

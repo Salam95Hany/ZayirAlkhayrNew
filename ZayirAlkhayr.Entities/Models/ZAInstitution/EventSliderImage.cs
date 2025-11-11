@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ZayirAlkhayr.Entities.Models;
 
 
-[Table(name: "EventSliderImages", Schema = "web")]
+[Table(name: "EventSliderImages", Schema = "institution")]
 public partial class EventSliderImage
 {
     public int Id { get; set; }

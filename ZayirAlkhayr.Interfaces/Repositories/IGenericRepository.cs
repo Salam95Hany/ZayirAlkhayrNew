@@ -30,5 +30,6 @@ namespace ZayirAlkhayr.Interfaces.Repositories
         Task AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
         Task<bool> AnyAsync(CancellationToken cancellationToken = default);
         Task<TResult> MaxAsync<TResult>(Expression<Func<T, TResult>> selector, CancellationToken cancellationToken = default);
+        Task<double> SumAsync(ISpecification<T> spec, Expression<Func<T, double>> selector, CancellationToken cancellationToken = default);
     }
 }

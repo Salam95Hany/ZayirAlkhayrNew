@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ZayirAlkhayr.Entities.Models;
 
 
-[Table(name: "ProjectDetails", Schema = "web")]
+[Table(name: "ProjectDetails", Schema = "institution")]
 public partial class ProjectDetail
 {
     public int Id { get; set; }

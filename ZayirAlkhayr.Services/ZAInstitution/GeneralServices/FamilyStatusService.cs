@@ -29,7 +29,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[3] = new SqlParameter("@IsFilter", false);
-            var dt = await _sQLHelper.ExecuteDatasetAsync("admin.SP_GetAllFamilyStatusDataWithFilters", Params);
+            var dt = await _sQLHelper.ExecuteDatasetAsync("institution.SP_GetAllFamilyStatusDataWithFilters", Params);
             var TotalCount = dt.Tables[0].Rows.Count > 0 && dt.Tables[0].Columns.Contains("TotalCount") ? int.Parse(dt.Tables[0].Rows[0]["TotalCount"].ToString()) : 0;
             return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt, TotalCount);
         }
@@ -42,7 +42,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[3] = new SqlParameter("@IsFilter", true);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_GetAllFamilyStatusDataWithFilters", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetAllFamilyStatusDataWithFilters", Params);
             var Filters = dt.ToGroupedFilters();
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
@@ -52,7 +52,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
         //    var FilterDt = Model.FilterList.ToDataTableFromFilterModel();
         //    var Params = new SqlParameter[1];
         //    Params[0] = new SqlParameter("@FilterList", FilterDt);
-        //    var dt = await _sQLHelper.ExecuteDataTableAsync("admin.SP_ExportFamilyStatusData", Params);
+        //    var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_ExportFamilyStatusData", Params);
         //    return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         //}
 
