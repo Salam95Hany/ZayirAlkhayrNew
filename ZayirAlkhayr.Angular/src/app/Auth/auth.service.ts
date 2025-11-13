@@ -38,8 +38,8 @@ export class AuthService {
     let sessionId = localStorage.getItem('sessionId');
     if (sessionId) return;
 
-    this.http.get<any>(this.apiURL + 'WebsiteHome/CreateSessionId').subscribe(data => {
-      const sessionId = data.sessionId;
+    this.http.get<ApiResponseModel<any>>(this.apiURL + 'WebsiteHome/CreateSessionId').subscribe(data => {
+      const sessionId = data.results.sessionId;
       localStorage.setItem('sessionId', sessionId);
     });
   }
