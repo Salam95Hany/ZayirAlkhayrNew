@@ -22,7 +22,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetFinancialTransactionData(PagingFilterModel PagingFilter, string TransactionType)
+        public async Task<ApiResponseModel<DataSet>> GetFinancialTransactionData(PagingFilterModel PagingFilter, string TransactionType)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
             var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
@@ -36,8 +36,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             Params[4] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[5] = new SqlParameter("@IsFilter", false);
             Params[6] = new SqlParameter("@TransactionType", TransactionType);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_GetAllFinancialTransactionDataWithFilter", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var dt = await _sQLHelper.ExecuteDatasetAsync("institution.SP_GetAllFinancialTransactionDataWithFilter", Params);
+            return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
         }
 
         public async Task<ApiResponseModel<List<FilterModel>>> GetFinancialTransactionFilters(PagingFilterModel PagingFilter, string TransactionType)
@@ -73,7 +73,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public async Task<ApiResponseModel<DataSet>> GetExportFinancialTransactionData(SearchReportModel Model, string TransactionType)
+        public async Task<ApiResponseModel<DataTable>> GetExportFinancialTransactionData(SearchReportModel Model, string TransactionType)
         {
             var FilterDt = Model.FilterItems.ToDataTableFromFilterModel();
             var FromDate = Model.FilterItems.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
@@ -84,8 +84,8 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             Params[1] = new SqlParameter("@FromDate", FromDate);
             Params[2] = new SqlParameter("@ToDate", ToDate);
             Params[3] = new SqlParameter("@TransactionType", TransactionType);
-            var dt = await _sQLHelper.ExecuteDatasetAsync("institution.SP_ExportFinancialTransactionData", Params);
-            return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_ExportFinancialTransactionData", Params);
+            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
         public async Task<ApiResponseModel<FinancialTransactionStatisticsDto>> GetFinancialTransactionStatisticsNetValue(PagingFilterModel PagingFilter)

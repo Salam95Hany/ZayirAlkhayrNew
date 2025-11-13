@@ -52,6 +52,10 @@
                         <span>تنزيل</span>
                     </button>
                     <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="border rounded">
+                        <button ngbDropdownItem class="d-flex align-items-center gap-2" (click)="OpenPdfFileItemModal(PDFFileItemModal)">
+                            <i class="fas fa-file-download"></i>
+                            <span class="px-2">PDF</span>
+                        </button>
                         <button ngbDropdownItem (click)="DownloadExcelFile()">
                             <i class="fas fa-file-download"></i>
                             <span class="px-2">Excel</span>
@@ -198,6 +202,60 @@
     </div>
     <div class="modal-footer flex-nowrap gap-2">
         <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
+            <i class="uil uil-save fs-3"></i>
+            <span>حفظ</span>
+        </button>
+        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
+            <i class="uil uil-times-circle fs-3"></i>
+            <span>الغاء</span>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #PDFFileItemModal let-modal>
+    <div class="modal-header modal-header-bg justify-content-between">
+        <h2 class="d-flex align-items-center gap-2">
+            <i class="uil uil-focus-add"></i>
+            <span>اختر أعمدة</span>
+        </h2>
+        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+            <i class="uil uil-times-circle"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <table class="table table-bordered table-feature-value align-middle border m-0">
+            <tbody>
+                <tr *ngFor="let item of SearchReport.headers;let x = index">
+                    <td class="table-feature">{{item.nameAr}}</td>
+                    <td class="table-value">
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">محدد</div>
+                            <label class="jtoggler-wrapper m-0 mx-0">
+                                <input type="checkbox" class="jtoggler" [(ngModel)]="item.isSelected">
+                                <div class="jtoggler-control">
+                                    <div class="jtoggler-handle"></div>
+                                </div>
+                            </label>
+                            <div class="ms-2">غير محدد</div>
+                            <div class="mr-25">
+                                <input type="number" class="form-control w-50 text-center" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="item.displayOrder" placeholder="الترتيب">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-feature">تنبيه هام</td>
+                    <td class="table-value">
+                        <ul>
+                            <li class="fs-5">لا يمكن اختيار أكثر من 6 أعمدة في الصفحة الواحدة</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer flex-nowrap gap-2">
+        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="DownloadPdfFile()">
             <i class="uil uil-save fs-3"></i>
             <span>حفظ</span>
         </button>

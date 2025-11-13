@@ -13,6 +13,8 @@ namespace ZayirAlkhayr.Reports.Model
         BeneFactorExcel,
         FamilyStatusExcel,
         AccountExportMonyExcel,
-        AccountImportMonyExcel
+        AccountImportMonyExcel,
+        AccountImportMonyPdf,
+        AccountExportMonyPdf
     }
 }

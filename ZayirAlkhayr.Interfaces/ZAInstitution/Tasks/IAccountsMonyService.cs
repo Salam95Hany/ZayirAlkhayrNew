@@ -13,12 +13,12 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.Tasks
 {
     public interface IAccountsMonyService
     {
-        Task<ApiResponseModel<DataTable>> GetFinancialTransactionData(PagingFilterModel PagingFilter, string TransactionType);
+        Task<ApiResponseModel<DataSet>> GetFinancialTransactionData(PagingFilterModel PagingFilter, string TransactionType);
         Task<ApiResponseModel<List<FilterModel>>> GetFinancialTransactionFilters(PagingFilterModel PagingFilter, string TransactionType);
         Task<ApiResponseModel<DataTable>> GetFinancialTransactionStatistics(PagingFilterModel PagingFilter, string TransactionType);
         Task<ApiResponseModel<FinancialTransactionStatisticsDto>> GetFinancialTransactionStatisticsNetValue(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<List<FilterModel>>> GetFinancialTransactionStatisticFilter();
-        Task<ApiResponseModel<DataSet>> GetExportFinancialTransactionData(SearchReportModel Model, string TransactionType);
+        Task<ApiResponseModel<DataTable>> GetExportFinancialTransactionData(SearchReportModel Model, string TransactionType);
         Task<ApiResponseModel<string>> AddNewFinancialTransaction(FinancialTransaction Model);
         Task<ApiResponseModel<string>> UpdateFinancialTransaction(FinancialTransaction Model);
         Task<ApiResponseModel<string>> DeleteFinancialTransaction(int AccountId);

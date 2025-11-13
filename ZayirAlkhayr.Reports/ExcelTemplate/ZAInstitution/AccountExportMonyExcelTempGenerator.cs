@@ -21,14 +21,9 @@ namespace ZayirAlkhayr.Reports.ExcelTemplate.ZAInstitution
         public async Task<string> Generate(SearchReportModel Model)
         {
             var DT = await _accountsMonyService.GetExportFinancialTransactionData(Model, "Expenses");
-            Model.Headers = DT.Results.Tables[1].AsEnumerable().Select(i => new PDFHeaderSelected
-            {
-                NameEn = i.Field<string>("DisplayValue"),
-                NameAr = i.Field<string>("DisplayName")
-            }).ToList();
-
+            Model.Headers.Add(new PDFHeaderSelected { DisplayOrder = 0, NameAr = "الرقم", NameEn = "RowNumber", ValueType = "Text" });
             var ExportTemplate = new ExportTemplateBase { Name = "المصروفات", SheetName = "المصروفات", TemplateName = "المصروفات", UserName = Model.UserName, Header = new ExportHeaders { ListHeaders = Model.Headers } };
-            var File = _exportManagerService.Export(ExportTemplate, DT.Results.Tables[0]);
+            var File = _exportManagerService.Export(ExportTemplate, DT.Results);
             return File;
         }
     }

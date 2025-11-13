@@ -13,7 +13,7 @@ import { ZaEmptyDataComponent } from '../../../../../../../Shared/za-empty-data/
 @Component({
   selector: 'app-family-data',
   standalone: true,
-  imports: [NgIf, NgFor, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule,ZaEmptyDataComponent],
+  imports: [NgIf, NgFor, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule, ZaEmptyDataComponent],
   templateUrl: './family-data.component.html',
   styleUrl: './family-data.component.css'
 })
@@ -27,6 +27,7 @@ export class FamilyDataComponent {
   FamilyChild = ["ابنة", "إبنة", "ابنه", "ابن", "إبنه", "إبن"];
   MaritalStatusValidation = false;
   FamilyChildCount = 0;
+  FamilyMembersCount = 0;
   addMode = true;
   MaritalStatus: any[] = [
     { value: 'أعزب', name: 'أعزب' },
@@ -51,6 +52,7 @@ export class FamilyDataComponent {
   ngOnInit(): void {
     this.FormInit();
     this.FamilyChildCount = this.FamilyDetails.filter(i => this.FamilyChild.includes(i.relevance)).length;
+    this.FamilyMembersCount = this.FamilyDetails.length ?? 1;
   }
 
   FormInit() {
@@ -62,10 +64,10 @@ export class FamilyDataComponent {
       education: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       jop: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       nationalId: ['', [CustomValidators.regexPattern(RegexType.noSpace)]],
-      maritalStatus:['', [Validators.required,CustomValidators.regexPattern(RegexType.noSpace)]],
+      maritalStatus: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
     });
 
-     this.ItemForm.valueChanges.subscribe((data) => {
+    this.ItemForm.valueChanges.subscribe((data) => {
       this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
     });
   }
@@ -79,7 +81,7 @@ export class FamilyDataComponent {
       education: item.education,
       jop: item.jop,
       nationalId: item?.nationalId ?? '',
-      maritalStatus:item?.maritalStatus
+      maritalStatus: item?.maritalStatus
     });
   }
 
@@ -112,7 +114,7 @@ export class FamilyDataComponent {
     });
   }
 
-   validateForm(): boolean {
+  validateForm(): boolean {
     this.formService.markFormGroupTouched(this.ItemForm);
     if (this.ItemForm.valid) {
       return true;
@@ -168,6 +170,7 @@ export class FamilyDataComponent {
     }
 
     this.FamilyChildCount = this.FamilyDetails.filter(i => this.FamilyChild.includes(i.relevance)).length;
+    this.FamilyMembersCount = this.FamilyDetails.length ?? 1;
     if (this.UpdateMode)
       this.FamilyDetailsChange.emit(this.FamilyDetails);
     this.modalService.dismissAll();
@@ -179,10 +182,12 @@ export class FamilyDataComponent {
     if (this.UpdateMode)
       this.FamilyDetailsChange.emit(this.FamilyDetails);
     this.FamilyChildCount = this.FamilyDetails.filter(i => this.FamilyChild.includes(i.relevance)).length;
+    this.FamilyMembersCount = this.FamilyDetails.length ?? 1;
     this.modalService.dismissAll();
   }
 
   GetOutputData() {
+    debugger;
     if (this.FamilyDetails.length > 0) {
       this.FamilyDetails.forEach(item => {
         item.childernsCount = this.FamilyDetails.length;

@@ -38,6 +38,7 @@ export class AccountImportMonyComponent {
   AccountMoneyList: any[] = [];
   BeneFactors: any[] = [];
   BeneFactorTypes: any[] = [];
+  AccountHeaders: any[] = [];
   ItemForm: FormGroup;
   showLoader: boolean = false;
   TotalCount = 0;
@@ -147,11 +148,21 @@ export class AccountImportMonyComponent {
     })
   }
 
+  OpenPdfFileItemModal(content: any) {
+    this.SearchReport.headers = this.pdfService.ConverHeaderToPDFModel(this.AccountHeaders);
+    this.modalService.open(content, {
+      size: 'lg',
+      scrollable: true,
+      centered: true
+    });
+  }
+
   GetFinancialTransactionData() {
     this.showLoader = true;
     this.taskService.GetFinancialTransactionData(this.PagingFilter, 'Income').subscribe(data => {
       this.showLoader = false;
-      this.AccountMoneyList = data.results;
+      this.AccountMoneyList = data.results.table;
+      this.AccountHeaders = data.results.table1;
       this.TotalCount = data.totalCount;
       this.onInputSelecetAll(this.IsSelectedAll);
     });
@@ -267,6 +278,41 @@ export class AccountImportMonyComponent {
     return this.formService.NumbersOnly(key);
   }
 
+  DownloadPdfFile() {
+    if (this.AccountMoneyList.length == 0) {
+      this.toaster.warning('لا يوجد بيانات للتنزيل');
+      return;
+    }
+
+    let checked = this.SearchReport.headers.filter(i => i.isSelected);
+    let isAllowSummation = this.SearchReport.headers.filter(i => i.isAllowSummation);
+    if (isAllowSummation.length > 1) {
+      this.toaster.warning('لا يمكن اختيار جمع قيم العامود الا لعامود واحد فقط');
+      return;
+    }
+
+    if (checked.length == 0) {
+      this.toaster.warning('اختر عامود واحد على الاقل');
+      return;
+    }
+
+    if (checked.length > 6) {
+      this.toaster.warning('لا يمكن اختيار أكثر من 6 أعمدة');
+      return;
+    }
+
+    let today = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
+    let fileName = 'الايرادات' + '_' + today;
+    this.SearchReport.headers = this.SearchReport.headers.filter(i => i.isSelected);
+    this.SearchReport.rowCount = 0;
+    this.SearchReport.reportType = 'AccountImportMonyPdf';
+    this.showLoader = true;
+    this.pdfService.DownloadFile(this.SearchReport, fileName + '.pdf').subscribe(data => {
+      this.showLoader = false;
+    });
+    this.modalService.dismissAll();
+  }
+
   DownloadExcelFile() {
     if (this.AccountMoneyList.length == 0) {
       this.toaster.warning('لا يوجد بيانات للتنزيل');
@@ -277,6 +323,7 @@ export class AccountImportMonyComponent {
     this.SearchReport.reportType = 'AccountImportMonyExcel';
     let today = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
     let fileName = 'الايرادات' + '_' + today;
+    this.SearchReport.headers = this.pdfService.ConverHeaderToPDFModel(this.AccountHeaders);
     this.showLoader = true;
     this.pdfService.DownloadFile(this.SearchReport, fileName + '.xlsx').subscribe(data => {
       this.showLoader = false;

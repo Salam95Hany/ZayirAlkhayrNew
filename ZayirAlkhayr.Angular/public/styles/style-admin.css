@@ -2350,3 +2350,7 @@ td {
     -ms-transform: translateY(-50%);
     -o-transform: translateY(-50%);
 }
+
+.mr-25 {
+    margin-right: 25px;
+}

@@ -164,6 +164,48 @@ namespace ZayirAlkhayr.Reports.Service
                     });
                 });
         }
+
+        public static void AddTotalAmountCard(this IContainer container, string label, string amount, string currency)
+        {
+            container.PaddingTop(10).Element(card =>
+            {
+                card
+                .Border(1)
+                .BorderColor(Colors.Grey.Lighten1)
+                .BackgroundLinearGradient(
+                    135,
+                    new[]
+                    {
+                Color.FromHex("#f8fdf8"),
+                Color.FromHex("#e8f5e8")
+                    })
+                .CornerRadius(8)
+                .Padding(10)
+                .Row(row =>
+                {
+                    row.RelativeItem().AlignMiddle().Text(text =>
+                    {
+                        text.Span("💰 ").FontSize(18);
+                        text.Span(label)
+                            .FontSize(20)
+                            .FontColor(Color.FromHex("#2d5016"))
+                            .Bold();
+                    });
+
+                    row.AutoItem().AlignMiddle().Row(inner =>
+                    {
+                        inner.AutoItem().Text(amount)
+                            .FontSize(26)
+                            .Bold()
+                            .FontColor(Color.FromHex("#2d5016"));
+
+                        inner.AutoItem().PaddingLeft(6).AlignMiddle().Text(currency)
+                            .FontSize(18)
+                            .FontColor(Color.FromHex("#4a7c23"));
+                    });
+                });
+            });
+        }
     }
 
 }

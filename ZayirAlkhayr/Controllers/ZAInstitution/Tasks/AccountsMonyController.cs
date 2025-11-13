@@ -18,7 +18,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.Tasks
         }
 
         [HttpPost("GetFinancialTransactionData")]
-        public async Task<ApiResponseModel<DataTable>> GetFinancialTransactionData(PagingFilterModel PagingFilter, string TransactionType)
+        public async Task<ApiResponseModel<DataSet>> GetFinancialTransactionData(PagingFilterModel PagingFilter, string TransactionType)
         {
             var results = await _accountsMonyService.GetFinancialTransactionData(PagingFilter, TransactionType);
             return results;

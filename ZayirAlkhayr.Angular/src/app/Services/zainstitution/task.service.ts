@@ -14,7 +14,7 @@ export class TaskService {
   // ============================= AccountsMony ==============================
 
   GetFinancialTransactionData(PagingFilter: PagingFilterModel, TransactionType: string) {
-    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'AccountsMony/GetFinancialTransactionData?TransactionType=' + TransactionType, PagingFilter);
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/GetFinancialTransactionData?TransactionType=' + TransactionType, PagingFilter);
   }
 
   GetFinancialTransactionFilters(PagingFilter: PagingFilterModel, TransactionType: string) {
