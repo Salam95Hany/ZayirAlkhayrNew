@@ -25,7 +25,7 @@ namespace ZayirAlkhayr.Reports.ExcelTemplate.ZAInstitution
 
         public async Task<string> Generate(SearchReportModel Model)
         {
-            var DT = await _accountsMonyService.GetExportFinancialTransactionData(Model, "Expenses");
+            var DT = await _accountsMonyService.GetExportFinancialTransactionData(Model, "Income");
             Model.Headers = DT.Results.Tables[1].AsEnumerable().Where(i => i.Field<string>("DisplayValue") != "DonationMethod").Select(i => new PDFHeaderSelected
             {
                 NameEn = i.Field<string>("DisplayValue"),

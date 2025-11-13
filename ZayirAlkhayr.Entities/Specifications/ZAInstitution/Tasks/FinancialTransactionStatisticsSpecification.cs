@@ -8,9 +8,9 @@ using ZayirAlkhayr.Entities.Models;
 
 namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.Tasks
 {
-    public class FinancialTransactionStatisticsSpecification:BaseSpecification<FinancialTransaction>
+    public class FinancialTransactionStatisticsSpecification : BaseSpecification<FinancialTransaction>
     {
-        public FinancialTransactionStatisticsSpecification(PagingFilterModel PagingFilter)
+        public FinancialTransactionStatisticsSpecification(PagingFilterModel PagingFilter, string TransactionType):base(i => i.TransactionType == TransactionType)
         {
             var userIds = PagingFilter.FilterList.Where(f => f.CategoryName == "Users").Select(f => f.ItemId).ToList();
             var TypeIds = PagingFilter.FilterList.Where(f => f.CategoryName == "Types").Select(f => int.Parse(f.ItemId)).ToList();

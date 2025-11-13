@@ -13,8 +13,7 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.GeneralServices
     {
         Task<ApiResponseModel<DataSet>> GetAllFamilyStatusData(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<List<FilterModel>>> GetAllFamilyStatusFilter(PagingFilterModel PagingFilter);
-        //Task<ApiResponseModel<string>> ExportFamilyStatusDataPDFFile(PDFModel Model, int RowCount);
-        //Task<ApiResponseModel<string>> ExportFamilyStatusDataExcelFile(PDFModel Model, string UserName);
+        Task<ApiResponseModel<DataTable>> ExportFamilyStatusData(List<FilterModel> FilterList);
         Task<ApiResponseModel<FamilyStatusLookups>> GetFamilyStatusLookups();
         Task<ApiResponseModel<UpdateFamilyStatusLookups>> GetUpdateFamilyStatusLookups(int FamilyStatusId);
     }

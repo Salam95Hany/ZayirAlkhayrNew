@@ -90,10 +90,11 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
 
         public async Task<ApiResponseModel<FinancialTransactionStatisticsDto>> GetFinancialTransactionStatisticsNetValue(PagingFilterModel PagingFilter)
         {
-            var Spec = new FinancialTransactionStatisticsSpecification(PagingFilter);
+            var SpecIncome = new FinancialTransactionStatisticsSpecification(PagingFilter, "Income");
+            var SpecExpenses = new FinancialTransactionStatisticsSpecification(PagingFilter, "Expenses");
             var StatisticsDto = new FinancialTransactionStatisticsDto();
-            StatisticsDto.TotalIncome = await _unitOfWork.Repository<FinancialTransaction>().SumAsync(Spec, i => i.TotalValue);
-            StatisticsDto.TotalExpenses = await _unitOfWork.Repository<FinancialTransaction>().SumAsync(Spec, i => i.TotalValue);
+            StatisticsDto.TotalIncome = await _unitOfWork.Repository<FinancialTransaction>().SumAsync(SpecIncome, i => i.TotalValue);
+            StatisticsDto.TotalExpenses = await _unitOfWork.Repository<FinancialTransaction>().SumAsync(SpecExpenses, i => i.TotalValue);
             StatisticsDto.NetValue = StatisticsDto.TotalIncome - StatisticsDto.TotalExpenses;
             return ApiResponseModel<FinancialTransactionStatisticsDto>.Success(GenericErrors.GetSuccess, StatisticsDto);
         }

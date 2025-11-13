@@ -42,6 +42,8 @@ export class AccountExportMonyComponent implements OnInit {
   TotalCount = 0;
   TotalExportValue = 0;
   ExportValueMonth = 0;
+  TotalValue = 0;
+  IsSelectedAll = false;
   isFilter = true;
   ActivityId: any;
   ImageFile: any;
@@ -170,6 +172,7 @@ export class AccountExportMonyComponent implements OnInit {
     this.taskService.GetFinancialTransactionStatistics(this.PagingFilter, 'Expenses').subscribe(data => {
       this.TotalExportValue = data.results[0].totalMoney ?? 0;
       this.ExportValueMonth = data.results[0].currentMonthMony ?? 0;
+      this.TotalValue = data.results[0].totalMoney ?? 0;
     });
   }
 
@@ -268,5 +271,31 @@ export class AccountExportMonyComponent implements OnInit {
     this.pdfService.DownloadFile(this.SearchReport, fileName + '.xlsx').subscribe(data => {
       this.showLoader = false;
     });
+  }
+
+  onInputSelecetAll(isSelected: boolean) {
+    debugger;
+    this.AccountMoneyList.forEach(item => item.isSelected = isSelected);
+    if (this.AccountMoneyList.every(i => !i.isSelected))
+      this.TotalValue = this.TotalExportValue;
+    else {
+      this.TotalValue = 0;
+      this.AccountMoneyList.forEach(item => {
+        if (item.isSelected)
+          this.TotalValue += item.totalValue;
+      });
+    }
+  }
+
+  onInputSelected() {
+    if (this.AccountMoneyList.every(i => !i.isSelected))
+      this.TotalValue = this.TotalExportValue;
+    else {
+      this.TotalValue = 0;
+      this.AccountMoneyList.forEach(item => {
+        if (item.isSelected)
+          this.TotalValue += item.totalValue;
+      });
+    }
   }
 }

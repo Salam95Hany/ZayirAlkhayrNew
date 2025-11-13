@@ -92,14 +92,14 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
 
                 Header = new List<PDFHeader>
                 {
-                    new PDFHeader{DisplayName = "Code",DisplayValue = "الكود",ValueType = "Text"},
-                    new PDFHeader{DisplayName = "FullName",DisplayValue = "الاسم",ValueType = "Text"},
-                    new PDFHeader{DisplayName = "Description",DisplayValue = "الوصف",ValueType = "Text"},
-                    new PDFHeader{DisplayName = "Phone",DisplayValue = "رقم التلفون",ValueType = "Text"},
-                    new PDFHeader{DisplayName = "Phone2",DisplayValue = "رقم التلفون 2",ValueType = "Text"},
-                    new PDFHeader{DisplayName = "Address",DisplayValue = "العنوان",ValueType = "TextText"},
-                    new PDFHeader{DisplayName = "Nationality",DisplayValue = "الجنسية",ValueType = ""},
-                    new PDFHeader{DisplayName = "FaceBook",DisplayValue = "صفحة الفيس بوك",ValueType = "Text"}
+                    new PDFHeader{DisplayName = "الكود",DisplayValue = "Code",ValueType = "Text"},
+                    new PDFHeader{DisplayName = "الاسم",DisplayValue = "FullName",ValueType = "Text"},
+                    new PDFHeader{DisplayName = "الوصف",DisplayValue = "Description",ValueType = "Text"},
+                    new PDFHeader{DisplayName = "رقم التلفون",DisplayValue = "Phone",ValueType = "Text"},
+                    new PDFHeader{DisplayName = "رقم التلفون 2",DisplayValue = "Phone2",ValueType = "Text"},
+                    new PDFHeader{DisplayName = "العنوان",DisplayValue = "Address",ValueType = "TextText"},
+                    new PDFHeader{DisplayName = "الجنسية",DisplayValue = "Nationality",ValueType = ""},
+                    new PDFHeader{DisplayName = "صفحة الفيس بوك",DisplayValue = "FaceBook",ValueType = "Text"}
                 }
             };
             return ApiResponseModel<BeneFactorDto>.Success(GenericErrors.GetSuccess, Results, TotalCount);

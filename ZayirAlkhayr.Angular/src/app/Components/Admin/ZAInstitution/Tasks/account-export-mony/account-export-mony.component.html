@@ -80,6 +80,7 @@
             <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
                 <thead>
                     <tr>
+                        <th><input type="checkbox" (change)="onInputSelecetAll($event.target.checked)" [(ngModel)]="IsSelectedAll"></th>
                         <th>اسم المتبرع</th>
                         <th>نوع التبرع</th>
                         <th>المبلغ</th>
@@ -92,6 +93,7 @@
                 <tbody>
                     <ng-container>
                         <tr *ngFor="let item of AccountMoneyList">
+                            <td><input type="checkbox" (change)="onInputSelected()" [(ngModel)]="item.isSelected"></td>
                             <td>{{item.fullName}}</td>
                             <td>{{item.name}}</td>
                             <td>{{item.totalValue}}</td>

@@ -43,7 +43,9 @@ export class AccountImportMonyComponent {
   TotalCount = 0;
   TotalImportValue = 0;
   ImportValueMonth = 0;
+  TotalValue = 0;
   isFilter = true;
+  IsSelectedAll = false;
   ActivityId: any;
   ImageFile: any;
   UserId: any;
@@ -151,6 +153,7 @@ export class AccountImportMonyComponent {
       this.showLoader = false;
       this.AccountMoneyList = data.results;
       this.TotalCount = data.totalCount;
+      this.onInputSelecetAll(this.IsSelectedAll);
     });
   }
 
@@ -179,6 +182,7 @@ export class AccountImportMonyComponent {
     this.taskService.GetFinancialTransactionStatistics(this.PagingFilter, 'Income').subscribe(data => {
       this.TotalImportValue = data.results[0].totalMoney ?? 0;
       this.ImportValueMonth = data.results[0].currentMonthMony ?? 0;
+      this.TotalValue = data.results[0].totalMoney ?? 0;
     });
   }
 
@@ -277,5 +281,30 @@ export class AccountImportMonyComponent {
     this.pdfService.DownloadFile(this.SearchReport, fileName + '.xlsx').subscribe(data => {
       this.showLoader = false;
     });
+  }
+
+  onInputSelecetAll(isSelected: boolean) {
+    this.AccountMoneyList.forEach(item => item.isSelected = isSelected);
+    if (this.AccountMoneyList.every(i => !i.isSelected))
+      this.TotalValue = this.TotalImportValue;
+    else {
+      this.TotalValue = 0;
+      this.AccountMoneyList.forEach(item => {
+        if (item.isSelected)
+          this.TotalValue += item.totalValue;
+      });
+    }
+  }
+
+  onInputSelected() {
+    if (this.AccountMoneyList.every(i => !i.isSelected))
+      this.TotalValue = this.TotalImportValue;
+    else {
+      this.TotalValue = 0;
+      this.AccountMoneyList.forEach(item => {
+        if (item.isSelected)
+          this.TotalValue += item.totalValue;
+      });
+    }
   }
 }

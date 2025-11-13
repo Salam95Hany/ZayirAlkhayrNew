@@ -27,7 +27,6 @@ namespace ZayirAlkhayr.Reports.PdfTemplate.ZAInstitution
             var FullPath = Path.Combine(_environment.WebRootPath, "ExportFiles", "BeneFactor" + ".pdf");
             var ImgPath = Path.Combine(_environment.WebRootPath, "Template", "ZayirAlkhayrLogo2.jpeg");
             var DT = await _beneFactorService.GetExportBeneFactorsData(Model.FilterItems);
-            //var DtBatches = DT.Results.ToDataTableBatches(Model.RowCount);
             Model.Headers.Add(new PDFHeaderSelected { DisplayOrder = 0, NameAr = "الرقم", NameEn = "RowNumber", ValueType = "Text" });
             Model.Headers = Model.Headers.OrderBy(i => i.DisplayOrder).ToList();
 
