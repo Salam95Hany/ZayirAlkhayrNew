@@ -1,4 +1,4 @@
-<div *ngIf="!selectMulti" ngbDropdown class="dropdown-as-input" container="body" placement="bottom-end">
+<div *ngIf="!selectMulti" ngbDropdown class="dropdown-as-input">
     <button type="button" style="padding-left: 80px;" [disabled]="disabled" id="dropdownBasic1" class="input-box" [class.error]="hasError" ngbDropdownToggle>
         <span>{{selectedName?selectedName?.substring(0, 30):placeholder}}</span>
         <span *ngIf="selectedCode">{{selectedCode}}</span>
@@ -19,7 +19,7 @@
 </div>
 
 
-<div *ngIf="selectMulti" ngbDropdown [autoClose]="'outside'" class="dropdown-as-input" container="body" placement="bottom-end">
+<div *ngIf="selectMulti" ngbDropdown [autoClose]="'outside'" class="dropdown-as-input">
     <button type="button" [disabled]="disabled" id="dropdownBasic1" class="input-box" [class.error]="hasError" ngbDropdownToggle>
         <div class="overflow-hidden"> 
             <span>{{placeholder}}</span>

@@ -67,7 +67,6 @@ export class FamilyStatusSidepanelComponent implements OnInit {
       this.showLoader = false;
       this.FamilyStatusInfo = data.results;
       this.isLookupsLoaded = true;
-      console.log(this.FamilyStatusInfo);
     });
   }
 

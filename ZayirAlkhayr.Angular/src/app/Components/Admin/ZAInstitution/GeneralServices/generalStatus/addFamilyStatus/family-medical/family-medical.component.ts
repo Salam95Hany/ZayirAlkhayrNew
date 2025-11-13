@@ -170,7 +170,6 @@ export class FamilyMedicalComponent implements OnInit, OnChanges {
   }
 
   PatientTypeChange(items: string[]) {
-    debugger
     items = items.map(i => i.toString());
     this.SelectedPatientTypes = [];
     let arry = this.PatientTypes.filter(i => items.includes(i.value));

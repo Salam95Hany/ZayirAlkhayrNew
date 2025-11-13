@@ -23,7 +23,7 @@ namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.BeneFactor
                 AddCriteria(fc => NationalityIds.Contains(fc.NationalityId));
 
             if (!string.IsNullOrEmpty(searchText))
-                AddCriteria(fc => fc.FullName.Contains(searchText));
+                AddCriteria(fc => fc.FullName.Contains(searchText) || fc.Phone.Contains(searchText));
 
             AddInclude(fc => fc.CreatedBy);
             AddInclude(fc => fc.Nationality);

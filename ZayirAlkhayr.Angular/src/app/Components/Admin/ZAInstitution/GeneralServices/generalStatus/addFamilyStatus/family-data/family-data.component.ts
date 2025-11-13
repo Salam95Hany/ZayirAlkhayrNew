@@ -177,7 +177,6 @@ export class FamilyDataComponent {
   }
 
   DeleteItem() {
-    debugger;
     this.FamilyDetails = this.FamilyDetails.filter(i => i.id != this.FamilyDetailsId);
     if (this.UpdateMode)
       this.FamilyDetailsChange.emit(this.FamilyDetails);
@@ -187,7 +186,6 @@ export class FamilyDataComponent {
   }
 
   GetOutputData() {
-    debugger;
     if (this.FamilyDetails.length > 0) {
       this.FamilyDetails.forEach(item => {
         item.childernsCount = this.FamilyDetails.length;

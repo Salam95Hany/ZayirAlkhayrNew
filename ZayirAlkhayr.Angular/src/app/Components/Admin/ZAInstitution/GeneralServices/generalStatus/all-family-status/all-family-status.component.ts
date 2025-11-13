@@ -203,7 +203,6 @@ export class AllFamilyStatusComponent {
       return;
     }
     
-    debugger;
     let today = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
     let fileName = 'الحالات' + '_' + today;
     this.SearchReport.headers = this.pdfService.ConverHeaderToPDFModel(this.FamilyStatusHeaders);

@@ -140,7 +140,6 @@ export class BenefactorDetailsComponent implements OnInit {
   }
 
   openDeleteItemModal(content: any, detailsId: any) {
-    debugger;
     this.DetailsId = detailsId;
     this.modalService.open(content, {
       size: 'md',
@@ -316,7 +315,6 @@ export class BenefactorDetailsComponent implements OnInit {
   }
 
   DeleteItem() {
-    debugger;
     this.showLoader = true;
     this.benefactorService.DeleteBeneFactorDetails(this.DetailsId).subscribe(data => {
       if (data.isSuccess) {

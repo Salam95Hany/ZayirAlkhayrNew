@@ -111,10 +111,9 @@ export class BenefactorComponent {
   }
 
   FillEditForm(item: any) {
-    debugger;
     this.fileURL = [];
     this.fileURL.push(item);
-    let fileName = item.image.split('/');
+    let fileName = item.image?.split('/');
     this.ItemForm.patchValue({
       id: item.id,
       fullName: item.fullName,
@@ -125,7 +124,7 @@ export class BenefactorComponent {
       nationalityId: item?.nationalityId.toString(),
       faceBook: item?.faceBook,
       welcomeMessage: item?.welcomeMessage,
-      oldFileName: fileName[fileName.length - 1],
+      oldFileName: fileName ? fileName[fileName.length - 1] : null,
       InsertUser: this.UserId,
       file: null,
     });

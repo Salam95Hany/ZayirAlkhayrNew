@@ -106,7 +106,6 @@ export class FamilyNeedsComponent implements OnInit {
   }
 
   FillEditNeedForm(item: any) {
-    debugger;
     this.NeedForm.setValue({
       id: item.id,
       categoryId: item.categoryId.toString(),
@@ -193,7 +192,6 @@ export class FamilyNeedsComponent implements OnInit {
 
   GetAllFamilyNeedTypesFilters() {
     this.generalStatusService.GetAllFamilyNeedTypesFilters().subscribe(data => {
-      debugger
       this.NeedFilterList = data.results;
     });
   }
@@ -204,7 +202,6 @@ export class FamilyNeedsComponent implements OnInit {
   }
 
   NeedFilterChecked(filterList: FilterModel[]) {
-    debugger;
     this.NeedsPagingFilter.filterList = filterList;
     this.GetAllFamilyNeedTypesData();
   }
@@ -218,7 +215,6 @@ export class FamilyNeedsComponent implements OnInit {
 
   GetAllFamilyNeedCategoriesFilters() {
     this.generalStatusService.GetAllFamilyNeedCategoriesFilters().subscribe(data => {
-      debugger
       this.CategoryFilterList = data.results;
     });
   }
@@ -229,7 +225,6 @@ export class FamilyNeedsComponent implements OnInit {
   }
 
   CategoryFilterChecked(filterList: FilterModel[]) {
-    debugger;
     this.CategoriesPagingFilter.filterList = filterList;
     this.GetAllFamilyNeedCategoriesData();
   }

@@ -135,7 +135,6 @@ export class FamilyNationalityComponent implements OnInit {
   }
 
   AddNewItem() {
-    debugger
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
     let isValid = this.validateForm();
 

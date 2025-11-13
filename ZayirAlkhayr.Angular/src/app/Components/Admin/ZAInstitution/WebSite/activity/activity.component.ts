@@ -317,7 +317,6 @@ export class ActivityComponent implements OnInit {
   }
 
   ApplyFilesSorting() {
-    debugger;
     let checked = this.multiFileURL.every(i => i.id);
     if (!checked) {
       this.toaster.warning('برجاء اضافة الصور الجديدة اولا');

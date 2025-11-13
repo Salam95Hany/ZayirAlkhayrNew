@@ -119,7 +119,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
             {
                  new()
                  {
-                    CategoryDisplayName = "بالاسم",
+                    CategoryDisplayName = "بالاسم, رقم التلفون",
                     CategoryName = "SearchText",
                     FilterType = "SearchText",
                  },
