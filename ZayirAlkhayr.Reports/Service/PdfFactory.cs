@@ -82,7 +82,7 @@ namespace ZayirAlkhayr.Reports.Service
         {
             Container.Column(col =>
             {
-                col.Item().PaddingVertical(5).MaxHeight(620).Table(tbl =>
+                col.Item().PaddingVertical(5).Table(tbl =>
                 {
                     IContainer DefaultCellStyle(IContainer container, string backgroundColor)
                     {
@@ -124,11 +124,11 @@ namespace ZayirAlkhayr.Reports.Service
                         foreach (var column in HeaderNames)
                         {
                             var cellValue = dt.Rows[i][column.NameEn]?.ToString() ?? "";
-                            tbl.Cell().Element(CellStyle).ShowEntire().Text(cellValue);
+                            tbl.Cell().Element(CellStyle).Text(cellValue);
                         }
                     }
 
-                    IContainer CellStyle(IContainer container) => DefaultCellStyle(container, Colors.White).ShowOnce();
+                    IContainer CellStyle(IContainer container) => DefaultCellStyle(container, Colors.White);
                 });
             });
         }

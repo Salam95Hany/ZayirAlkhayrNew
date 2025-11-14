@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    apiUrl: 'https://zayiralkhayr-test-api.runasp.net/api/',
+    apiUrl: 'https://zayiralkhayr-api.runasp.net/api/',
 };

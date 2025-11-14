@@ -14,5 +14,6 @@ namespace ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.WebSite
         public string Image { get; set; }
         public string InsertDate { get; set; }
         public string CreatedBy { get; set; }
+        public bool IsVisible { get; set; }
     }
 }

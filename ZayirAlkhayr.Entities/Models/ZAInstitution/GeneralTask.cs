@@ -19,7 +19,7 @@ public partial class GeneralTask : AuditableEntity
     public string Priority { get; set; }
     public string AssignTo { get; set; }
     public DateTime TaskAddedDate { get; set; }
-    public DateTime DueDate { get; set; }
+    public DateTime? DueDate { get; set; }
 
     public TaskStatus Status { get; set; }
 }

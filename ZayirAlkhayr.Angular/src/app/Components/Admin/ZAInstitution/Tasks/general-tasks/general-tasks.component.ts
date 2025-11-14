@@ -60,7 +60,6 @@ export class GeneralTasksComponent {
     title: '',
     description: '',
     taskAddedDate: '',
-    dueDate: '',
     priority: '',
     assignTo: ''
   };
@@ -100,7 +99,7 @@ export class GeneralTasksComponent {
       title: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       description: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       taskAddedDate: ['', [Validators.required]],
-      dueDate: ['', [Validators.required]],
+      dueDate: null,
       priority: ['', [Validators.required]],
       assignTo: ['', [Validators.required]],
       insertUser: null
@@ -140,6 +139,7 @@ export class GeneralTasksComponent {
     this.showLoader = true;
     this.taskService.GetAllGeneralTasksData(this.PagingFilter).subscribe(data => {
       this.showLoader = false;
+      debugger;
       this.TasksData = data.results;
       this.TotalCount = data.totalCount;
     });

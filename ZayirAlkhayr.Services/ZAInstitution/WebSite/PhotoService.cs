@@ -46,6 +46,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Title = fc.Title,
                 Image = Path.Combine(ApiLocalUrl, ImageFiles.PhotoImages.ToString(), fc.Image),
                 Description = fc.Description,
+                IsVisible = fc.IsVisible,
                 CreatedBy = fc.CreatedBy.UserName,
                 InsertDate = fc.InsertDate?.ToString("dddd d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE")) ?? ""
             }).ToList();

@@ -94,8 +94,7 @@
                             <span class="priority-badge bg-danger text-white" *ngIf="item?.priority == 'HighPriority'">أولوية عالية</span>
                             <span class="priority-badge bg-warning text-white" *ngIf="item?.priority == 'MediumPriority'">أولوية متوسطة</span>
                             <span class="priority-badge bg-success text-white" *ngIf="item?.priority == 'LowPriority'">أولوية منخفضة</span>
-                            <span class="task-time"><i class="far fa-clock me-1"></i>تاريخ التسليم: {{item?.dueDate |
-                                date:'yyyy-MM-dd'}}</span>
+                            <span class="task-time" *ngIf="item?.dueDate"><i class="far fa-clock me-1"></i>تاريخ التسليم: {{item?.dueDate | date:'yyyy-MM-dd'}}</span>
 
                             <span class="task-time"><i class="far fa-user me-1"></i>المكلف بالمهمة:
                                 {{item?.assignTo}}</span>
@@ -162,7 +161,7 @@
                     <tr>
                         <td class="table-feature">تاريخ التسليم</td>
                         <td class="table-value">
-                            <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ التسليم...'" [error]="formErrors.dueDate" formControlName="dueDate"></app-za-input-with-label>
+                            <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ التسليم...'" formControlName="dueDate"></app-za-input-with-label>
                         </td>
                     </tr>
                     <tr>

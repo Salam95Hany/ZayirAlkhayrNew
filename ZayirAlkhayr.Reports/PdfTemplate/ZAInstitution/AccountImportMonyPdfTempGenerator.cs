@@ -40,7 +40,8 @@ namespace ZayirAlkhayr.Reports.PdfTemplate.ZAInstitution
                 {
                     container.Page(page =>
                     {
-                        page.Size(PageSizes.A4);
+                        //page.Size(PageSizes.A4);
+                        page.Size(PageSizes.A4.Landscape());
                         page.PageColor(Colors.White);
                         page.DefaultTextStyle(x => x.FontSize(12).FontFamily("Arial"));
                         page.ContentFromRightToLeft();
