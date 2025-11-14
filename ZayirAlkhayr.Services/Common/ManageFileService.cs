@@ -16,6 +16,9 @@ namespace ZayirAlkhayr.Services.Common
         public async Task<ApiResponseModel<string>> UploadFile(IFormFile File, string OldFileName, ImageFiles FolderName)
         {
             string FolderPath = Path.Combine(_webRootPath, FolderName.ToString());
+            if (!Directory.Exists(FolderPath))
+                Directory.CreateDirectory(FolderPath);
+
             if (!string.IsNullOrEmpty(OldFileName))
             {
                 DeleteFile(OldFileName, FolderName);
@@ -36,9 +39,6 @@ namespace ZayirAlkhayr.Services.Common
             }
             else
             {
-                if (!Directory.Exists(FolderPath))
-                    Directory.CreateDirectory(FolderPath);
-
                 if (File.Length > 0)
                 {
                     using (var stream = new FileStream(Path.Combine(FolderPath, FileName), FileMode.Create))

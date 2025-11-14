@@ -81,7 +81,7 @@ export class FamilyDataComponent {
       education: item.education,
       jop: item.jop,
       nationalId: item?.nationalId ?? '',
-      maritalStatus: item?.maritalStatus
+      maritalStatus: item?.maritalStatus?.toString() ?? ''
     });
   }
 

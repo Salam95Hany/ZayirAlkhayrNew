@@ -118,8 +118,8 @@ export class GeneralTasksComponent {
       description: item?.description ?? '',
       taskAddedDate: this.datePipe.transform(item?.taskAddedDate, 'yyyy-MM-dd') ?? null,
       dueDate: this.datePipe.transform(item?.dueDate, 'yyyy-MM-dd') ?? null,
-      priority: item?.priority ?? '',
-      assignTo: item?.assignToId ?? '',
+      priority: item?.priority?.toString() ?? '',
+      assignTo: item?.assignToId?.toString() ?? '',
       insertUser: item?.insertUser
     });
   }

@@ -133,7 +133,7 @@ export class FamilyMedicalComponent implements OnInit, OnChanges {
       specialization: item.specialization,
       isMedicalReport: item.isMedicalReport,
       isNeedProcess: item.isNeedProcess,
-      familyName: item?.name,
+      familyName: item?.name?.toString() ?? '',
       patientType: this.SelectedPatientTypeIds.join(',')
     });
   }

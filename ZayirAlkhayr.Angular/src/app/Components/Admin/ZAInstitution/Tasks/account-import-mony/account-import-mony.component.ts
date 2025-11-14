@@ -111,11 +111,11 @@ export class AccountImportMonyComponent {
   FillEditForm(item: any) {
     this.ItemForm.setValue({
       id: item.id,
-      beneFactorId: item?.beneFactorId ?? '0',
-      beneFactorTypeId: item?.beneFactorTypeId,
+      beneFactorId: item?.beneFactorId?.toString() ?? '0',
+      beneFactorTypeId: item?.beneFactorTypeId?.toString() ?? '',
       details: item?.details,
       totalValue: item?.totalValue,
-      donationMethodId: item?.donationMethodId,
+      donationMethodId: item?.donationMethodId?.toString() ?? '',
       insertUser: this.UserId,
       insertDate: this.datepipe.transform(item?.insertDate, 'yyyy-MM-dd'),
       transactionType: null
