@@ -38,9 +38,9 @@ namespace ZayirAlkhayr.Entities.Common
 
         private static int GetCount(T? value)
         {
-            if(value is System.Data.DataSet dataSet)
+            if (value is System.Data.DataSet dataSet)
             {
-                if (dataSet.Tables.Count > 0 && dataSet.Tables[0].Columns.Contains("TotalCount"))
+                if (dataSet.Tables.Count > 0 && dataSet.Tables[0].Columns.Contains("TotalCount") && dataSet.Tables[0].Rows.Count > 0)
                     return int.TryParse(dataSet.Tables[0].Rows[0]["TotalCount"]?.ToString(), out var totalCount) ? totalCount : 0;
                 return 0;
             }

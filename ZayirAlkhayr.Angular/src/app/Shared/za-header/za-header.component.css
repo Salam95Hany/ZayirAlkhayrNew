@@ -80,3 +80,10 @@
     width: 102% !important;
     min-width: unset !important;
 }
+
+.login-logo .logo-img {
+    --dim: 52px;
+    width: var(--dim);
+    height: var(--dim);
+    margin-top: -3px;
+}

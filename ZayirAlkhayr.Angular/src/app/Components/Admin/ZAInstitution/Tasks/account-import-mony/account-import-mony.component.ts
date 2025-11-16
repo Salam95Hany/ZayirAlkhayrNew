@@ -69,7 +69,6 @@ export class AccountImportMonyComponent {
   formErrors = {
     beneFactorId: '',
     beneFactorTypeId: '',
-    details: '',
     totalValue: '',
     insertDate: '',
     donationMethodId: ''
@@ -95,7 +94,7 @@ export class AccountImportMonyComponent {
       id: 0,
       beneFactorId: ['', Validators.required],
       beneFactorTypeId: ['', Validators.required],
-      details: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      details: ['', [CustomValidators.regexPattern(RegexType.noSpace)]],
       totalValue: ['', Validators.required],
       donationMethodId: ['', Validators.required],
       insertUser: null,
