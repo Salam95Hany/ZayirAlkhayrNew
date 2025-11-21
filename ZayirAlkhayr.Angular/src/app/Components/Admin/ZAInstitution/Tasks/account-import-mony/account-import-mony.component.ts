@@ -108,11 +108,11 @@ export class AccountImportMonyComponent {
   }
 
   FillEditForm(item: any) {
-    this.ItemForm.setValue({
+    this.ItemForm.patchValue({
       id: item.id,
       beneFactorId: item?.beneFactorId?.toString() ?? '0',
       beneFactorTypeId: item?.beneFactorTypeId?.toString() ?? '',
-      details: item?.details,
+      details: item?.details ?? '',
       totalValue: item?.totalValue,
       donationMethodId: item?.donationMethodId?.toString() ?? '',
       insertUser: this.UserId,

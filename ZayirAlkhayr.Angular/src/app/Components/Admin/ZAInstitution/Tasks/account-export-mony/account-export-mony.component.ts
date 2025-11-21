@@ -20,13 +20,14 @@ import { PdfDownloadService } from '../../../../../Services/shared/pdf-download.
 import { SearchReportModel } from '../../../../../Models/shared/SearchReportModel';
 import { ZaDropDownFormControlComponent } from '../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 import { NgxLoadingModule } from "ngx-loading";
+import { DonationMethodPipe } from '../../../../../Pipes/donation-method.pipe';
 
 @Component({
   selector: 'app-account-export-mony',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RoleCheckerDirective, ZaInputWithLabelComponent,
-    NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule],
+    NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule,DonationMethodPipe],
   templateUrl: './account-export-mony.component.html',
   styleUrl: './account-export-mony.component.css',
   providers: [DatePipe]
@@ -50,6 +51,11 @@ export class AccountExportMonyComponent implements OnInit {
   ImageFile: any;
   UserId: any;
   AccountId: any;
+  DonationMethods: any[] = [
+    { value: 1, name: 'فودافون كاش' },
+    { value: 2, name: 'انستا باي' },
+    { value: 3, name: 'نقداً' }
+  ];
   PagingFilter: PagingFilterModel = {
     currentPage: 1,
     pageSize: 20,
@@ -63,9 +69,9 @@ export class AccountExportMonyComponent implements OnInit {
   formErrors = {
     beneFactorId: '',
     beneFactorTypeId: '',
-    details: '',
     totalValue: '',
-    insertDate: ''
+    insertDate: '',
+    donationMethodId: ''
   };
 
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private authService: AuthService,
@@ -88,8 +94,9 @@ export class AccountExportMonyComponent implements OnInit {
       id: 0,
       beneFactorId: ['', Validators.required],
       beneFactorTypeId: ['', Validators.required],
-      details: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      details: ['', [CustomValidators.regexPattern(RegexType.noSpace)]],
       totalValue: ['', Validators.required],
+      donationMethodId: ['', Validators.required],
       insertUser: null,
       insertDate: ['', Validators.required],
       transactionType: null
@@ -101,11 +108,12 @@ export class AccountExportMonyComponent implements OnInit {
   }
 
   FillEditForm(item: any) {
-    this.ItemForm.setValue({
+    this.ItemForm.patchValue({
       id: item.id,
       beneFactorId: item?.beneFactorId?.toString() ?? '0',
       beneFactorTypeId: item?.beneFactorTypeId?.toString() ?? '',
-      details: item?.details,
+      donationMethodId: item?.donationMethodId?.toString() ?? '',
+      details: item?.details ?? '',
       totalValue: item?.totalValue,
       insertUser: this.UserId,
       insertDate: this.datepipe.transform(item?.insertDate, 'yyyy-MM-dd'),

@@ -7,6 +7,7 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using ZayirAlkhayr.Reports.Service;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Tasks;
+using System.Data;
 
 namespace ZayirAlkhayr.Reports.PdfTemplate.ZAInstitution
 {
@@ -30,6 +31,7 @@ namespace ZayirAlkhayr.Reports.PdfTemplate.ZAInstitution
                 var FullPath = Path.Combine(_environment.WebRootPath, "ExportFiles", "AccountMony" + ".pdf");
                 var ImgPath = Path.Combine(_environment.WebRootPath, "Template", "ZayirAlkhayrLogo2.jpeg");
                 var DT = await _accountsMonyService.GetExportFinancialTransactionData(Model, "Income");
+                
                 Model.Headers.Add(new PDFHeaderSelected { DisplayOrder = 0, NameAr = "الرقم", NameEn = "RowNumber", ValueType = "Text" });
                 Model.Headers = Model.Headers.OrderBy(i => i.DisplayOrder).ToList();
                 var TotalCount = 0.0;

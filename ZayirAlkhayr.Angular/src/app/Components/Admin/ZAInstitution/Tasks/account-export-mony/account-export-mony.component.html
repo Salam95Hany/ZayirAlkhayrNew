@@ -87,6 +87,7 @@
                         <th><input type="checkbox" (change)="onInputSelecetAll($event.target.checked)" [(ngModel)]="IsSelectedAll"></th>
                         <th>اسم المتبرع</th>
                         <th>نوع التبرع</th>
+                        <th>طريقة التبرع</th>
                         <th>المبلغ</th>
                         <th>التفاصيل</th>
                         <th>تمت الاضافة من قبل</th>
@@ -100,6 +101,7 @@
                             <td><input type="checkbox" (change)="onInputSelected()" [(ngModel)]="item.isSelected"></td>
                             <td>{{item.fullName}}</td>
                             <td>{{item.name}}</td>
+                            <td>{{item.donationMethodId | donationMethod}}</td>
                             <td>{{item.totalValue}}</td>
                             <td>{{item.details}}</td>
                             <td>{{item.createdBy}}</td>
@@ -180,6 +182,17 @@
                             </div>
                             <div class="error-message" *ngIf="formErrors.beneFactorTypeId">
                                 {{ formErrors.beneFactorTypeId }}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">طريقة التبرع</td>
+                        <td class="table-value">
+                            <div class="form-floating">
+                                <app-za-drop-down-form-control [data]="DonationMethods" [showSearch]="true" [placeholder]="'طريقة التبرع'" formControlName="donationMethodId" [hasError]="formErrors.donationMethodId"></app-za-drop-down-form-control>
+                            </div>
+                            <div class="error-message" *ngIf="formErrors.donationMethodId">
+                                {{ formErrors.donationMethodId }}
                             </div>
                         </td>
                     </tr>
