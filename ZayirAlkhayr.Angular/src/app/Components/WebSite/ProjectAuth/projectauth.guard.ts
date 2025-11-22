@@ -13,6 +13,7 @@ export class ProjectauthGuard implements CanActivate {
   constructor(private http: HttpClient, private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
+    debugger;
     let ProjectId = route.paramMap.get('id');
     return this.http.get(this.apiURL + 'Projects/CheckProjectLinkIsActive?ProjectId=' + ProjectId).pipe(
       map((response: any) => {

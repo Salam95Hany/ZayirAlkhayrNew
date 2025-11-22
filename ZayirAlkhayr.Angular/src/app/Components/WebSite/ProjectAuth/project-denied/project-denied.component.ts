@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ZaWebsiteService } from '../../../../Services/zainstitution/za-website.service';
 import { NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-project-denied',
   standalone: true,
-  imports: [NgFor,NgIf],
+  imports: [NgFor,NgIf,RouterLink],
   templateUrl: './project-denied.component.html',
   styleUrls: ['./project-denied.component.css']
 })
