@@ -27,29 +27,58 @@ namespace ZayirAlkhayr.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequestParams req)
         {
-            var apiKey = _config["Httpsms:ApiKey"];
+            try
+            {
+                var apiKey = _config["Httpsms:ApiKey"];
 
-            if (apiKey == null)
-                return BadRequest("Server is not configured with an API key.");
+                if (apiKey == null)
+                    return BadRequest("Server is not configured with an API key.");
 
-            if (req.ApiKey != apiKey)
-                return Unauthorized(new { error = "Invalid API key" });
+                if (req.ApiKey != apiKey)
+                    return Unauthorized(new { error = "Invalid API key" });
 
-            return Ok(new { status = "success", message = "Login OK" });
+                return Ok(new { status = "success", message = "Login OK" });
+            }
+            catch (Exception ex)
+            {
+                var FilePath = Path.Combine(_webHostEnvironment.WebRootPath, "Logs", "LogParams.txt");
+                if (!Directory.Exists(FilePath))
+                    Directory.CreateDirectory(FilePath);
+
+                string logText = $"SMS Request Body At: {DateTime.Now}\n{ex.Message}\n\n\n";
+                System.IO.File.AppendAllText(FilePath, logText);
+
+                return Ok();
+            }
+            
         }
 
         // ========== INCOMING SMS ==========
         [HttpPost("incoming")]
         public bool IncomingMessage([FromBody] IncomingSmsParam message)
         {
-            var FilePath = Path.Combine(_webHostEnvironment.WebRootPath, "Logs", "LogParams.txt");
-            if (!Directory.Exists(FilePath))
-                Directory.CreateDirectory(FilePath);
+            try
+            {
+                var FilePath = Path.Combine(_webHostEnvironment.WebRootPath, "Logs", "LogParams.txt");
+                if (!Directory.Exists(FilePath))
+                    Directory.CreateDirectory(FilePath);
 
-            string jsonBody = JsonConvert.SerializeObject(message, Formatting.Indented);
-            string logText = $"SMS Request Body At: {DateTime.Now}\n{jsonBody}\n\n\n";
-            System.IO.File.AppendAllText(FilePath, logText);
-            return true;
+                string jsonBody = JsonConvert.SerializeObject(message, Formatting.Indented);
+                string logText = $"SMS Request Body At: {DateTime.Now}\n{jsonBody}\n\n\n";
+                System.IO.File.AppendAllText(FilePath, logText);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                var FilePath = Path.Combine(_webHostEnvironment.WebRootPath, "Logs", "LogParams.txt");
+                if (!Directory.Exists(FilePath))
+                    Directory.CreateDirectory(FilePath);
+
+                string logText = $"SMS Request Body At: {DateTime.Now}\n{ex.Message}\n\n\n";
+                System.IO.File.AppendAllText(FilePath, logText);
+                return true;
+            }
+           
         }
     }
 }
