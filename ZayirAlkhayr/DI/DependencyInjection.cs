@@ -7,6 +7,7 @@ using QuestPDF.Infrastructure;
 using System.Text;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Interfaces;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
@@ -18,6 +19,7 @@ using ZayirAlkhayr.Interfaces.ZAInstitution.Tasks;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Reports.Interface;
 using ZayirAlkhayr.Reports.Service;
+using ZayirAlkhayr.Services;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
@@ -87,7 +89,12 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IBeneFactorService, BeneFactorService>();
             services.AddScoped<ISharedService, SharedService>();
             services.AddScoped<IPagePermissionService, PagePermissionService>();
+
+
+            services.AddScoped<ISmsSenderService, SmsSenderService>();
+
             
+
 
             #region ReportsDI
 
