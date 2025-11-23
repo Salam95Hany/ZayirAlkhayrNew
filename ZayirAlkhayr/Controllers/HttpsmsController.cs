@@ -18,11 +18,6 @@ namespace ZayirAlkhayr.Controllers
             _config = config;
         }
 
-        public HttpsmsController(IConfiguration config)
-        {
-            _config = config;
-        }
-
         // ========== LOGIN ==========
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequestParams req)
@@ -41,12 +36,13 @@ namespace ZayirAlkhayr.Controllers
             }
             catch (Exception ex)
             {
-                var FilePath = Path.Combine(_webHostEnvironment.WebRootPath, "Logs", "LogParams.txt");
-                if (!Directory.Exists(FilePath))
-                    Directory.CreateDirectory(FilePath);
+                var FolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "Logs");
+                if (!Directory.Exists(FolderPath))
+                    Directory.CreateDirectory(FolderPath);
 
-                string logText = $"SMS Request Body At: {DateTime.Now}\n{ex.Message}\n\n\n";
-                System.IO.File.AppendAllText(FilePath, logText);
+                string FilePath = Path.Combine(FolderPath, "LogParams.txt");
+
+                System.IO.File.AppendAllText(FilePath, ex.Message);
 
                 return Ok();
             }
@@ -59,9 +55,11 @@ namespace ZayirAlkhayr.Controllers
         {
             try
             {
-                var FilePath = Path.Combine(_webHostEnvironment.WebRootPath, "Logs", "LogParams.txt");
-                if (!Directory.Exists(FilePath))
-                    Directory.CreateDirectory(FilePath);
+                var FolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "Logs");
+                if (!Directory.Exists(FolderPath))
+                    Directory.CreateDirectory(FolderPath);
+
+                string FilePath = Path.Combine(FolderPath, "LogParams.txt");
 
                 string jsonBody = JsonConvert.SerializeObject(message, Formatting.Indented);
                 string logText = $"SMS Request Body At: {DateTime.Now}\n{jsonBody}\n\n\n";
@@ -70,12 +68,13 @@ namespace ZayirAlkhayr.Controllers
             }
             catch (Exception ex)
             {
-                var FilePath = Path.Combine(_webHostEnvironment.WebRootPath, "Logs", "LogParams.txt");
-                if (!Directory.Exists(FilePath))
-                    Directory.CreateDirectory(FilePath);
+                var FolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "Logs");
+                if (!Directory.Exists(FolderPath))
+                    Directory.CreateDirectory(FolderPath);
 
-                string logText = $"SMS Request Body At: {DateTime.Now}\n{ex.Message}\n\n\n";
-                System.IO.File.AppendAllText(FilePath, logText);
+                string FilePath = Path.Combine(FolderPath, "LogParams.txt");
+
+                System.IO.File.AppendAllText(FilePath, ex.Message);
                 return true;
             }
            

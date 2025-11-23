@@ -8,8 +8,8 @@ namespace ZayirAlkhayr.Entities.Common
 {
     public class IncomingSmsParam
     {
-        public string Message_Id { get; set; }
-        public string User_Id { get; set; }
+        public string Message_id { get; set; }
+        public string User_id { get; set; }
         public string Owner { get; set; }
         public bool Encrypted { get; set; }
         public string Contact { get; set; }
