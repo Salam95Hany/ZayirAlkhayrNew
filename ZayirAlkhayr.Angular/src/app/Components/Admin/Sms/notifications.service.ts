@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationsService {
-
+  apiURL = environment.apiUrl;
   constructor() { }
 
   connect() {
-    return new EventSource('http://localhost:52091/api/SmsSender/stream');
+    return new EventSource(this.apiURL + 'SmsSender/stream');
   }
 }
