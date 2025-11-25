@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
+using System.Text;
 using System.Text.Json.Nodes;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.BeneFactor;
@@ -19,6 +21,7 @@ namespace ZayirAlkhayr.Controllers
         private readonly IAppSettings _appSettings;
         private readonly ISmsSenderService _smsSenderService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private static readonly ConcurrentBag<HttpResponse> _clients = new();
         public SmsSenderController(IAppSettings appSettings, ISmsSenderService smsSenderService, IWebHostEnvironment webHostEnvironment)
         {
             _appSettings = appSettings;
@@ -56,6 +59,7 @@ namespace ZayirAlkhayr.Controllers
                     };
 
                     await _smsSenderService.SaveMessage(SmsMsg);
+                    await BroadcastAsync("Message_Added");
                     return Ok();
                 }
                 else
@@ -79,6 +83,36 @@ namespace ZayirAlkhayr.Controllers
         {
             var results = await _smsSenderService.GetAllSmsMessageData(PagingFilter);
             return results;
+        }
+
+        [HttpGet("stream")]
+        public async Task Stream()
+        {
+            Response.Headers.Add("Cache-Control", "no-cache");
+            Response.Headers.Add("Content-Type", "text/event-stream");
+            _clients.Add(Response);
+            await Response.Body.FlushAsync();
+            await Task.Run(() => HttpContext.RequestAborted.WaitHandle.WaitOne());
+            _clients.TryTake(out _);
+        }
+
+        public static async Task BroadcastAsync(string msg)
+        {
+            foreach (var client in _clients)
+            {
+                try
+                {
+                    var data = $"data: {msg}\n\n";
+                    var bytes = Encoding.UTF8.GetBytes(data);
+
+                    await client.Body.WriteAsync(bytes);
+                    await client.Body.FlushAsync();
+                }
+                catch
+                {
+                  
+                }
+            }
         }
     }
 }

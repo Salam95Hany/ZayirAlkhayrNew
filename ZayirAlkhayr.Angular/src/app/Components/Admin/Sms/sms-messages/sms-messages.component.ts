@@ -5,11 +5,12 @@ import { NgxLoadingModule } from "ngx-loading";
 import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
 import { TaskService } from '../../../../Services/zainstitution/task.service';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { NotificationsService } from '../notifications.service';
 
 @Component({
   selector: 'app-sms-messages',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, NgxLoadingModule,NgFor,CommonModule],
+  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, NgxLoadingModule, NgFor, CommonModule],
   templateUrl: './sms-messages.component.html',
   styleUrl: './sms-messages.component.css'
 })
@@ -26,14 +27,23 @@ export class SmsMessagesComponent implements OnInit {
     filterList: []
   }
 
-  constructor(private taskService: TaskService) {
+  constructor(private taskService: TaskService, private notificationService: NotificationsService) {
 
   }
 
   ngOnInit(): void {
-    this.GetAllSmsMessageData();
     this.updateDateTime();
     setInterval(() => this.updateDateTime(), 1000);
+    const es = this.notificationService.connect();
+    es.onmessage = (event) => {
+      console.log("Event received: ", event.data);
+
+      if (event.data === 'Message_Added') {
+        this.GetAllSmsMessageData();
+      }
+    };
+
+    this.GetAllSmsMessageData();
   }
 
   updateDateTime() {
