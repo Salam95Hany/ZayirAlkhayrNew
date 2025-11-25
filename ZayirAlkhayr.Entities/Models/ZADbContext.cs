@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Models.Settings;
+using ZayirAlkhayr.Entities.Models.Sms;
 
 namespace ZayirAlkhayr.Entities.Models;
 
@@ -55,8 +56,13 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     #region Settings
     public virtual DbSet<Application> Applications { get; set; }
     public virtual DbSet<PagePermission> PagePermission { get; set; }
-    
+
     #endregion
 
+    #region SmsMessages
+
+    public virtual DbSet<SmsMessage> SmsMessages { get; set; }
+
+    #endregion
 
 }

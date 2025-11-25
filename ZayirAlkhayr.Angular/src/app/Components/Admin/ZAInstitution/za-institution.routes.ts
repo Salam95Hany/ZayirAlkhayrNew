@@ -169,8 +169,13 @@ export const ZAInstitutionRoutes: Routes = [
                 canActivate: [authGuard],
                 data: { pageKey: 'ZAInstitution_NetValue' }
             },
+            {
+                path: 'sms-messages',
+                loadComponent: () =>
+                    import('../Sms/sms-messages/sms-messages.component').then(m => m.SmsMessagesComponent)
+            },
 
-            
+
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: '**', redirectTo: 'home', pathMatch: 'full' },
         ]

@@ -17,5 +17,6 @@ namespace ZayirAlkhayr.Services.Common
         public string[] URLList { get; set; }
         public ConnectionStrings ConnectionStrings { get; set; }
         public JWT Jwt { get; set; }
+        public string SecretKey { get; set; }
     }
 }

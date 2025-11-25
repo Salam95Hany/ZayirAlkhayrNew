@@ -16,6 +16,7 @@ namespace ZayirAlkhayr.Interfaces.Common
         string[] URLList { get; set; }
         ConnectionStrings ConnectionStrings { get; set; }
         JWT Jwt { get; set; }
+        string SecretKey { get; set; }
     }
 
     public class ConnectionStrings

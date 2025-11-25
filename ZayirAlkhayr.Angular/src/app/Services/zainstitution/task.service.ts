@@ -82,4 +82,10 @@ export class TaskService {
   DeleteGeneralTask(TaskId: number) {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/DeleteGeneralTask?TaskId=' + TaskId);
   }
+
+  // ============================= GeneralTasks ==============================
+
+   GetAllSmsMessageData(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'SmsSender/GetAllSmsMessageData', PagingFilter);
+  }
 }
