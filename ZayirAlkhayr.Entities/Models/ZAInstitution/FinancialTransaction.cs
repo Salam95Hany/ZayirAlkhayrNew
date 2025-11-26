@@ -24,4 +24,6 @@ public partial class FinancialTransaction : AuditableEntity
 
     public string TransactionType { get; set; }
 
+    public DateTime CreatedDate { get; set; }
+
 }

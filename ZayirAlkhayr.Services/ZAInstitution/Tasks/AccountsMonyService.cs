@@ -119,6 +119,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                 ImportObj.DonationMethodId = Model.DonationMethodId;
                 ImportObj.InsertUser = Model.InsertUser;
                 ImportObj.InsertDate = Model.InsertDate;
+                ImportObj.CreatedDate = DateTime.UtcNow;
 
                 await _unitOfWork.Repository<FinancialTransaction>().AddAsync(ImportObj);
                 await _unitOfWork.CompleteAsync();
