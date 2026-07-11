@@ -1,0 +1,30 @@
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { ApiResponseModel } from '../../Models/shared/ErrorResponseModel';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SchoolStudentService {
+  apiURL = environment.apiUrl;
+  constructor(private http: HttpClient) { }
+
+  // ========================================= Auth =========================================
+
+  GetAllUsers() {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Auth/GetAllUsers');
+  }
+
+  CreateUser(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Auth/CreateUser', Model);
+  }
+
+  EditUser(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Auth/EditUser', Model);
+  }
+
+  DeleteUser(UserId: string) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Auth/DeleteUser?UserId=' + UserId);
+  }
+}

@@ -237,6 +237,56 @@ export class MenueService {
       ]
     },
     {
+      menuItemId: MenuType.School,
+      displayName: 'مركز بشائر القرآن',
+      menuItem: 'School',
+      subMenus: [
+        {
+          menuItemId: MenuType.School,
+          displayName: 'إدارة الطلاب',
+          menuItem: '1',
+          description: 'إدارة الطلاب و بياناتهم',
+          icon: 'fa-solid fa-exchange-alt',
+          route: '/admin/school/home/1',
+          pageKey: 'School_ManageStudents',
+          subMenus: [
+            {
+              displayName: 'الطلاب',
+              menuItem: 'students',
+              description: 'عرض و إدارة بيانات الطلاب',
+              icon: 'uil uil-sliders-v-alt',
+              route: '/admin/school/students',
+              pageKey: 'School_Student',
+            },
+            {
+              displayName: 'المراحل الدراسية',
+              menuItem: 'academic-stages',
+              description: 'عرض و إدارة مراحل الدراسة',
+              icon: 'uil uil-sliders-v-alt',
+              route: '/admin/school/academic-stages',
+              pageKey: 'School_AcademicStages',
+            },
+            {
+              displayName: 'أنواع الخصم',
+              menuItem: 'discount-types',
+              description: 'عرض و إدارة أنواع الخصم',
+              icon: 'uil uil-sliders-v-alt',
+              route: '/admin/school/discount-types',
+              pageKey: 'School_DiscountTypes',
+            },
+            {
+              displayName: 'الجنسيات',
+              menuItem: 'nationalities',
+              description: 'عرض و إدارة الجنسيات',
+              icon: 'uil uil-sliders-v-alt',
+              route: '/admin/school/nationalities',
+              pageKey: 'School_Nationalities',
+            }
+          ]
+        }
+      ]
+    },
+    {
       menuItemId: MenuType.Settings,
       displayName: 'الاعدادات',
       menuItem: 'Settings',
@@ -289,5 +339,6 @@ export class MenueService {
 }
 export enum MenuType {
   ZAInstitution = 1,
-  Settings = 2
+  Settings = 2,
+  School = 3
 }
