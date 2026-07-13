@@ -25,6 +25,10 @@ export class StudentDataComponent {
   @Input() UpdateMode = false;
   @Input() DetailsMode = false;
   @Output() StudentDetailsChange = new EventEmitter<string[]>();
+  studentStatus: FormDropdownModel[] = [
+    { value: 'موجود', name: 'موجود' },
+    { value: 'منسحب', name: 'منسحب' }
+  ];
   ItemForm: FormGroup;
   FamilyChildCount = 0;
   StudentDetailsId: number;
@@ -157,6 +161,8 @@ export class StudentDataComponent {
     }
 
     const formData = this.ItemForm.value;
+    let academicStageName = this.AcademicStages.find(i => i.value == formData.academicStageId)?.name;
+    let nationalityName = this.Nationalities.find(i => i.value == formData.nationalityId)?.name;
     let arryNum = this.StudentDetails.map(i => i.id);
     let id = arryNum.length > 0 ? Math.max(...arryNum) : 0;
     if (this.addMode) {
@@ -164,11 +170,13 @@ export class StudentDataComponent {
         id: id + 1,
         studentName: formData.studentName,
         academicStageId: formData.academicStageId,
+        academicStageName: academicStageName,
         birthDay: formData.birthDay,
         governmentSchool: formData.governmentSchool,
         studyPeriod: formData.studyPeriod,
         studyAmount: formData.studyAmount,
         nationalityId: formData.nationalityId,
+        nationalityName: nationalityName,
         isHaveHealthCondition: formData.isHaveHealthCondition,
         healthConditionNote: formData.healthConditionNote,
         gender: formData.gender,
@@ -182,11 +190,13 @@ export class StudentDataComponent {
       if (obj) {
         obj.studentName = formData.studentName;
         obj.academicStageId = formData.academicStageId;
+        obj.academicStageName = academicStageName;
         obj.birthDay = formData.birthDay;
         obj.governmentSchool = formData.governmentSchool;
         obj.studyPeriod = formData.studyPeriod;
         obj.studyAmount = formData.studyAmount;
         obj.nationalityId = formData.nationalityId;
+        obj.nationalityName = nationalityName;
         obj.isHaveHealthCondition = formData.isHaveHealthCondition;
         obj.healthConditionNote = formData.healthConditionNote;
         obj.gender = formData.gender;

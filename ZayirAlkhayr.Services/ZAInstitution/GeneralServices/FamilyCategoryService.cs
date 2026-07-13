@@ -85,7 +85,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 {
                     Name = Model.Name,
                     InsertUser = Model.InsertUser,
-                    InsertDate = DateTime.UtcNow
+                    InsertDate = DateTime.UtcNow.EgyptNow()
                 };
 
                 await _unitOfWork.Repository<FamilyCategory>().AddAsync(CategoryObj);
@@ -112,7 +112,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 {
                     CategoryObj.Name = Model.Name;
                     CategoryObj.UpdateUser = Model.InsertUser;
-                    CategoryObj.UpdateDate = DateTime.Now.AddHours(1);
+                    CategoryObj.UpdateDate = DateTime.UtcNow.EgyptNow().AddHours(1);
 
                     await _unitOfWork.CompleteAsync();
 

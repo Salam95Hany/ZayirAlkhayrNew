@@ -33,4 +33,11 @@ namespace ZayirAlkhayr.Entities.Common
         InProgress = 2,
         Finished = 3
     }
+
+    public enum StudentStatus
+    {
+        Present = 1, // موجود
+        Withdrawn = 2, // منسحب 
+        Deleted = 3 // محذوف
+    }
 }

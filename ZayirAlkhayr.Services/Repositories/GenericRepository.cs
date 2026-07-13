@@ -24,6 +24,11 @@ namespace ZayirAlkhayr.Services.Repositories
             return await _dbContext.Set<T>().AsNoTracking().ToListAsync(cancellationToken);
         }
 
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            return await _dbContext.Set<T>().Where(predicate).ToListAsync(cancellationToken);
+        }
+
         public async Task<T?> GetByIdWithSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken)
         {
             return await ApplySecifications(spec).FirstOrDefaultAsync(cancellationToken);

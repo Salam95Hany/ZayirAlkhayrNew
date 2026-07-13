@@ -46,7 +46,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                     FamilyObj.Education = Model.FamilyStatus.Education;
                     FamilyObj.Jop = Model.FamilyStatus.Jop;
                     FamilyObj.UpdateUser = Model.FamilyStatus.InsertUser;
-                    FamilyObj.UpdateDate = DateTime.UtcNow;
+                    FamilyObj.UpdateDate = DateTime.UtcNow.EgyptNow();
 
 
                     await UpdateFamilyIncome(Model.FamilyIncome, Model.FamilyStatus.Id);

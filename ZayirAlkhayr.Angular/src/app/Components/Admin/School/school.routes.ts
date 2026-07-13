@@ -21,6 +21,13 @@ export const SchoolRoutes: Routes = [
                 canActivate: [authGuard],
                 data: { pageKey: 'School' }
             },
+              {
+                path: 'add-student',
+                loadComponent: () =>
+                    import('./addStudent/add-student.component').then(m => m.AddStudentComponent),
+                canActivate: [authGuard],
+                data: { pageKey: 'School_Student' }
+            },
             {
                 path: 'students',
                 loadComponent: () => import('./student/student.component').then(m => m.StudentComponent),

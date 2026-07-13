@@ -13,6 +13,7 @@ namespace ZayirAlkhayr.Interfaces.Repositories
         Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<T?> GetByIdAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
         Task<List<T>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<List<T>> GetAllAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
         Task<List<T>> GetAllWithSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken = default);
         Task<T?> GetByIdWithSpecAsync(ISpecification<T> spec, CancellationToken cancellationToken = default);
         Task<int> CountAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);

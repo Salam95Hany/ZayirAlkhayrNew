@@ -76,7 +76,7 @@ namespace ZayirAlkhayr.Reports.Service
         private void SetTemplateValues(ref ExcelWorksheet worksheet, Dictionary<string, string> substitutionValue)
         {
             var TimeCell = worksheet.Cells[2, 10];
-            TimeCell.Value = "تاريخ التحميل : " + DateTime.Now.ToString("dddd d MMMM , yyyy", new CultureInfo("ar-AE"));
+            TimeCell.Value = "تاريخ التحميل : " + DateTime.UtcNow.EgyptNow().ToString("dddd d MMMM , yyyy", new CultureInfo("ar-AE"));
             var ByCell = worksheet.Cells[3, 10];
             ByCell.Value = "اسم المستخدم : " + substitutionValue["UserName"];
             var IsValidSheetName = substitutionValue.TryGetValue("SheetName", out string sheetName);
@@ -111,7 +111,7 @@ namespace ZayirAlkhayr.Reports.Service
         }
         private string GetLocalPath(string fileTitle, string extension)
         {
-            string WEBurl = Path.Combine(_environment.WebRootPath, @"ExportFiles\", $"{fileTitle}_{DateTime.Now:yyyyMMddHHmmssfff}{extension}");
+            string WEBurl = Path.Combine(_environment.WebRootPath, @"ExportFiles\", $"{fileTitle}_{DateTime.UtcNow.EgyptNow():yyyyMMddHHmmssfff}{extension}");
             return WEBurl;
         }
     }

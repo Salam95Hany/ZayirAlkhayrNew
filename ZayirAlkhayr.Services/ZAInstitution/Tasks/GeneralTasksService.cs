@@ -86,7 +86,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                 TaskObj.InsertUser = Model.InsertUser;
                 TaskObj.TaskAddedDate = Model.TaskAddedDate;
                 TaskObj.DueDate = Model.DueDate;
-                TaskObj.InsertDate = DateTime.UtcNow;
+                TaskObj.InsertDate = DateTime.UtcNow.EgyptNow();
 
                 await _unitOfWork.Repository<GeneralTask>().AddAsync(TaskObj);
                 await _unitOfWork.CompleteAsync();
@@ -132,7 +132,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                 TaskObj.UpdateUser = Model.InsertUser;
                 TaskObj.TaskAddedDate = Model.TaskAddedDate;
                 TaskObj.DueDate = Model.DueDate;
-                TaskObj.UpdateDate = DateTime.UtcNow;
+                TaskObj.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                 await _unitOfWork.CompleteAsync();
 

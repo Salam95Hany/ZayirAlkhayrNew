@@ -101,7 +101,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                     Notes = Model.Notes,
                     IsGuaranteed = false,
                     InsertUser = Model.InsertUser,
-                    InsertDate = DateTime.UtcNow
+                    InsertDate = DateTime.UtcNow.EgyptNow()
                 };
 
 
@@ -145,7 +145,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                     OrphansObj.Notes = Model.Notes;
                     OrphansObj.IsGuaranteed = Model.IsGuaranteed;
                     OrphansObj.UpdateUser = Model.InsertUser;
-                    OrphansObj.UpdateDate = DateTime.Now.AddHours(1);
+                    OrphansObj.UpdateDate = DateTime.UtcNow.EgyptNow().AddHours(1);
 
                     await _unitOfWork.CompleteAsync();
 

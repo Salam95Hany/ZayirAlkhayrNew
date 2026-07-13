@@ -47,7 +47,7 @@ namespace ZayirAlkhayr.Services.Auth
                 var (token, expiresIn) = _jwtProvider.GenerateToken(user);
 
                 user.IsActive = true;
-                user.LoginDate = DateTime.UtcNow;
+                user.LoginDate = DateTime.UtcNow.EgyptNow();
                 await _userManager.UpdateAsync(user);
 
                 var UserApps = await GetAllUserApplications(user.Id);
@@ -61,9 +61,9 @@ namespace ZayirAlkhayr.Services.Auth
                     UserId = user.Id,
                     UserApps = UserApps,
                     Token = token,
-                    LoginDate = DateTime.UtcNow,
-                    LoginDateAr = DateTime.UtcNow.ToString("dddd d MMMM , yyyy", new CultureInfo("ar-AE")),
-                    LoginTimeAr = DateTime.UtcNow.ToString("hh:mm:ss t", new CultureInfo("ar-AE")),
+                    LoginDate = DateTime.UtcNow.EgyptNow(),
+                    LoginDateAr = DateTime.UtcNow.EgyptNow().ToString("dddd d MMMM , yyyy", new CultureInfo("ar-AE")),
+                    LoginTimeAr = DateTime.UtcNow.EgyptNow().ToString("hh:mm:ss t", new CultureInfo("ar-AE")),
                     ExpiresIn = expiresIn,
                 };
 

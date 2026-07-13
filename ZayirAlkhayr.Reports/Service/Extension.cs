@@ -18,5 +18,10 @@ namespace ZayirAlkhayr.Reports.Service
 
             return batches;
         }
+
+        public static DateTime EgyptNow(this DateTime dateTime)
+        {
+            return TimeZoneInfo.ConvertTimeBySystemTimeZoneId(dateTime.ToUniversalTime(), "Egypt Standard Time");
+        }
     }
 }

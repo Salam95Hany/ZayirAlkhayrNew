@@ -135,7 +135,7 @@ namespace ZayirAlkhayr.Reports.Service
 
         public static void AddFooterContent(this IContainer Container)
         {
-            string currentDate = DateTime.Now.ToString("d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE"));
+            string currentDate = DateTime.UtcNow.EgyptNow().ToString("d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE"));
 
             Container.Height(25).BackgroundLinearGradient(135,
                     new Color[]

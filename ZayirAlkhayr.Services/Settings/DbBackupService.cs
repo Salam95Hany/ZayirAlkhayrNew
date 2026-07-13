@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Settings;
+using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Services.Settings
 {
@@ -76,7 +77,7 @@ namespace ZayirAlkhayr.Services.Settings
         private string GetBackupImageFilePath(ImageFiles Folder)
         {
             var FullPath = Path.Combine(_environment.WebRootPath, ImageFiles.ExportFiles.ToString());
-            var FileName = DateTime.Now.ToString("dd-MM-yyyy") + "_" + Folder.ToString() + ".zip";
+            var FileName = DateTime.UtcNow.EgyptNow().ToString("dd-MM-yyyy") + "_" + Folder.ToString() + ".zip";
             return Path.Combine(FullPath, FileName);
         }
     }

@@ -86,7 +86,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 {
                     Name = Model.Name,
                     InsertUser = Model.InsertUser,
-                    InsertDate = DateTime.UtcNow
+                    InsertDate = DateTime.UtcNow.EgyptNow()
                 };
 
 
@@ -114,7 +114,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 {
                     PatientObj.Name = Model.Name;
                     PatientObj.UpdateUser = Model.InsertUser;
-                    PatientObj.UpdateDate = DateTime.UtcNow;
+                    PatientObj.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                     await _unitOfWork.CompleteAsync();
 

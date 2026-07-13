@@ -155,7 +155,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                     CategoryId = Model.CategoryId,
                     Name = Model.Name,
                     InsertUser = Model.InsertUser,
-                    InsertDate = DateTime.UtcNow
+                    InsertDate = DateTime.UtcNow.EgyptNow()
                 };
 
                 await _unitOfWork.Repository<FamilyNeedType>().AddAsync(NeedObj);
@@ -181,7 +181,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 {
                     Name = Model.Name,
                     InsertUser = Model.InsertUser,
-                    InsertDate = DateTime.UtcNow
+                    InsertDate = DateTime.UtcNow.EgyptNow()
                 };
 
                 await _unitOfWork.Repository<FamilyNeedCategory>().AddAsync(CategoryObj);
@@ -209,7 +209,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                     NeedObj.CategoryId = Model.CategoryId;
                     NeedObj.Name = Model.Name;
                     NeedObj.UpdateUser = Model.InsertUser;
-                    NeedObj.UpdateDate = DateTime.UtcNow;
+                    NeedObj.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                     await _unitOfWork.CompleteAsync();
 
@@ -238,7 +238,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 {
                     NeedObj.Name = Model.Name;
                     NeedObj.UpdateUser = Model.InsertUser;
-                    NeedObj.UpdateDate = DateTime.UtcNow;
+                    NeedObj.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                     await _unitOfWork.CompleteAsync();
 

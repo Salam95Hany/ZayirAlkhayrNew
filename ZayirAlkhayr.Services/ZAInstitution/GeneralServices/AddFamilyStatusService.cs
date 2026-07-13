@@ -46,7 +46,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                     Education = Model.FamilyStatus.Education,
                     Jop = Model.FamilyStatus.Jop,
                     InsertUser = Model.FamilyStatus.InsertUser,
-                    InsertDate = DateTime.UtcNow,
+                    InsertDate = DateTime.UtcNow.EgyptNow(),
                     AddedDate = Model.FamilyStatus.AddedDate
                 };
 

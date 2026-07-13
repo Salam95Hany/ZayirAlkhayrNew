@@ -162,7 +162,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                     Event.Month = Model.FromDate.Value.ToString("MMMM", new CultureInfo("ar-AE")) + " إلى " + Model.ToDate.Value.ToString("MMMM", new CultureInfo("ar-AE"));
                 Event.IsVisible = Model.IsVisible;
                 Event.InsertUser = Model.InsertUser;
-                Event.InsertDate = DateTime.UtcNow;
+                Event.InsertDate = DateTime.UtcNow.EgyptNow();
 
                 await _unitOfWork.Repository<Event>().AddAsync(Event);
                 await _unitOfWork.CompleteAsync();
@@ -196,7 +196,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                     Event.Month = Model.FromDate.Value.ToString("MMMM", new CultureInfo("ar-AE")) + " إلى " + Model.ToDate.Value.ToString("MMMM", new CultureInfo("ar-AE"));
                 Event.IsVisible = Model.IsVisible;
                 Event.UpdateUser = Model.InsertUser;
-                Event.UpdateDate = DateTime.UtcNow;
+                Event.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                 await _unitOfWork.CompleteAsync();
 

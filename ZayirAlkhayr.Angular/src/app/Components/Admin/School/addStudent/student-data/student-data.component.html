@@ -37,11 +37,11 @@
                     <ng-container>
                         <tr *ngFor="let item of StudentDetails">
                             <td>{{item.studentName}}</td>
-                            <td>{{item.academicStageId}}</td>
+                            <td>{{item.academicStageName}}</td>
                             <td>{{item.birthDay}}</td>
                             <td>{{item.governmentSchool}}</td>
                             <td>{{item.studyPeriod}}</td>
-                            <td>{{item.nationalityId}}</td>
+                            <td>{{item.nationalityName}}</td>
                             <td>{{item.isHaveHealthCondition}}</td>
                             <td>{{item.healthConditionNote}}</td>
                             <td>{{item.gender}}</td>
@@ -111,7 +111,12 @@
                         <tr>
                             <td class="table-feature">المرحلة الدراسية</td>
                             <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'المرحلة الدراسية...'" [error]="formErrors.academicStageId" formControlName="academicStageId"></app-za-input-with-label>
+                                <div class="form-floating">
+                                    <app-za-drop-down-form-control [data]="AcademicStages" [showSearch]="true" [placeholder]="'المرحلة الدراسية'" formControlName="academicStageId" [hasError]="formErrors.academicStageId"></app-za-drop-down-form-control>
+                                </div>
+                                <div class="error-message" *ngIf="formErrors.academicStageId">
+                                    {{ formErrors.academicStageId }}
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -135,7 +140,12 @@
                         <tr>
                             <td class="table-feature">الجنسية</td>
                             <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'الجنسية...'" [error]="formErrors.nationalityId" formControlName="nationalityId"></app-za-input-with-label>
+                                <div class="form-floating">
+                                    <app-za-drop-down-form-control [data]="Nationalities" [showSearch]="true" [placeholder]="'الجنسية'" formControlName="nationalityId" [hasError]="formErrors.nationalityId"></app-za-drop-down-form-control>
+                                </div>
+                                <div class="error-message" *ngIf="formErrors.nationalityId">
+                                    {{ formErrors.nationalityId }}
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -171,7 +181,12 @@
                         <tr>
                             <td class="table-feature">حالة الطالب</td>
                             <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'حالة الطالب...'" [error]="formErrors.studentStatus" formControlName="studentStatus"></app-za-input-with-label>
+                                <div class="form-floating">
+                                    <app-za-drop-down-form-control [data]="studentStatus" [showSearch]="true" [placeholder]="'حالة الطالب'" formControlName="studentStatusId" [hasError]="formErrors.studentStatusId"></app-za-drop-down-form-control>
+                                </div>
+                                <div class="error-message" *ngIf="formErrors.studentStatusId">
+                                    {{ formErrors.studentStatusId }}
+                                </div>
                             </td>
                         </tr>
                         <tr>

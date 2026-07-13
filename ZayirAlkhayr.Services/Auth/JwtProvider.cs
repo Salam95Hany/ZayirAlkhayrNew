@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
+using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Services.Auth
 {
@@ -38,7 +39,7 @@ namespace ZayirAlkhayr.Services.Auth
                 issuer: _appSettings.Jwt.Issuer,
                 audience: _appSettings.Jwt.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_appSettings.Jwt.ExpiryMinutes),
+                expires: DateTime.UtcNow.EgyptNow().AddMinutes(_appSettings.Jwt.ExpiryMinutes),
                 signingCredentials: singingCredentials
             );
 

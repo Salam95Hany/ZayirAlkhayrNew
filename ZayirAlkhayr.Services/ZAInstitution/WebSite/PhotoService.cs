@@ -129,7 +129,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 PhotoObj.Description = Model.Description;
                 PhotoObj.IsVisible = Model.IsVisible;
                 PhotoObj.InsertUser = Model.InsertUser;
-                PhotoObj.InsertDate = DateTime.UtcNow;
+                PhotoObj.InsertDate = DateTime.UtcNow.EgyptNow();
 
                 var FileName = await _manageFileService.UploadFile(Model.Files, "", ImageFiles.PhotoImages);
                 if (FileName.IsSuccess)
@@ -161,7 +161,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 PhotoObj.Description = Model.Description;
                 PhotoObj.IsVisible = Model.IsVisible;
                 PhotoObj.UpdateUser = Model.InsertUser;
-                PhotoObj.UpdateDate = DateTime.UtcNow;
+                PhotoObj.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                 if (Model.Files != null)
                 {

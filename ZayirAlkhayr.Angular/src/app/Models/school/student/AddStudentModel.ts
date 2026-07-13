@@ -1,8 +1,8 @@
 
-export interface AddFamilyStatusModel {
+export interface AddStudentModel {
     parentStudent: ParentStudent;
     student: StudentDetails[];
-    review: StudentReview;
+    discount: StudentDiscount[];
 }
 
 export interface ParentStudent {
@@ -19,10 +19,12 @@ export interface StudentDetails {
     id: number;
     studentName: string; // اسم الطالب
     academicStageId: number; // المرحلة الدراسية
+    academicStageName: string; // اسم المرحلة الدراسية
     birthDay: string; // تاريخ الميلاد
     governmentSchool: string; // المدرسة الحكومية 
     studyPeriod: string; // فترة الدراسة
     nationalityId: number; // الجنسية
+    nationalityName: string; // اسم الجنسية
     isHaveHealthCondition: boolean; // هل لديه حالة صحية
     healthConditionNote: string; // ملاحظات الحالة الصحية
     gender: string; // الجنس
@@ -33,7 +35,7 @@ export interface StudentDetails {
     orderAmongChildren: number; // ترتيب الطفل بين إخوانه
 }
 
-export interface StudentReview {
+export interface StudentDiscount {
     studentName: string;
     discountTypeId: number;
     discountReason: string;

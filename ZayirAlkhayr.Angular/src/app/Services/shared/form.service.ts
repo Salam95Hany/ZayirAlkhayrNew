@@ -93,10 +93,6 @@ export class FormService {
     return messages;
   }
 
-  // Validate form instance
-  // check_dirty true will only emit errors if the field is touched
-  // check_dirty false will check all fields independent of
-  // being touched or not. Use this as the last check before submitting
   public validateForm(formToValidate: FormGroup, formErrors: any, checkDirty?: boolean) {
     const form = formToValidate;
 

@@ -10,6 +10,7 @@ using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
+using ZayirAlkhayr.Interfaces.School;
 using ZayirAlkhayr.Interfaces.Settings;
 using ZayirAlkhayr.Interfaces.Shared;
 using ZayirAlkhayr.Interfaces.ZAInstitution.BeneFactor;
@@ -21,6 +22,7 @@ using ZayirAlkhayr.Reports.Service;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
+using ZayirAlkhayr.Services.School;
 using ZayirAlkhayr.Services.Settings;
 using ZayirAlkhayr.Services.Shared;
 using ZayirAlkhayr.Services.ZAInstitution.BeneFactor;
@@ -87,7 +89,11 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IBeneFactorService, BeneFactorService>();
             services.AddScoped<ISharedService, SharedService>();
             services.AddScoped<IPagePermissionService, PagePermissionService>();
-            
+            services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IStudentNationalityService, StudentNationalityService>();
+            services.AddScoped<IDiscountTypeService, DiscountTypeService>();
+            services.AddScoped<IAcademicStageService, AcademicStageService>();
+
 
             #region ReportsDI
 

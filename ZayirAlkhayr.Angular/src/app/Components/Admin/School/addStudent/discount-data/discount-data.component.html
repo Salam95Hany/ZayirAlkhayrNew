@@ -1,0 +1,47 @@
+<div class="table-responsive shadow-sm radius-10">
+    <form [formGroup]="ItemForm" autocomplete="off">
+        <div formArrayName="discounts">
+            <table class="table table-bordered table-feature-value align-middle border m-0">
+                <thead>
+                    <tr>
+                        <th colspan="2"> الخصومات</th>
+                    </tr>
+                </thead>
+                <tbody *ngFor="let group of discounts.controls; let i = index" [formGroupName]="i">
+                    <tr>
+                        <td class="table-feature">
+                            اسم الطالب
+                        </td>
+                        <td class="table-value">
+                            <app-za-input-with-label type="text" placeholder="اسم الطالب..." formControlName="studentName"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">
+                            نوع الخصم
+                        </td>
+                        <td class="table-value">
+                            <app-za-input-with-label type="text" placeholder="نوع الخصم..." formControlName="discountTypeId"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">
+                            سبب الخصم
+                        </td>
+                        <td class="table-value">
+                            <app-za-input-with-label type="text" placeholder="سبب الخصم..." formControlName="discountReason"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">
+                            قيمة الخصم %
+                        </td>
+                        <td class="table-value">
+                            <app-za-input-with-label type="text" placeholder="قيمة الخصم..." formControlName="discountAmount"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>

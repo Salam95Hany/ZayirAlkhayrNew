@@ -137,7 +137,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Project.ProjectUrl = UiHost + "/projects/events/" + Id;
                 Project.IsVisible = Model.IsVisible;
                 Project.InsertUser = Model.InsertUser;
-                Project.InsertDate = DateTime.UtcNow;
+                Project.InsertDate = DateTime.UtcNow.EgyptNow();
 
                 await _unitOfWork.Repository<Project>().AddAsync(Project);
                 await _unitOfWork.CompleteAsync();
@@ -167,7 +167,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.WebSite
                 Project.RemainingAmount = Model.RemainingAmount;
                 Project.IsVisible = Model.IsVisible;
                 Project.UpdateUser = Model.InsertUser;
-                Project.UpdateDate = DateTime.UtcNow;
+                Project.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                 await _unitOfWork.CompleteAsync();
 

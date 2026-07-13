@@ -119,7 +119,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                 ImportObj.DonationMethodId = Model.DonationMethodId;
                 ImportObj.InsertUser = Model.InsertUser;
                 ImportObj.InsertDate = Model.InsertDate;
-                ImportObj.CreatedDate = DateTime.UtcNow;
+                ImportObj.CreatedDate = DateTime.UtcNow.EgyptNow();
 
                 await _unitOfWork.Repository<FinancialTransaction>().AddAsync(ImportObj);
                 await _unitOfWork.CompleteAsync();
@@ -147,7 +147,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
                     ImportObj.DonationMethodId = Model.DonationMethodId;
                     ImportObj.InsertDate = Model.InsertDate;
                     ImportObj.UpdateUser = Model.InsertUser;
-                    ImportObj.UpdateDate = DateTime.UtcNow;
+                    ImportObj.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                     await _unitOfWork.CompleteAsync();
 

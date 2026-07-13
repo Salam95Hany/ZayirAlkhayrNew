@@ -1,1 +1,50 @@
-<p>add-student works!</p>
+<div class="stepper-container mb-3">
+    <div class="row g-4">
+        <div class="col-xl-2 d-flex justify-content-center justify-content-xl-start m-0">
+            <div class="d-flex flex-column align-items-center justify-content-center gap-2">
+                <div class="user-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h4>اضافة طالب جديد</h4>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <div class="stepper-wrapper">
+                <div class="stepper-item" *ngFor="let item of StepList; index as i" [ngClass]="{
+                'completed': i + 1 < activeStep,
+                'active': i + 1 == activeStep }">
+                    <div class="step-circle">{{ item.number }}</div>
+                    <div class="step-label">{{ item.stepName }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 d-flex align-items-center justify-content-center justify-content-xl-end m-0">
+            <button class="btn btn-nav btn-next me-2" *ngIf="activeStep > 1" (click)="PreviousSteps()">
+                <i class="fas fa-arrow-right"></i>
+                السابق
+            </button>
+            <button class="btn btn-nav btn-prev" *ngIf="activeStep >= 7" (click)="AddNewStudent()">
+                <i class="fas fa-plus-circle fa-fw"></i>
+                <span class="navbar-brand m-0">اضافة</span>
+            </button>
+            <button class="btn btn-nav btn-prev" *ngIf="activeStep >= 1 && activeStep < 7" (click)="NextStep()">
+                التالي
+                <i class="fas fa-arrow-left"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="steppers-content" *ngIf="isLookupsLoaded">
+    <div [hidden]="activeStep != 1">
+        <app-parent-data #ParentData></app-parent-data>
+    </div>
+    <div [hidden]="activeStep != 2">
+        <app-student-data #StudentData></app-student-data>
+    </div>
+    <div [hidden]="activeStep != 3">
+        <app-discount-data #DiscountData></app-discount-data>
+    </div>
+</div>
+
+<ngx-loading [show]="showLoader"></ngx-loading>

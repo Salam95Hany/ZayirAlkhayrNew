@@ -51,7 +51,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
                 Response.Name = result.FullName;
                 Response.Code = result.Code;
                 Response.LoginId = Guid.NewGuid().ToString();
-                Response.LoginDate = DateTime.UtcNow;
+                Response.LoginDate = DateTime.UtcNow.EgyptNow();
                 Response.WelcomeMessage = result.WelcomeMessage;
                 Response.ResponseCode = 200;
                 Response.ResponseMessage = "تم تسجيل الدخول بنجاح";
@@ -375,7 +375,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
                 BeneFactorObj.NationalityId = Model.NationalityId;
                 BeneFactorObj.FaceBook = Model.FaceBook;
                 BeneFactorObj.InsertUser = Model.InsertUser;
-                BeneFactorObj.InsertDate = DateTime.UtcNow;
+                BeneFactorObj.InsertDate = DateTime.UtcNow.EgyptNow();
 
                 if (Model.Files != null)
                 {
@@ -408,7 +408,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
                 var BeneFactorObj = new BeneFactorType();
                 BeneFactorObj.Name = Model.Name;
                 BeneFactorObj.InsertUser = Model.InsertUser;
-                BeneFactorObj.InsertDate = DateTime.UtcNow;
+                BeneFactorObj.InsertDate = DateTime.UtcNow.EgyptNow();
 
                 await _unitOfWork.Repository<BeneFactorType>().AddAsync(BeneFactorObj);
                 await _unitOfWork.CompleteAsync();
@@ -435,7 +435,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
 
                 Entity.Name = Model.Name;
                 Entity.UpdateUser = Model.InsertUser;
-                Entity.UpdateDate = DateTime.UtcNow;
+                Entity.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                 await _unitOfWork.CompleteAsync();
 
@@ -486,7 +486,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
                 var BeneFactorObj = new BeneFactorNationality();
                 BeneFactorObj.Name = Model.Name;
                 BeneFactorObj.InsertUser = Model.InsertUser;
-                BeneFactorObj.InsertDate = DateTime.UtcNow;
+                BeneFactorObj.InsertDate = DateTime.UtcNow.EgyptNow();
 
                 await _unitOfWork.Repository<BeneFactorNationality>().AddAsync(BeneFactorObj);
                 await _unitOfWork.CompleteAsync();
@@ -513,7 +513,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
 
                 Entity.Name = Model.Name;
                 Entity.UpdateUser = Model.InsertUser;
-                Entity.UpdateDate = DateTime.UtcNow;
+                Entity.UpdateDate = DateTime.UtcNow.EgyptNow();
 
 
                 await _unitOfWork.CompleteAsync();
@@ -565,7 +565,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
                 BeneFactorObj.PaymentDate = Model.PaymentDate;
                 BeneFactorObj.TotalValue = Model.TotalValue;
                 BeneFactorObj.InsertUser = Model.InsertUser;
-                BeneFactorObj.InsertDate = DateTime.UtcNow;
+                BeneFactorObj.InsertDate = DateTime.UtcNow.EgyptNow();
                 BeneFactorObj.IsParent = Model.IsParent;
 
                 if (Model.Files != null)
@@ -603,7 +603,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
                 BeneFactorObj.BeneFactorId = Model.BeneFactorId;
                 BeneFactorObj.Note = Model.Note;
                 BeneFactorObj.Suggestion = Model.Suggestion;
-                BeneFactorObj.InsertDate = DateTime.UtcNow;
+                BeneFactorObj.InsertDate = DateTime.UtcNow.EgyptNow();
 
                 await _unitOfWork.Repository<BeneFactorNote>().AddAsync(BeneFactorObj);
                 await _unitOfWork.CompleteAsync();
@@ -637,7 +637,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
                 BeneFactorObj.Nationality = Model.Nationality;
                 BeneFactorObj.FaceBook = Model.FaceBook;
                 BeneFactorObj.UpdateUser = Model.InsertUser;
-                BeneFactorObj.UpdateDate = DateTime.Now.AddHours(1);
+                BeneFactorObj.UpdateDate = DateTime.UtcNow.EgyptNow().AddHours(1);
 
                 if (Model.Files != null)
                 {
