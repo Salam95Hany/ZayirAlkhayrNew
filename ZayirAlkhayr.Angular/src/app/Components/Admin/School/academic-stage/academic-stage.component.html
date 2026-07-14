@@ -31,6 +31,7 @@
                 <thead>
                     <tr>
                         <th>الاسم</th>
+                        <th>المبلغ</th>
                         <th>تمت الاضافة من قبل</th>
                         <th>تاريخ الاضافة</th>
                         <th>عمليات</th>
@@ -38,8 +39,9 @@
                 </thead>
                 <tbody>
                     <ng-container>
-                        <tr *ngFor="let item of FamilyNationalityData">
+                        <tr *ngFor="let item of Results">
                             <td>{{item.name}}</td>
+                            <td>{{item.amount}}</td>
                             <td>{{item.createdBy}}</td>
                             <td>{{item.insertDateStr}}</td>
                             <td>
@@ -55,9 +57,9 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr *ngIf="!FamilyNationalityData.length">
+                        <tr *ngIf="!Results.length">
                             <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!FamilyNationalityData.length"></app-za-empty-data>
+                                <app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data>
                             </td>
                         </tr>
                     </ng-container>
@@ -85,6 +87,12 @@
                         <td class="table-feature">الاسم</td>
                         <td class="table-value">
                             <app-za-input-with-label [type]="'text'" [placeholder]="'الاسم...'" formControlName="name" [error]="formErrors.name"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">المبلغ</td>
+                        <td class="table-value">
+                            <app-za-input-with-label [type]="'text'" [placeholder]="'المبلغ...'" formControlName="amount" [error]="formErrors.amount" [allowNumbersOnly]="true"></app-za-input-with-label>
                         </td>
                     </tr>
                 </tbody>

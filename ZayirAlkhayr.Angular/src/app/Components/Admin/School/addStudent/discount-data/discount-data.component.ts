@@ -5,27 +5,34 @@ import { CustomValidators, RegexType } from '../../../../../Services/shared/cust
 import { FormService } from '../../../../../Services/shared/form.service';
 import { AuthService } from '../../../../../Auth/auth.service';
 import { StudentDiscount } from '../../../../../Models/school/student/AddStudentModel';
+import { FormDropdownModel } from '../../../../../Models/shared/FormDropdownModel';
+import { NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-discount-data',
   standalone: true,
-  imports: [ZaInputWithLabelComponent, ReactiveFormsModule, FormsModule],
+  imports: [ZaInputWithLabelComponent, ReactiveFormsModule, FormsModule,NgFor],
   templateUrl: './discount-data.component.html',
   styleUrl: './discount-data.component.css'
 })
 export class DiscountDataComponent {
   @Input() StudentDiscount: StudentDiscount[] = [];
+  @Input() DiscountTypes: FormDropdownModel[] = [];
+  @Input() StudentNames: string[] = [];
   @Input() UpdateMode = false;
   @Input() DetailsMode = false;
   ItemForm!: FormGroup;
 
-  constructor(private fb: FormBuilder,private authService: AuthService,private formService: FormService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private formService: FormService) { }
 
   ngOnInit(): void {
     this.ItemForm = this.fb.group({
       discounts: this.fb.array([])
     });
 
+    this.StudentDiscount.forEach((item, i) => {
+      item.studentName = this.StudentNames[i];
+    });
     this.loadData();
   }
 
@@ -37,41 +44,35 @@ export class DiscountDataComponent {
     this.StudentDiscount.forEach(item => {
       this.discounts.push(
         this.fb.group({
-          studentName: [{value: item.studentName,disabled: true}],
+          studentName: [{ value: item.studentName, disabled: true }],
           discountTypeId: [
             {
               value: item.discountTypeId ?? '',
               disabled: this.DetailsMode
-            },
-            [
-              Validators.required,
-              CustomValidators.regexPattern(RegexType.noSpace)
-            ]
+            }
           ],
           discountReason: [
             {
               value: item.discountReason ?? '',
               disabled: this.DetailsMode
-            },
-            [
-              Validators.required,
-              CustomValidators.regexPattern(RegexType.noSpace)
-            ]
+            }
           ],
           discountAmount: [
             {
               value: item.discountAmount ?? '',
               disabled: this.DetailsMode
-            },
-            [
-              Validators.required,
-              CustomValidators.regexPattern(RegexType.numeric)
-            ]
+            }
           ]
-
         })
       );
+    });
 
+    const studentStatusControl = this.ItemForm.get('discountTypeId');
+    studentStatusControl?.valueChanges.subscribe((value) => {
+      if (value) {
+        this.formService.updateFieldValidators(this.ItemForm, 'discountReason', true, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]);
+        this.formService.updateFieldValidators(this.ItemForm, 'discountAmount', true, [Validators.required]);
+      }
     });
 
   }

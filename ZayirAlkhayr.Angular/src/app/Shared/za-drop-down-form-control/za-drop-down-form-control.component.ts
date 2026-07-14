@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, forwardRef, input, Input, Output, Renderer2 } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, forwardRef, input, Input, Output, Renderer2, ViewChild } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NgbDropdownConfig, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormDropdownModel } from '../../Models/shared/FormDropdownModel';
@@ -20,6 +20,7 @@ import { SearchArryPipe } from "../../Pipes/search-arry.pipe";
   ],
 })
 export class ZaDropDownFormControlComponent {
+  @ViewChild('dropdownButton') dropdownButton!: ElementRef<HTMLButtonElement>;
   @Input() data: FormDropdownModel[] = [];
   @Input() placeholder: string = '';
   @Input() style: string = 'w-50';
@@ -31,7 +32,7 @@ export class ZaDropDownFormControlComponent {
   @Input() selectedValues: string[] = [];
   @Output() valueChanged = new EventEmitter<any | any[]>();
   selectedItems: string[] = [];
-
+  dropdownWidth = 0;
   filteredData: any[] = [];
   searchText: string = '';
   selectedValue: any = '';
@@ -41,7 +42,7 @@ export class ZaDropDownFormControlComponent {
 
   private onChange: any = () => { };
   private onTouched: any = () => { };
-  constructor(private dropdownConfig: NgbDropdownConfig, private renderer: Renderer2) { }
+  constructor(private dropdownConfig: NgbDropdownConfig, private renderer: Renderer2, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     if (this.isCustomDropdown)
@@ -57,6 +58,11 @@ export class ZaDropDownFormControlComponent {
       else
         this.writeValue(this.selectedValue);
     }
+  }
+
+  ngAfterViewInit() {
+    this.dropdownWidth = this.dropdownButton.nativeElement.offsetWidth;
+    this.cdr.detectChanges();
   }
 
   writeValue(value: any): void {

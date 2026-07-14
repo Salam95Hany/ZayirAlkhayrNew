@@ -23,11 +23,11 @@
                 <i class="fas fa-arrow-right"></i>
                 السابق
             </button>
-            <button class="btn btn-nav btn-prev" *ngIf="activeStep >= 7" (click)="AddNewStudent()">
+            <button class="btn btn-nav btn-prev" *ngIf="activeStep >= 3" (click)="AddNewStudent()">
                 <i class="fas fa-plus-circle fa-fw"></i>
                 <span class="navbar-brand m-0">اضافة</span>
             </button>
-            <button class="btn btn-nav btn-prev" *ngIf="activeStep >= 1 && activeStep < 7" (click)="NextStep()">
+            <button class="btn btn-nav btn-prev" *ngIf="activeStep >= 1 && activeStep < 3" (click)="NextStep()">
                 التالي
                 <i class="fas fa-arrow-left"></i>
             </button>
@@ -40,10 +40,10 @@
         <app-parent-data #ParentData></app-parent-data>
     </div>
     <div [hidden]="activeStep != 2">
-        <app-student-data #StudentData></app-student-data>
+        <app-student-data #StudentData [AcademicStages]="StudentLookups?.academicStages" [Nationalities]="StudentLookups?.nationalities"></app-student-data>
     </div>
     <div [hidden]="activeStep != 3">
-        <app-discount-data #DiscountData></app-discount-data>
+        <app-discount-data #DiscountData [DiscountTypes]="StudentLookups?.discountTypes"></app-discount-data>
     </div>
 </div>
 

@@ -76,21 +76,25 @@ namespace ZayirAlkhayr.Services.Common
         public static List<FilterModel> ToGroupedFilters(this List<FilterModel> filters)
         {
             return filters
-                .GroupBy(f => f.CategoryName)
-                .Select(group => new FilterModel
+        .GroupBy(f => f.CategoryName)
+        .Select(group => new FilterModel
+        {
+            CategoryName = group.Key,
+            CategoryDisplayName = group.First().CategoryDisplayName,
+            FilterType = group.First().FilterType,
+            FilterItems = group
+                .Where(f => !string.IsNullOrWhiteSpace(f.ItemId)
+                         && !string.IsNullOrWhiteSpace(f.ItemKey))
+                .Select(f => new FilterModel
                 {
-                    CategoryName = group.Key,
-                    CategoryDisplayName = group?.FirstOrDefault()?.CategoryDisplayName,
-                    FilterType = group?.FirstOrDefault()?.FilterType,
-                    FilterItems = group.Select(f => new FilterModel
-                    {
-                        CategoryName = f.CategoryName,
-                        ItemId = f.ItemId,
-                        ItemKey = f.ItemKey,
-                        ItemValue = f.ItemValue
-                    }).ToList()
+                    CategoryName = f.CategoryName,
+                    ItemId = f.ItemId,
+                    ItemKey = f.ItemKey,
+                    ItemValue = f.ItemValue
                 })
-                .ToList();
+                .ToList()
+        })
+        .ToList();
         }
 
         public static DataTable ToDataTableFromFilterModel(this List<FilterModel> filterList)

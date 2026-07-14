@@ -38,7 +38,7 @@
                 </thead>
                 <tbody>
                     <ng-container>
-                        <tr *ngFor="let item of FamilyNationalityData">
+                        <tr *ngFor="let item of Results">
                             <td>{{item.name}}</td>
                             <td>{{item.createdBy}}</td>
                             <td>{{item.insertDateStr}}</td>
@@ -55,9 +55,9 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr *ngIf="!FamilyNationalityData.length">
+                        <tr *ngIf="!Results.length">
                             <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!FamilyNationalityData.length"></app-za-empty-data>
+                                <app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data>
                             </td>
                         </tr>
                     </ng-container>

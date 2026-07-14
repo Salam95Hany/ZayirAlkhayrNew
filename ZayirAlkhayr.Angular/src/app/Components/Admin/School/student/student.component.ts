@@ -17,12 +17,12 @@ import { ToastrService } from 'ngx-toastr';
 import { FormService } from '../../../../Services/shared/form.service';
 import { AuthService } from '../../../../Auth/auth.service';
 import { PdfDownloadService } from '../../../../Services/shared/pdf-download.service';
-import { FamilyStatusSidepanelComponent } from '../../ZAInstitution/GeneralServices/generalStatus/family-status-sidepanel/family-status-sidepanel.component';
+import { StudentSidepanelComponent } from '../student-sidepanel/student-sidepanel.component';
 
 @Component({
   selector: 'app-student',
   standalone: true,
-   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
+  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RouterModule, RoleCheckerDirective,
     NgIf, NgFor, NgxLoadingModule],
   templateUrl: './student.component.html',
@@ -30,19 +30,20 @@ import { FamilyStatusSidepanelComponent } from '../../ZAInstitution/GeneralServi
   providers: [DatePipe]
 })
 export class StudentComponent {
-TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'الطلاب'];
-  FamilyStatusData: any[] = [];
+  TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'الطلاب'];
+  Results: any[] = [];
   FilterList: FilterModel[] = [];
   SearchReport: SearchReportModel = {
-    reportType: 'FamilyStatusPdf',
+    reportType: 'StudentPdf',
     headers: [],
     filterItems: []
   };
-  FamilyStatusHeaders: any[] = [];
-  FamilyStatusId: any
+  StudentHeaders: any[] = [];
+  StudentId: any;
+  ParentId: any;
   UserName: any;
   showLoader = false;
-  isFilter = false;
+  isFilter = true;
   TotalCount = 0;
   RowCount = 25;
   PagingFilter: PagingFilterModel = {
@@ -51,7 +52,7 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
     pageSize: 20
   }
 
-  constructor(private schoolStudentService: SchoolStudentService, private offcanvasService: NgbOffcanvas, private injector: Injector,
+  constructor(private schoolService: SchoolStudentService, private offcanvasService: NgbOffcanvas, private injector: Injector,
     private modalService: NgbModal, private pdfService: PdfDownloadService, private toaster: ToastrService, private datePipe: DatePipe
     , private formService: FormService, private authSerive: AuthService
   ) {
@@ -60,37 +61,38 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
 
   ngOnInit(): void {
     this.UserName = this.authSerive.userName;
-    this.GetAllFamilyStatusData();
-    this.GetAllFamilyStatusFilter();
+    this.GetAllStudentData();
+    this.GetAllStudentFilter();
   }
 
-  openUpdateFamilyStatusSidePanel(item: any, UpdateMode: boolean, DetailsMode: boolean) {
+  openUpdateStudentSidePanel(item: any, UpdateMode: boolean, DetailsMode: boolean) {
     const injector = Injector.create({
       providers: [
-        { provide: 'FamilyStatusId', useValue: item.id },
-        { provide: 'FamilyStatusCode', useValue: item.code },
-        { provide: 'FamilyStatusName', useValue: item.statusName },
+        { provide: 'StudentId', useValue: item.id },
+        { provide: 'StudentName', useValue: item.studentName },
+        { provide: 'AcademicStage', useValue: item.academicStageName },
         { provide: 'UpdateMode', useValue: UpdateMode },
         { provide: 'DetailsMode', useValue: DetailsMode }
       ],
       parent: this.injector
     });
 
-    const ref = this.offcanvasService.open(FamilyStatusSidepanelComponent, {
+    const ref = this.offcanvasService.open(StudentSidepanelComponent, {
       injector: injector,
       position: 'end'
     });
 
     ref.dismissed.subscribe((result: any) => {
       if (result?.reload == 'reload') {
-        this.GetAllFamilyStatusData();
-        this.GetAllFamilyStatusFilter();
+        this.GetAllStudentData();
+        this.GetAllStudentFilter();
       }
     });
   }
 
-  openDeleteItemModal(content: any, familyStatusId: any) {
-    this.FamilyStatusId = familyStatusId;
+  openDeleteItemModal(content: any, item: any) {
+    this.StudentId = item.id;
+    this.ParentId = item.parentId;
     this.modalService.open(content, {
       size: 'md',
       scrollable: true,
@@ -99,7 +101,7 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
   }
 
   OpenPdfFileItemModal(content: any) {
-    this.SearchReport.headers = this.pdfService.ConverHeaderToPDFModel(this.FamilyStatusHeaders);
+    this.SearchReport.headers = this.pdfService.ConverHeaderToPDFModel(this.StudentHeaders);
     this.RowCount = 15;
     this.modalService.open(content, {
       size: 'lg',
@@ -110,32 +112,32 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
 
 
 
-  GetAllFamilyStatusData() {
-    // this.showLoader = true;
-    // this.generalService.GetAllFamilyStatusData(this.PagingFilter).subscribe(data => {
-    //   this.showLoader = false;
-    //   this.FamilyStatusData = data.results.table;
-    //   this.FamilyStatusHeaders = data.results.table1;
-    //   this.TotalCount = data.totalCount;
-    // });
+  GetAllStudentData() {
+    this.showLoader = true;
+    this.schoolService.GetAllStudentData(this.PagingFilter).subscribe(data => {
+      this.showLoader = false;
+      this.Results = data.results.table;
+      this.StudentHeaders = data.results.table1;
+      this.TotalCount = data.totalCount;
+    });
   }
 
-  GetAllFamilyStatusFilter() {
-    // this.generalService.GetAllFamilyStatusFilter(this.PagingFilter).subscribe(data => {
-    //   this.FilterList = data.results;
-    // });
+  GetAllStudentFilter() {
+    this.schoolService.GetAllStudentFilter(this.PagingFilter).subscribe(data => {
+      this.FilterList = data.results;
+    });
   }
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
-    this.GetAllFamilyStatusData();
+    this.GetAllStudentData();
   }
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
     this.SearchReport.filterItems = filterList;
     this.PagingFilter.currentPage = 1;
-    this.GetAllFamilyStatusData();
+    this.GetAllStudentData();
   }
 
   NumbersOnly(key: any) {
@@ -144,21 +146,21 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
 
   DeleteItem() {
     this.showLoader = true;
-    // this.generalService.DeleteFamilyStatus(this.FamilyStatusId).subscribe(data => {
-    //   if (data.isSuccess) {
-    //     this.toaster.success(data.message);
-    //     this.GetAllFamilyStatusData();
-    //     this.GetAllFamilyStatusFilter();
-    //     this.modalService.dismissAll();
-    //   }
-    //   else
-    //     this.toaster.error(data.message);
-    //   this.showLoader = false;
-    // })
+    this.schoolService.DeleteStudent(this.ParentId,this.StudentId).subscribe(data => {
+      if (data.isSuccess) {
+        this.toaster.success(data.message);
+        this.GetAllStudentData();
+        this.GetAllStudentFilter();
+        this.modalService.dismissAll();
+      }
+      else
+        this.toaster.error(data.message);
+      this.showLoader = false;
+    })
   }
 
   DownloadPdfFile() {
-    if (this.FamilyStatusData.length == 0) {
+    if (this.Results.length == 0) {
       this.toaster.warning('لا يوجد بيانات للتنزيل');
       return;
     }
@@ -198,14 +200,14 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
   }
 
   DownloadExcelFile() {
-    if (this.FamilyStatusData.length == 0) {
+    if (this.Results.length == 0) {
       this.toaster.warning('لا يوجد بيانات للتنزيل');
       return;
     }
-    
+
     let today = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
-    let fileName = 'الحالات' + '_' + today;
-    this.SearchReport.headers = this.pdfService.ConverHeaderToPDFModel(this.FamilyStatusHeaders);
+    let fileName = 'الطلاب' + '_' + today;
+    this.SearchReport.headers = this.pdfService.ConverHeaderToPDFModel(this.StudentHeaders);
     this.SearchReport.userName = this.UserName;
     this.SearchReport.reportType = 'FamilyStatusExcel';
     this.showLoader = true;

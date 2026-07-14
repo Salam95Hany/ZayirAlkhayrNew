@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormService } from '../../../../../Services/shared/form.service';
 import { ToastrService } from 'ngx-toastr';
@@ -14,7 +14,7 @@ import { FormDropdownModel } from '../../../../../Models/shared/FormDropdownMode
 @Component({
   selector: 'app-student-data',
   standalone: true,
-  imports: [NgIf, NgFor, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule, ZaEmptyDataComponent],
+  imports: [NgIf, NgFor, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule, ZaEmptyDataComponent, FormsModule],
   templateUrl: './student-data.component.html',
   styleUrl: './student-data.component.css'
 })
@@ -26,11 +26,16 @@ export class StudentDataComponent {
   @Input() DetailsMode = false;
   @Output() StudentDetailsChange = new EventEmitter<string[]>();
   studentStatus: FormDropdownModel[] = [
-    { value: 'موجود', name: 'موجود' },
-    { value: 'منسحب', name: 'منسحب' }
+    { value: 1, name: 'موجود' },
+    { value: 2, name: 'منسحب' }
+  ];
+  Genders: FormDropdownModel[] = [
+    { value: 1, name: 'ذكر' },
+    { value: 2, name: 'أنثى' }
   ];
   ItemForm: FormGroup;
   FamilyChildCount = 0;
+  TotalStudyAmount = 0;
   StudentDetailsId: number;
   addMode = true;
   formErrors = {
@@ -41,13 +46,12 @@ export class StudentDataComponent {
     studyPeriod: '',
     nationalityId: '',
     isHaveHealthCondition: '',
-    HealthConditionNote: '',
+    healthConditionNote: '',
     gender: '',
     academicYear: '',
     studentStatusId: '',
     studentStatusReason: '',
-    orderAmongChildren: '',
-    nationalId: ''
+    orderAmongChildren: ''
   };
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private formService: FormService,
@@ -57,6 +61,7 @@ export class StudentDataComponent {
   ngOnInit(): void {
     this.FormInit();
     this.FamilyChildCount = this.StudentDetails.length;
+    this.TotalStudyAmount = this.StudentDetails.reduce((total, student) => total + (student.studyAmount || 0), 0);
   }
 
   FormInit() {
@@ -67,20 +72,37 @@ export class StudentDataComponent {
       birthDay: ['', [Validators.required]],
       governmentSchool: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       studyPeriod: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      NationalityId: ['', [Validators.required]],
-      isHaveHealthCondition: ['', [Validators.required]],
-      HealthConditionNote: [''],
-      studyAmount: [''],
+      nationalityId: ['', [Validators.required]],
+      isHaveHealthCondition: [''],
+      healthConditionNote: [''],
       gender: ['', [Validators.required]],
       academicYear: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       studentStatusId: ['', [Validators.required]],
       studentStatusReason: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      orderAmongChildren: ['', [Validators.required]],
-      nationalId: ['', [Validators.required]]
+      orderAmongChildren: ['', [Validators.required]]
     });
 
     this.ItemForm.valueChanges.subscribe((data) => {
       this.formErrors = this.formService.validateForm(this.ItemForm, this.formErrors, true);
+    });
+
+    const studentStatusControl = this.ItemForm.get('studentStatusId');
+    studentStatusControl?.valueChanges.subscribe((value) => {
+      if (value == 2) {
+        this.formService.updateFieldValidators(this.ItemForm, 'studentStatusReason', true, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]);
+      } else {
+        this.formService.updateFieldValidators(this.ItemForm, 'studentStatusReason', false, []);
+      }
+    });
+
+    const isHaveHealthConditionControl = this.ItemForm.get('isHaveHealthCondition');
+    isHaveHealthConditionControl?.valueChanges.subscribe((value) => {
+      debugger;
+      if (value) {
+        this.formService.updateFieldValidators(this.ItemForm, 'healthConditionNote', true, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]);
+      } else {
+        this.formService.updateFieldValidators(this.ItemForm, 'healthConditionNote', false, []);
+      }
     });
   }
 
@@ -92,16 +114,14 @@ export class StudentDataComponent {
       birthDay: item.birthDay,
       governmentSchool: item.governmentSchool,
       studyPeriod: item.studyPeriod,
-      NationalityId: item.NationalityId,
+      nationalityId: item.nationalityId,
       isHaveHealthCondition: item.isHaveHealthCondition,
       HealthConditionNote: item.HealthConditionNote,
-      studyAmount: item.studyAmount,
       gender: item.gender,
       academicYear: item.academicYear,
       studentStatusId: item.studentStatusId,
       studentStatusReason: item.studentStatusReason,
       orderAmongChildren: item.orderAmongChildren,
-      nationalId: item.nationalId
     });
   }
 
@@ -174,7 +194,7 @@ export class StudentDataComponent {
         birthDay: formData.birthDay,
         governmentSchool: formData.governmentSchool,
         studyPeriod: formData.studyPeriod,
-        studyAmount: formData.studyAmount,
+        studyAmount: this.AcademicStages.find(i => i.value == formData.academicStageId)?.extraData['amount'],
         nationalityId: formData.nationalityId,
         nationalityName: nationalityName,
         isHaveHealthCondition: formData.isHaveHealthCondition,
@@ -194,7 +214,7 @@ export class StudentDataComponent {
         obj.birthDay = formData.birthDay;
         obj.governmentSchool = formData.governmentSchool;
         obj.studyPeriod = formData.studyPeriod;
-        obj.studyAmount = formData.studyAmount;
+        obj.studyAmount = this.AcademicStages.find(i => i.value == formData.academicStageId)?.extraData['amount'];
         obj.nationalityId = formData.nationalityId;
         obj.nationalityName = nationalityName;
         obj.isHaveHealthCondition = formData.isHaveHealthCondition;
@@ -210,6 +230,7 @@ export class StudentDataComponent {
     this.FamilyChildCount = this.StudentDetails.length;
     if (this.UpdateMode)
       this.StudentDetailsChange.emit(this.StudentDetails.map(i => i.studentName));
+    this.TotalStudyAmount = this.StudentDetails.reduce((total, student) => total + (student.studyAmount || 0), 0);
     this.modalService.dismissAll();
   }
 
@@ -222,10 +243,12 @@ export class StudentDataComponent {
   }
 
   GetOutputData() {
-    if (this.StudentDetails.length > 0) {
+    if (this.StudentDetails.length == 0) {
+      this.toaster.warning('أدخل بيانات طالب على الأقل');
+      return null;
+    }
 
-      return this.StudentDetails;
-    } else
-      return [];
+
+    return this.StudentDetails;
   }
 }

@@ -96,6 +96,8 @@ export class AddStudentComponent {
   AddNewStudent() {
     let data = this.viewChilds[this.Counter].GetOutputData();
     this.AddStudentModel[this.StepName] = data;
+    console.log(this.AddStudentModel);
+    return;
     this.showLoader = true;
     this.schoolStudentService.AddNewStudent(this.AddStudentModel).subscribe(data => {
       this.showLoader = false;

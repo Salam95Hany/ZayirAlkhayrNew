@@ -16,13 +16,19 @@
                 <tr>
                     <td class="table-feature">رقم الهاتف</td>
                     <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'رقم الهاتف...'" [error]="formErrors.phone" formControlName="phone"></app-za-input-with-label>
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'رقم الهاتف...'" [error]="formErrors.phone" formControlName="phone" [allowNumbersOnly]="true"></app-za-input-with-label>
                     </td>
                 </tr>
                 <tr>
                     <td class="table-feature">العنوان</td>
                     <td class="table-value">
                         <app-za-input-with-label [type]="'text'" [placeholder]="'العنوان...'" [error]="formErrors.address" formControlName="address"></app-za-input-with-label>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-feature">عدد الأبناء</td>
+                    <td class="table-value">
+                        <app-za-input-with-label [type]="'text'" [placeholder]="'عدد الأبناء...'" [disabled]="true" [(ngModel)]="ParentStudent.childrenCount" [ngModelOptions]="{ standalone: true }"></app-za-input-with-label>
                     </td>
                 </tr>
             </tbody>

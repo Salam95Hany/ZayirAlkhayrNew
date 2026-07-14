@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -129,6 +129,19 @@ export class FormService {
       control.addValidators(Validators.required);
     } else {
       control.removeValidators(Validators.required);
+    }
+
+    control.updateValueAndValidity();
+  }
+
+  public updateFieldValidators(formGroup: FormGroup, field: string, enable: boolean, validators: ValidatorFn[]): void {
+    const control: AbstractControl | null = formGroup.get(field);
+    if (!control) return;
+
+    if (enable) {
+      control.setValidators(validators);
+    } else {
+      control.clearValidators();
     }
 
     control.updateValueAndValidity();

@@ -1,0 +1,23 @@
+.scroll-body {
+    overflow-y: auto;
+    max-height: 90vh;
+}
+
+.btn-color {
+    background-color: #157347;
+    color: white;
+    align-items: center;
+    border: 0;
+    letter-spacing: 0.5px;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
+    font-weight: bold;
+    height: 50px;
+    font-size: 12px;
+    border-radius: 5px;
+    --bs-btn-padding-y: 0.75rem;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+}

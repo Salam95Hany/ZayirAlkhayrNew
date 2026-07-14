@@ -16,21 +16,22 @@ import { FormService } from '../../../../Services/shared/form.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../Auth/auth.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
+import { SchoolStudentService } from '../../../../Services/school/school-student.service';
 
 @Component({
   selector: 'app-student-nationality',
   standalone: true,
-   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
+  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
     NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule],
   templateUrl: './student-nationality.component.html',
   styleUrl: './student-nationality.component.css'
 })
 export class StudentNationalityComponent {
-TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'الجنسيات'];
-  FamilyNationalityData: any[] = [];
+  TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'الجنسيات'];
+  Results: any[] = [];
   FilterList: FilterModel[] = [];
   showLoader = false;
-  isFilter = false;
+  isFilter = true;
   TotalCount = 0;
   ItemForm: FormGroup;
   UserId: any;
@@ -44,14 +45,14 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
     name: ''
   };
 
-  constructor(private modalService: NgbModal, private generalStatusService: GeneralStatusService, private formService: FormService
-    , private fb: FormBuilder, private toaster: ToastrService,private authService: AuthService) { }
+  constructor(private modalService: NgbModal, private schoolService: SchoolStudentService, private formService: FormService
+    , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.UserId = this.authService.userId;
     this.FormInit();
-    this.GetAllFamilyNationalitiesData();
-    this.GetAllFamilyNationalitiesFilter();
+    this.GetAllStudentNationalityData();
+    this.GetAllStudentNationalityFilter();
   }
 
   FormInit() {
@@ -100,17 +101,17 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
     });
   }
 
-  GetAllFamilyNationalitiesData() {
+  GetAllStudentNationalityData() {
     this.showLoader = true;
-    this.generalStatusService.GetAllFamilyNationalitiesData(this.PagingFilter).subscribe(data => {
+    this.schoolService.GetAllStudentNationalityData(this.PagingFilter).subscribe(data => {
       this.showLoader = false;
-      this.FamilyNationalityData = data.results;
+      this.Results = data.results;
       this.TotalCount = data.totalCount;
     });
   }
 
-  GetAllFamilyNationalitiesFilter() {
-    this.generalStatusService.GetAllFamilyNationalitiesFilter(this.PagingFilter).subscribe(data => {
+  GetAllStudentNationalityFilter() {
+    this.schoolService.GetAllStudentNationalityFilter().subscribe(data => {
       this.FilterList = data.results;
     });
   }
@@ -121,7 +122,7 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
-    this.GetAllFamilyNationalitiesData();
+    this.GetAllStudentNationalityData();
   }
 
   validateForm(): boolean {
@@ -144,11 +145,11 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
 
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.generalStatusService.AddNewFamilyNationality(this.ItemForm.value).subscribe(data => {
+      this.schoolService.AddNewStudentNationality(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
-          this.GetAllFamilyNationalitiesData();
-          this.GetAllFamilyNationalitiesFilter();
+          this.GetAllStudentNationalityData();
+          this.GetAllStudentNationalityFilter();
           this.modalService.dismissAll();
         }
         else
@@ -156,11 +157,11 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
         this.showLoader = false;
       });
     } else {
-      this.generalStatusService.UpdateFamilyNationality(this.ItemForm.value).subscribe(data => {
+      this.schoolService.UpdateStudentNationality(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
-          this.GetAllFamilyNationalitiesData();
-          this.GetAllFamilyNationalitiesFilter();
+          this.GetAllStudentNationalityData();
+          this.GetAllStudentNationalityFilter();
           this.modalService.dismissAll();
         }
         else
@@ -172,11 +173,11 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
 
   DeleteItem() {
     this.showLoader = true;
-    this.generalStatusService.DeleteFamilyNationality(this.NationalityId).subscribe(data => {
+    this.schoolService.DeleteStudentNationality(this.NationalityId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
-        this.GetAllFamilyNationalitiesData();
-        this.GetAllFamilyNationalitiesFilter();
+        this.GetAllStudentNationalityData();
+        this.GetAllStudentNationalityFilter();
         this.modalService.dismissAll();
       }
       else

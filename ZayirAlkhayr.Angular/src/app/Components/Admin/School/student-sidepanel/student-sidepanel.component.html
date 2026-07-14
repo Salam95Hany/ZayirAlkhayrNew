@@ -1,0 +1,30 @@
+<div class="offcanvas-header justify-content-between gap-3 fs-4 border-bottom py-3">
+    <div class="d-flex align-items-center gap-2">
+        <i class="fas fa-info-circle offcanvas-header-icon"></i>
+        <span>
+            {{StudentName}} - {{AcademicStage}}
+        </span>
+    </div>
+    <div class="cursor-pointer text-danger fs-2" (click)="dismissSidePanel()">
+        <i class="uil uil-times-circle"></i>
+    </div>
+</div>
+<div class="offcanvas-body pt-4 bg-light scroll-body" *ngIf="isLookupsLoaded" #sidepanelEditStatus>
+    <hr>
+    <div class="mb-5">
+        <h3>بيانات ولي الأمر</h3>
+        <app-parent-data #ParentData></app-parent-data>
+    </div>
+    <div class="mb-5">
+        <h3>بيانات الطالب</h3>
+        <app-student-data #StudentData></app-student-data>
+    </div>
+    <div class="mb-5">
+        <h3>بيانات الخصم</h3>
+        <app-discount-data #DiscountData></app-discount-data>
+    </div>
+    <hr *ngIf="!DetailsMode">
+    <button class="w-100 btn-color" *ngIf="!DetailsMode" (click)="UpdateStudent()">حفظ</button>
+</div>
+
+<ngx-loading [show]="showLoader"></ngx-loading>

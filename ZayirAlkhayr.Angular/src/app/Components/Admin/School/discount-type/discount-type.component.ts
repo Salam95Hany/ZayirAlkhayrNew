@@ -11,11 +11,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { RoleCheckerDirective } from '../../../../Directives/role-checker.directive';
 import { FilterModel } from '../../../../Models/shared/FilterModel';
 import { PagingFilterModel } from '../../../../Models/shared/PagingFilterModel ';
-import { GeneralStatusService } from '../../../../Services/zainstitution/general-status.service';
 import { FormService } from '../../../../Services/shared/form.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../Auth/auth.service';
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
+import { SchoolStudentService } from '../../../../Services/school/school-student.service';
 
 @Component({
   selector: 'app-discount-type',
@@ -26,15 +26,15 @@ import { CustomValidators, RegexType } from '../../../../Services/shared/custom-
   styleUrl: './discount-type.component.css'
 })
 export class DiscountTypeComponent {
-TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'الجنسيات'];
-  FamilyNationalityData: any[] = [];
+  TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'أنواع الخصم'];
+  Results: any[] = [];
   FilterList: FilterModel[] = [];
   showLoader = false;
-  isFilter = false;
+  isFilter = true;
   TotalCount = 0;
   ItemForm: FormGroup;
   UserId: any;
-  NationalityId: any;
+  DiscountTypeId: any;
   PagingFilter: PagingFilterModel = {
     filterList: [],
     currentPage: 1,
@@ -44,14 +44,14 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
     name: ''
   };
 
-  constructor(private modalService: NgbModal, private generalStatusService: GeneralStatusService, private formService: FormService
-    , private fb: FormBuilder, private toaster: ToastrService,private authService: AuthService) { }
+  constructor(private modalService: NgbModal, private schoolService: SchoolStudentService, private formService: FormService
+    , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.UserId = this.authService.userId;
     this.FormInit();
-    this.GetAllFamilyNationalitiesData();
-    this.GetAllFamilyNationalitiesFilter();
+    this.GetAllDiscountTypeData();
+    this.GetAllDiscountTypeFilter();
   }
 
   FormInit() {
@@ -92,7 +92,7 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
   }
 
   openDeleteItemModal(content: any, item: any) {
-    this.NationalityId = item.id;
+    this.DiscountTypeId = item.id;
     this.modalService.open(content, {
       size: 'md',
       scrollable: true,
@@ -100,17 +100,17 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
     });
   }
 
-  GetAllFamilyNationalitiesData() {
+  GetAllDiscountTypeData() {
     this.showLoader = true;
-    this.generalStatusService.GetAllFamilyNationalitiesData(this.PagingFilter).subscribe(data => {
+    this.schoolService.GetAllDiscountTypeData(this.PagingFilter).subscribe(data => {
       this.showLoader = false;
-      this.FamilyNationalityData = data.results;
+      this.Results = data.results;
       this.TotalCount = data.totalCount;
     });
   }
 
-  GetAllFamilyNationalitiesFilter() {
-    this.generalStatusService.GetAllFamilyNationalitiesFilter(this.PagingFilter).subscribe(data => {
+  GetAllDiscountTypeFilter() {
+    this.schoolService.GetAllDiscountTypeFilter().subscribe(data => {
       this.FilterList = data.results;
     });
   }
@@ -121,7 +121,7 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
-    this.GetAllFamilyNationalitiesData();
+    this.GetAllDiscountTypeData();
   }
 
   validateForm(): boolean {
@@ -144,11 +144,11 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
 
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.generalStatusService.AddNewFamilyNationality(this.ItemForm.value).subscribe(data => {
+      this.schoolService.AddNewDiscountType(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
-          this.GetAllFamilyNationalitiesData();
-          this.GetAllFamilyNationalitiesFilter();
+          this.GetAllDiscountTypeData();
+          this.GetAllDiscountTypeFilter();
           this.modalService.dismissAll();
         }
         else
@@ -156,11 +156,11 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
         this.showLoader = false;
       });
     } else {
-      this.generalStatusService.UpdateFamilyNationality(this.ItemForm.value).subscribe(data => {
+      this.schoolService.UpdateDiscountType(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
-          this.GetAllFamilyNationalitiesData();
-          this.GetAllFamilyNationalitiesFilter();
+          this.GetAllDiscountTypeData();
+          this.GetAllDiscountTypeFilter();
           this.modalService.dismissAll();
         }
         else
@@ -172,11 +172,11 @@ TitleList = ['مركز بشائر القرآن', 'إدارة الطلاب', 'ا�
 
   DeleteItem() {
     this.showLoader = true;
-    this.generalStatusService.DeleteFamilyNationality(this.NationalityId).subscribe(data => {
+    this.schoolService.DeleteDiscountType(this.DiscountTypeId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
-        this.GetAllFamilyNationalitiesData();
-        this.GetAllFamilyNationalitiesFilter();
+        this.GetAllDiscountTypeData();
+        this.GetAllDiscountTypeFilter();
         this.modalService.dismissAll();
       }
       else

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ZaInputWithLabelComponent } from '../../../../../Shared/za-input-with-label/za-input-with-label.component';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { FormService } from '../../../../../Services/shared/form.service';
 import { AuthService } from '../../../../../Auth/auth.service';
@@ -9,7 +9,7 @@ import { ParentStudent } from '../../../../../Models/school/student/AddStudentMo
 @Component({
   selector: 'app-parent-data',
   standalone: true,
-  imports: [ZaInputWithLabelComponent, ReactiveFormsModule],
+  imports: [ZaInputWithLabelComponent, ReactiveFormsModule,FormsModule],
   templateUrl: './parent-data.component.html',
   styleUrl: './parent-data.component.css'
 })
@@ -30,6 +30,8 @@ export class ParentDataComponent {
   ngOnInit(): void {
     this.UserId = this.authService.userId;
     this.ParentStudent.insertUser = this.UserId;
+    if(!this.UpdateMode)
+      this.ParentStudent.childrenCount = 0;
     this.ItemForm = this.fb.group({
       parentName: [{ value: this.ParentStudent.parentName ?? '', disabled: this.DetailsMode ? true : false }, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       phone: [{ value: this.ParentStudent.phone ?? '', disabled: this.DetailsMode ? true : false }, [Validators.required]],

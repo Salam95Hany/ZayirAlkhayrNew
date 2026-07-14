@@ -1,9 +1,9 @@
 <div *ngIf="!selectMulti" ngbDropdown class="dropdown-as-input" container="body" placement="bottom-right">
-    <button type="button" style="padding-left: 80px;" [disabled]="disabled" id="dropdownBasic1" class="input-box" [class.error]="hasError" ngbDropdownToggle>
+    <button #dropdownButton type="button" style="padding-left: 80px;" [disabled]="disabled" id="dropdownBasic1" class="input-box" [class.error]="hasError" ngbDropdownToggle>
         <span>{{selectedName?selectedName?.substring(0, 30):placeholder}}</span>
         <span *ngIf="selectedCode">{{selectedCode}}</span>
     </button>
-    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" [style.width.px]="dropdownWidth">
         <div *ngIf="showSearch" class="p-2 bg-light border-bottom">
             <input type="text" class="form-control form-control" (input)="onInputChange($event)" placeholder="Search..." />
         </div>
