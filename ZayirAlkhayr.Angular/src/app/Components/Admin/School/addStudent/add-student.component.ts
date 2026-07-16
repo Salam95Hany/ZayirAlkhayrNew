@@ -25,6 +25,7 @@ export class AddStudentComponent {
   AddStudentModel: AddStudentModel = {} as AddStudentModel;
   showLoader = false;
   isLookupsLoaded = false;
+  StudentNames: string[] = [];
   StepName: string;
   activeStep = 1;
   Counter = 0;
@@ -95,17 +96,22 @@ export class AddStudentComponent {
 
   AddNewStudent() {
     let data = this.viewChilds[this.Counter].GetOutputData();
+    if (data == null)
+      return;
+    
     this.AddStudentModel[this.StepName] = data;
-    console.log(this.AddStudentModel);
-    return;
     this.showLoader = true;
     this.schoolStudentService.AddNewStudent(this.AddStudentModel).subscribe(data => {
       this.showLoader = false;
       if (data.isSuccess) {
         this.toaster.success(data.message);
-        this.router.navigateByUrl('admin/za-institution/family-status');
+        this.router.navigateByUrl('admin/school/students');
       } else
         this.toaster.error(data.message);
     });
+  }
+
+  StudendChange(item: string[]) {
+    this.StudentNames = item;
   }
 }

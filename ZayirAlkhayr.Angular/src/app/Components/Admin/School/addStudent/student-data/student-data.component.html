@@ -2,7 +2,7 @@
     <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
         <div class="col-md-8 mb-2" *ngIf="!DetailsMode">
             <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)">
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)" *ngIf="!DetailsMode">
                     <i class="fas fa-plus-circle"></i>
                     <span>إضافة</span>
                 </button>
@@ -38,9 +38,9 @@
                         <tr *ngFor="let item of StudentDetails">
                             <td>{{item.studentName}}</td>
                             <td>{{item.academicStageName}}</td>
-                            <td>{{item.birthDay}}</td>
+                            <td>{{item.birthDay | arabicDateWithTime}}</td>
                             <td>{{item.governmentSchool}}</td>
-                            <td>{{item.studyPeriod}}</td>
+                            <td>{{item.studyPeriodName}}</td>
                             <td>{{item.nationalityName}}</td>
                             <td class="table-value">
                                 <div class="d-flex align-items-center">
@@ -55,7 +55,7 @@
                                 </div>
                             </td>
                             <td>{{item.healthConditionNote}}</td>
-                            <td>{{item.gender}}</td>
+                            <td>{{item.genderName}}</td>
                             <td>{{item.academicYear}}</td>
                             <td>{{item.studyAmount}}</td>
                             <td>{{item.studentStatusId == 1 ? 'موجود' : 'منسحب'}}</td>
@@ -130,13 +130,13 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-feature">المرحلة الدراسية</td>
+                            <td class="table-feature">الجنس</td>
                             <td class="table-value">
                                 <div class="form-floating">
-                                    <app-za-drop-down-form-control [data]="AcademicStages" [showSearch]="true" [placeholder]="'المرحلة الدراسية'" formControlName="academicStageId" [hasError]="formErrors.academicStageId"></app-za-drop-down-form-control>
+                                    <app-za-drop-down-form-control [data]="Genders" [showSearch]="true" [placeholder]="'الجنس'" formControlName="gender" [hasError]="formErrors.gender"></app-za-drop-down-form-control>
                                 </div>
-                                <div class="error-message" *ngIf="formErrors.academicStageId">
-                                    {{ formErrors.academicStageId }}
+                                <div class="error-message" *ngIf="formErrors.gender">
+                                    {{ formErrors.gender }}
                                 </div>
                             </td>
                         </tr>
@@ -144,18 +144,6 @@
                             <td class="table-feature">تاريخ الميلاد</td>
                             <td class="table-value">
                                 <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ الميلاد...'" [error]="formErrors.birthDay" formControlName="birthDay"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">المدرسة الحكومية</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'المدرسة الحكومية...'" [error]="formErrors.governmentSchool" formControlName="governmentSchool"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">الفترة الدراسية</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'الفترة الدراسية...'" [error]="formErrors.studyPeriod" formControlName="studyPeriod"></app-za-input-with-label>
                             </td>
                         </tr>
                         <tr>
@@ -170,34 +158,13 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="table-feature">هل لديه حالة صحية</td>
-                            <td class="table-value">
-                                <div class="d-flex align-items-center">
-                                    <div class="me-2">نعم</div>
-                                    <label class="jtoggler-wrapper m-0 mx-0">
-                                <input type="checkbox" formControlName="isHaveHealthCondition" class="jtoggler">
-                                <div class="jtoggler-control">
-                                    <div class="jtoggler-handle"></div>
-                                </div>
-                            </label>
-                                    <div class="ms-2">لا</div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="ItemForm.get('isHaveHealthCondition')?.value">
-                            <td class="table-feature">ملاحظات الحالة الصحية</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'ملاحظات الحالة الصحية...'" [error]="formErrors.healthConditionNote" formControlName="healthConditionNote"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">الجنس</td>
+                            <td class="table-feature">المرحلة الدراسية</td>
                             <td class="table-value">
                                 <div class="form-floating">
-                                    <app-za-drop-down-form-control [data]="Genders" [showSearch]="true" [placeholder]="'الجنس'" formControlName="gender" [hasError]="formErrors.gender"></app-za-drop-down-form-control>
+                                    <app-za-drop-down-form-control [data]="AcademicStages" [showSearch]="true" [placeholder]="'المرحلة الدراسية'" formControlName="academicStageId" [hasError]="formErrors.academicStageId"></app-za-drop-down-form-control>
                                 </div>
-                                <div class="error-message" *ngIf="formErrors.gender">
-                                    {{ formErrors.gender }}
+                                <div class="error-message" *ngIf="formErrors.academicStageId">
+                                    {{ formErrors.academicStageId }}
                                 </div>
                             </td>
                         </tr>
@@ -207,12 +174,23 @@
                                 <app-za-input-with-label [type]="'text'" [placeholder]="'السنة الدراسية...'" [error]="formErrors.academicYear" formControlName="academicYear" [allowNumbersOnly]="true"></app-za-input-with-label>
                             </td>
                         </tr>
-                        <!-- <tr>
-                            <td class="table-feature">المبلغ المستحق</td>
+                        <tr>
+                            <td class="table-feature">الفترة الدراسية</td>
                             <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'المبلغ المستحق...'" [error]="formErrors.studyAmount" formControlName="studyAmount"></app-za-input-with-label>
+                                <div class="form-floating">
+                                    <app-za-drop-down-form-control [data]="StudyPeriods" [showSearch]="true" [placeholder]="'الفترة الدراسية'" formControlName="studyPeriod" [hasError]="formErrors.academicStageId"></app-za-drop-down-form-control>
+                                </div>
+                                <div class="error-message" *ngIf="formErrors.studyPeriod">
+                                    {{ formErrors.studyPeriod }}
+                                </div>
                             </td>
-                        </tr> -->
+                        </tr>
+                        <tr>
+                            <td class="table-feature">المدرسة الحكومية</td>
+                            <td class="table-value">
+                                <app-za-input-with-label [type]="'text'" [placeholder]="'المدرسة الحكومية...'" [error]="formErrors.governmentSchool" formControlName="governmentSchool"></app-za-input-with-label>
+                            </td>
+                        </tr>
                         <tr>
                             <td class="table-feature">حالة الطالب</td>
                             <td class="table-value">
@@ -234,6 +212,27 @@
                             <td class="table-feature">ترتيب الطالب بين اخوته</td>
                             <td class="table-value">
                                 <app-za-input-with-label [type]="'text'" [placeholder]="'ترتيب الطالب بين اخوته...'" [error]="formErrors.orderAmongChildren" formControlName="orderAmongChildren" [allowNumbersOnly]="true"></app-za-input-with-label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">هل لديه حالة صحية</td>
+                            <td class="table-value">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-2">نعم</div>
+                                    <label class="jtoggler-wrapper m-0 mx-0">
+                                <input type="checkbox" formControlName="isHaveHealthCondition" class="jtoggler">
+                                <div class="jtoggler-control">
+                                    <div class="jtoggler-handle"></div>
+                                </div>
+                            </label>
+                                    <div class="ms-2">لا</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="ItemForm.get('isHaveHealthCondition')?.value">
+                            <td class="table-feature">ملاحظات الحالة الصحية</td>
+                            <td class="table-value">
+                                <app-za-input-with-label [type]="'text'" [placeholder]="'ملاحظات الحالة الصحية...'" [error]="formErrors.healthConditionNote" formControlName="healthConditionNote"></app-za-input-with-label>
                             </td>
                         </tr>
                     </tbody>

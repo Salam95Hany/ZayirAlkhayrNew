@@ -52,6 +52,12 @@ export const SchoolRoutes: Routes = [
                 canActivate: [authGuard],
                 data: { pageKey: 'School_Nationalities' }
             },
+            {
+                path: 'student-payments',
+                loadComponent: () => import('./student-payment/student-payment.component').then(m => m.StudentPaymentComponent),
+                canActivate: [authGuard],
+                data: { pageKey: 'School_StudentPayments' }
+            },
 
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: '**', redirectTo: 'home', pathMatch: 'full' },

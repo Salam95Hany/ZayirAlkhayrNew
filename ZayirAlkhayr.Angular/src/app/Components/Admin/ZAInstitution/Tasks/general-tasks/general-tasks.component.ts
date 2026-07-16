@@ -139,7 +139,6 @@ export class GeneralTasksComponent {
     this.showLoader = true;
     this.taskService.GetAllGeneralTasksData(this.PagingFilter).subscribe(data => {
       this.showLoader = false;
-      debugger;
       this.TasksData = data.results;
       this.TotalCount = data.totalCount;
     });

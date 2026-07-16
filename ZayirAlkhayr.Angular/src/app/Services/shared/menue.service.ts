@@ -281,6 +281,14 @@ export class MenueService {
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/school/nationalities',
               pageKey: 'School_Nationalities',
+            },
+            {
+              displayName: 'الدفعات',
+              menuItem: 'student-payments',
+              description: 'عرض و إدارة الدفعات',
+              icon: 'uil uil-sliders-v-alt',
+              route: '/admin/school/student-payments',
+              pageKey: 'School_StudentPayments',
             }
           ]
         }

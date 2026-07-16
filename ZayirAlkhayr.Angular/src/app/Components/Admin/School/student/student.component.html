@@ -46,36 +46,42 @@
             <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
                 <thead>
                     <tr>
-                        <th>الاسم</th>
                         <th>اسم ولي الاأمر</th>
+                        <th>اسم الطالب</th>
                         <th>رقم التلفون</th>
                         <th>المرحلة الدراسية</th>
                         <th>تاريخ الميلاد</th>
-                        <th>العمر</th>
                         <th>المدرسة الحكومية</th>
                         <th>فترة الدراسة</th>
                         <th>الجنسية</th>
                         <th>السنة الدراسية</th>
                         <th>الحالة</th>
+                        <th>تمت الاضافة من قبل</th>
+                        <th>تاريخ الاضافة</th>
                         <th>عمليات</th>
                     </tr>
                 </thead>
                 <tbody>
                     <ng-container>
                         <tr *ngFor="let item of Results">
-                            <td>{{item.studentName}}</td>
                             <td>{{item.parentName}}</td>
+                            <td>{{item.studentName}}</td>
                             <td>{{item.phone}}</td>
                             <td>{{item.academicStageName}}</td>
-                            <td>{{item.birthDay}}</td>
-                            <td>{{item.age}}</td>
+                            <td>{{item.birthDay | arabicDateWithTime}}</td>
                             <td>{{item.governmentSchool}}</td>
-                            <td>{{item.studyPeriod}}</td>
+                            <td>{{item.studyPeriodName}}</td>
                             <td>{{item.nationalityName}}</td>
                             <td>{{item.academicYear}}</td>
-                            <td>{{item.studentStatusId}}</td>
                             <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center">
+                                <span class="status-chip badge-success" *ngIf="item.studentStatusId == 1">{{item.studentStatusName}}</span>
+                                <span class="status-chip badge-warning" *ngIf="item.studentStatusId == 2">{{item.studentStatusName}}</span>
+                                <span class="status-chip badge-danger" *ngIf="item.studentStatusId == 3">{{item.studentStatusName}}</span>
+                            </td>
+                            <td>{{item.createdBy}}</td>
+                            <td>{{item.insertDateStr}}</td>
+                            <td>
+                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="item.studentStatusId != 3">
                                     <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_FamilyStatus" action="canEdit" (click)="openUpdateStudentSidePanel(item,true,false)">
                                         <i class="uil uil-pen"></i>
                                         <span>تعديل</span>

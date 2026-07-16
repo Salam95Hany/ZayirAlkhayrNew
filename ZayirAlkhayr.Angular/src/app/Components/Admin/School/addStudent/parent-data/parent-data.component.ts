@@ -9,7 +9,7 @@ import { ParentStudent } from '../../../../../Models/school/student/AddStudentMo
 @Component({
   selector: 'app-parent-data',
   standalone: true,
-  imports: [ZaInputWithLabelComponent, ReactiveFormsModule,FormsModule],
+  imports: [ZaInputWithLabelComponent, ReactiveFormsModule, FormsModule],
   templateUrl: './parent-data.component.html',
   styleUrl: './parent-data.component.css'
 })
@@ -28,9 +28,10 @@ export class ParentDataComponent {
   constructor(private fb: FormBuilder, private authService: AuthService, private formService: FormService) { }
 
   ngOnInit(): void {
+    debugger;
     this.UserId = this.authService.userId;
     this.ParentStudent.insertUser = this.UserId;
-    if(!this.UpdateMode)
+    if (!this.UpdateMode && !this.DetailsMode)
       this.ParentStudent.childrenCount = 0;
     this.ItemForm = this.fb.group({
       parentName: [{ value: this.ParentStudent.parentName ?? '', disabled: this.DetailsMode ? true : false }, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormService } from '../../../../../Services/shared/form.service';
@@ -10,11 +10,14 @@ import { ZaEmptyDataComponent } from '../../../../../Shared/za-empty-data/za-emp
 import { CustomValidators, RegexType } from '../../../../../Services/shared/custom-validators';
 import { StudentDetails } from '../../../../../Models/school/student/AddStudentModel';
 import { FormDropdownModel } from '../../../../../Models/shared/FormDropdownModel';
+import { ArabicDateWithTimePipe } from '../../../../../Pipes/arabic-date-with-time.pipe';
 
 @Component({
   selector: 'app-student-data',
   standalone: true,
-  imports: [NgIf, NgFor, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule, ZaEmptyDataComponent, FormsModule],
+  imports: [NgIf, NgFor, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule, ZaEmptyDataComponent, FormsModule,
+    ArabicDateWithTimePipe
+  ],
   templateUrl: './student-data.component.html',
   styleUrl: './student-data.component.css'
 })
@@ -32,6 +35,10 @@ export class StudentDataComponent {
   Genders: FormDropdownModel[] = [
     { value: 1, name: 'ذكر' },
     { value: 2, name: 'أنثى' }
+  ];
+  StudyPeriods: FormDropdownModel[] = [
+    { value: 1, name: 'صباحي' },
+    { value: 2, name: 'مسائي' }
   ];
   ItemForm: FormGroup;
   FamilyChildCount = 0;
@@ -69,14 +76,14 @@ export class StudentDataComponent {
       id: 0,
       studentName: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       academicStageId: ['', [Validators.required]],
-      birthDay: ['', [Validators.required]],
+      birthDay: ['', [Validators.required, CustomValidators.ageBetween(4, 14)]],
       governmentSchool: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      studyPeriod: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      studyPeriod: ['', [Validators.required]],
       nationalityId: ['', [Validators.required]],
       isHaveHealthCondition: [''],
       healthConditionNote: [''],
       gender: ['', [Validators.required]],
-      academicYear: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
+      academicYear: ['', [Validators.required, CustomValidators.regexPattern(RegexType.academicYear)]],
       studentStatusId: ['', [Validators.required]],
       studentStatusReason: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       orderAmongChildren: ['', [Validators.required]]
@@ -97,7 +104,6 @@ export class StudentDataComponent {
 
     const isHaveHealthConditionControl = this.ItemForm.get('isHaveHealthCondition');
     isHaveHealthConditionControl?.valueChanges.subscribe((value) => {
-      debugger;
       if (value) {
         this.formService.updateFieldValidators(this.ItemForm, 'healthConditionNote', true, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]);
       } else {
@@ -180,9 +186,21 @@ export class StudentDataComponent {
       }
     }
 
+    if (this.addMode && this.StudentDetails.some(x => x.orderAmongChildren == this.ItemForm.value.orderAmongChildren)) {
+      this.toaster.warning('هذا الترتيب مستخدم بالفعل لأحد الأشقاء.');
+      return;
+    }
+
+    if (!this.addMode && this.StudentDetails.some(x => x.orderAmongChildren == this.ItemForm.value.orderAmongChildren && x.id != this.ItemForm.value.id)) {
+      this.toaster.warning('هذا الترتيب مستخدم بالفعل لأحد الأشقاء.');
+      return;
+    }
+
     const formData = this.ItemForm.value;
     let academicStageName = this.AcademicStages.find(i => i.value == formData.academicStageId)?.name;
     let nationalityName = this.Nationalities.find(i => i.value == formData.nationalityId)?.name;
+    let studyPeriodName = this.StudyPeriods.find(i => i.value == formData.studyPeriod)?.name;
+    let genderName = this.Genders.find(i => i.value == formData.gender)?.name;
     let arryNum = this.StudentDetails.map(i => i.id);
     let id = arryNum.length > 0 ? Math.max(...arryNum) : 0;
     if (this.addMode) {
@@ -194,12 +212,14 @@ export class StudentDataComponent {
         birthDay: formData.birthDay,
         governmentSchool: formData.governmentSchool,
         studyPeriod: formData.studyPeriod,
+        studyPeriodName: studyPeriodName,
         studyAmount: this.AcademicStages.find(i => i.value == formData.academicStageId)?.extraData['amount'],
         nationalityId: formData.nationalityId,
         nationalityName: nationalityName,
         isHaveHealthCondition: formData.isHaveHealthCondition,
         healthConditionNote: formData.healthConditionNote,
         gender: formData.gender,
+        genderName: genderName,
         academicYear: formData.academicYear,
         studentStatusId: formData.studentStatusId,
         studentStatusReason: formData.studentStatusReason,
@@ -214,12 +234,14 @@ export class StudentDataComponent {
         obj.birthDay = formData.birthDay;
         obj.governmentSchool = formData.governmentSchool;
         obj.studyPeriod = formData.studyPeriod;
+        obj.studyPeriodName = studyPeriodName;
         obj.studyAmount = this.AcademicStages.find(i => i.value == formData.academicStageId)?.extraData['amount'];
         obj.nationalityId = formData.nationalityId;
         obj.nationalityName = nationalityName;
         obj.isHaveHealthCondition = formData.isHaveHealthCondition;
         obj.healthConditionNote = formData.healthConditionNote;
         obj.gender = formData.gender;
+        obj.genderName = genderName;
         obj.academicYear = formData.academicYear;
         obj.studentStatusId = formData.studentStatusId;
         obj.studentStatusReason = formData.studentStatusReason;

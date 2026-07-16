@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +44,20 @@ export class FormService {
     });
   }
 
+  public markControlsAsTouched(control: AbstractControl): void {
+
+    if (control instanceof FormGroup) {
+      Object.values(control.controls).forEach(c => this.markControlsAsTouched(c));
+    }
+
+    if (control instanceof FormArray) {
+      control.controls.forEach(c => this.markControlsAsTouched(c));
+    }
+
+    control.markAsTouched();
+    control.updateValueAndValidity();
+  }
+
   // return list of error messages
   public validationMessages() {
     const messages = {
@@ -53,6 +67,9 @@ export class FormService {
       min: 'القيمة المدخلة أقل من الحد الأدنى المسموح',
       max: 'القيمة المدخلة أكبر من الحد الأقصى المسموح',
       invalid_URL: 'الرابط غير صالح',
+      futureDate: 'لا يمكن أن يكون تاريخ الميلاد أكبر من تاريخ اليوم.',
+      minAge: (error: any) => `يجب ألا يقل عمر الطالب عن ${error.requiredAge} سنوات.`,
+      maxAge: (error: any) => `يجب ألا يزيد عمر الطالب عن ${error.requiredAge} سنوات.`,
       endDateLessThanStartDate: (error: string) => error || 'تاريخ النهاية يجب أن أكبر من تاريخ البداية',
       regexPattern: (error: string) => error || 'النمط المدخل غير صحيح',
       arrayLength: (error: string) => error || 'عدد العناصر غير صحيح',
@@ -106,7 +123,17 @@ export class FormService {
           if (!checkDirty || (control.dirty || control.touched)) {
             for (const key in control.errors) {
 
-              if (key && !['invalid_characters', 'invalidExtension', 'endDateLessThanStartDate', 'regexPattern', 'dateGreaterThan', 'dateLessThan', 'arrayLength'].includes(key)) {
+              if (key && ![
+                'invalid_characters',
+                'invalidExtension',
+                'endDateLessThanStartDate',
+                'regexPattern',
+                'dateGreaterThan',
+                'dateLessThan',
+                'arrayLength',
+                'minAge',
+                'maxAge'
+              ].includes(key)) {
                 formErrors[field] = formErrors[field] || messages[key];
               }
               else {

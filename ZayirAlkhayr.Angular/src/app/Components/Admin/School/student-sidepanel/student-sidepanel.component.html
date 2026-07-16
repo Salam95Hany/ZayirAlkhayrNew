@@ -13,15 +13,15 @@
     <hr>
     <div class="mb-5">
         <h3>بيانات ولي الأمر</h3>
-        <app-parent-data #ParentData></app-parent-data>
+        <app-parent-data #ParentData [ParentStudent]="AddStudentModel.parentStudent" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode"></app-parent-data>
     </div>
     <div class="mb-5">
         <h3>بيانات الطالب</h3>
-        <app-student-data #StudentData></app-student-data>
+        <app-student-data #StudentData [StudentDetails]="AddStudentModel.student" [AcademicStages]="StudentInfo?.lookups?.academicStages" [Nationalities]="StudentInfo?.lookups?.nationalities" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode" (StudentDetailsChange)="StudendChange($event)"></app-student-data>
     </div>
     <div class="mb-5">
         <h3>بيانات الخصم</h3>
-        <app-discount-data #DiscountData></app-discount-data>
+        <app-discount-data #DiscountData [StudentDiscount]="AddStudentModel.discount" [DiscountTypes]="StudentInfo?.lookups?.discountTypes" [StudentNames]="StudentNames" [StudentNames]="[this.StudentInfo.student.studentName]" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode"></app-discount-data>
     </div>
     <hr *ngIf="!DetailsMode">
     <button class="w-100 btn-color" *ngIf="!DetailsMode" (click)="UpdateStudent()">حفظ</button>

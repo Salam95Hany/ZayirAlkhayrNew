@@ -28,8 +28,8 @@ export class SchoolStudentService {
     return this.http.get<ApiResponseModel<StudentLookups>>(this.apiURL + 'Student/GetStudentLookups');
   }
 
-  GetUpdateStudentLookups(StudentId: number) {
-    return this.http.get<ApiResponseModel<UpdateStudentLookups>>(this.apiURL + 'Student/GetUpdateStudentLookups?StudentId=' + StudentId);
+  GetUpdateStudentLookups(StudentId: number, ParentId: number) {
+    return this.http.get<ApiResponseModel<UpdateStudentLookups>>(this.apiURL + 'Student/GetUpdateStudentLookups?StudentId=' + StudentId + '&ParentId=' + ParentId);
   }
 
   AddNewStudent(Model: AddStudentModel) {
@@ -66,7 +66,7 @@ export class SchoolStudentService {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'AcademicStage/DeleteAcademicStage?AcademicStageId=' + AcademicStageId);
   }
 
-    // ============================= DiscountType ==============================
+  // ============================= DiscountType ==============================
 
   GetAllDiscountTypeData(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'DiscountType/GetAllDiscountTypeData', PagingFilter);
@@ -88,7 +88,7 @@ export class SchoolStudentService {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'DiscountType/DeleteDiscountType?DiscountTypeId=' + DiscountTypeId);
   }
 
-      // ============================= StudentNationality ==============================
+  // ============================= StudentNationality ==============================
 
   GetAllStudentNationalityData(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'StudentNationality/GetAllStudentNationalityData', PagingFilter);

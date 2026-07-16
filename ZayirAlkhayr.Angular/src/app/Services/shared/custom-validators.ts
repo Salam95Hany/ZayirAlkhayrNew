@@ -1,4 +1,4 @@
-import { AbstractControl, ValidatorFn, Validators } from "@angular/forms";
+import { AbstractControl, ValidationErrors, ValidatorFn, Validators } from "@angular/forms";
 
 const validCharacters = /[^\s\w,.:&\/()+%'`@-]/;
 const urlPattern = /^(ftp|http|https):\/\/[^ "]+$/;
@@ -15,6 +15,52 @@ export class CustomValidators extends Validators {
             if (control.value && !regex.pattern.test(control.value)) {
                 return { regexPattern: message ? message : regex.message };
             }
+            return null;
+        };
+    }
+
+    static ageBetween(minAge: number, maxAge: number): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            if (!control.value) {
+                return null;
+            }
+
+            const birthDate = new Date(control.value);
+            const today = new Date();
+
+            if (birthDate > today) {
+                return {
+                    futureDate: true
+                };
+            }
+
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (
+                monthDiff < 0 ||
+                (monthDiff === 0 && today.getDate() < birthDate.getDate())
+            ) {
+                age--;
+            }
+
+            if (age < minAge) {
+                return {
+                    minAge: {
+                        requiredAge: minAge,
+                        actualAge: age
+                    }
+                };
+            }
+
+            if (age > maxAge) {
+                return {
+                    maxAge: {
+                        requiredAge: maxAge,
+                        actualAge: age
+                    }
+                };
+            }
+
             return null;
         };
     }
@@ -46,6 +92,7 @@ export enum RegexType {
     phoneNumber,
     englishLettersOnly,
     FourMinLength,
+    academicYear
 
 }
 export const regexList: RegexModel[] = [
@@ -134,7 +181,7 @@ export const regexList: RegexModel[] = [
         message: "رقم التلفون غير صحيح.",
         type: RegexType.phoneNumber
     },
-     {
+    {
         pattern: /^[a-zA-Z \-\']+/,
         message: "يُسمح فقط بالحروف الإنجليزية.",
         type: RegexType.englishLettersOnly
@@ -143,5 +190,10 @@ export const regexList: RegexModel[] = [
         pattern: /^.{4,}$/,
         message: "كلمة المرور لا تقل عن اربع ارقام او احرف",
         type: RegexType.FourMinLength
+    },
+    {
+        pattern: /^(200[0-9]|20[1-9][0-9]|2100)$/,
+        message: "يجب ان تكون السنة الدراسية بين 2000 و 2100",
+        type: RegexType.academicYear
     }
 ];

@@ -40,10 +40,10 @@
         <app-parent-data #ParentData></app-parent-data>
     </div>
     <div [hidden]="activeStep != 2">
-        <app-student-data #StudentData [AcademicStages]="StudentLookups?.academicStages" [Nationalities]="StudentLookups?.nationalities"></app-student-data>
+        <app-student-data #StudentData [AcademicStages]="StudentLookups?.academicStages" [Nationalities]="StudentLookups?.nationalities" (StudentDetailsChange)="StudendChange($event)"></app-student-data>
     </div>
     <div [hidden]="activeStep != 3">
-        <app-discount-data #DiscountData [DiscountTypes]="StudentLookups?.discountTypes"></app-discount-data>
+        <app-discount-data #DiscountData [DiscountTypes]="StudentLookups?.discountTypes" [StudentNames]="StudentNames"></app-discount-data>
     </div>
 </div>
 

@@ -18,11 +18,12 @@ import { FormService } from '../../../../Services/shared/form.service';
 import { AuthService } from '../../../../Auth/auth.service';
 import { PdfDownloadService } from '../../../../Services/shared/pdf-download.service';
 import { StudentSidepanelComponent } from '../student-sidepanel/student-sidepanel.component';
+import { ArabicDateWithTimePipe } from '../../../../Pipes/arabic-date-with-time.pipe';
 
 @Component({
   selector: 'app-student',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
+  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,ArabicDateWithTimePipe,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RouterModule, RoleCheckerDirective,
     NgIf, NgFor, NgxLoadingModule],
   templateUrl: './student.component.html',
@@ -69,6 +70,7 @@ export class StudentComponent {
     const injector = Injector.create({
       providers: [
         { provide: 'StudentId', useValue: item.id },
+        { provide: 'ParentId', useValue: item.parentId },
         { provide: 'StudentName', useValue: item.studentName },
         { provide: 'AcademicStage', useValue: item.academicStageName },
         { provide: 'UpdateMode', useValue: UpdateMode },
@@ -79,7 +81,8 @@ export class StudentComponent {
 
     const ref = this.offcanvasService.open(StudentSidepanelComponent, {
       injector: injector,
-      position: 'end'
+      position: 'end',
+      panelClass: 'student-details-offcanvas'
     });
 
     ref.dismissed.subscribe((result: any) => {

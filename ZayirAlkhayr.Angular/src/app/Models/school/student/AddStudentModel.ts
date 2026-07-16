@@ -6,31 +6,35 @@ export interface AddStudentModel {
 }
 
 export interface ParentStudent {
+    parentId: number;
     parentName: string;
     phone: string;
     address: string;
     childrenCount: number;
     insertUser: string;
-    insertDate: string | null;
-    updateUser: string;
-    updateDate: string | null;
+    insertDate?: string | null;
+    updateUser?: string;
+    updateDate?: string | null;
 }
 export interface StudentDetails {
     id: number;
+    studentId?: number;
     studentName: string; // اسم الطالب
-    academicStageId: number; // المرحلة الدراسية
+    academicStageId: string; // المرحلة الدراسية
     academicStageName: string; // اسم المرحلة الدراسية
     birthDay: string; // تاريخ الميلاد
     governmentSchool: string; // المدرسة الحكومية 
-    studyPeriod: string; // فترة الدراسة
-    nationalityId: number; // الجنسية
+    studyPeriod: number; // فترة الدراسة
+    studyPeriodName: string; // فترة الدراسة
+    nationalityId: string; // الجنسية
     nationalityName: string; // اسم الجنسية
     isHaveHealthCondition: boolean; // هل لديه حالة صحية
     healthConditionNote: string; // ملاحظات الحالة الصحية
-    gender: string; // الجنس
+    gender: number; // الجنس
+    genderName: string; // الجنس
     academicYear: string; // السنة الدراسية
     studyAmount: number; // قيمة الدراسة
-    studentStatusId: string; // موجود او منسحب
+    studentStatusId: number; // موجود او منسحب
     studentStatusReason: string; // لو كان منسحب سبب الانسحاب
     orderAmongChildren: number; // ترتيب الطفل بين إخوانه
 }

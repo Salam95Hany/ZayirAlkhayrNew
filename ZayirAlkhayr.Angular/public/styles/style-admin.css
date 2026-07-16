@@ -1732,6 +1732,17 @@ input[dir="rtl"] {
     /* Optional, to align text to the right */
 }
 
+.status-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 34px;
+    padding: .4rem .9rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
 
 /* ================================= Side Panel New Design ========================================= */
 
@@ -1740,6 +1751,10 @@ input[dir="rtl"] {
     background: #f0f0f0;
     min-width: 250px;
     box-shadow: -2px 0px 5px 0px rgb(65 73 91);
+}
+
+.student-details-offcanvas {
+    width: 70% !important;
 }
 
 @media (max-width: 767px) {
