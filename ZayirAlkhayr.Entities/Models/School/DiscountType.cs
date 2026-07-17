@@ -12,6 +12,9 @@ namespace ZayirAlkhayr.Entities.Models.School
     public class DiscountType: AuditableEntity
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
+
+        // Navigation
+        public virtual ICollection<StudentEnrollment> StudentEnrollments { get; set; } = new HashSet<StudentEnrollment>();
     }
 }

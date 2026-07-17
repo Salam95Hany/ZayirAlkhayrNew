@@ -11,10 +11,15 @@ namespace ZayirAlkhayr.Entities.Models.School
     public class Parent
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Phone { get; set; }
-        public string Address { get; set; }
-        public string TelegramCode { get; set; }
+        public string Name { get; set; } = null!;
+        public string ParentPhone { get; set; } = null!;
+        public string? MotherPhone { get; set; }
+        public string Address { get; set; } = null!;
+        public string TelegramCode { get; set; } = null!;
+        public string? WhatsappNumber { get; set; }
         public bool IsActive { get; set; }
+
+        // Navigation
+        public virtual ICollection<Student> Students { get; set; } = new HashSet<Student>();
     }
 }

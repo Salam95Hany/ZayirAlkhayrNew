@@ -55,136 +55,195 @@ namespace ZayirAlkhayr.Services.School
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public async Task<ApiResponseModel<string>> AddNewStudent(AddStudentModel Model, CancellationToken cancellationToken = default)
+        public async Task<ApiResponseModel<string>> AddNewStudent(AddStudentModel model, CancellationToken cancellationToken = default)
         {
-            using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            var parentRepository = _unitOfWork.Repository<Parent>();
+            var studentRepository = _unitOfWork.Repository<Student>();
+            var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
+
+            bool parentExists = await parentRepository.AnyAsync(x => x.Name == model.ParentData.ParentName);
+
+            if (parentExists)
+                return ApiResponseModel<string>.Failure(GenericErrors.ParentStudentAlreadyExists);
+
+            var studentNames = model.StudentData.Select(x => x.StudentName.Trim()).Distinct().ToList();
+            bool studentExists = await studentRepository.AnyAsync(x =>
+                studentNames.Contains(x.StudentName));
+
+            if (studentExists)
+                return ApiResponseModel<string>.Failure(GenericErrors.StudentAlreadyExists);
+
+            var discounts = model.DiscountData?.GroupBy(x => x.StudentName.Trim()).ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase)
+                ?? new Dictionary<string, StudentDiscount>(StringComparer.OrdinalIgnoreCase);
+
+
+
+            var codeTable = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetStudentCodeSequences", new[] { new SqlParameter("@Count", model.StudentData.Count) });
+            var codes = codeTable.AsEnumerable().Select(x => x["Code"].ToString()!).ToList();
+
+            if (codes.Count != model.StudentData.Count)
+                return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
+
+            await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+
             try
             {
-                var ParentExist = await _unitOfWork.Repository<Parent>().AnyAsync(i => i.Name == Model.ParentData.ParentName);
-                if (ParentExist)
-                    return ApiResponseModel<string>.Failure(GenericErrors.ParentStudentAlreadyExists);
-
-                var StudentNames = Model.StudentData.Select(i => i.StudentName).ToList();
-                var StudentExist = await _unitOfWork.Repository<Student>().AnyAsync(i => StudentNames.Contains(i.StudentName));
-                if (StudentExist)
-                    return ApiResponseModel<string>.Failure(GenericErrors.StudentAlreadyExists);
-
-                var Parent = new Parent
+                var parent = new Parent
                 {
-                    Name = Model.ParentData.ParentName,
-                    Phone = Model.ParentData.Phone,
-                    Address = Model.ParentData.Address,
+                    Name = model.ParentData.ParentName,
+                    ParentPhone = model.ParentData.Phone,
+                    MotherPhone = model.ParentData.Phone,
+                    WhatsappNumber = model.ParentData.Phone,
+                    Address = model.ParentData.Address,
                     TelegramCode = GenerateTelCode()
                 };
 
-                await _unitOfWork.Repository<Parent>().AddAsync(Parent);
+                await parentRepository.AddAsync(parent);
                 await _unitOfWork.CompleteAsync();
 
-                var Students = new List<Student>();
-                foreach (var item in Model.StudentData)
+                var students = new List<Student>();
+
+                for (int i = 0; i < model.StudentData.Count; i++)
                 {
-                    var Discount = Model.DiscountData.FirstOrDefault(i => i.StudentName == item.StudentName);
-                    var Student = new Student
+                    var item = model.StudentData[i];
+
+                    students.Add(new Student
                     {
-                        AcademicStageId = item.AcademicStageId,
+                        ParentId = parent.Id,
+                        StudentName = item.StudentName.Trim(),
                         NationalityId = item.NationalityId,
-                        StudentStatusId = item.StudentStatusId,
-                        DiscountTypeId = Discount?.DiscountTypeId,
-                        StudentName = item.StudentName,
-                        ParentId = Parent.Id,
                         BirthDay = item.BirthDay,
                         Gender = item.Gender,
                         GovernmentSchool = item.GovernmentSchool,
-                        AcademicYear = item.AcademicYear,
-                        StudyPeriod = item.StudyPeriod,
+                        Code = codes[i],
                         IsHaveHealthCondition = item.IsHaveHealthCondition,
                         HealthConditionNote = item.HealthConditionNote,
-                        StudyAmount = item.StudyAmount,
-                        StudentStatusReason = item.StudentStatusReason,
                         OrderAmongChildren = item.OrderAmongChildren,
-                        DiscountReason = Discount?.DiscountReason,
-                        DiscountAmount = Discount?.DiscountAmount,
-                        ChildrenCount = Model.StudentData.Count,
-                        InsertUser = Model.ParentData.InsertUser,
-                        InsertDate = DateTime.UtcNow.EgyptNow(),
-                    };
-
-                    var lastCode = await _unitOfWork.Repository<FamilyStatus>().MaxAsync(i => (int?)i.Code) ?? 0;
-                    Student.Code = lastCode + 1;
-
-                    await _unitOfWork.Repository<Student>().AddAsync(Student);
-
-
+                        InsertUser = model.ParentData.InsertUser,
+                        InsertDate = DateTime.UtcNow.EgyptNow()
+                    });
                 }
 
+                await studentRepository.AddRangeAsync(students);
+                await _unitOfWork.CompleteAsync();
+
+                var enrollments = new List<StudentEnrollment>();
+
+                for (int i = 0; i < students.Count; i++)
+                {
+                    var student = students[i];
+                    var item = model.StudentData[i];
+                    discounts.TryGetValue(item.StudentName.Trim(), out var discount);
+
+                    enrollments.Add(new StudentEnrollment
+                    {
+                        StudentId = student.Id,
+                        AcademicYearId = item.AcademicYearId,
+                        AcademicStageId = item.AcademicStageId,
+                        StudyPeriodId = item.StudyPeriodId,
+                        StudentStatusId = item.StudentStatusId,
+                        StudentStatusReason = item.StudentStatusReason,
+                        DiscountTypeId = discount?.DiscountTypeId,
+                        DiscountAmount = discount?.DiscountAmount,
+                        DiscountReason = discount?.DiscountReason,
+                        Notes = discount?.Notes,
+                        EnrollmentDate = item.EnrollmentDate,
+                        IsCurrent = item.IsCurrent
+                    });
+                }
+
+                await enrollmentRepository.AddRangeAsync(enrollments);
                 await _unitOfWork.CompleteAsync();
                 await transaction.CommitAsync(cancellationToken);
+
                 return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
 
-        public async Task<ApiResponseModel<string>> UpdateStudent(AddStudentModel Model, CancellationToken cancellationToken = default)
+        public async Task<ApiResponseModel<string>> UpdateStudent(AddStudentModel model, CancellationToken cancellationToken = default)
         {
-            using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
-            try
-            {
-                var ParentExist = await _unitOfWork.Repository<Parent>().AnyAsync(i => i.Name == Model.ParentData.ParentName && i.Id != Model.ParentData.ParentId);
-                if (ParentExist)
-                    return ApiResponseModel<string>.Failure(GenericErrors.ParentStudentAlreadyExists);
+            var studentUpdated = model.StudentData.FirstOrDefault(x => x.StudentId.HasValue);
 
-                var StudentUpdated = Model.StudentData.FirstOrDefault(i => i.StudentId.HasValue);
-                var StudentAdded = Model.StudentData.Where(i => !i.StudentId.HasValue).ToList();
-                var Discount = Model.DiscountData.FirstOrDefault(i => i.StudentName == StudentUpdated.StudentName);
-                var StudentExist = await _unitOfWork.Repository<Student>().AnyAsync(i => i.StudentName == StudentUpdated.StudentName && i.Id != StudentUpdated.StudentId);
-                if (StudentExist)
-                    return ApiResponseModel<string>.Failure(GenericErrors.StudentAlreadyExists);
-
-                var Parent = await _unitOfWork.Repository<Parent>().FirstOrDefaultAsync(x => x.Id == Model.ParentData.ParentId);
-                if (Parent != null)
-                {
-                    Parent.Name = Model.ParentData.ParentName;
-                    Parent.Phone = Model.ParentData.Phone;
-                    Parent.Address = Model.ParentData.Address;
-                }
-
-                var StudentObj = await _unitOfWork.Repository<Student>().GetByIdAsync(StudentUpdated.StudentId.Value);
-                if (StudentObj != null)
-                {
-                    StudentObj.StudentName = StudentUpdated.StudentName;
-                    StudentObj.AcademicStageId = StudentUpdated.AcademicStageId;
-                    StudentObj.NationalityId = StudentUpdated.NationalityId;
-                    StudentObj.StudentStatusId = StudentUpdated.StudentStatusId;
-                    StudentObj.BirthDay = StudentUpdated.BirthDay;
-                    StudentObj.Gender = StudentUpdated.Gender;
-                    StudentObj.GovernmentSchool = StudentUpdated.GovernmentSchool;
-                    StudentObj.AcademicYear = StudentUpdated.AcademicYear;
-                    StudentObj.StudyPeriod = StudentUpdated.StudyPeriod;
-                    StudentObj.IsHaveHealthCondition = StudentUpdated.IsHaveHealthCondition;
-                    StudentObj.HealthConditionNote = StudentUpdated.HealthConditionNote;
-                    StudentObj.StudyAmount = StudentUpdated.StudyAmount;
-                    StudentObj.StudentStatusReason = StudentUpdated.StudentStatusReason;
-                    StudentObj.OrderAmongChildren = StudentUpdated.OrderAmongChildren;
-                    StudentObj.DiscountTypeId = Discount?.DiscountTypeId;
-                    StudentObj.DiscountReason = Discount?.DiscountReason;
-                    StudentObj.DiscountAmount = Discount?.DiscountAmount;
-                    StudentObj.UpdateUser = Model.ParentData.InsertUser;
-                    StudentObj.UpdateDate = DateTime.UtcNow.EgyptNow();
-
-                    if (StudentAdded.Count > 0)
-                        await AddNewStudentSidePanel(StudentAdded, Model.DiscountData, Model.ParentData.ParentId.Value, Model.ParentData.InsertUser);
-
-                    await _unitOfWork.CompleteAsync();
-                    await transaction.CommitAsync(cancellationToken);
-                    return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
-                }
-
+            if (studentUpdated == null)
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
 
+            var newStudents = model.StudentData.Where(x => !x.StudentId.HasValue).ToList();
+            var parentRepository = _unitOfWork.Repository<Parent>();
+            var studentRepository = _unitOfWork.Repository<Student>();
+            var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
+
+            bool parentExists = await parentRepository.AnyAsync(x => x.Name == model.ParentData.ParentName && x.Id != model.ParentData.ParentId);
+            if (parentExists)
+                return ApiResponseModel<string>.Failure(GenericErrors.ParentStudentAlreadyExists);
+
+            bool studentExists = await studentRepository.AnyAsync(x => x.StudentName == studentUpdated.StudentName && x.Id != studentUpdated.StudentId);
+            if (studentExists)
+                return ApiResponseModel<string>.Failure(GenericErrors.StudentAlreadyExists);
+
+            var discountDictionary = model.DiscountData?.GroupBy(x => x.StudentName.Trim()).ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase)
+                ?? new Dictionary<string, StudentDiscount>(StringComparer.OrdinalIgnoreCase);
+
+            discountDictionary.TryGetValue(studentUpdated.StudentName.Trim(), out var discount);
+
+            await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+
+            try
+            {
+                var parentTask = parentRepository.GetByIdAsync(model.ParentData.ParentId!.Value);
+                var studentTask = studentRepository.GetByIdAsync(studentUpdated.StudentId!.Value);
+                var enrollmentTask = enrollmentRepository.FirstOrDefaultAsync(x => x.StudentId == studentUpdated.StudentId && x.IsCurrent);
+                await Task.WhenAll(parentTask, studentTask, enrollmentTask);
+
+                var parent = parentTask.Result;
+                var student = studentTask.Result;
+                var enrollment = enrollmentTask.Result;
+                if (parent == null || student == null || enrollment == null)
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+                }
+
+
+                parent.Name = model.ParentData.ParentName;
+                parent.ParentPhone = model.ParentData.Phone;
+                parent.MotherPhone = model.ParentData.Phone;
+                parent.WhatsappNumber = model.ParentData.Phone;
+                parent.Address = model.ParentData.Address;
+
+                student.StudentName = studentUpdated.StudentName;
+                student.NationalityId = studentUpdated.NationalityId;
+                student.BirthDay = studentUpdated.BirthDay;
+                student.Gender = studentUpdated.Gender;
+                student.GovernmentSchool = studentUpdated.GovernmentSchool;
+                student.IsHaveHealthCondition = studentUpdated.IsHaveHealthCondition;
+                student.HealthConditionNote = studentUpdated.HealthConditionNote;
+                student.OrderAmongChildren = studentUpdated.OrderAmongChildren;
+                student.UpdateUser = model.ParentData.InsertUser;
+                student.UpdateDate = DateTime.UtcNow.EgyptNow();
+
+                enrollment.AcademicYearId = studentUpdated.AcademicYearId;
+                enrollment.AcademicStageId = studentUpdated.AcademicStageId;
+                enrollment.StudyPeriodId = studentUpdated.StudyPeriodId;
+                enrollment.StudentStatusId = studentUpdated.StudentStatusId;
+                enrollment.StudentStatusReason = studentUpdated.StudentStatusReason;
+                enrollment.DiscountTypeId = discount?.DiscountTypeId;
+                enrollment.DiscountAmount = discount?.DiscountAmount;
+                enrollment.DiscountReason = discount?.DiscountReason;
+                enrollment.EnrollmentDate = studentUpdated.EnrollmentDate;
+                enrollment.IsCurrent = studentUpdated.IsCurrent;
+                enrollment.Notes = discount?.Notes;
+
+                if (newStudents.Any())
+                    await CreateStudentsAsync(newStudents, model.DiscountData, model.ParentData.ParentId!.Value, model.ParentData.InsertUser);
+
+                await _unitOfWork.CompleteAsync();
+                await transaction.CommitAsync(cancellationToken);
+                return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
             }
             catch (Exception ex)
             {
@@ -198,84 +257,125 @@ namespace ZayirAlkhayr.Services.School
         }
 
 
-        public async Task AddNewStudentSidePanel(List<StudentDetails> StudentData, List<StudentDiscount> DiscountData, int ParentId, string InsertUser)
+        private async Task CreateStudentsAsync(List<StudentDetails> students, List<StudentDiscount> discounts, int parentId, string insertUser)
         {
-            var StudentNames = StudentData.Select(i => i.StudentName).ToList();
-            var StudentExist = await _unitOfWork.Repository<Student>().AnyAsync(i => StudentNames.Contains(i.StudentName));
-            if (StudentExist)
+            var studentRepository = _unitOfWork.Repository<Student>();
+            var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
+
+            var studentNames = students.Select(x => x.StudentName.Trim()).Distinct().ToList();
+            bool studentExists = await studentRepository.AnyAsync(x =>
+                studentNames.Contains(x.StudentName));
+
+            if (studentExists)
                 throw new Exception("Student Name Exist");
 
-            var Students = new List<Student>();
-            var ParentStudentCount = await _unitOfWork.Repository<Student>().CountAsync(i => i.ParentId == ParentId);
-            foreach (var item in StudentData)
+            var discountDictionary = discounts?.GroupBy(x => x.StudentName.Trim()).ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase)
+                ?? new Dictionary<string, StudentDiscount>(StringComparer.OrdinalIgnoreCase);
+
+            var codeTable = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetStudentCodeSequences", new[] { new SqlParameter("@Count", students.Count) });
+            var codes = codeTable.AsEnumerable().Select(x => x.Field<string>("Code")!).ToList();
+
+            var studentEntities = new List<Student>();
+
+            for (int i = 0; i < students.Count; i++)
             {
-                var Discount = DiscountData.FirstOrDefault(i => i.StudentName == item.StudentName);
-                var Student = new Student
+                var item = students[i];
+                studentEntities.Add(new Student
                 {
-                    AcademicStageId = item.AcademicStageId,
+                    ParentId = parentId,
+                    StudentName = item.StudentName.Trim(),
                     NationalityId = item.NationalityId,
-                    StudentStatusId = item.StudentStatusId,
-                    DiscountTypeId = Discount?.DiscountTypeId,
-                    StudentName = item.StudentName,
-                    ParentId = ParentId,
                     BirthDay = item.BirthDay,
                     Gender = item.Gender,
                     GovernmentSchool = item.GovernmentSchool,
-                    AcademicYear = item.AcademicYear,
-                    StudyPeriod = item.StudyPeriod,
+                    Code = codes[i],
                     IsHaveHealthCondition = item.IsHaveHealthCondition,
                     HealthConditionNote = item.HealthConditionNote,
-                    StudyAmount = item.StudyAmount,
-                    StudentStatusReason = item.StudentStatusReason,
                     OrderAmongChildren = item.OrderAmongChildren,
-                    DiscountReason = Discount?.DiscountReason,
-                    DiscountAmount = Discount?.DiscountAmount,
-                    ChildrenCount = StudentData.Count + ParentStudentCount,
-                    InsertUser = InsertUser,
-                    InsertDate = DateTime.UtcNow.EgyptNow(),
-                };
-
-                var lastCode = await _unitOfWork.Repository<FamilyStatus>().MaxAsync(i => (int?)i.Code) ?? 0;
-                Student.Code = lastCode + 1;
-
-                await _unitOfWork.Repository<Student>().AddAsync(Student);
+                    InsertUser = insertUser,
+                    InsertDate = DateTime.UtcNow.EgyptNow()
+                });
             }
+
+            await studentRepository.AddRangeAsync(studentEntities);
+            await _unitOfWork.CompleteAsync();
+
+
+            var enrollmentEntities = new List<StudentEnrollment>();
+
+            for (int i = 0; i < studentEntities.Count; i++)
+            {
+                var student = studentEntities[i];
+                var item = students[i];
+
+                discountDictionary.TryGetValue(item.StudentName.Trim(), out var discount);
+                enrollmentEntities.Add(new StudentEnrollment
+                {
+                    StudentId = student.Id,
+                    AcademicYearId = item.AcademicYearId,
+                    AcademicStageId = item.AcademicStageId,
+                    StudyPeriodId = item.StudyPeriodId,
+                    StudentStatusId = item.StudentStatusId,
+                    StudentStatusReason = item.StudentStatusReason,
+                    DiscountTypeId = discount?.DiscountTypeId,
+                    DiscountAmount = discount?.DiscountAmount,
+                    DiscountReason = discount?.DiscountReason,
+                    Notes = discount?.Notes,
+                    EnrollmentDate = item.EnrollmentDate,
+                    IsCurrent = item.IsCurrent
+                });
+            }
+
+            await enrollmentRepository.AddRangeAsync(enrollmentEntities);
         }
 
-        public async Task<ApiResponseModel<string>> DeleteStudent(int ParentId, int StudentId, CancellationToken cancellationToken = default)
+        public async Task<ApiResponseModel<string>> DeleteStudent(int parentId, int studentId, CancellationToken cancellationToken = default)
         {
-            using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
             try
             {
-                var Parent = await _unitOfWork.Repository<Parent>().GetByIdAsync(ParentId);
-                if (Parent == null)
+                var parentRepository = _unitOfWork.Repository<Parent>();
+                var studentRepository = _unitOfWork.Repository<Student>();
+                var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
+
+                var parentTask = parentRepository.GetByIdAsync(parentId);
+                var studentTask = studentRepository.GetByIdAsync(studentId);
+                var enrollmentTask = enrollmentRepository.FirstOrDefaultAsync(x => x.StudentId == studentId && x.IsCurrent);
+                await Task.WhenAll(parentTask, studentTask, enrollmentTask);
+
+                var parent = parentTask.Result;
+                var student = studentTask.Result;
+                var enrollment = enrollmentTask.Result;
+
+                if (parent == null || student == null || enrollment == null)
+                {
+                    await transaction.RollbackAsync(cancellationToken);
                     return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+                }
 
-                var Students = await _unitOfWork.Repository<Student>().GetAllAsync(x => x.ParentId == ParentId);
-                if (Students == null || Students.Count == 0)
+                if (student.ParentId != parentId)
+                {
+                    await transaction.RollbackAsync(cancellationToken);
                     return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+                }
 
-                var Student = Students.FirstOrDefault(x => x.Id == StudentId);
-                if (Student == null)
-                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+                student.UpdateDate = DateTime.UtcNow.EgyptNow();
 
-                Student.StudentStatusId = StudentStatus.Deleted;
+                enrollment.IsCurrent = false;
+                enrollment.StudentStatusId = StudentStatus.Deleted;
+                enrollment.StudentStatusReason ??= "Student Deleted";
 
-                var ActiveStudents = Students.Where(x => x.Id != StudentId).ToList();
+                bool hasActiveStudents = await studentRepository.AnyAsync(x => x.ParentId == parentId && x.Id != studentId);
 
-                if (ActiveStudents.Count == 0)
-                    Parent.IsActive = false;
-                else
-                    foreach (var item in ActiveStudents)
-                        item.ChildrenCount = ActiveStudents.Count;
+                if (!hasActiveStudents)
+                    parent.IsActive = false;
 
                 await _unitOfWork.CompleteAsync();
                 await transaction.CommitAsync(cancellationToken);
-
                 return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync(cancellationToken);
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
@@ -304,11 +404,7 @@ namespace ZayirAlkhayr.Services.School
             var data = results.Select(i => new FormDropdownModel
             {
                 Value = i.Id.ToString(),
-                Name = i.Name,
-                ExtraData = new Dictionary<string, object>
-                {
-                    { "amount", i.Amount }
-                }
+                Name = i.Name
             }).ToList();
             return data;
         }

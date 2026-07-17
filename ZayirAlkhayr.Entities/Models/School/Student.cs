@@ -12,25 +12,20 @@ namespace ZayirAlkhayr.Entities.Models.School
     public class Student : AuditableEntity
     {
         public int Id { get; set; }
-        public int AcademicStageId { get; set; }
         public int NationalityId { get; set; }
-        public StudentStatus StudentStatusId { get; set; }
-        public int? DiscountTypeId { get; set; }
         public int ParentId { get; set; }
-        public string StudentName { get; set; }
-        public int Code { get; set; }
+        public string StudentName { get; set; } = null!;
+        public string Code { get; set; } = null!;
         public DateTime BirthDay { get; set; }
-        public string Gender { get; set; }
-        public string GovernmentSchool { get; set; }
-        public int AcademicYear { get; set; }
-        public string StudyPeriod { get; set; }
+        public string Gender { get; set; } = null!;
+        public string GovernmentSchool { get; set; } = null!;
         public bool IsHaveHealthCondition { get; set; }
         public string? HealthConditionNote { get; set; }
-        public double StudyAmount { get; set; }
-        public string? StudentStatusReason { get; set; }
         public int OrderAmongChildren { get; set; }
-        public string? DiscountReason { get; set; }
-        public double? DiscountAmount { get; set; }
-        public int ChildrenCount { get; set; }
+
+        // Navigation
+        public virtual Parent Parent { get; set; } = null!;
+        public virtual StudentNationality Nationality { get; set; } = null!;
+        public virtual ICollection<StudentEnrollment> StudentEnrollments { get; set; } = new HashSet<StudentEnrollment>();
     }
 }

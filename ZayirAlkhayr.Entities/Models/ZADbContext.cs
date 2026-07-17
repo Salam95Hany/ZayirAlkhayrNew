@@ -65,7 +65,11 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     public virtual DbSet<AcademicStage> AcademicStages { get; set; }
     public virtual DbSet<DiscountType> DiscountTypes { get; set; }
     public virtual DbSet<Parent> Parents { get; set; }
-    
+    public virtual DbSet<AcademicYear> AcademicYears { get; set; }
+    public virtual DbSet<FeeTemplate> FeeTemplates { get; set; }
+    public virtual DbSet<StudentEnrollment> StudentEnrollments { get; set; }
+    public virtual DbSet<StudentFee> StudentFees { get; set; }
+    public virtual DbSet<StudentPayment> StudentPayments { get; set; }
 
     #endregion
 

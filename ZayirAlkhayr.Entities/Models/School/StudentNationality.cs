@@ -12,6 +12,9 @@ namespace ZayirAlkhayr.Entities.Models.School
     public class StudentNationality: AuditableEntity
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
+
+        // Navigation
+        public virtual ICollection<Student> Students { get; set; } = new HashSet<Student>();
     }
 }

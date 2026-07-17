@@ -31,7 +31,6 @@ namespace ZayirAlkhayr.Services.School
             {
                 Id = fc.Id,
                 Name = fc.Name,
-                Amount = fc.Amount,
                 CreatedBy = fc.CreatedBy.UserName,
                 UserId = fc.InsertUser,
                 InsertDate = fc.InsertDate,
@@ -84,7 +83,6 @@ namespace ZayirAlkhayr.Services.School
                 var PatientObj = new AcademicStage
                 {
                     Name = Model.Name,
-                    Amount = Model.Amount,
                     InsertUser = Model.InsertUser,
                     InsertDate = DateTime.UtcNow.EgyptNow()
                 };
@@ -113,7 +111,6 @@ namespace ZayirAlkhayr.Services.School
                 if (PatientObj != null)
                 {
                     PatientObj.Name = Model.Name;
-                    PatientObj.Amount = Model.Amount;
                     PatientObj.UpdateUser = Model.InsertUser;
                     PatientObj.UpdateDate = DateTime.UtcNow.EgyptNow();
 

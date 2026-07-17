@@ -34,17 +34,19 @@ namespace ZayirAlkhayr.Entities.Common
         public string AcademicStageName { get; set; } // اسم المرحلة الدراسية
         public DateTime BirthDay { get; set; } // تاريخ الميلاد
         public string GovernmentSchool { get; set; } // المدرسة الحكومية 
-        public string StudyPeriod { get; set; } // فترة الدراسة
+        public int StudyPeriodId { get; set; } // فترة الدراسة
         public int NationalityId { get; set; } // الجنسية
         public string NationalityName { get; set; } // اسم الجنسية
         public bool IsHaveHealthCondition { get; set; } // هل لديه حالة صحية
         public string? HealthConditionNote { get; set; } // ملاحظات الحالة الصحية
         public string Gender { get; set; } // الجنس
-        public int AcademicYear { get; set; } // السنة الدراسية
+        public int AcademicYearId { get; set; } // السنة الدراسية
         public double StudyAmount { get; set; } // قيمة الدراسة
         public StudentStatus StudentStatusId { get; set; } // موجود او منسحب
         public string? StudentStatusReason { get; set; } // لو كان منسحب سبب الانسحاب
         public int OrderAmongChildren { get; set; } // ترتيب الطفل بين إخوانه
+        public bool IsCurrent { get; set; }
+        public DateTime EnrollmentDate { get; set; }
     }
 
     public class StudentDiscount
@@ -53,5 +55,6 @@ namespace ZayirAlkhayr.Entities.Common
         public int? DiscountTypeId { get; set; }
         public string? DiscountReason { get; set; }
         public double? DiscountAmount { get; set; }
+        public string? Notes { get; set; }
     }
 }
