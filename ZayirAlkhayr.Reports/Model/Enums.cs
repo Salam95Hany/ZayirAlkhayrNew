@@ -10,11 +10,13 @@ namespace ZayirAlkhayr.Reports.Model
     {
         BeneFactorPdf,
         FamilyStatusPdf,
+        StudentPdf,
         BeneFactorExcel,
         FamilyStatusExcel,
         AccountExportMonyExcel,
         AccountImportMonyExcel,
         AccountImportMonyPdf,
-        AccountExportMonyPdf
+        AccountExportMonyPdf,
+        StudentExcel,
     }
 }

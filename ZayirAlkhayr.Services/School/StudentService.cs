@@ -51,7 +51,7 @@ namespace ZayirAlkhayr.Services.School
             var FilterDt = FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[1];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("institution.SP_ExportStudentData", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_ExportStudentData", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
