@@ -34,7 +34,7 @@ namespace ZayirAlkhayr.Entities.Common
         public string AcademicStageName { get; set; } // اسم المرحلة الدراسية
         public DateTime BirthDay { get; set; } // تاريخ الميلاد
         public string GovernmentSchool { get; set; } // المدرسة الحكومية 
-        public int StudyPeriodId { get; set; } // فترة الدراسة
+        public StudyPeriod StudyPeriodId { get; set; } // فترة الدراسة
         public int NationalityId { get; set; } // الجنسية
         public string NationalityName { get; set; } // اسم الجنسية
         public bool IsHaveHealthCondition { get; set; } // هل لديه حالة صحية

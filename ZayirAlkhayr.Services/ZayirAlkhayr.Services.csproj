@@ -19,4 +19,9 @@
     <ProjectReference Include="..\ZayirAlkhayr.Interfaces\ZayirAlkhayr.Interfaces.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="School\Students\ManageFee\" />
+    <Folder Include="School\Students\ManageParent\" />
+  </ItemGroup>
+
 </Project>

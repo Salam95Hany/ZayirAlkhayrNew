@@ -67,6 +67,7 @@ export class FormService {
       min: 'القيمة المدخلة أقل من الحد الأدنى المسموح',
       max: 'القيمة المدخلة أكبر من الحد الأقصى المسموح',
       invalid_URL: 'الرابط غير صالح',
+      invalidAcademicYear:'يجب أن تكون سنة البداية أصغر من سنة النهاية',
       futureDate: 'لا يمكن أن يكون تاريخ الميلاد أكبر من تاريخ اليوم.',
       minAge: (error: any) => `يجب ألا يقل عمر الطالب عن ${error.requiredAge} سنوات.`,
       maxAge: (error: any) => `يجب ألا يزيد عمر الطالب عن ${error.requiredAge} سنوات.`,

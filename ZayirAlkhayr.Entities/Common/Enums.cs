@@ -40,4 +40,10 @@ namespace ZayirAlkhayr.Entities.Common
         Withdrawn = 2, // منسحب 
         Deleted = 3 // محذوف
     }
+
+    public enum StudyPeriod
+    {
+        Morning = 1, // صباحي
+        Evning = 2, // مسائي 
+    }
 }

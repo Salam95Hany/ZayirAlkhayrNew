@@ -66,6 +66,72 @@ export class SchoolStudentService {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'AcademicStage/DeleteAcademicStage?AcademicStageId=' + AcademicStageId);
   }
 
+  // ============================= AcademicYear ==============================
+
+  GetAllAcademicYearData(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AcademicYear/GetAllAcademicYearData', PagingFilter);
+  }
+
+  GetAllAcademicYearFilter() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'AcademicYear/GetAllAcademicYearFilter');
+  }
+
+  AddNewAcademicYear(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AcademicYear/AddNewAcademicYear', Model);
+  }
+
+  UpdateAcademicYear(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AcademicYear/UpdateAcademicYear', Model);
+  }
+
+  DeleteAcademicYear(AcademicYearId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'AcademicYear/DeleteAcademicYear?AcademicYearId=' + AcademicYearId);
+  }
+
+  // ============================= FeeType ==============================
+
+  GetAllFeeTypeData(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'FeeType/GetAllFeeTypeData', PagingFilter);
+  }
+
+  GetAllFeeTypeFilter() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'FeeType/GetAllFeeTypeFilter');
+  }
+
+  AddNewFeeType(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'FeeType/AddNewFeeType', Model);
+  }
+
+  UpdateFeeType(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'FeeType/UpdateFeeType', Model);
+  }
+
+  DeleteFeeType(FeeTypeId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'FeeType/DeleteFeeType?FeeTypeId=' + FeeTypeId);
+  }
+
+   // ============================= FeeTemplate ==============================
+
+  GetAllFeeTemplateData(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'FeeTemplate/GetAllFeeTemplateData', PagingFilter);
+  }
+
+  GetAllFeeTemplateFilter() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'FeeTemplate/GetAllFeeTemplateFilter');
+  }
+
+  AddNewFeeTemplate(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'FeeTemplate/AddNewFeeTemplate', Model);
+  }
+
+  UpdateFeeTemplate(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'FeeTemplate/UpdateFeeTemplate', Model);
+  }
+
+  DeleteFeeTemplate(FeeTemplateId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'FeeTemplate/DeleteFeeTemplate?FeeTemplateId=' + FeeTemplateId);
+  }
+
   // ============================= DiscountType ==============================
 
   GetAllDiscountTypeData(PagingFilter: PagingFilterModel) {

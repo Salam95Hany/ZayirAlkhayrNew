@@ -17,7 +17,7 @@ namespace ZayirAlkhayr.Entities.Models.School
         public int AcademicStageId { get; set; }
         public StudentStatus StudentStatusId { get; set; }
         public int? DiscountTypeId { get; set; }
-        public int StudyPeriodId { get; set; }
+        public StudyPeriod StudyPeriodId { get; set; }
         public string? StudentStatusReason { get; set; }
         public double? DiscountAmount { get; set; }
         public string? DiscountReason { get; set; }

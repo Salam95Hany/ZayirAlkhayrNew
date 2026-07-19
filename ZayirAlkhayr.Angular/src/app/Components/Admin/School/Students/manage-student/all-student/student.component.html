@@ -1,0 +1,190 @@
+<app-za-breadcrumb [TitleList]="TitleList"></app-za-breadcrumb>
+
+<div class="table-card border radius-10 overflow-hidden shadow-sm">
+    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
+        <div class="col-md-8 mb-2">
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" routerLink="/admin/school/add-student" appRole pageKey="School_Student" action="canAdd">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>إضافة</span>
+                </button>
+                <div ngbDropdown class="d-inline-block" appRole pageKey="School_Student" action="canExport">
+                    <button type="button" class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" id="dropdownBasic1" ngbDropdownToggle>
+                        <i class="uil uil-export"></i>
+                        <span>تنزيل</span>
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="border rounded">
+                        <button ngbDropdownItem class="d-flex align-items-center gap-2" (click)="OpenPdfFileItemModal(PDFFileItemModal)">
+                            <i class="fas fa-file-download"></i>
+                            <span class="px-2">PDF</span>
+                        </button>
+                        <button ngbDropdownItem (click)="DownloadExcelFile()">
+                            <i class="fas fa-file-download"></i>
+                            <span class="px-2">Excel</span>
+                        </button>
+                    </div>
+                </div>
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                    <i class="uil uil-filter"></i>
+                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
+                </button>
+            </div>
+        </div>
+        <div class="col-md-4 mb-2">
+            <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
+        </div>
+        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <div class="d-flex align-items-center">
+                <ng-container>
+                    <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <div class="p-3 bg-white">
+        <div class="table-responsive shadow-sm radius-10">
+            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+                <thead>
+                    <tr>
+                        <th>اسم ولي الاأمر</th>
+                        <th>اسم الطالب</th>
+                        <th>رقم التلفون</th>
+                        <th>المرحلة الدراسية</th>
+                        <th>تاريخ الميلاد</th>
+                        <th>المدرسة الحكومية</th>
+                        <th>فترة الدراسة</th>
+                        <th>الجنسية</th>
+                        <th>السنة الدراسية</th>
+                        <th>الحالة</th>
+                        <th>أُضيف بواسطة</th>
+                        <th>تاريخ الاضافة</th>
+                        <th>عمليات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container>
+                        <tr *ngFor="let item of Results">
+                            <td>{{item.parentName}}</td>
+                            <td>{{item.studentName}}</td>
+                            <td>{{item.phone}}</td>
+                            <td>{{item.academicStageName}}</td>
+                            <td>{{item.birthDay | arabicDateWithTime}}</td>
+                            <td>{{item.governmentSchool}}</td>
+                            <td>{{item.studyPeriodName}}</td>
+                            <td>{{item.nationalityName}}</td>
+                            <td>{{item.academicYear}}</td>
+                            <td>
+                                <span class="status-chip badge-success" *ngIf="item.studentStatusId == 1">{{item.studentStatusName}}</span>
+                                <span class="status-chip badge-warning" *ngIf="item.studentStatusId == 2">{{item.studentStatusName}}</span>
+                                <span class="status-chip badge-danger" *ngIf="item.studentStatusId == 3">{{item.studentStatusName}}</span>
+                            </td>
+                            <td>{{item.createdBy}}</td>
+                            <td>{{item.insertDateStr}}</td>
+                            <td>
+                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="item.studentStatusId != 3">
+                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_FamilyStatus" action="canEdit" (click)="openUpdateStudentSidePanel(item,true,false)">
+                                        <i class="uil uil-pen"></i>
+                                        <span>تعديل</span>
+                                    </button>
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_FamilyStatus" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
+                                        <i class="uil uil-trash-alt"></i>
+                                        <span>حذف</span>
+                                    </button>
+                                    <button class="button-table-action btn-details d-flex align-items-center justify-content-center gap-2" appRole pageKey="ZAInstitution_FamilyStatus" action="canAdd" (click)="openUpdateStudentSidePanel(item,false,true)">
+                                        <i class="uil uil-document-info"></i>
+                                        <span>معاينة</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="!Results.length">
+                            <td colspan="13" class="text-right">
+                                <app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<ng-template #PDFFileItemModal let-modal>
+    <div class="modal-header modal-header-bg justify-content-between">
+        <h2 class="d-flex align-items-center gap-2">
+            <i class="uil uil-focus-add"></i>
+            <span>اختر أعمدة</span>
+        </h2>
+        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+            <i class="uil uil-times-circle"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <table class="table table-bordered table-feature-value align-middle border m-0">
+            <tbody>
+                <tr *ngFor="let item of SearchReport.headers;let x = index">
+                    <td class="table-feature">{{item.nameAr}}</td>
+                    <td class="table-value">
+                        <div class="d-flex align-items-center">
+                            <div class="me-2">محدد</div>
+                            <label class="jtoggler-wrapper m-0 mx-0">
+                                <input type="checkbox" class="jtoggler" [(ngModel)]="item.isSelected">
+                                <div class="jtoggler-control">
+                                    <div class="jtoggler-handle"></div>
+                                </div>
+                            </label>
+                            <div class="ms-2">غير محدد</div>
+                            <div class="mr-25">
+                                <input type="number" class="form-control w-50 text-center" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="item.displayOrder" placeholder="الترتيب">
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-feature">تنبيه هام</td>
+                    <td class="table-value">
+                        <ul>
+                            <li class="fs-5">لا يمكن اختيار أكثر من 6 أعمدة في الصفحة الواحدة</li>
+                        </ul>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer flex-nowrap gap-2">
+        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="DownloadPdfFile()">
+            <i class="uil uil-save fs-3"></i>
+            <span>حفظ</span>
+        </button>
+        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
+            <i class="uil uil-times-circle fs-3"></i>
+            <span>الغاء</span>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteItemModal let-modal>
+    <div class="modal-header modal-header-bg justify-content-between">
+        <h2 class="d-flex align-items-center gap-2">
+            <span>تأكيد الإجراء</span>
+        </h2>
+        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
+            <i class="uil uil-times-circle"></i>
+        </div>
+    </div>
+    <div class="modal-body">
+        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
+    </div>
+    <div class="modal-footer justify-content-start">
+        <button type="button" class="btn btn-success" (click)="DeleteItem()">
+            <i class="fas fa-check"></i>
+            <span class="ms-2">نعم</span>
+        </button>
+        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
+            <i class="fas fa-times"></i>
+            <span class="ms-2">لا</span>
+        </button>
+    </div>
+</ng-template>
+
+<ngx-loading [show]="showLoader"></ngx-loading>

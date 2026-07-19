@@ -70,6 +70,7 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     public virtual DbSet<StudentEnrollment> StudentEnrollments { get; set; }
     public virtual DbSet<StudentFee> StudentFees { get; set; }
     public virtual DbSet<StudentPayment> StudentPayments { get; set; }
+    public virtual DbSet<FeeType> FeeTypes { get; set; }
 
     #endregion
 

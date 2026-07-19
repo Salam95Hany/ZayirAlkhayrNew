@@ -80,7 +80,7 @@ export class ZaDropDownFormControlComponent {
       this.valueChanged.emit(this.selectedValues);
     }
     else {
-      var sName = this.data?.find(x => x.value === value)?.name;
+      var sName = this.data?.find(x => x.value == value)?.name;
 
       if (value)
         this.selectedValue = value;

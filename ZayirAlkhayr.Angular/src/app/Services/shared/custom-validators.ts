@@ -63,7 +63,7 @@ export class CustomValidators extends Validators {
 
             return null;
         };
-    }
+    } 
 }
 
 export interface RegexModel {

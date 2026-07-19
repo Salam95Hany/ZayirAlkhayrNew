@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZayirAlkhayr.Entities.Common;
 
 namespace ZayirAlkhayr.Entities.Models.School
 {
     [Table(name: "AcademicYears", Schema = "school")]
-    public class AcademicYear
+    public class AcademicYear: AuditableEntity
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
