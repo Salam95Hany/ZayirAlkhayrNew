@@ -3,7 +3,7 @@ import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Va
 import { NgFor, NgIf } from '@angular/common';
 import { ZaInputWithLabelComponent } from '../../../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { ZaDropDownFormControlComponent } from '../../../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
-import { StudentDiscount } from '../../../../../../../Models/school/student/AddStudentModel';
+import { StudentDetails, StudentDiscount } from '../../../../../../../Models/school/student/AddStudentModel';
 import { FormDropdownModel } from '../../../../../../../Models/shared/FormDropdownModel';
 import { AuthService } from '../../../../../../../Auth/auth.service';
 import { FormService } from '../../../../../../../Services/shared/form.service';
@@ -19,7 +19,9 @@ import { CustomValidators, RegexType } from '../../../../../../../Services/share
 export class DiscountDataComponent {
   @Input() StudentDiscount: StudentDiscount[] = [];
   @Input() DiscountTypes: FormDropdownModel[] = [];
-  @Input() StudentNames: string[] = [];
+  @Input() StudentDetails: StudentDetails[] = [];
+  @Input() FeeTemplates: any[] = [];
+  @Input() CurrentYear: FormDropdownModel;
   @Input() UpdateMode = false;
   @Input() DetailsMode = false;
   ItemForm!: FormGroup;
@@ -36,7 +38,7 @@ export class DiscountDataComponent {
     });
 
     this.StudentDiscount.forEach((item, i) => {
-      item.studentName = this.StudentNames[i];
+      item.studentName = this.StudentDetails[i].studentName;
     });
 
     this.ItemForm.valueChanges.subscribe(() => {
@@ -49,22 +51,27 @@ export class DiscountDataComponent {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    let studentNames = changes['StudentNames'];
-    if (studentNames && studentNames?.currentValue?.length > 0) {
-      this.StudentNames.forEach((item, i) => {
-        let checked = this.StudentDiscount.some(x => x.studentName == item);
-        if (!checked && studentNames?.currentValue?.length > studentNames?.previousValue?.length) {
+    let studentDetails = changes['StudentDetails'];
+    if (studentDetails && studentDetails?.currentValue?.length > 0) {
+      this.StudentDetails.forEach((item, i) => {
+        let checked = this.StudentDiscount.some(x => x.studentName == item.studentName);
+        if (!checked && studentDetails?.currentValue?.length > studentDetails?.previousValue?.length) {
+          let amount = this.FeeTemplates.find(i => i.academicStageId == item.academicStageId)?.amount;
           this.StudentDiscount.push({
-            studentName: item,
+            studentName: item.studentName,
+            academicStageName: item.academicStageName,
+            academicYear: item.academicYear,
+            studyAmount: amount,
             discountTypeId: null,
             discountAmount: null,
-            discountReason: ''
+            discountReason: '',
+            notes: ''
           });
         }
       });
 
       this.StudentDiscount.forEach((item, i) => {
-        item.studentName = this.StudentNames[i];
+        item.studentName = this.StudentDetails[i].studentName;
       });
 
       this.ItemForm = this.fb.group({
@@ -72,7 +79,7 @@ export class DiscountDataComponent {
       });
 
       this.StudentDiscount.forEach((item, i) => {
-        item.studentName = this.StudentNames[i];
+        item.studentName = this.StudentDetails[i].studentName;
       });
 
       this.ItemForm.valueChanges.subscribe(() => {
@@ -85,22 +92,22 @@ export class DiscountDataComponent {
     }
   }
 
-  InetialData(studentData: any[]) {
+  InetialData(studentData: StudentDetails[]) {
     if (studentData && studentData.length > 0) {
-      if (this.StudentDiscount.length == 0) {
-        studentData.forEach((item, i) => {
-          this.StudentDiscount.push({
-            studentName: studentData[i]?.studentName,
-            discountTypeId: null,
-            discountAmount: null,
-            discountReason: ''
-          });
+      this.StudentDiscount = [];
+      studentData.forEach((item, i) => {
+        let amount = this.FeeTemplates.find(i => i.academicStageId == item.academicStageId)?.amount;
+        this.StudentDiscount.push({
+          studentName: item.studentName,
+          academicStageName: item.academicStageName,
+          academicYear: item.academicYear,
+          studyAmount: amount,
+          discountTypeId: null,
+          discountAmount: null,
+          discountReason: '',
+          notes: ''
         });
-      } else {
-        this.StudentDiscount.forEach((item, i) => {
-          item.studentName = studentData[i]?.studentName;
-        });
-      }
+      });
 
       this.syncFormToModel();
       this.loadData();
@@ -125,9 +132,13 @@ export class DiscountDataComponent {
     this.StudentDiscount.forEach(item => {
       const group = this.fb.group({
         studentName: [{ value: item.studentName, disabled: true }],
+        academicStageName: [{ value: item.academicStageName, disabled: true }],
+        academicYear: [{ value: item.academicYear, disabled: true }],
+        studyAmount: [{ value: item.studyAmount, disabled: true }],
         discountTypeId: [item.discountTypeId ?? ''],
         discountReason: [item.discountReason ?? ''],
-        discountAmount: [item.discountAmount ?? '']
+        discountAmount: [item.discountAmount ?? ''],
+        notes: [item.discountAmount ?? '']
       });
 
       group.get('discountTypeId')?.valueChanges.subscribe(value => {

@@ -68,5 +68,11 @@ namespace ZayirAlkhayr.Services.Common
         public static Error ParentStudentAlreadyExists = new("اسم ولي الأمر موجود بالفعل");
 
         public static Error StudentAlreadyExists = new("اسم الطالب موجود بالفعل");
+
+        public static Error AcademicFeeTempNotExist = new("برجاء اضافة قوالب للرسوم");
+
+        public static Error DeleteStudentFee = new("لا يمكن حذف الطالب لوجود دفعات مسجلة.");
+
+
     }
 }

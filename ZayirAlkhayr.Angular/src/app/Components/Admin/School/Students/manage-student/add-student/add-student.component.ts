@@ -7,7 +7,7 @@ import { ParentDataComponent } from './parent-data/parent-data.component';
 import { StudentDataComponent } from './student-data/student-data.component';
 import { DiscountDataComponent } from './discount-data/discount-data.component';
 import { StudentLookups } from '../../../../../../Models/school/student/StudentLookups';
-import { AddStudentModel } from '../../../../../../Models/school/student/AddStudentModel';
+import { AddStudentModel, StudentDetails } from '../../../../../../Models/school/student/AddStudentModel';
 import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
 
 @Component({
@@ -25,7 +25,7 @@ export class AddStudentComponent {
   AddStudentModel: AddStudentModel = {} as AddStudentModel;
   showLoader = false;
   isLookupsLoaded = false;
-  StudentNames: string[] = [];
+  StudentDetails: StudentDetails[] = [];
   StepName: string;
   activeStep = 1;
   Counter = 0;
@@ -34,7 +34,7 @@ export class AddStudentComponent {
   StepList: any[] = [
     { stepName: 'بيانات ولي الأمر', stepId: 'ParentData', number: 1 },
     { stepName: 'بيانات الطالب', stepId: 'StudentData', number: 2 },
-    { stepName: 'بيانات الخصم', stepId: 'DiscountData', number: 3 }
+    { stepName: 'المراجعة النهائية', stepId: 'DiscountData', number: 3 }
   ]
 
   constructor(private schoolStudentService: SchoolStudentService, private toaster: ToastrService, private router: Router
@@ -111,7 +111,7 @@ export class AddStudentComponent {
     });
   }
 
-  StudendChange(item: string[]) {
-    this.StudentNames = item;
+  StudendChange(item: StudentDetails[]) {
+    this.StudentDetails = item;
   }
 }

@@ -17,9 +17,10 @@ namespace ZayirAlkhayr.Entities.Common
     {
         public int? ParentId { get; set; }
         public string ParentName { get; set; }
-        public string Phone { get; set; }
+        public string FatherPhone { get; set; }
+        public string MotherPhone { get; set; }
+        public string WhatsappNumber { get; set; }
         public string Address { get; set; }
-        public int ChildrenCount { get; set; }
         public string InsertUser { get; set; }
         public string? InsertDate { get; set; }
         public string? UpdateUser { get; set; }
@@ -31,12 +32,10 @@ namespace ZayirAlkhayr.Entities.Common
         public int? StudentId { get; set; }
         public string StudentName { get; set; } // اسم الطالب
         public int AcademicStageId { get; set; } // المرحلة الدراسية
-        public string AcademicStageName { get; set; } // اسم المرحلة الدراسية
         public DateTime BirthDay { get; set; } // تاريخ الميلاد
         public string GovernmentSchool { get; set; } // المدرسة الحكومية 
         public StudyPeriod StudyPeriodId { get; set; } // فترة الدراسة
         public int NationalityId { get; set; } // الجنسية
-        public string NationalityName { get; set; } // اسم الجنسية
         public bool IsHaveHealthCondition { get; set; } // هل لديه حالة صحية
         public string? HealthConditionNote { get; set; } // ملاحظات الحالة الصحية
         public string Gender { get; set; } // الجنس
@@ -45,7 +44,6 @@ namespace ZayirAlkhayr.Entities.Common
         public StudentStatus StudentStatusId { get; set; } // موجود او منسحب
         public string? StudentStatusReason { get; set; } // لو كان منسحب سبب الانسحاب
         public int OrderAmongChildren { get; set; } // ترتيب الطفل بين إخوانه
-        public bool IsCurrent { get; set; }
         public DateTime EnrollmentDate { get; set; }
     }
 

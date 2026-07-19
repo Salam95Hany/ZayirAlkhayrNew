@@ -9,7 +9,7 @@
                 <app-za-drop-down-form-control [data]="BeneFactorData" [showSearch]="true" [placeholder]="'متبرع'" [(ngModel)]="BeneFactorId" (valueChanged)="OnChangeBeneFactor($event)"></app-za-drop-down-form-control>
             </div>
             <div class="col-lg-1 d-flex align-items-center">
-                <div class="d-flex align-items-center" *ngIf="BeneFactorId">
+                <div class="d-flex align-items-center justify-content-center" *ngIf="BeneFactorId">
                     <div class="me-2">كاش</div>
                     <label class="jtoggler-wrapper m-0 mx-0">
                     <input type="checkbox" class="jtoggler" [(ngModel)]="TypeSwitcher"

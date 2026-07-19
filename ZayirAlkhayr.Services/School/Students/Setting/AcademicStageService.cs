@@ -156,5 +156,16 @@ namespace ZayirAlkhayr.Services.School.Students.Setting
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }
+
+        public async Task<List<FormDropdownModel>> GetAcademicStages()
+        {
+            var results = await _unitOfWork.Repository<AcademicStage>().GetAllAsync();
+            var data = results.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.Name
+            }).ToList();
+            return data;
+        }
     }
 }

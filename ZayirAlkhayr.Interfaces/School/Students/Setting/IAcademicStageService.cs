@@ -16,5 +16,6 @@ namespace ZayirAlkhayr.Interfaces.School.Students.Setting
         Task<ApiResponseModel<string>> AddNewAcademicStage(AcademicStage Model);
         Task<ApiResponseModel<string>> UpdateAcademicStage(AcademicStage Model);
         Task<ApiResponseModel<string>> DeleteAcademicStage(int AcademicStageId);
+        Task<List<FormDropdownModel>> GetAcademicStages();
     }
 }

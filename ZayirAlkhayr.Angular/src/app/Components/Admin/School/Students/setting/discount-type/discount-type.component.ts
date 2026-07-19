@@ -12,10 +12,10 @@ import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-wit
 import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
 import { FilterModel } from '../../../../../../Models/shared/FilterModel';
 import { PagingFilterModel } from '../../../../../../Models/shared/PagingFilterModel ';
-import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
 import { FormService } from '../../../../../../Services/shared/form.service';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
+import { StudentSettingService } from '../../../../../../Services/school/student-setting.service';
 
 @Component({
   selector: 'app-discount-type',
@@ -44,7 +44,7 @@ export class DiscountTypeComponent {
     name: ''
   };
 
-  constructor(private modalService: NgbModal, private schoolService: SchoolStudentService, private formService: FormService
+  constructor(private modalService: NgbModal, private studentSettingService: StudentSettingService, private formService: FormService
     , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -102,7 +102,7 @@ export class DiscountTypeComponent {
 
   GetAllDiscountTypeData() {
     this.showLoader = true;
-    this.schoolService.GetAllDiscountTypeData(this.PagingFilter).subscribe(data => {
+    this.studentSettingService.GetAllDiscountTypeData(this.PagingFilter).subscribe(data => {
       this.showLoader = false;
       this.Results = data.results;
       this.TotalCount = data.totalCount;
@@ -110,7 +110,7 @@ export class DiscountTypeComponent {
   }
 
   GetAllDiscountTypeFilter() {
-    this.schoolService.GetAllDiscountTypeFilter().subscribe(data => {
+    this.studentSettingService.GetAllDiscountTypeFilter().subscribe(data => {
       this.FilterList = data.results;
     });
   }
@@ -144,7 +144,7 @@ export class DiscountTypeComponent {
 
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.schoolService.AddNewDiscountType(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.AddNewDiscountType(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllDiscountTypeData();
@@ -156,7 +156,7 @@ export class DiscountTypeComponent {
         this.showLoader = false;
       });
     } else {
-      this.schoolService.UpdateDiscountType(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.UpdateDiscountType(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllDiscountTypeData();
@@ -172,7 +172,7 @@ export class DiscountTypeComponent {
 
   DeleteItem() {
     this.showLoader = true;
-    this.schoolService.DeleteDiscountType(this.DiscountTypeId).subscribe(data => {
+    this.studentSettingService.DeleteDiscountType(this.DiscountTypeId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllDiscountTypeData();

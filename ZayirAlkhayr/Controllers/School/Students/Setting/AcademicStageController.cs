@@ -50,5 +50,12 @@ namespace ZayirAlkhayr.Controllers.School.Students.Setting
             var results = await _academicStageService.DeleteAcademicStage(AcademicStageId);
             return results;
         }
+
+        [HttpGet("GetAcademicStages")]
+        public async Task<List<FormDropdownModel>> GetAcademicStages()
+        {
+            var results = await _academicStageService.GetAcademicStages();
+            return results;
+        }
     }
 }

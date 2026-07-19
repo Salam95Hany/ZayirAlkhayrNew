@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
+using ZayirAlkhayr.Entities.Common;
 
 namespace ZayirAlkhayr.Entities.Models.School
 {
@@ -19,7 +20,7 @@ namespace ZayirAlkhayr.Entities.Models.School
         public double NetAmount { get; set; }
         public double PaidAmount { get; set; }
         public double RemainingAmount { get; set; }
-        public int Status { get; set; }
+        public StudentFeeStatus Status { get; set; }
 
         // Navigation
         public virtual StudentEnrollment StudentEnrollment { get; set; } = null!;

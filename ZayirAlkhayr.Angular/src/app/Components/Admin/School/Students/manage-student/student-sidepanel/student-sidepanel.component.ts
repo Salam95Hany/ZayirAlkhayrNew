@@ -33,7 +33,7 @@ export class StudentSidepanelComponent {
   StudentInfo: any;
   showLoader = false;
   isLookupsLoaded = false;
-  StudentNames: string[] = [];
+  StudentDetails: StudentDetails[] = [];
   StepList: any[] = [
     { stepId: 'ParentData', number: 0, scrollTop: 0 },
     { stepId: 'StudentData', number: 1 },
@@ -110,13 +110,14 @@ export class StudentSidepanelComponent {
     let nationalityName = this.StudentInfo.lookups.nationalities.find(i => i.value == this.StudentInfo.student.nationalityId)?.name;
     let studyPeriodName = this.StudyPeriods.find(i => i.value == this.StudentInfo.student.studyPeriod)?.name;
     let genderName = this.Genders.find(i => i.value == this.StudentInfo.student.gender)?.name;
-    
+
     let parentStudent: ParentStudent = {
       parentId: this.StudentInfo.parent.id,
-      address: this.StudentInfo.parent.address,
-      phone: this.StudentInfo.parent.phone,
       parentName: this.StudentInfo.parent.name,
-      childrenCount: this.StudentInfo.student.childrenCount,
+      address: this.StudentInfo.parent.address,
+      fatherPhone: this.StudentInfo.parent.fatherPhone,
+      motherPhone: this.StudentInfo.parent.fatherPhone,
+      whatsappNumber: this.StudentInfo.parent.whatsappNumber,
       insertUser: this.authService.userId
     };
 
@@ -128,7 +129,7 @@ export class StudentSidepanelComponent {
       academicStageName: academicStageName,
       birthDay: this.StudentInfo.student.birthDay,
       governmentSchool: this.StudentInfo.student.governmentSchool,
-      studyPeriod: +this.StudentInfo.student.studyPeriod,
+      studyPeriodId: +this.StudentInfo.student.studyPeriodId,
       studyPeriodName: studyPeriodName,
       nationalityId: this.StudentInfo.student.nationalityId?.toString(),
       nationalityName: nationalityName,
@@ -137,17 +138,22 @@ export class StudentSidepanelComponent {
       gender: +this.StudentInfo.student.gender,
       genderName: genderName,
       academicYear: this.StudentInfo.student.academicYear,
-      studyAmount: this.StudentInfo.student.studyAmount,
+      academicYearId: this.StudentInfo.student.sss,
       studentStatusId: +this.StudentInfo.student.studentStatusId,
       studentStatusReason: this.StudentInfo.student.studentStatusReason,
-      orderAmongChildren: this.StudentInfo.student.orderAmongChildren
+      orderAmongChildren: this.StudentInfo.student.orderAmongChildren,
+      enrollmentDate: ''
     };
 
     let studentDiscount: StudentDiscount = {
       studentName: this.StudentInfo.student.studentName,
+      academicStageName: academicStageName,
+      academicYear: this.StudentInfo.student.academicYear,
+      studyAmount: 0,
       discountTypeId: this.StudentInfo.student.discountTypeId?.toString(),
       discountReason: this.StudentInfo.student.discountReason,
       discountAmount: this.StudentInfo.student.discountAmount,
+      notes: ''
     };
 
     this.AddStudentModel.parentStudent = parentStudent;
@@ -155,7 +161,7 @@ export class StudentSidepanelComponent {
     this.AddStudentModel.discount = [studentDiscount];
   }
 
-  StudendChange(item: any[]) {
-    this.StudentNames = item;
+  StudendChange(item: StudentDetails[]) {
+    this.StudentDetails = item;
   }
 }

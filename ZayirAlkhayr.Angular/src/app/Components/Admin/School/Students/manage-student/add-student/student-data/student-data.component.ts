@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
-import { NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { ZaInputWithLabelComponent } from '../../../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { ZaDropDownFormControlComponent } from '../../../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 import { ZaEmptyDataComponent } from '../../../../../../../Shared/za-empty-data/za-empty-data.component';
@@ -18,6 +18,7 @@ import { CustomValidators, RegexType } from '../../../../../../../Services/share
   imports: [NgIf, NgFor, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule, ZaEmptyDataComponent, FormsModule,
     ArabicDateWithTimePipe
   ],
+  providers: [DatePipe],
   templateUrl: './student-data.component.html',
   styleUrl: './student-data.component.css'
 })
@@ -25,9 +26,10 @@ export class StudentDataComponent {
   @Input() StudentDetails: StudentDetails[] = [];
   @Input() AcademicStages: FormDropdownModel[] = [];
   @Input() Nationalities: FormDropdownModel[] = [];
+  @Input() CurrentYear: FormDropdownModel;
   @Input() UpdateMode = false;
   @Input() DetailsMode = false;
-  @Output() StudentDetailsChange = new EventEmitter<string[]>();
+  @Output() StudentDetailsChange = new EventEmitter<StudentDetails[]>();
   studentStatus: FormDropdownModel[] = [
     { value: 1, name: 'موجود' },
     { value: 2, name: 'منسحب' }
@@ -50,7 +52,7 @@ export class StudentDataComponent {
     academicStageId: '',
     birthDay: '',
     governmentSchool: '',
-    studyPeriod: '',
+    studyPeriodId: '',
     nationalityId: '',
     isHaveHealthCondition: '',
     healthConditionNote: '',
@@ -58,17 +60,17 @@ export class StudentDataComponent {
     academicYear: '',
     studentStatusId: '',
     studentStatusReason: '',
-    orderAmongChildren: ''
+    orderAmongChildren: '',
+    enrollmentDate:''
   };
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private formService: FormService,
-    private toaster: ToastrService
+    private toaster: ToastrService, private datePipe: DatePipe
   ) { }
 
   ngOnInit(): void {
     this.FormInit();
     this.FamilyChildCount = this.StudentDetails.length;
-    this.TotalStudyAmount = this.StudentDetails.reduce((total, student) => total + (student.studyAmount || 0), 0);
   }
 
   FormInit() {
@@ -76,17 +78,19 @@ export class StudentDataComponent {
       id: 0,
       studentName: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       academicStageId: ['', [Validators.required]],
+      academicYearId: ['', [Validators.required]],
       birthDay: ['', [Validators.required, CustomValidators.ageBetween(4, 14)]],
       governmentSchool: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      studyPeriod: ['', [Validators.required]],
+      studyPeriodId: ['', [Validators.required]],
       nationalityId: ['', [Validators.required]],
       isHaveHealthCondition: [''],
       healthConditionNote: [''],
       gender: ['', [Validators.required]],
-      academicYear: ['', [Validators.required, CustomValidators.regexPattern(RegexType.academicYear)]],
+      academicYear: [{ value: '', disabled: true }, [Validators.required]],
       studentStatusId: ['', [Validators.required]],
       studentStatusReason: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      orderAmongChildren: ['', [Validators.required]]
+      orderAmongChildren: ['', [Validators.required]],
+      enrollmentDate: ['', [Validators.required]]
     });
 
     this.ItemForm.valueChanges.subscribe((data) => {
@@ -117,9 +121,10 @@ export class StudentDataComponent {
       id: item.id,
       studentName: item.studentName,
       academicStageId: item.academicStageId,
+      academicYearId: item.academicYearId,
       birthDay: item.birthDay,
       governmentSchool: item.governmentSchool,
-      studyPeriod: item.studyPeriod,
+      studyPeriodId: item.studyPeriodId,
       nationalityId: item.nationalityId,
       isHaveHealthCondition: item.isHaveHealthCondition,
       HealthConditionNote: item.HealthConditionNote,
@@ -128,12 +133,15 @@ export class StudentDataComponent {
       studentStatusId: item.studentStatusId,
       studentStatusReason: item.studentStatusReason,
       orderAmongChildren: item.orderAmongChildren,
+      enrollmentDate: this.datePipe.transform(item.enrollmentDate, 'yyyy-MM-dd')
     });
   }
 
   ResetForm() {
     this.ItemForm.reset();
     this.ItemForm.get('id').setValue(0);
+    this.ItemForm.get('academicYearId').setValue(this.CurrentYear.value);
+    this.ItemForm.get('academicYear').setValue(this.CurrentYear.name);
   }
 
   openItemModal(content: any, item: any) {
@@ -211,19 +219,20 @@ export class StudentDataComponent {
         academicStageName: academicStageName,
         birthDay: formData.birthDay,
         governmentSchool: formData.governmentSchool,
-        studyPeriod: formData.studyPeriod,
+        studyPeriodId: formData.studyPeriodId,
         studyPeriodName: studyPeriodName,
-        studyAmount: this.AcademicStages.find(i => i.value == formData.academicStageId)?.extraData['amount'],
         nationalityId: formData.nationalityId,
         nationalityName: nationalityName,
         isHaveHealthCondition: formData.isHaveHealthCondition,
         healthConditionNote: formData.healthConditionNote,
         gender: formData.gender,
         genderName: genderName,
-        academicYear: formData.academicYear,
+        academicYear: this.CurrentYear.name,
+        academicYearId: this.CurrentYear.value,
         studentStatusId: formData.studentStatusId,
         studentStatusReason: formData.studentStatusReason,
         orderAmongChildren: formData.orderAmongChildren,
+        enrollmentDate: formData.enrollmentDate
       });
     } else {
       let obj = this.StudentDetails.find(i => i.id == formData.id);
@@ -233,33 +242,33 @@ export class StudentDataComponent {
         obj.academicStageName = academicStageName;
         obj.birthDay = formData.birthDay;
         obj.governmentSchool = formData.governmentSchool;
-        obj.studyPeriod = formData.studyPeriod;
+        obj.studyPeriodId = formData.studyPeriodId;
         obj.studyPeriodName = studyPeriodName;
-        obj.studyAmount = this.AcademicStages.find(i => i.value == formData.academicStageId)?.extraData['amount'];
         obj.nationalityId = formData.nationalityId;
         obj.nationalityName = nationalityName;
         obj.isHaveHealthCondition = formData.isHaveHealthCondition;
         obj.healthConditionNote = formData.healthConditionNote;
         obj.gender = formData.gender;
         obj.genderName = genderName;
-        obj.academicYear = formData.academicYear;
+        obj.academicYear = this.CurrentYear.name;
+        obj.academicYearId = this.CurrentYear.value;
         obj.studentStatusId = formData.studentStatusId;
         obj.studentStatusReason = formData.studentStatusReason;
         obj.orderAmongChildren = formData.orderAmongChildren;
+        obj.enrollmentDate = formData.enrollmentDate
       }
     }
 
     this.FamilyChildCount = this.StudentDetails.length;
     if (this.UpdateMode)
-      this.StudentDetailsChange.emit(this.StudentDetails.map(i => i.studentName));
-    this.TotalStudyAmount = this.StudentDetails.reduce((total, student) => total + (student.studyAmount || 0), 0);
+      this.StudentDetailsChange.emit(this.StudentDetails);
     this.modalService.dismissAll();
   }
 
   DeleteItem() {
     this.StudentDetails = this.StudentDetails.filter(i => i.id != this.StudentDetailsId);
     if (this.UpdateMode)
-      this.StudentDetailsChange.emit(this.StudentDetails.map(i => i.studentName));
+      this.StudentDetailsChange.emit(this.StudentDetails);
     this.FamilyChildCount = this.StudentDetails.length;
     this.modalService.dismissAll();
   }

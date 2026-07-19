@@ -12,10 +12,10 @@ import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-wit
 import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
 import { FilterModel } from '../../../../../../Models/shared/FilterModel';
 import { PagingFilterModel } from '../../../../../../Models/shared/PagingFilterModel ';
-import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
 import { FormService } from '../../../../../../Services/shared/form.service';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
+import { StudentSettingService } from '../../../../../../Services/school/student-setting.service';
 
 @Component({
   selector: 'app-student-nationality',
@@ -44,7 +44,7 @@ export class StudentNationalityComponent {
     name: ''
   };
 
-  constructor(private modalService: NgbModal, private schoolService: SchoolStudentService, private formService: FormService
+  constructor(private modalService: NgbModal, private studentSettingService: StudentSettingService, private formService: FormService
     , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -102,7 +102,7 @@ export class StudentNationalityComponent {
 
   GetAllStudentNationalityData() {
     this.showLoader = true;
-    this.schoolService.GetAllStudentNationalityData(this.PagingFilter).subscribe(data => {
+    this.studentSettingService.GetAllStudentNationalityData(this.PagingFilter).subscribe(data => {
       this.showLoader = false;
       this.Results = data.results;
       this.TotalCount = data.totalCount;
@@ -110,7 +110,7 @@ export class StudentNationalityComponent {
   }
 
   GetAllStudentNationalityFilter() {
-    this.schoolService.GetAllStudentNationalityFilter().subscribe(data => {
+    this.studentSettingService.GetAllStudentNationalityFilter().subscribe(data => {
       this.FilterList = data.results;
     });
   }
@@ -144,7 +144,7 @@ export class StudentNationalityComponent {
 
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.schoolService.AddNewStudentNationality(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.AddNewStudentNationality(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllStudentNationalityData();
@@ -156,7 +156,7 @@ export class StudentNationalityComponent {
         this.showLoader = false;
       });
     } else {
-      this.schoolService.UpdateStudentNationality(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.UpdateStudentNationality(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllStudentNationalityData();
@@ -172,7 +172,7 @@ export class StudentNationalityComponent {
 
   DeleteItem() {
     this.showLoader = true;
-    this.schoolService.DeleteStudentNationality(this.NationalityId).subscribe(data => {
+    this.studentSettingService.DeleteStudentNationality(this.NationalityId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllStudentNationalityData();

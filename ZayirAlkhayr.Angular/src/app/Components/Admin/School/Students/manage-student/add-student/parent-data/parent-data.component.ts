@@ -5,6 +5,7 @@ import { ParentStudent } from '../../../../../../../Models/school/student/AddStu
 import { AuthService } from '../../../../../../../Auth/auth.service';
 import { FormService } from '../../../../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../../../../Services/shared/custom-validators';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-parent-data',
@@ -21,20 +22,19 @@ export class ParentDataComponent {
   ItemForm: FormGroup;
   formErrors = {
     parentName: '',
-    phone: '',
     address: ''
   };
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private formService: FormService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private formService: FormService, private toaster: ToastrService) { }
 
   ngOnInit(): void {
     this.UserId = this.authService.userId;
     this.ParentStudent.insertUser = this.UserId;
-    if (!this.UpdateMode && !this.DetailsMode)
-      this.ParentStudent.childrenCount = 0;
     this.ItemForm = this.fb.group({
       parentName: [{ value: this.ParentStudent.parentName ?? '', disabled: this.DetailsMode ? true : false }, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      phone: [{ value: this.ParentStudent.phone ?? '', disabled: this.DetailsMode ? true : false }, [Validators.required]],
+      fatherPhone: [{ value: this.ParentStudent.fatherPhone ?? '', disabled: this.DetailsMode ? true : false }],
+      motherPhone: [{ value: this.ParentStudent.motherPhone ?? '', disabled: this.DetailsMode ? true : false }],
+      whatsappNumber: [{ value: this.ParentStudent.whatsappNumber ?? '', disabled: this.DetailsMode ? true : false }],
       address: [{ value: this.ParentStudent.address ?? '', disabled: this.DetailsMode ? true : false }, [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]]
     });
 
@@ -56,6 +56,11 @@ export class ParentDataComponent {
   GetOutputData() {
     let isValid = this.validateForm();
     if (!isValid) {
+      return null;
+    }
+
+    if (!this.ItemForm.value.fatherPhone && !this.ItemForm.value.motherPhone) {
+      this.toaster.warning('أدخل رقم هاتف الأب او الأم')
       return null;
     }
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Models.School;
 using ZayirAlkhayr.Interfaces.Common;
@@ -60,29 +61,32 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             var parentRepository = _unitOfWork.Repository<Parent>();
             var studentRepository = _unitOfWork.Repository<Student>();
             var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
+            var studentFeeRepository = _unitOfWork.Repository<StudentFee>();
+            var feeTemplateRepository = _unitOfWork.Repository<FeeTemplate>();
 
             bool parentExists = await parentRepository.AnyAsync(x => x.Name == model.ParentData.ParentName);
-
             if (parentExists)
                 return ApiResponseModel<string>.Failure(GenericErrors.ParentStudentAlreadyExists);
 
             var studentNames = model.StudentData.Select(x => x.StudentName.Trim()).Distinct().ToList();
-            bool studentExists = await studentRepository.AnyAsync(x =>
-                studentNames.Contains(x.StudentName));
-
+            bool studentExists = await studentRepository.AnyAsync(x => studentNames.Contains(x.StudentName));
             if (studentExists)
                 return ApiResponseModel<string>.Failure(GenericErrors.StudentAlreadyExists);
 
             var discounts = model.DiscountData?.GroupBy(x => x.StudentName.Trim()).ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase)
                 ?? new Dictionary<string, StudentDiscount>(StringComparer.OrdinalIgnoreCase);
 
-
-
             var codeTable = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetStudentCodeSequences", new[] { new SqlParameter("@Count", model.StudentData.Count) });
             var codes = codeTable.AsEnumerable().Select(x => x["Code"].ToString()!).ToList();
 
             if (codes.Count != model.StudentData.Count)
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
+
+            var academicFeeTemps = await feeTemplateRepository.GetAllAsync(i => i.AcademicYearId == model.StudentData.FirstOrDefault().AcademicYearId);
+            if (academicFeeTemps.Count == 0)
+                return ApiResponseModel<string>.Failure(GenericErrors.AcademicFeeTempNotExist);
+
+            var feeTemplatesByStage = academicFeeTemps.GroupBy(x => x.AcademicStageId).ToDictionary(x => x.Key, x => x.ToList());
 
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
@@ -91,9 +95,9 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                 var parent = new Parent
                 {
                     Name = model.ParentData.ParentName,
-                    ParentPhone = model.ParentData.Phone,
-                    MotherPhone = model.ParentData.Phone,
-                    WhatsappNumber = model.ParentData.Phone,
+                    ParentPhone = model.ParentData.FatherPhone,
+                    MotherPhone = model.ParentData.MotherPhone,
+                    WhatsappNumber = model.ParentData.WhatsappNumber,
                     Address = model.ParentData.Address,
                     TelegramCode = GenerateTelCode()
                 };
@@ -148,11 +152,46 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                         DiscountReason = discount?.DiscountReason,
                         Notes = discount?.Notes,
                         EnrollmentDate = item.EnrollmentDate,
-                        IsCurrent = item.IsCurrent
+                        IsCurrent = true
                     });
                 }
 
                 await enrollmentRepository.AddRangeAsync(enrollments);
+                await _unitOfWork.CompleteAsync();
+
+                var studentFees = new List<StudentFee>();
+
+                for (int i = 0; i < enrollments.Count; i++)
+                {
+                    var enrollment = enrollments[i];
+
+                    if (!feeTemplatesByStage.TryGetValue(enrollment.AcademicStageId, out var templates))
+                        continue;
+
+                    foreach (var template in templates)
+                    {
+                        double totalAmount = template.Amount;
+                        double discountAmount = 0;
+                        if (template.FeeTypeId == 3 && enrollment.DiscountAmount.HasValue && enrollment.DiscountAmount > 0)
+                            discountAmount = Math.Round(totalAmount * enrollment.DiscountAmount.Value / 100.0, 2, MidpointRounding.AwayFromZero);
+
+                        double netAmount = totalAmount - discountAmount;
+
+                        studentFees.Add(new StudentFee
+                        {
+                            StudentEnrollmentId = enrollment.Id,
+                            FeeTypeId = template.FeeTypeId,
+                            TotalAmount = totalAmount,
+                            DiscountAmount = discountAmount,
+                            NetAmount = netAmount,
+                            PaidAmount = 0,
+                            RemainingAmount = netAmount,
+                            Status = StudentFeeStatus.Pending
+                        });
+                    }
+                }
+
+                await studentFeeRepository.AddRangeAsync(studentFees);
                 await _unitOfWork.CompleteAsync();
                 await transaction.CommitAsync(cancellationToken);
 
@@ -176,6 +215,8 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             var parentRepository = _unitOfWork.Repository<Parent>();
             var studentRepository = _unitOfWork.Repository<Student>();
             var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
+            var studentFeeRepository = _unitOfWork.Repository<StudentFee>();
+            var feeTemplateRepository = _unitOfWork.Repository<FeeTemplate>();
 
             bool parentExists = await parentRepository.AnyAsync(x => x.Name == model.ParentData.ParentName && x.Id != model.ParentData.ParentId);
             if (parentExists)
@@ -208,11 +249,20 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                     return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
                 }
 
+                var feeTemplatesTask = feeTemplateRepository.GetAllAsync(x => x.AcademicYearId == enrollment.AcademicYearId && x.AcademicStageId == enrollment.AcademicStageId);
+                var studentFeesTask = studentFeeRepository.GetAllAsync(x => x.StudentEnrollmentId == enrollment.Id);
+
+                await Task.WhenAll(feeTemplatesTask, studentFeesTask);
+
+                var feeTemplates = feeTemplatesTask.Result;
+                var studentFees = studentFeesTask.Result;
+                var feeDictionary = studentFees.ToDictionary(x => x.FeeTypeId);
+
 
                 parent.Name = model.ParentData.ParentName;
-                parent.ParentPhone = model.ParentData.Phone;
-                parent.MotherPhone = model.ParentData.Phone;
-                parent.WhatsappNumber = model.ParentData.Phone;
+                parent.ParentPhone = model.ParentData.FatherPhone;
+                parent.MotherPhone = model.ParentData.MotherPhone;
+                parent.WhatsappNumber = model.ParentData.WhatsappNumber;
                 parent.Address = model.ParentData.Address;
 
                 student.StudentName = studentUpdated.StudentName;
@@ -235,8 +285,52 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                 enrollment.DiscountAmount = discount?.DiscountAmount;
                 enrollment.DiscountReason = discount?.DiscountReason;
                 enrollment.EnrollmentDate = studentUpdated.EnrollmentDate;
-                enrollment.IsCurrent = studentUpdated.IsCurrent;
+                enrollment.IsCurrent = true;
                 enrollment.Notes = discount?.Notes;
+
+                foreach (var template in feeTemplates)
+                {
+                    double totalAmount = template.Amount;
+                    double discountAmount = 0;
+
+                    if (template.FeeTypeId == 3 && enrollment.DiscountAmount.HasValue && enrollment.DiscountAmount.Value > 0)
+                        discountAmount = Math.Round(totalAmount * enrollment.DiscountAmount.Value / 100, 2, MidpointRounding.AwayFromZero);
+
+                    double netAmount = totalAmount - discountAmount;
+
+                    if (feeDictionary.TryGetValue(template.FeeTypeId, out var studentFee))
+                    {
+                        studentFee.TotalAmount = totalAmount;
+                        studentFee.DiscountAmount = discountAmount;
+                        studentFee.NetAmount = netAmount;
+                        studentFee.RemainingAmount = Math.Max(0, netAmount - studentFee.PaidAmount);
+                        studentFee.Status = studentFee.PaidAmount switch
+                        {
+                            0 => StudentFeeStatus.Pending,
+                            var paid when paid >= netAmount => StudentFeeStatus.Paid,
+                            _ => StudentFeeStatus.PartiallyPaid
+                        };
+                    }
+                    else
+                    {
+                        studentFees.Add(new StudentFee
+                        {
+                            StudentEnrollmentId = enrollment.Id,
+                            FeeTypeId = template.FeeTypeId,
+                            TotalAmount = totalAmount,
+                            DiscountAmount = discountAmount,
+                            NetAmount = netAmount,
+                            PaidAmount = 0,
+                            RemainingAmount = netAmount,
+                            Status = StudentFeeStatus.Pending
+                        });
+                    }
+                }
+
+                var newFees = studentFees.Where(x => x.Id == 0).ToList();
+
+                if (newFees.Any())
+                    await studentFeeRepository.AddRangeAsync(newFees);
 
                 if (newStudents.Any())
                     await CreateStudentsAsync(newStudents, model.DiscountData, model.ParentData.ParentId!.Value, model.ParentData.InsertUser);
@@ -251,6 +345,8 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
 
                 if (ex.Message == "Student Name Exist")
                     return ApiResponseModel<string>.Failure(GenericErrors.StudentAlreadyExists);
+                else if (ex.Message == "AcademicFeeTemp NotExist")
+                    return ApiResponseModel<string>.Failure(GenericErrors.AcademicFeeTempNotExist);
                 else
                     return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
@@ -261,6 +357,8 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
         {
             var studentRepository = _unitOfWork.Repository<Student>();
             var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
+            var studentFeeRepository = _unitOfWork.Repository<StudentFee>();
+            var feeTemplateRepository = _unitOfWork.Repository<FeeTemplate>();
 
             var studentNames = students.Select(x => x.StudentName.Trim()).Distinct().ToList();
             bool studentExists = await studentRepository.AnyAsync(x =>
@@ -268,6 +366,12 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
 
             if (studentExists)
                 throw new Exception("Student Name Exist");
+
+            var academicFeeTemps = await feeTemplateRepository.GetAllAsync(i => i.AcademicYearId == students.FirstOrDefault().AcademicYearId);
+            if (academicFeeTemps.Count == 0)
+                throw new Exception("AcademicFeeTemp NotExist");
+
+            var feeTemplatesByStage = academicFeeTemps.GroupBy(x => x.AcademicStageId).ToDictionary(x => x.Key, x => x.ToList());
 
             var discountDictionary = discounts?.GroupBy(x => x.StudentName.Trim()).ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase)
                 ?? new Dictionary<string, StudentDiscount>(StringComparer.OrdinalIgnoreCase);
@@ -322,11 +426,46 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                     DiscountReason = discount?.DiscountReason,
                     Notes = discount?.Notes,
                     EnrollmentDate = item.EnrollmentDate,
-                    IsCurrent = item.IsCurrent
+                    IsCurrent = true
                 });
             }
 
             await enrollmentRepository.AddRangeAsync(enrollmentEntities);
+            await _unitOfWork.CompleteAsync();
+
+            var studentFees = new List<StudentFee>();
+
+            for (int i = 0; i < enrollmentEntities.Count; i++)
+            {
+                var enrollment = enrollmentEntities[i];
+
+                if (!feeTemplatesByStage.TryGetValue(enrollment.AcademicStageId, out var templates))
+                    continue;
+
+                foreach (var template in templates)
+                {
+                    double totalAmount = template.Amount;
+                    double discountAmount = 0;
+                    if (template.FeeTypeId == 3 && enrollment.DiscountAmount.HasValue && enrollment.DiscountAmount > 0)
+                        discountAmount = Math.Round(totalAmount * enrollment.DiscountAmount.Value / 100.0, 2, MidpointRounding.AwayFromZero);
+
+                    double netAmount = totalAmount - discountAmount;
+
+                    studentFees.Add(new StudentFee
+                    {
+                        StudentEnrollmentId = enrollment.Id,
+                        FeeTypeId = template.FeeTypeId,
+                        TotalAmount = totalAmount,
+                        DiscountAmount = discountAmount,
+                        NetAmount = netAmount,
+                        PaidAmount = 0,
+                        RemainingAmount = netAmount,
+                        Status = StudentFeeStatus.Pending
+                    });
+                }
+            }
+
+            await studentFeeRepository.AddRangeAsync(studentFees);
         }
 
         public async Task<ApiResponseModel<string>> DeleteStudent(int parentId, int studentId, CancellationToken cancellationToken = default)
@@ -338,6 +477,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                 var parentRepository = _unitOfWork.Repository<Parent>();
                 var studentRepository = _unitOfWork.Repository<Student>();
                 var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
+                var studentFeeRepository = _unitOfWork.Repository<StudentFee>();
 
                 var parentTask = parentRepository.GetByIdAsync(parentId);
                 var studentTask = studentRepository.GetByIdAsync(studentId);
@@ -359,6 +499,21 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                     await transaction.RollbackAsync(cancellationToken);
                     return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
                 }
+
+                bool hasPayments = await studentFeeRepository.AnyAsync(x => x.StudentEnrollmentId == enrollment.Id && x.PaidAmount > 0);
+                if (hasPayments)
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    return ApiResponseModel<string>.Failure(GenericErrors.DeleteStudentFee);
+                }
+
+                var fees = await studentFeeRepository.GetAllAsync(x => x.StudentEnrollmentId == enrollment.Id);
+                foreach (var fee in fees)
+                {
+                    fee.Status = StudentFeeStatus.Cancelled;
+                    fee.RemainingAmount = 0;
+                }
+
 
                 student.UpdateDate = DateTime.UtcNow.EgyptNow();
 
@@ -387,12 +542,16 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             var AcademicStages = await GetAcademicStages();
             var Nationalities = await GetStudentNationalities();
             var DiscountTypes = await GetDiscountTypes();
+            var CurrentYear = await GetCurrentAcademicYear();
+            var FeeTemplates = await GetFeeTemplates(int.Parse(CurrentYear.Value));
 
             var Model = new StudentLookups
             {
                 AcademicStages = AcademicStages,
                 Nationalities = Nationalities,
-                DiscountTypes = DiscountTypes
+                DiscountTypes = DiscountTypes,
+                CurrentYear = CurrentYear,
+                FeeTemplates = FeeTemplates
             };
 
             return ApiResponseModel<StudentLookups>.Success(GenericErrors.GetSuccess, Model);
@@ -427,6 +586,29 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             {
                 Value = i.Id.ToString(),
                 Name = i.Name
+            }).ToList();
+            return data;
+        }
+
+        async Task<FormDropdownModel> GetCurrentAcademicYear()
+        {
+            var results = await _unitOfWork.Repository<AcademicYear>().FirstOrDefaultAsync(i => i.IsCurrent);
+            var data = new FormDropdownModel
+            {
+                Value = results?.Id.ToString(),
+                Name = results?.Name
+            };
+            return data;
+        }
+
+        async Task<List<FeeTemplateDto>> GetFeeTemplates(int AcademicYearId)
+        {
+            var results = await _unitOfWork.Repository<FeeTemplate>().GetAllAsync(i => i.AcademicYearId == AcademicYearId && i.FeeTypeId == 3);
+            var data = results.Select(i => new FeeTemplateDto
+            {
+                AcademicStageId = i.AcademicStageId,
+                FeeTypeId = i.FeeTypeId,
+                Amount = i.Amount
             }).ToList();
             return data;
         }

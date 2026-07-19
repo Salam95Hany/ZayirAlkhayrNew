@@ -57,7 +57,7 @@ namespace ZayirAlkhayr.Services.School.Students.Setting
             {
                 new()
                 {
-                    CategoryDisplayName = "بالاسم",
+                    CategoryDisplayName = "بالسنة الدراسية",
                     CategoryName = "SearchText",
                     FilterType = "SearchText",
                 },
@@ -177,21 +177,13 @@ namespace ZayirAlkhayr.Services.School.Students.Setting
             {
                 var Entity = await _unitOfWork.Repository<AcademicYear>().FirstOrDefaultAsync(i => i.IsCurrent);
                 if (Entity != null)
-                    return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, Entity.Name);
+                    return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, Entity.Name + ";;;" + Entity.Id);
 
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
 
             }
             catch (Exception ex)
             {
-                if (ex.InnerException is SqlException sqlEx)
-                {
-                    if (sqlEx.Message.Contains("REFERENCE constraint"))
-                    {
-                        return ApiResponseModel<string>.Failure(GenericErrors.DeleteRelationRow);
-                    }
-                }
-
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
         }

@@ -12,10 +12,10 @@ import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-wit
 import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
 import { FilterModel } from '../../../../../../Models/shared/FilterModel';
 import { PagingFilterModel } from '../../../../../../Models/shared/PagingFilterModel ';
-import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
 import { FormService } from '../../../../../../Services/shared/form.service';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
+import { StudentSettingService } from '../../../../../../Services/school/student-setting.service';
 
 @Component({
   selector: 'app-academic-stage',
@@ -45,7 +45,7 @@ export class AcademicStageComponent {
     amount: ''
   };
 
-  constructor(private modalService: NgbModal, private schoolService: SchoolStudentService, private formService: FormService
+  constructor(private modalService: NgbModal, private studentSettingService: StudentSettingService, private formService: FormService
     , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -103,7 +103,7 @@ export class AcademicStageComponent {
 
   GetAllAcademicStageData() {
     this.showLoader = true;
-    this.schoolService.GetAllAcademicStageData(this.PagingFilter).subscribe(data => {
+    this.studentSettingService.GetAllAcademicStageData(this.PagingFilter).subscribe(data => {
       this.showLoader = false;
       this.Results = data.results;
       this.TotalCount = data.totalCount;
@@ -111,7 +111,7 @@ export class AcademicStageComponent {
   }
 
   GetAllAcademicStageFilter() {
-    this.schoolService.GetAllAcademicStageFilter().subscribe(data => {
+    this.studentSettingService.GetAllAcademicStageFilter().subscribe(data => {
       this.FilterList = data.results;
     });
   }
@@ -145,7 +145,7 @@ export class AcademicStageComponent {
 
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.schoolService.AddNewAcademicStage(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.AddNewAcademicStage(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllAcademicStageData();
@@ -157,7 +157,7 @@ export class AcademicStageComponent {
         this.showLoader = false;
       });
     } else {
-      this.schoolService.UpdateAcademicStage(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.UpdateAcademicStage(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllAcademicStageData();
@@ -173,7 +173,7 @@ export class AcademicStageComponent {
 
   DeleteItem() {
     this.showLoader = true;
-    this.schoolService.DeleteAcademicStage(this.AcademicStageId).subscribe(data => {
+    this.studentSettingService.DeleteAcademicStage(this.AcademicStageId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllAcademicStageData();

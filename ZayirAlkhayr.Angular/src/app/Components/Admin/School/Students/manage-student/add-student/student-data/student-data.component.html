@@ -26,10 +26,10 @@
                         <th>ملاحظات الحالة الصحية</th>
                         <th>الجنس</th>
                         <th>السنة الدراسية</th>
-                        <th>المبلغ المستحق</th>
                         <th>حالة الطالب</th>
                         <th>سبب الانسحاب</th>
                         <th>ترتيب الطالب بين اخوته</th>
+                        <th>تاريخ التسجيل</th>
                         <th *ngIf="!DetailsMode">عمليات</th>
                     </tr>
                 </thead>
@@ -43,7 +43,7 @@
                             <td>{{item.studyPeriodName}}</td>
                             <td>{{item.nationalityName}}</td>
                             <td class="table-value">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center justify-content-center">
                                     <div class="me-2">نعم</div>
                                     <label class="jtoggler-wrapper m-0 mx-0">
                                 <input type="checkbox" [(ngModel)]="item.isHaveHealthCondition" class="jtoggler" disabled>
@@ -57,10 +57,10 @@
                             <td>{{item.healthConditionNote}}</td>
                             <td>{{item.genderName}}</td>
                             <td>{{item.academicYear}}</td>
-                            <td>{{item.studyAmount}}</td>
                             <td>{{item.studentStatusId == 1 ? 'موجود' : 'منسحب'}}</td>
                             <td>{{item.studentStatusReason}}</td>
                             <td>{{item.orderAmongChildren}}</td>
+                            <td>{{item.enrollmentDate}}</td>
                             <td *ngIf="!DetailsMode">
                                 <div class="w-100 d-flex align-items-center justify-content-center">
                                     <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
@@ -92,17 +92,6 @@
                     </div>
                     <div class="stats-value">
                         <span class="badge bg-primary fs-6 px-3 py-2">{{FamilyChildCount}}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="stats-card border radius-10 p-3 bg-light d-flex align-items-center justify-content-between">
-                    <div class="stats-label">
-                        <i class="fas fa-hand-holding-usd me-2 text-success"></i>
-                        <span class="fw-semibold">إجمالي المبلغ المستحق</span>
-                    </div>
-                    <div class="stats-value">
-                        <span class="badge bg-success fs-6 px-3 py-2">{{TotalStudyAmount}}</span>
                     </div>
                 </div>
             </div>
@@ -178,10 +167,10 @@
                             <td class="table-feature">الفترة الدراسية</td>
                             <td class="table-value">
                                 <div class="form-floating">
-                                    <app-za-drop-down-form-control [data]="StudyPeriods" [showSearch]="true" [placeholder]="'الفترة الدراسية'" formControlName="studyPeriod" [hasError]="formErrors.academicStageId"></app-za-drop-down-form-control>
+                                    <app-za-drop-down-form-control [data]="StudyPeriods" [showSearch]="true" [placeholder]="'الفترة الدراسية'" formControlName="studyPeriodId" [hasError]="formErrors.studyPeriodId"></app-za-drop-down-form-control>
                                 </div>
-                                <div class="error-message" *ngIf="formErrors.studyPeriod">
-                                    {{ formErrors.studyPeriod }}
+                                <div class="error-message" *ngIf="formErrors.studyPeriodId">
+                                    {{ formErrors.studyPeriodId }}
                                 </div>
                             </td>
                         </tr>
@@ -212,6 +201,12 @@
                             <td class="table-feature">ترتيب الطالب بين اخوته</td>
                             <td class="table-value">
                                 <app-za-input-with-label [type]="'text'" [placeholder]="'ترتيب الطالب بين اخوته...'" [error]="formErrors.orderAmongChildren" formControlName="orderAmongChildren" [allowNumbersOnly]="true"></app-za-input-with-label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="table-feature">تاريخ التسجيل</td>
+                            <td class="table-value">
+                                <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ التسجيل...'" [error]="formErrors.enrollmentDate" formControlName="enrollmentDate"></app-za-input-with-label>
                             </td>
                         </tr>
                         <tr>

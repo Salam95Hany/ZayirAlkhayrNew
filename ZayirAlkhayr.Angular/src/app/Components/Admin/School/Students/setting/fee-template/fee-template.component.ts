@@ -11,17 +11,18 @@ import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.
 import { NgxLoadingModule } from 'ngx-loading';
 import { FilterModel } from '../../../../../../Models/shared/FilterModel';
 import { PagingFilterModel } from '../../../../../../Models/shared/PagingFilterModel ';
-import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
 import { FormService } from '../../../../../../Services/shared/form.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { FormDropdownModel } from '../../../../../../Models/shared/FormDropdownModel';
+import { StudentSettingService } from '../../../../../../Services/school/student-setting.service';
+import { ZaDropDownFormControlComponent } from '../../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 
 @Component({
   selector: 'app-fee-template',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
-    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule],
+    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule, ZaDropDownFormControlComponent],
   templateUrl: './fee-template.component.html',
   styleUrl: './fee-template.component.css'
 })
@@ -31,6 +32,7 @@ export class FeeTemplateComponent {
   FeeTypes: FormDropdownModel[] = [];
   AcademicStages: FormDropdownModel[] = [];
   FilterList: FilterModel[] = [];
+  AcademicYear: any;
   showLoader = false;
   isFilter = true;
   TotalCount = 0;
@@ -44,12 +46,12 @@ export class FeeTemplateComponent {
   };
   formErrors = {
     academicStageId: '',
-    academicYearId: '',
+    academicYearName: '',
     feeTypeId: '',
     amount: ''
   };
 
-  constructor(private modalService: NgbModal, private schoolService: SchoolStudentService, private formService: FormService
+  constructor(private modalService: NgbModal, private studentSettingService: StudentSettingService, private formService: FormService
     , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -57,13 +59,17 @@ export class FeeTemplateComponent {
     this.FormInit();
     this.GetAllFeeTemplateData();
     this.GetAllFeeTemplateFilter();
+    this.GetCurrentAcademicYear();
+    this.GetAcademicStages();
+    this.GetFeeTypes();
   }
 
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
       academicStageId: ['', [Validators.required]],
-      academicYearId: ['', [Validators.required]],
+      academicYearId: [''],
+      academicYearName: [{ value: '', disabled: true }, [Validators.required]],
       feeTypeId: ['', [Validators.required]],
       amount: ['', [Validators.required]],
       insertUser: null
@@ -79,6 +85,7 @@ export class FeeTemplateComponent {
       id: item.id,
       academicStageId: item?.academicStageId,
       academicYearId: item?.academicYearId,
+      academicYearName: item?.academicYearId,
       feeTypeId: item?.feeTypeId,
       amount: item?.amount,
       insertUser: this.UserId,
@@ -89,6 +96,7 @@ export class FeeTemplateComponent {
     this.ItemForm.reset();
     this.ItemForm.get('id').setValue(0);
     this.ItemForm.get('insertUser').setValue(this.UserId);
+    this.ItemForm.patchValue({ academicYearId: this.AcademicYear.split(';;;')[1], academicYearName: this.AcademicYear.split(';;;')[0] });
   }
 
   openItemModal(content: any, item: any) {
@@ -111,9 +119,30 @@ export class FeeTemplateComponent {
     });
   }
 
+  GetCurrentAcademicYear() {
+    this.showLoader = true;
+    this.studentSettingService.GetCurrentAcademicYear().subscribe(data => {
+      this.AcademicYear = data.results;
+    });
+  }
+
+  GetAcademicStages() {
+    this.showLoader = true;
+    this.studentSettingService.GetAcademicStages().subscribe(data => {
+      this.AcademicStages = data;
+    });
+  }
+
+  GetFeeTypes() {
+    this.showLoader = true;
+    this.studentSettingService.GetFeeTypes().subscribe(data => {
+      this.FeeTypes = data;
+    });
+  }
+
   GetAllFeeTemplateData() {
     this.showLoader = true;
-    this.schoolService.GetAllFeeTemplateData(this.PagingFilter).subscribe(data => {
+    this.studentSettingService.GetAllFeeTemplateData(this.PagingFilter).subscribe(data => {
       this.showLoader = false;
       this.Results = data.results;
       this.TotalCount = data.totalCount;
@@ -121,7 +150,7 @@ export class FeeTemplateComponent {
   }
 
   GetAllFeeTemplateFilter() {
-    this.schoolService.GetAllFeeTemplateFilter().subscribe(data => {
+    this.studentSettingService.GetAllFeeTemplateFilter().subscribe(data => {
       this.FilterList = data.results;
     });
   }
@@ -146,6 +175,7 @@ export class FeeTemplateComponent {
   }
 
   AddNewItem() {
+    debugger;
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
     let isValid = this.validateForm();
 
@@ -155,7 +185,7 @@ export class FeeTemplateComponent {
 
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.schoolService.AddNewFeeTemplate(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.AddNewFeeTemplate(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllFeeTemplateData();
@@ -167,7 +197,7 @@ export class FeeTemplateComponent {
         this.showLoader = false;
       });
     } else {
-      this.schoolService.UpdateFeeTemplate(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.UpdateFeeTemplate(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllFeeTemplateData();
@@ -183,7 +213,7 @@ export class FeeTemplateComponent {
 
   DeleteItem() {
     this.showLoader = true;
-    this.schoolService.DeleteFeeTemplate(this.FeeTemplateId).subscribe(data => {
+    this.studentSettingService.DeleteFeeTemplate(this.FeeTemplateId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllFeeTemplateData();

@@ -30,11 +30,12 @@
             <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
                 <thead>
                     <tr>
-                        <th>الاسم</th>
+                        <th>السنة الدراسية</th>
                         <th>تاريخ بدء السنة</th>
                         <th>تاريخ انتهاء السنة</th>
                         <th>تاريخ فتح الترحيل</th>
                         <th>تاريخ غلق الترحيل</th>
+                        <th>السنة الدراسية الحالية</th>
                         <th>أُضيف بواسطة</th>
                         <th>تاريخ الاضافة</th>
                         <th>عمليات</th>
@@ -48,6 +49,19 @@
                             <td>{{item.endDate | arabicDateWithTime}}</td>
                             <td>{{item.promotionOpenDate | arabicDateWithTime}}</td>
                             <td>{{item.promotionCloseDate | arabicDateWithTime}}</td>
+                            <td class="table-value">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <div class="me-2">نعم</div>
+                                    <label class="jtoggler-wrapper m-0 mx-0">
+                                        <input type="checkbox" [(ngModel)]="item.isCurrent" class="jtoggler"
+                                            disabled>
+                                        <div class="jtoggler-control">
+                                            <div class="jtoggler-handle"></div>
+                                        </div>
+                                    </label>
+                                    <div class="ms-2">لا</div>
+                                </div>
+                            </td>
                             <td>{{item.createdBy}}</td>
                             <td>{{item.insertDateStr}}</td>
                             <td>
@@ -90,7 +104,7 @@
             <table class="table table-bordered table-feature-value align-middle border m-0">
                 <tbody>
                     <tr>
-                        <td class="table-feature">الاسم</td>
+                        <td class="table-feature">السنة الدراسية</td>
                         <td class="table-value d-flex">
                             <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'السنة من...'" formControlName="name1" [allowNumbersOnly]="true" [error]="formErrors.name1"></app-za-input-with-label>
                             <span class="mx-2 mt-3">-</span>

@@ -42,9 +42,9 @@
                 <tbody>
                     <ng-container>
                         <tr *ngFor="let item of Results">
-                            <td>{{item.academicYear}}</td>
-                            <td>{{item.academicStage}}</td>
-                            <td>{{item.feeType}}</td>
+                            <td>{{item.academicYearName}}</td>
+                            <td>{{item.academicStageName}}</td>
+                            <td>{{item.feeTypeName}}</td>
                             <td>{{item.amount}}</td>
                             <td>{{item.createdBy}}</td>
                             <td>{{item.insertDateStr}}</td>
@@ -90,7 +90,7 @@
                     <tr>
                         <td class="table-feature">السنة الدراسية</td>
                         <td class="table-value d-flex">
-                            <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'السنة الدراسية...'" formControlName="academicYearId" [allowNumbersOnly]="true" [error]="formErrors.academicYearId"></app-za-input-with-label>
+                            <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'السنة الدراسية...'" formControlName="academicYearName" [allowNumbersOnly]="true" [error]="formErrors.academicYearId"></app-za-input-with-label>
                         </td>
                     </tr>
                     <tr>

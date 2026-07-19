@@ -43,7 +43,7 @@
                             <td>{{item.createdBy}}</td>
                             <td>{{item.insertDateStr}}</td>
                             <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center">
+                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="!item.isSystem">
                                     <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_FamilyNationality" action="canEdit" (click)="openItemModal(OpenItemModal,item)">
                                         <i class="uil uil-pen"></i>
                                         <span>تعديل</span>

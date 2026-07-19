@@ -12,7 +12,7 @@ using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Services.School.Students.Setting
 {
-    public class FeeTypeService: IFeeTypeService
+    public class FeeTypeService : IFeeTypeService
     {
         private readonly IUnitOfWork _unitOfWork;
         public FeeTypeService(IUnitOfWork unitOfWork)
@@ -31,6 +31,7 @@ namespace ZayirAlkhayr.Services.School.Students.Setting
             {
                 Id = fc.Id,
                 Name = fc.Name,
+                IsSystem = fc.IsSystem,
                 CreatedBy = fc.CreatedBy.UserName,
                 UserId = fc.InsertUser,
                 InsertDate = fc.InsertDate,

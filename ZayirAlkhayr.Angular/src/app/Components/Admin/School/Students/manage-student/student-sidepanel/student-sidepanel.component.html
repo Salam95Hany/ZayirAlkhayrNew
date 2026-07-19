@@ -17,11 +17,13 @@
     </div>
     <div class="mb-5">
         <h3>بيانات الطالب</h3>
-        <app-student-data #StudentData [StudentDetails]="AddStudentModel.student" [AcademicStages]="StudentInfo?.lookups?.academicStages" [Nationalities]="StudentInfo?.lookups?.nationalities" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode" (StudentDetailsChange)="StudendChange($event)"></app-student-data>
+        <app-student-data #StudentData [StudentDetails]="AddStudentModel.student" [AcademicStages]="StudentInfo?.lookups?.academicStages" [Nationalities]="StudentInfo?.lookups?.nationalities" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode" [CurrentYear]="StudentInfo?.lookups?.currentYear"
+            (StudentDetailsChange)="StudendChange($event)"></app-student-data>
     </div>
     <div class="mb-5">
-        <h3>بيانات الخصم</h3>
-        <app-discount-data #DiscountData [StudentDiscount]="AddStudentModel.discount" [DiscountTypes]="StudentInfo?.lookups?.discountTypes" [StudentNames]="StudentNames" [StudentNames]="[this.StudentInfo.student.studentName]" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode"></app-discount-data>
+        <h3>المراجعة النهائية</h3>
+        <app-discount-data #DiscountData [StudentDiscount]="AddStudentModel.discount" [DiscountTypes]="StudentInfo?.lookups?.discountTypes" [FeeTemplates]="StudentInfo?.lookups?.feeTemplates" [CurrentYear]="StudentInfo?.lookups?.currentYear" [StudentDetails]="StudentDetails"
+            [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode"></app-discount-data>
     </div>
     <hr *ngIf="!DetailsMode">
     <button class="w-100 btn-color" *ngIf="!DetailsMode" (click)="UpdateStudent()">حفظ</button>

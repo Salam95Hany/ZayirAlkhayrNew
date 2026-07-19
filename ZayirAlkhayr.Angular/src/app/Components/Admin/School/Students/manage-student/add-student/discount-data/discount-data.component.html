@@ -4,7 +4,7 @@
             <table class="table table-bordered table-feature-value align-middle border m-0 mb-3" *ngFor="let group of discounts.controls; let i = index" [formGroupName]="i">
                 <thead>
                     <tr>
-                        <th colspan="2"> الخصومات</th>
+                        <th colspan="2">الطالب ({{i + 1}})</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -14,6 +14,30 @@
                         </td>
                         <td class="table-value">
                             <app-za-input-with-label type="text" placeholder="اسم الطالب..." formControlName="studentName"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">
+                            السنة الدراسية
+                        </td>
+                        <td class="table-value">
+                            <app-za-input-with-label type="text" placeholder="السنة الدراسية..." formControlName="academicYear"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">
+                            المرحلة الدراسية
+                        </td>
+                        <td class="table-value">
+                            <app-za-input-with-label type="text" placeholder="المرحلة الدراسية..." formControlName="academicStageName"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">
+                            الرسوم السنوية
+                        </td>
+                        <td class="table-value">
+                            <app-za-input-with-label type="text" placeholder="الرسوم السنوية..." formControlName="studyAmount"></app-za-input-with-label>
                         </td>
                     </tr>
                     <tr>
@@ -40,6 +64,14 @@
                         </td>
                         <td class="table-value">
                             <app-za-input-with-label type="text" placeholder="قيمة الخصم %..." formControlName="discountAmount" [allowNumbersOnly]="true" [error]="formErrors[i]?.discountAmount"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">
+                            ملاحظات
+                        </td>
+                        <td class="table-value">
+                            <app-za-input-with-label type="text" placeholder="ملاحظات..." formControlName="notes"></app-za-input-with-label>
                         </td>
                     </tr>
                 </tbody>

@@ -25,7 +25,7 @@ namespace ZayirAlkhayr.Entities.Specifications.School
 
             AddInclude(fc => fc.CreatedBy);
 
-            ApplyOrderByDescending(fc => fc.InsertDate);
+            //ApplyOrderByDescending(fc => fc.InsertDate);
             if (applyPaging)
                 ApplyPaging((filterModel.Currentpage - 1) * filterModel.Pagesize, filterModel.Pagesize);
         }

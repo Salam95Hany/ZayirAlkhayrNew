@@ -6,21 +6,21 @@ import { ZaEmptyDataComponent } from '../../../../../../Shared/za-empty-data/za-
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-with-label/za-input-with-label.component';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
 import { NgxLoadingModule } from 'ngx-loading';
 import { FilterModel } from '../../../../../../Models/shared/FilterModel';
 import { PagingFilterModel } from '../../../../../../Models/shared/PagingFilterModel ';
-import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
 import { FormService } from '../../../../../../Services/shared/form.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { ArabicDateWithTimePipe } from '../../../../../../Pipes/arabic-date-with-time.pipe';
+import { StudentSettingService } from '../../../../../../Services/school/student-setting.service';
 
 @Component({
   selector: 'app-academic-year',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
+  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,FormsModule,
     NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule, ArabicDateWithTimePipe],
   providers: [DatePipe],
   templateUrl: './academic-year.component.html',
@@ -50,7 +50,7 @@ export class AcademicYearComponent {
     promotionCloseDate: ''
   };
 
-  constructor(private modalService: NgbModal, private schoolService: SchoolStudentService, private formService: FormService
+  constructor(private modalService: NgbModal, private studentSettingService: StudentSettingService, private formService: FormService
     , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService, private datePipe: DatePipe) { }
 
   ngOnInit(): void {
@@ -113,13 +113,14 @@ export class AcademicYearComponent {
   FillEditForm(item: any) {
     this.ItemForm.setValue({
       id: item.id,
-      name1: item?.name1,
-      name2: item?.name2,
+      name1: item?.name?.split('-')[1],
+      name2: item?.name?.split('-')[0],
       name: item?.name,
       startDate: this.datePipe.transform(item?.startDate, 'yyyy-MM-dd'),
       endDate: this.datePipe.transform(item?.endDate, 'yyyy-MM-dd'),
       promotionOpenDate: this.datePipe.transform(item?.promotionOpenDate, 'yyyy-MM-dd'),
       promotionCloseDate: this.datePipe.transform(item?.promotionCloseDate, 'yyyy-MM-dd'),
+      isCurrent: item?.isCurrent,
       insertUser: this.UserId,
     });
   }
@@ -152,7 +153,7 @@ export class AcademicYearComponent {
 
   GetAllAcademicYearData() {
     this.showLoader = true;
-    this.schoolService.GetAllAcademicYearData(this.PagingFilter).subscribe(data => {
+    this.studentSettingService.GetAllAcademicYearData(this.PagingFilter).subscribe(data => {
       this.showLoader = false;
       this.Results = data.results;
       this.TotalCount = data.totalCount;
@@ -160,7 +161,7 @@ export class AcademicYearComponent {
   }
 
   GetAllAcademicYearFilter() {
-    this.schoolService.GetAllAcademicYearFilter().subscribe(data => {
+    this.studentSettingService.GetAllAcademicYearFilter().subscribe(data => {
       this.FilterList = data.results;
     });
   }
@@ -200,7 +201,7 @@ export class AcademicYearComponent {
     console.log(this.ItemForm.value);
 
     if (this.ItemForm.controls['id'].value == 0) {
-      this.schoolService.AddNewAcademicYear(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.AddNewAcademicYear(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllAcademicYearData();
@@ -212,7 +213,7 @@ export class AcademicYearComponent {
         this.showLoader = false;
       });
     } else {
-      this.schoolService.UpdateAcademicYear(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.UpdateAcademicYear(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllAcademicYearData();
@@ -228,7 +229,7 @@ export class AcademicYearComponent {
 
   DeleteItem() {
     this.showLoader = true;
-    this.schoolService.DeleteAcademicYear(this.AcademicYearId).subscribe(data => {
+    this.studentSettingService.DeleteAcademicYear(this.AcademicYearId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllAcademicYearData();

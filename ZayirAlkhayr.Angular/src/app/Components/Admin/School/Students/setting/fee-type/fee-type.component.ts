@@ -11,10 +11,10 @@ import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.
 import { NgxLoadingModule } from 'ngx-loading';
 import { FilterModel } from '../../../../../../Models/shared/FilterModel';
 import { PagingFilterModel } from '../../../../../../Models/shared/PagingFilterModel ';
-import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
 import { FormService } from '../../../../../../Services/shared/form.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../../../Auth/auth.service';
+import { StudentSettingService } from '../../../../../../Services/school/student-setting.service';
 
 @Component({
   selector: 'app-fee-type',
@@ -43,7 +43,7 @@ export class FeeTypeComponent {
     name: ''
   };
 
-  constructor(private modalService: NgbModal, private schoolService: SchoolStudentService, private formService: FormService
+  constructor(private modalService: NgbModal, private studentSettingService: StudentSettingService, private formService: FormService
     , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -101,7 +101,7 @@ export class FeeTypeComponent {
 
   GetAllFeeTypeData() {
     this.showLoader = true;
-    this.schoolService.GetAllFeeTypeData(this.PagingFilter).subscribe(data => {
+    this.studentSettingService.GetAllFeeTypeData(this.PagingFilter).subscribe(data => {
       this.showLoader = false;
       this.Results = data.results;
       this.TotalCount = data.totalCount;
@@ -109,7 +109,7 @@ export class FeeTypeComponent {
   }
 
   GetAllFeeTypeFilter() {
-    this.schoolService.GetAllFeeTypeFilter().subscribe(data => {
+    this.studentSettingService.GetAllFeeTypeFilter().subscribe(data => {
       this.FilterList = data.results;
     });
   }
@@ -144,7 +144,7 @@ export class FeeTypeComponent {
 
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.schoolService.AddNewFeeType(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.AddNewFeeType(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllFeeTypeData();
@@ -156,7 +156,7 @@ export class FeeTypeComponent {
         this.showLoader = false;
       });
     } else {
-      this.schoolService.UpdateFeeType(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.UpdateFeeType(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.GetAllFeeTypeData();
@@ -172,7 +172,7 @@ export class FeeTypeComponent {
 
   DeleteItem() {
     this.showLoader = true;
-    this.schoolService.DeleteFeeType(this.FeeTypeId).subscribe(data => {
+    this.studentSettingService.DeleteFeeType(this.FeeTypeId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
         this.GetAllFeeTypeData();

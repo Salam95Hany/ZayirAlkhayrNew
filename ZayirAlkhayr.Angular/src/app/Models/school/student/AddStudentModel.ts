@@ -8,9 +8,10 @@ export interface AddStudentModel {
 export interface ParentStudent {
     parentId: number;
     parentName: string;
-    phone: string;
+    fatherPhone: string;
+    motherPhone: string;
     address: string;
-    childrenCount: number;
+    whatsappNumber: string;
     insertUser: string;
     insertDate?: string | null;
     updateUser?: string;
@@ -24,7 +25,7 @@ export interface StudentDetails {
     academicStageName: string; // اسم المرحلة الدراسية
     birthDay: string; // تاريخ الميلاد
     governmentSchool: string; // المدرسة الحكومية 
-    studyPeriod: number; // فترة الدراسة
+    studyPeriodId: number; // فترة الدراسة
     studyPeriodName: string; // فترة الدراسة
     nationalityId: string; // الجنسية
     nationalityName: string; // اسم الجنسية
@@ -33,15 +34,20 @@ export interface StudentDetails {
     gender: number; // الجنس
     genderName: string; // الجنس
     academicYear: string; // السنة الدراسية
-    studyAmount: number; // قيمة الدراسة
+    academicYearId: string; // السنة الدراسية
     studentStatusId: number; // موجود او منسحب
     studentStatusReason: string; // لو كان منسحب سبب الانسحاب
     orderAmongChildren: number; // ترتيب الطفل بين إخوانه
+    enrollmentDate: string;
 }
 
 export interface StudentDiscount {
     studentName: string;
+    academicYear: string;
+    academicStageName: string;
+    studyAmount: number;
     discountTypeId: number;
     discountReason: string;
     discountAmount: number;
+    notes: string;
 }

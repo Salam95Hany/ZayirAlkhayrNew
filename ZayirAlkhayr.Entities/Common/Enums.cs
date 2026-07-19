@@ -46,4 +46,12 @@ namespace ZayirAlkhayr.Entities.Common
         Morning = 1, // صباحي
         Evning = 2, // مسائي 
     }
+
+    public enum StudentFeeStatus
+    {
+        Pending = 1, // لم يتم دفع أي مبلغ
+        PartiallyPaid = 2, // تم دفع جزء من المبلغ
+        Paid = 3, // تم سداد الرسوم بالكامل
+        Cancelled = 4 // تم إلغاء هذا الرسم
+    }
 }
