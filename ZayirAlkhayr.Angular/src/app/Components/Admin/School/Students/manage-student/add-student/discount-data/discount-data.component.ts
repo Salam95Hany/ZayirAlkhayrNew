@@ -24,6 +24,7 @@ export class DiscountDataComponent {
   @Input() CurrentYear: FormDropdownModel;
   @Input() UpdateMode = false;
   @Input() DetailsMode = false;
+  @Input() IsDisabledDiscountSection = false;
   ItemForm!: FormGroup;
   formErrors: {
     discountReason: string;
@@ -54,9 +55,9 @@ export class DiscountDataComponent {
     let studentDetails = changes['StudentDetails'];
     if (studentDetails && studentDetails?.currentValue?.length > 0) {
       this.StudentDetails.forEach((item, i) => {
-        let checked = this.StudentDiscount.some(x => x.studentName == item.studentName);
+        let checked = this.StudentDiscount.find(x => x.studentName == item.studentName);
+        let amount = this.FeeTemplates.find(i => i.academicStageId == item.academicStageId)?.amount;
         if (!checked && studentDetails?.currentValue?.length > studentDetails?.previousValue?.length) {
-          let amount = this.FeeTemplates.find(i => i.academicStageId == item.academicStageId)?.amount;
           this.StudentDiscount.push({
             studentName: item.studentName,
             academicStageName: item.academicStageName,
@@ -70,16 +71,17 @@ export class DiscountDataComponent {
         }
       });
 
-      this.StudentDiscount.forEach((item, i) => {
-        item.studentName = this.StudentDetails[i].studentName;
-      });
-
       this.ItemForm = this.fb.group({
         discounts: this.fb.array([])
       });
 
       this.StudentDiscount.forEach((item, i) => {
-        item.studentName = this.StudentDetails[i].studentName;
+        let student = this.StudentDetails[i];
+        let amount = this.FeeTemplates.find(i => i.academicStageId == student.academicStageId)?.amount;
+        item.studentName = student.studentName;
+        item.academicStageName = student.academicStageName;
+        item.academicYear = student.academicYear;
+        item.studyAmount = amount;
       });
 
       this.ItemForm.valueChanges.subscribe(() => {
@@ -130,15 +132,20 @@ export class DiscountDataComponent {
     this.formErrors = this.StudentDiscount.map(() => ({ discountReason: '', discountAmount: '' }));
     this.discounts.clear();
     this.StudentDiscount.forEach(item => {
+      let makeDisabled = false;
+      let obj = this.StudentDetails.find(i => i.studentName == item.studentName)?.studentId
+      if (obj && this.IsDisabledDiscountSection)
+        makeDisabled = true;
+
       const group = this.fb.group({
         studentName: [{ value: item.studentName, disabled: true }],
         academicStageName: [{ value: item.academicStageName, disabled: true }],
         academicYear: [{ value: item.academicYear, disabled: true }],
         studyAmount: [{ value: item.studyAmount, disabled: true }],
-        discountTypeId: [item.discountTypeId ?? ''],
+        discountTypeId: [{ value: item.discountTypeId ?? '', disabled: makeDisabled }],
         discountReason: [item.discountReason ?? ''],
-        discountAmount: [item.discountAmount ?? ''],
-        notes: [item.discountAmount ?? '']
+        discountAmount: [{ value: item.discountAmount ?? '', disabled: makeDisabled }],
+        notes: [item.notes ?? '']
       });
 
       group.get('discountTypeId')?.valueChanges.subscribe(value => {

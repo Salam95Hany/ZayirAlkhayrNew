@@ -1,0 +1,268 @@
+:host {
+    --bg-outer: #eef2f9;
+    --card-bg: #ffffff;
+    --deco-color: #dbe6f5;
+    --deco-color-soft: #e6eefa;
+    --navy: #1c3f6e;
+    --blue-accent: #2f7bf6;
+    --blue-mid: #4f8ff0;
+    --star-gold: #f5b942;
+    --text-muted: #55627a;
+    --divider: #d9e2f0;
+}
+
+.coming-soon-card {
+    position: relative;
+    background: var(--card-bg);
+    border-radius: 28px;
+    width: 100%;
+    padding: 70px 40px 60px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(28, 63, 110, 0.06);
+    height: 100%;
+    background: var(--bg-outer);
+    font-family: 'Tajawal', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    margin: 0;
+    padding: 24px;
+}
+
+
+/* ---------- Decorative background icons ---------- */
+
+.deco {
+    position: absolute;
+    color: var(--deco-color);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.deco.soft {
+    color: var(--deco-color-soft);
+}
+
+.deco-cap {
+    top: 12%;
+    left: 8%;
+    width: 70px;
+}
+
+.deco-plane {
+    top: 26%;
+    left: 13%;
+    width: 60px;
+    transform: rotate(-8deg);
+}
+
+.deco-book-open {
+    bottom: 16%;
+    left: 6%;
+    width: 66px;
+}
+
+.deco-star-1 {
+    bottom: 8%;
+    left: 9%;
+    width: 26px;
+}
+
+.deco-circle-1 {
+    top: 6%;
+    left: 20%;
+    width: 14px;
+}
+
+.deco-circle-2 {
+    top: 44%;
+    left: 3%;
+    width: 10px;
+}
+
+.deco-star-2 {
+    top: 36%;
+    left: 32%;
+    width: 16px;
+}
+
+.deco-search {
+    top: 10%;
+    right: 9%;
+    width: 60px;
+}
+
+.deco-ruler {
+    top: 24%;
+    right: 6%;
+    width: 55px;
+    transform: rotate(10deg);
+}
+
+.deco-star-3 {
+    top: 6%;
+    right: 22%;
+    width: 16px;
+}
+
+.deco-bulb {
+    bottom: 24%;
+    right: 7%;
+    width: 55px;
+}
+
+.deco-molecule {
+    bottom: 8%;
+    right: 8%;
+    width: 60px;
+}
+
+.deco-circle-3 {
+    top: 8%;
+    right: 30%;
+    width: 12px;
+}
+
+.deco-circle-4 {
+    bottom: 30%;
+    right: 22%;
+    width: 10px;
+}
+
+
+/* ---------- content ---------- */
+
+.content-wrap {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+.illustration-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 34px;
+}
+
+.illustration-wrap::before {
+    content: "";
+    position: absolute;
+    width: 640px;
+    height: 260px;
+    max-width: 90%;
+    background: linear-gradient(180deg, #e7f0fb 0%, #eef4fc 60%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+    top: 10px;
+    z-index: 0;
+}
+
+.school-illustration {
+    position: relative;
+    z-index: 1;
+    width: 480px;
+    max-width: 100%;
+    height: auto;
+}
+
+.title-en {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 3rem;
+    color: var(--navy);
+    letter-spacing: 0.5px;
+    margin-bottom: 18px;
+}
+
+.title-ar-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 26px;
+}
+
+.title-ar-row .line {
+    height: 1px;
+    width: 90px;
+    background: linear-gradient(to right, transparent, var(--divider) 40%, var(--divider) 60%, transparent);
+}
+
+.title-ar-row .star {
+    color: var(--star-gold);
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.title-ar {
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 700;
+    font-size: 1.9rem;
+    color: var(--blue-accent);
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 2rem;
+    line-height: 2;
+    max-width: 560px;
+    margin: 0 auto 32px;
+}
+
+.divider-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.divider-row .line {
+    height: 1px;
+    width: 150px;
+    max-width: 25vw;
+    background: var(--divider);
+}
+
+.bell-circle {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: #e8f0fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.bell-circle svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--blue-accent);
+}
+
+.thanks-text {
+    color: var(--text-muted);
+    font-size: 2rem;
+}
+
+@media (max-width: 576px) {
+    .title-en {
+        font-size: 2.1rem;
+    }
+    .title-ar {
+        font-size: 1.4rem;
+    }
+    .coming-soon-card {
+        padding: 50px 18px 40px;
+        border-radius: 20px;
+    }
+    .title-ar-row .line,
+    .divider-row .line {
+        width: 40px;
+    }
+    .deco {
+        display: none;
+    }
+}

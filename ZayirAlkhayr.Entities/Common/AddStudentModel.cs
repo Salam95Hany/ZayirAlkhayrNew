@@ -10,7 +10,7 @@ namespace ZayirAlkhayr.Entities.Common
     {
         public ParentStudent ParentData { get; set; }
         public List<StudentDetails> StudentData { get; set; }
-        public List<StudentDiscount> DiscountData { get; set; }
+        //public List<StudentDiscount> DiscountData { get; set; }
     }
 
     public class ParentStudent
@@ -45,6 +45,7 @@ namespace ZayirAlkhayr.Entities.Common
         public string? StudentStatusReason { get; set; } // لو كان منسحب سبب الانسحاب
         public int OrderAmongChildren { get; set; } // ترتيب الطفل بين إخوانه
         public DateTime EnrollmentDate { get; set; }
+        public string Notes { get; set; }
     }
 
     public class StudentDiscount

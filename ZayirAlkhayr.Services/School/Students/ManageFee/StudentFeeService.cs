@@ -3,26 +3,24 @@ using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Models.School;
-using ZayirAlkhayr.Entities.Specifications.School;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
-using ZayirAlkhayr.Interfaces.School.Students.ManageStudent;
+using ZayirAlkhayr.Interfaces.School.Students.ManageFee;
 using ZayirAlkhayr.Services.Common;
 
-namespace ZayirAlkhayr.Services.School.Students.ManageStudent
+namespace ZayirAlkhayr.Services.School.Students.ManageFee
 {
-    public class StudentService : IStudentService
+    public class StudentFeeService: IStudentFeeService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISQLHelper _sQLHelper;
-        private const string Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        public StudentService(ZADbContext context, ISQLHelper sQLHelper, IUnitOfWork unitOfWork)
+        public StudentFeeService(ZADbContext context, ISQLHelper sQLHelper, IUnitOfWork unitOfWork)
         {
             _sQLHelper = sQLHelper;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ApiResponseModel<DataSet>> GetAllStudentData(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<DataSet>> GetAllStudentFeeData(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[4];
@@ -30,11 +28,11 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[3] = new SqlParameter("@IsFilter", false);
-            var dt = await _sQLHelper.ExecuteDatasetAsync("school.SP_GetAllStudentDataWithFilters", Params);
+            var dt = await _sQLHelper.ExecuteDatasetAsync("school.SP_GetAllStudentFeeWithFilters", Params);
             return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public async Task<ApiResponseModel<List<FilterModel>>> GetAllStudentFilter(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<FilterModel>>> GetAllStudentFeeFilters(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[4];
@@ -42,17 +40,17 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[3] = new SqlParameter("@IsFilter", true);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetAllStudentDataWithFilters", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetAllStudentFeeWithFilters", Params);
             var Filters = dt.ToGroupedFilters();
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
-        public async Task<ApiResponseModel<DataTable>> ExportStudentData(List<FilterModel> FilterList)
+        public async Task<ApiResponseModel<DataTable>> ExportStudentFee(List<FilterModel> FilterList)
         {
             var FilterDt = FilterList.ToDataTableFromFilterModel();
             var Params = new SqlParameter[1];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_ExportStudentData", Params);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_ExportStudentFeeWithFilters", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
@@ -71,6 +69,9 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             if (studentExists)
                 return ApiResponseModel<string>.Failure(GenericErrors.StudentAlreadyExists);
 
+            //var discounts = model.DiscountData?.GroupBy(x => x.StudentName.Trim()).ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase)
+            //    ?? new Dictionary<string, StudentDiscount>(StringComparer.OrdinalIgnoreCase);
+
             var codeTable = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetStudentCodeSequences", new[] { new SqlParameter("@Count", model.StudentData.Count) });
             var codes = codeTable.AsEnumerable().Select(x => x["Code"].ToString()!).ToList();
 
@@ -88,7 +89,6 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                     MotherPhone = model.ParentData.MotherPhone,
                     WhatsappNumber = model.ParentData.WhatsappNumber,
                     Address = model.ParentData.Address,
-                    TelegramCode = GenerateTelCode()
                 };
 
                 await parentRepository.AddAsync(parent);
@@ -126,6 +126,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                 {
                     var student = students[i];
                     var item = model.StudentData[i];
+                    //discounts.TryGetValue(item.StudentName.Trim(), out var discount);
 
                     enrollments.Add(new StudentEnrollment
                     {
@@ -135,7 +136,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                         StudyPeriodId = item.StudyPeriodId,
                         StudentStatusId = item.StudentStatusId,
                         StudentStatusReason = item.StudentStatusReason,
-                        Notes = item?.Notes,
+                        //Notes = discount?.Notes,
                         EnrollmentDate = item.EnrollmentDate,
                         IsCurrent = true
                     });
@@ -212,10 +213,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                 enrollment.StudentStatusReason = studentUpdated.StudentStatusReason;
                 enrollment.EnrollmentDate = studentUpdated.EnrollmentDate;
                 enrollment.IsCurrent = true;
-                enrollment.Notes = enrollment?.Notes;
-
-                if (newStudents.Any())
-                    await CreateStudentsAsync(newStudents, model.ParentData.ParentId!.Value, model.ParentData.InsertUser);
+                //enrollment.Notes = discount?.Notes;
 
                 await _unitOfWork.CompleteAsync();
                 await transaction.CommitAsync(cancellationToken);
@@ -232,72 +230,6 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                 else
                     return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
-        }
-
-
-        private async Task CreateStudentsAsync(List<StudentDetails> students, int parentId, string insertUser)
-        {
-            var studentRepository = _unitOfWork.Repository<Student>();
-            var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
-
-            var studentNames = students.Select(x => x.StudentName.Trim()).Distinct().ToList();
-            bool studentExists = await studentRepository.AnyAsync(x =>
-                studentNames.Contains(x.StudentName));
-
-            if (studentExists)
-                throw new Exception("Student Name Exist");
-
-            var codeTable = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetStudentCodeSequences", new[] { new SqlParameter("@Count", students.Count) });
-            var codes = codeTable.AsEnumerable().Select(x => x.Field<string>("Code")!).ToList();
-
-            var studentEntities = new List<Student>();
-
-            for (int i = 0; i < students.Count; i++)
-            {
-                var item = students[i];
-                studentEntities.Add(new Student
-                {
-                    ParentId = parentId,
-                    StudentName = item.StudentName.Trim(),
-                    NationalityId = item.NationalityId,
-                    BirthDay = item.BirthDay,
-                    Gender = item.Gender,
-                    GovernmentSchool = item.GovernmentSchool,
-                    Code = codes[i],
-                    IsHaveHealthCondition = item.IsHaveHealthCondition,
-                    HealthConditionNote = item.HealthConditionNote,
-                    OrderAmongChildren = item.OrderAmongChildren,
-                    InsertUser = insertUser,
-                    InsertDate = DateTime.UtcNow.EgyptNow()
-                });
-            }
-
-            await studentRepository.AddRangeAsync(studentEntities);
-            await _unitOfWork.CompleteAsync();
-
-
-            var enrollmentEntities = new List<StudentEnrollment>();
-
-            for (int i = 0; i < studentEntities.Count; i++)
-            {
-                var student = studentEntities[i];
-                var item = students[i];
-
-                enrollmentEntities.Add(new StudentEnrollment
-                {
-                    StudentId = student.Id,
-                    AcademicYearId = item.AcademicYearId,
-                    AcademicStageId = item.AcademicStageId,
-                    StudyPeriodId = item.StudyPeriodId,
-                    StudentStatusId = item.StudentStatusId,
-                    StudentStatusReason = item.StudentStatusReason,
-                    Notes = item?.Notes,
-                    EnrollmentDate = item.EnrollmentDate,
-                    IsCurrent = true
-                });
-            }
-
-            await enrollmentRepository.AddRangeAsync(enrollmentEntities);
         }
 
         public async Task<ApiResponseModel<string>> DeleteStudent(int parentId, int studentId, CancellationToken cancellationToken = default)
@@ -362,93 +294,6 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                 await transaction.RollbackAsync(cancellationToken);
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
-        }
-
-        public async Task<ApiResponseModel<StudentLookups>> GetStudentLookups()
-        {
-            var AcademicStages = await GetAcademicStages();
-            var Nationalities = await GetStudentNationalities();
-            var CurrentYear = await GetCurrentAcademicYear();
-
-            var Model = new StudentLookups
-            {
-                AcademicStages = AcademicStages,
-                Nationalities = Nationalities,
-                CurrentYear = CurrentYear
-            };
-
-            return ApiResponseModel<StudentLookups>.Success(GenericErrors.GetSuccess, Model);
-        }
-
-        async Task<List<FormDropdownModel>> GetAcademicStages()
-        {
-            var results = await _unitOfWork.Repository<AcademicStage>().GetAllAsync();
-            var data = results.Select(i => new FormDropdownModel
-            {
-                Value = i.Id.ToString(),
-                Name = i.Name
-            }).ToList();
-            return data;
-        }
-
-        async Task<List<FormDropdownModel>> GetStudentNationalities()
-        {
-            var results = await _unitOfWork.Repository<StudentNationality>().GetAllAsync();
-            var data = results.Select(i => new FormDropdownModel
-            {
-                Value = i.Id.ToString(),
-                Name = i.Name
-            }).ToList();
-            return data;
-        }
-
-        async Task<FormDropdownModel> GetCurrentAcademicYear()
-        {
-            var results = await _unitOfWork.Repository<AcademicYear>().FirstOrDefaultAsync(i => i.IsCurrent);
-            var data = new FormDropdownModel
-            {
-                Value = results?.Id.ToString(),
-                Name = results?.Name
-            };
-            return data;
-        }
-
-        public async Task<ApiResponseModel<UpdateStudentLookups>> GetUpdateStudentLookups(int StudentId, int ParentId)
-        {
-            var Lookups = await GetStudentLookups();
-            var Student = await GetStudent(StudentId);
-            var Parent = await GetParent(ParentId);
-
-            if (Student == null)
-                return ApiResponseModel<UpdateStudentLookups>.Failure(GenericErrors.NotFound);
-
-            var Model = new UpdateStudentLookups
-            {
-                Lookups = Lookups.Results,
-                Student = Student,
-                Parent = Parent
-            };
-
-            return ApiResponseModel<UpdateStudentLookups>.Success(GenericErrors.GetSuccess, Model);
-        }
-
-        async Task<Student> GetStudent(int StudentId)
-        {
-            var spec = new StudentEnrollmentLookupsSpecification(StudentId);
-            var results = await _unitOfWork.Repository<Student>().GetByIdWithSpecAsync(spec);
-            return results;
-        }
-
-        async Task<Parent> GetParent(int ParentId)
-        {
-            var results = await _unitOfWork.Repository<Parent>().GetByIdAsync(ParentId);
-            return results;
-        }
-
-        string GenerateTelCode()
-        {
-            var random = Random.Shared;
-            return new string(Enumerable.Range(0, 8).Select(_ => Chars[random.Next(Chars.Length)]).ToArray());
         }
     }
 }

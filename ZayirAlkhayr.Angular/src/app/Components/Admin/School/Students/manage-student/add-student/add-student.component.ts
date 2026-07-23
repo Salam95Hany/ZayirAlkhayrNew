@@ -5,7 +5,6 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { ParentDataComponent } from './parent-data/parent-data.component';
 import { StudentDataComponent } from './student-data/student-data.component';
-import { DiscountDataComponent } from './discount-data/discount-data.component';
 import { StudentLookups } from '../../../../../../Models/school/student/StudentLookups';
 import { AddStudentModel, StudentDetails } from '../../../../../../Models/school/student/AddStudentModel';
 import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
@@ -13,14 +12,13 @@ import { SchoolStudentService } from '../../../../../../Services/school/school-s
 @Component({
   selector: 'app-add-student',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, NgxLoadingModule, ParentDataComponent, StudentDataComponent, DiscountDataComponent],
+  imports: [NgFor, NgIf, NgClass, NgxLoadingModule, ParentDataComponent, StudentDataComponent],
   templateUrl: './add-student.component.html',
   styleUrl: './add-student.component.css'
 })
 export class AddStudentComponent {
   @ViewChild('ParentData') ParentData: ParentDataComponent;
   @ViewChild('StudentData') StudentData: StudentDataComponent;
-  @ViewChild('DiscountData') DiscountData: DiscountDataComponent;
   StudentLookups: StudentLookups = {} as StudentLookups;
   AddStudentModel: AddStudentModel = {} as AddStudentModel;
   showLoader = false;
@@ -33,8 +31,8 @@ export class AddStudentComponent {
   Steps: any[] = [];
   StepList: any[] = [
     { stepName: 'بيانات ولي الأمر', stepId: 'ParentData', number: 1 },
-    { stepName: 'بيانات الطالب', stepId: 'StudentData', number: 2 },
-    { stepName: 'المراجعة النهائية', stepId: 'DiscountData', number: 3 }
+    { stepName: 'بيانات الطالب', stepId: 'StudentData', number: 2 }
+    // { stepName: 'المراجعة النهائية', stepId: 'DiscountData', number: 3 }
   ]
 
   constructor(private schoolStudentService: SchoolStudentService, private toaster: ToastrService, private router: Router
@@ -57,7 +55,7 @@ export class AddStudentComponent {
   }
 
   NextStep() {
-    this.viewChilds = [this.ParentData, this.StudentData, this.DiscountData]
+    this.viewChilds = [this.ParentData, this.StudentData]
     let data = this.viewChilds[this.Counter].GetOutputData();
     if (this.Counter == 0) {
       if (data == null)

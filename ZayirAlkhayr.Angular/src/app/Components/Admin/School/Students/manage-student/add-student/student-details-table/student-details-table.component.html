@@ -1,0 +1,102 @@
+<div class="row">
+    <div class="mb-3" *ngFor="let item of StudentDetails;let i = index" [class.col-lg-12]="StudentDetails.length === 1" [class.col-lg-6]="StudentDetails.length > 1">
+        <div class="table-responsive shadow-sm radius-10">
+            <table class="table table-bordered table-feature-value align-middle border m-0">
+                <thead>
+                    <tr>
+                        <th colspan="2">بيانات الطالب ({{i + 1}})</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="table-feature">الاسم</td>
+                        <td class="table-value fs-5">{{item.studentName}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">المرحلة الدراسية</td>
+                        <td class="table-value fs-5">{{item.academicStageName}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">تاريخ الميلاد</td>
+                        <td class="table-value fs-5">{{item.birthDay | arabicDateWithTime}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">المدرسة الحكومية</td>
+                        <td class="table-value fs-5">{{item.governmentSchool}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">الفترة الدراسية</td>
+                        <td class="table-value fs-5">{{item.studyPeriodName}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">الجنسية</td>
+                        <td class="table-value fs-5">{{item.nationalityName}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">هل لديه حالة صحية</td>
+                        <td class="table-value">
+                            <div class="d-flex align-items-center">
+                                <div class="me-2 fs-5">نعم</div>
+                                <label class="jtoggler-wrapper m-0 mx-0">
+                                    <input type="checkbox" [(ngModel)]="item.isHaveHealthCondition" class="jtoggler"
+                                        disabled>
+                                    <div class="jtoggler-control">
+                                        <div class="jtoggler-handle"></div>
+                                    </div>
+                                </label>
+                                <div class="ms-2 fs-5">لا</div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">ملاحظات الحالة الصحية</td>
+                        <td class="table-value fs-5">{{item.healthConditionNote}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">الجنس</td>
+                        <td class="table-value fs-5">{{item.genderName}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">السنة الدراسية</td>
+                        <td class="table-value fs-5">{{item.academicYear}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">حالة الطالب</td>
+                        <td class="table-value fs-5">{{item.studentStatusId == 1 ? 'موجود' : 'منسحب'}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">سبب الانسحاب</td>
+                        <td class="table-value fs-5">{{item.studentStatusReason}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">ترتيب الطالب بين اخوته</td>
+                        <td class="table-value fs-5">{{item.orderAmongChildren}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">تاريخ التسجيل</td>
+                        <td class="table-value fs-5">{{item.enrollmentDate | arabicDateWithTime}}</td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">ملاحظات</td>
+                        <td class="table-value fs-5">{{item.notes}}</td>
+                    </tr>
+                    <tr *ngIf="!DetailsMode">
+                        <td class="table-feature">عمليات</td>
+                        <td class="table-value">
+                            <div class="w-100 d-flex align-items-center">
+                                <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openModal('Edit',item)">
+                                    <i class="uil uil-pen"></i>
+                                    <span>تعديل</span>
+                                </button>
+                                <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openModal('Delete',item)">
+                                    <i class="uil uil-trash-alt"></i>
+                                    <span>حذف</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

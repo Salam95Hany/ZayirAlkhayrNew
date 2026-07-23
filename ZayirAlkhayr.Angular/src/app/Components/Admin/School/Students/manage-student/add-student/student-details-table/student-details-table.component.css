@@ -1,0 +1,10 @@
+th {
+    text-align: inherit;
+    text-align: -webkit-match-parent;
+    font-size: 20px;
+}
+
+.table-feature-value th {
+    background-color: #eee;
+    border-left: none;
+}

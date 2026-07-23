@@ -10,6 +10,7 @@ using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
+using ZayirAlkhayr.Interfaces.School.Students.ManageFee;
 using ZayirAlkhayr.Interfaces.School.Students.ManageStudent;
 using ZayirAlkhayr.Interfaces.School.Students.Setting;
 using ZayirAlkhayr.Interfaces.Settings;
@@ -23,6 +24,7 @@ using ZayirAlkhayr.Reports.Service;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
+using ZayirAlkhayr.Services.School.Students.ManageFee;
 using ZayirAlkhayr.Services.School.Students.ManageStudent;
 using ZayirAlkhayr.Services.School.Students.Setting;
 using ZayirAlkhayr.Services.Settings;
@@ -98,6 +100,8 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IAcademicYearService, AcademicYearService>();
             services.AddScoped<IFeeTemplateService, FeeTemplateService>();
             services.AddScoped<IFeeTypeService, FeeTypeService>();
+            services.AddScoped<IStudentFeeService, StudentFeeService>();
+            
 
 
             #region ReportsDI

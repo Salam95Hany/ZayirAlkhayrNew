@@ -15,6 +15,9 @@ namespace ZayirAlkhayr.Entities.Models.School
         public int Id { get; set; }
         public int StudentEnrollmentId { get; set; }
         public int FeeTypeId { get; set; }
+        public int? DiscountTypeId { get; set; }
+        public double? DiscountAmountPer { get; set; }
+        public string? DiscountReason { get; set; }
         public double TotalAmount { get; set; }
         public double? DiscountAmount { get; set; }
         public double NetAmount { get; set; }
@@ -24,6 +27,7 @@ namespace ZayirAlkhayr.Entities.Models.School
 
         // Navigation
         public virtual StudentEnrollment StudentEnrollment { get; set; } = null!;
+        public virtual DiscountType DiscountType { get; set; } = null!;
         public virtual ICollection<StudentPayment> StudentPayments { get; set; } = new HashSet<StudentPayment>();
     }
 }

@@ -1,28 +1,28 @@
-import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, Output, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgIf } from '@angular/common';
 import { ZaInputWithLabelComponent } from '../../../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { ZaDropDownFormControlComponent } from '../../../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component';
 import { ZaEmptyDataComponent } from '../../../../../../../Shared/za-empty-data/za-empty-data.component';
-import { ArabicDateWithTimePipe } from '../../../../../../../Pipes/arabic-date-with-time.pipe';
 import { StudentDetails } from '../../../../../../../Models/school/student/AddStudentModel';
 import { FormDropdownModel } from '../../../../../../../Models/shared/FormDropdownModel';
 import { FormService } from '../../../../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../../../../Services/shared/custom-validators';
+import { StudentDetailsTableComponent } from "../student-details-table/student-details-table.component";
 
 @Component({
   selector: 'app-student-data',
   standalone: true,
-  imports: [NgIf, NgFor, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule, ZaEmptyDataComponent, FormsModule,
-    ArabicDateWithTimePipe
-  ],
+  imports: [NgIf, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule, ZaEmptyDataComponent, FormsModule, StudentDetailsTableComponent],
   providers: [DatePipe],
   templateUrl: './student-data.component.html',
   styleUrl: './student-data.component.css'
 })
 export class StudentDataComponent {
+  @ViewChild('deleteItemModal') deleteItemModal!: TemplateRef<any>;
+  @ViewChild('OpenItemModal') OpenItemModal!: TemplateRef<any>;
   @Input() StudentDetails: StudentDetails[] = [];
   @Input() AcademicStages: FormDropdownModel[] = [];
   @Input() Nationalities: FormDropdownModel[] = [];
@@ -61,7 +61,7 @@ export class StudentDataComponent {
     studentStatusId: '',
     studentStatusReason: '',
     orderAmongChildren: '',
-    enrollmentDate:''
+    enrollmentDate: ''
   };
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private formService: FormService,
@@ -90,7 +90,8 @@ export class StudentDataComponent {
       studentStatusId: ['', [Validators.required]],
       studentStatusReason: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       orderAmongChildren: ['', [Validators.required]],
-      enrollmentDate: ['', [Validators.required]]
+      enrollmentDate: ['', [Validators.required]],
+      notes: ['']
     });
 
     this.ItemForm.valueChanges.subscribe((data) => {
@@ -122,18 +123,19 @@ export class StudentDataComponent {
       studentName: item.studentName,
       academicStageId: item.academicStageId,
       academicYearId: item.academicYearId,
-      birthDay: item.birthDay,
+      birthDay: this.datePipe.transform(item.birthDay, 'yyyy-MM-dd'),
       governmentSchool: item.governmentSchool,
       studyPeriodId: item.studyPeriodId,
       nationalityId: item.nationalityId,
       isHaveHealthCondition: item.isHaveHealthCondition,
-      HealthConditionNote: item.HealthConditionNote,
+      healthConditionNote: item.healthConditionNote ?? '',
       gender: item.gender,
       academicYear: item.academicYear,
       studentStatusId: item.studentStatusId,
-      studentStatusReason: item.studentStatusReason,
+      studentStatusReason: item.studentStatusReason ?? '',
       orderAmongChildren: item.orderAmongChildren,
-      enrollmentDate: this.datePipe.transform(item.enrollmentDate, 'yyyy-MM-dd')
+      enrollmentDate: this.datePipe.transform(item.enrollmentDate, 'yyyy-MM-dd'),
+      notes: item.notes
     });
   }
 
@@ -144,11 +146,27 @@ export class StudentDataComponent {
     this.ItemForm.get('academicYear').setValue(this.CurrentYear.name);
   }
 
+  OpenModalClicked(event: any) {
+    if (event.key == 'Edit') {
+      this.openItemModal(this.OpenItemModal, event.item);
+    } else {
+      this.openDeleteItemModal(this.deleteItemModal, event.item.id);
+    }
+  }
+
   openItemModal(content: any, item: any) {
     this.ResetForm();
     this.addMode = true;
+    this.ItemForm.get('academicStageId')?.enable();
+    this.ItemForm.get('enrollmentDate')?.enable();
+    this.ItemForm.get('gender')?.enable();
     if (item) {
       this.addMode = false;
+      if (this.UpdateMode && item.studentId) {
+        this.ItemForm.get('academicStageId')?.disable();
+        this.ItemForm.get('enrollmentDate')?.disable();
+        this.ItemForm.get('gender')?.disable();
+      }
       this.FillEditForm(item);
     }
 
@@ -204,10 +222,10 @@ export class StudentDataComponent {
       return;
     }
 
-    const formData = this.ItemForm.value;
+    const formData = this.ItemForm.getRawValue();
     let academicStageName = this.AcademicStages.find(i => i.value == formData.academicStageId)?.name;
     let nationalityName = this.Nationalities.find(i => i.value == formData.nationalityId)?.name;
-    let studyPeriodName = this.StudyPeriods.find(i => i.value == formData.studyPeriod)?.name;
+    let studyPeriodName = this.StudyPeriods.find(i => i.value == formData.studyPeriodId)?.name;
     let genderName = this.Genders.find(i => i.value == formData.gender)?.name;
     let arryNum = this.StudentDetails.map(i => i.id);
     let id = arryNum.length > 0 ? Math.max(...arryNum) : 0;
@@ -232,7 +250,8 @@ export class StudentDataComponent {
         studentStatusId: formData.studentStatusId,
         studentStatusReason: formData.studentStatusReason,
         orderAmongChildren: formData.orderAmongChildren,
-        enrollmentDate: formData.enrollmentDate
+        enrollmentDate: formData.enrollmentDate,
+        notes: formData.notes
       });
     } else {
       let obj = this.StudentDetails.find(i => i.id == formData.id);
@@ -255,7 +274,8 @@ export class StudentDataComponent {
         obj.studentStatusId = formData.studentStatusId;
         obj.studentStatusReason = formData.studentStatusReason;
         obj.orderAmongChildren = formData.orderAmongChildren;
-        obj.enrollmentDate = formData.enrollmentDate
+        obj.enrollmentDate = formData.enrollmentDate;
+        obj.notes = formData.notes
       }
     }
 

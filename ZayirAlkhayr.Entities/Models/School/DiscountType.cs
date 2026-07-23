@@ -15,6 +15,6 @@ namespace ZayirAlkhayr.Entities.Models.School
         public string Name { get; set; } = null!;
 
         // Navigation
-        public virtual ICollection<StudentEnrollment> StudentEnrollments { get; set; } = new HashSet<StudentEnrollment>();
+        public virtual ICollection<StudentFee> StudentFees { get; set; } = new HashSet<StudentFee>();
     }
 }

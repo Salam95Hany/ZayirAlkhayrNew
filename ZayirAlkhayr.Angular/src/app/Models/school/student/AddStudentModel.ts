@@ -2,7 +2,7 @@
 export interface AddStudentModel {
     parentStudent: ParentStudent;
     student: StudentDetails[];
-    discount: StudentDiscount[];
+    // discount: StudentDiscount[];
 }
 
 export interface ParentStudent {
@@ -39,6 +39,7 @@ export interface StudentDetails {
     studentStatusReason: string; // لو كان منسحب سبب الانسحاب
     orderAmongChildren: number; // ترتيب الطفل بين إخوانه
     enrollmentDate: string;
+    notes:string;
 }
 
 export interface StudentDiscount {

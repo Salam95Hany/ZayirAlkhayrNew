@@ -101,7 +101,7 @@ export class ZaDropDownFormControlComponent {
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    // Implement if needed
+    this.disabled = isDisabled;
   }
 
   onInputChange(event: any) {

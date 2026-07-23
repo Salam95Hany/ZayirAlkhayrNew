@@ -175,7 +175,6 @@ export class FeeTemplateComponent {
   }
 
   AddNewItem() {
-    debugger;
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
     let isValid = this.validateForm();
 

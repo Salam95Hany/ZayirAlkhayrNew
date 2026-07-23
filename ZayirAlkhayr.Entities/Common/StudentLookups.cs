@@ -13,9 +13,7 @@ namespace ZayirAlkhayr.Entities.Common
     {
         public List<FormDropdownModel> AcademicStages { get; set; }
         public List<FormDropdownModel> Nationalities { get; set; }
-        public List<FormDropdownModel> DiscountTypes { get; set; }
         public FormDropdownModel CurrentYear { get; set; }
-        public List<FeeTemplateDto> FeeTemplates { get; set; }
         
     }
 

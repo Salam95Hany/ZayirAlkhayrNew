@@ -4,9 +4,8 @@ import { NgxLoadingModule } from 'ngx-loading';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ParentDataComponent } from '../add-student/parent-data/parent-data.component';
-import { DiscountDataComponent } from '../add-student/discount-data/discount-data.component';
 import { StudentDataComponent } from '../add-student/student-data/student-data.component';
-import { AddStudentModel, ParentStudent, StudentDetails, StudentDiscount } from '../../../../../../Models/school/student/AddStudentModel';
+import { AddStudentModel, StudentDetails } from '../../../../../../Models/school/student/AddStudentModel';
 import { FormDropdownModel } from '../../../../../../Models/shared/FormDropdownModel';
 import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
 import { AuthService } from '../../../../../../Auth/auth.service';
@@ -14,7 +13,7 @@ import { AuthService } from '../../../../../../Auth/auth.service';
 @Component({
   selector: 'app-student-sidepanel',
   standalone: true,
-  imports: [NgIf, NgxLoadingModule, ParentDataComponent, DiscountDataComponent, StudentDataComponent],
+  imports: [NgIf, NgxLoadingModule, ParentDataComponent, StudentDataComponent],
   templateUrl: './student-sidepanel.component.html',
   styleUrl: './student-sidepanel.component.css'
 })
@@ -22,7 +21,7 @@ export class StudentSidepanelComponent {
   @ViewChild('sidepanelEditStatus') sidepanelEditStatus: ElementRef;
   @ViewChild('ParentData') ParentData: ParentDataComponent;
   @ViewChild('StudentData') StudentData: StudentDataComponent;
-  @ViewChild('DiscountData') DiscountData: DiscountDataComponent;
+  // @ViewChild('DiscountData') DiscountData: DiscountDataComponent;
   @Input() StudentId: any;
   @Input() ParentId: any;
   @Input() StudentName: any;
@@ -37,7 +36,7 @@ export class StudentSidepanelComponent {
   StepList: any[] = [
     { stepId: 'ParentData', number: 0, scrollTop: 0 },
     { stepId: 'StudentData', number: 1 },
-    { stepId: 'DiscountData', number: 2, scrollTop: 900 }
+    // { stepId: 'DiscountData', number: 2, scrollTop: 900 }
   ];
   studentStatus: FormDropdownModel[] = [
     { value: 1, name: 'موجود' },
@@ -83,7 +82,7 @@ export class StudentSidepanelComponent {
 
   UpdateStudent() {
     for (const step of this.StepList) {
-      let viewChilds = [this.ParentData, this.StudentData, this.DiscountData]
+      let viewChilds = [this.ParentData, this.StudentData]
       let data = viewChilds[step.number].GetOutputData();
       if (!data) {
         this.sidepanelEditStatus.nativeElement.scrollTop = step.scrollTop;
@@ -105,63 +104,72 @@ export class StudentSidepanelComponent {
   }
 
 
-  BindStudentModel() {
-    let academicStageName = this.StudentInfo.lookups.academicStages.find(i => i.value == this.StudentInfo.student.academicStageId)?.name;
-    let nationalityName = this.StudentInfo.lookups.nationalities.find(i => i.value == this.StudentInfo.student.nationalityId)?.name;
-    let studyPeriodName = this.StudyPeriods.find(i => i.value == this.StudentInfo.student.studyPeriod)?.name;
-    let genderName = this.Genders.find(i => i.value == this.StudentInfo.student.gender)?.name;
+  BindStudentModel(): void {
 
-    let parentStudent: ParentStudent = {
-      parentId: this.StudentInfo.parent.id,
-      parentName: this.StudentInfo.parent.name,
-      address: this.StudentInfo.parent.address,
-      fatherPhone: this.StudentInfo.parent.fatherPhone,
-      motherPhone: this.StudentInfo.parent.fatherPhone,
-      whatsappNumber: this.StudentInfo.parent.whatsappNumber,
+    const student = this.StudentInfo.student;
+    const parent = this.StudentInfo.parent;
+    const enrollment = student.studentEnrollments?.[0];
+
+    if (!student || !parent || !enrollment) {
+      return;
+    }
+
+    const academicStageName = this.StudentInfo.lookups.academicStages.find(x => +x.value === enrollment.academicStageId)?.name ?? '';
+    const nationalityName = this.StudentInfo.lookups.nationalities.find(x => +x.value === student.nationalityId)?.name ?? '';
+    const studyPeriodName = this.StudyPeriods.find(x => +x.value === enrollment.studyPeriodId)?.name ?? '';
+    const genderName = this.Genders.find(x => +x.value === +student.gender)?.name ?? '';
+
+    this.AddStudentModel.parentStudent = {
+      parentId: parent.id,
+      parentName: parent.name,
+      address: parent.address,
+      fatherPhone: parent.parentPhone,
+      motherPhone: parent.motherPhone,
+      whatsappNumber: parent.whatsappNumber,
       insertUser: this.authService.userId
     };
 
-    let student: StudentDetails = {
+    this.AddStudentModel.student = [{
       id: 1,
-      studentId: +this.StudentInfo.student.id,
-      studentName: this.StudentInfo.student.studentName,
-      academicStageId: this.StudentInfo.student.academicStageId?.toString(),
-      academicStageName: academicStageName,
-      birthDay: this.StudentInfo.student.birthDay,
-      governmentSchool: this.StudentInfo.student.governmentSchool,
-      studyPeriodId: +this.StudentInfo.student.studyPeriodId,
-      studyPeriodName: studyPeriodName,
-      nationalityId: this.StudentInfo.student.nationalityId?.toString(),
-      nationalityName: nationalityName,
-      isHaveHealthCondition: this.StudentInfo.student.isHaveHealthCondition,
-      healthConditionNote: this.StudentInfo.student.healthConditionNote,
-      gender: +this.StudentInfo.student.gender,
-      genderName: genderName,
-      academicYear: this.StudentInfo.student.academicYear,
-      academicYearId: this.StudentInfo.student.sss,
-      studentStatusId: +this.StudentInfo.student.studentStatusId,
-      studentStatusReason: this.StudentInfo.student.studentStatusReason,
-      orderAmongChildren: this.StudentInfo.student.orderAmongChildren,
-      enrollmentDate: ''
-    };
+      studentId: student.id,
+      studentName: student.studentName,
+      academicStageId: enrollment.academicStageId,
+      academicStageName,
+      birthDay: student.birthDay,
+      governmentSchool: student.governmentSchool,
+      studyPeriodId: enrollment.studyPeriodId,
+      studyPeriodName,
+      nationalityId: student.nationalityId,
+      nationalityName,
+      isHaveHealthCondition: student.isHaveHealthCondition,
+      healthConditionNote: student.healthConditionNote,
+      gender: +student.gender,
+      genderName,
+      academicYear: enrollment.academicYear.name,
+      academicYearId: enrollment.academicYearId,
+      studentStatusId: enrollment.studentStatusId,
+      studentStatusReason: enrollment.studentStatusReason,
+      orderAmongChildren: student.orderAmongChildren,
+      enrollmentDate: enrollment.enrollmentDate,
+      notes: enrollment.notes
+    }];
 
-    let studentDiscount: StudentDiscount = {
-      studentName: this.StudentInfo.student.studentName,
-      academicStageName: academicStageName,
-      academicYear: this.StudentInfo.student.academicYear,
-      studyAmount: 0,
-      discountTypeId: this.StudentInfo.student.discountTypeId?.toString(),
-      discountReason: this.StudentInfo.student.discountReason,
-      discountAmount: this.StudentInfo.student.discountAmount,
-      notes: ''
-    };
+    // const feeTemplate = this.StudentInfo.lookups.feeTemplates.find(x => x.academicStageId === enrollment.academicStageId);
+    // this.AddStudentModel.discount = [{
+    //   studentName: student.studentName,
+    //   academicStageName,
+    //   academicYear: enrollment.academicYear.name,
+    //   studyAmount: feeTemplate?.amount ?? 0,
+    //   discountTypeId: enrollment.discountTypeId,
+    //   discountReason: enrollment.discountReason,
+    //   discountAmount: enrollment.discountAmount,
+    //   notes: enrollment.notes
+    // }];
 
-    this.AddStudentModel.parentStudent = parentStudent;
-    this.AddStudentModel.student = [student];
-    this.AddStudentModel.discount = [studentDiscount];
+    this.StudentDetails = [...this.AddStudentModel.student];
   }
 
-  StudendChange(item: StudentDetails[]) {
-    this.StudentDetails = item;
-  }
+  // StudendChange(item: StudentDetails[]) {
+  //   this.StudentDetails = [...item];
+  // }
 }

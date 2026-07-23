@@ -73,6 +73,10 @@ namespace ZayirAlkhayr.Services.Common
 
         public static Error DeleteStudentFee = new("لا يمكن حذف الطالب لوجود دفعات مسجلة.");
 
+        public static Error CannotEditDiscountAfterPayment = new("لا يمكن تعديل الخصم بعد تحصيل الرسوم من الطالب.");
+
+        
+
 
     }
 }
