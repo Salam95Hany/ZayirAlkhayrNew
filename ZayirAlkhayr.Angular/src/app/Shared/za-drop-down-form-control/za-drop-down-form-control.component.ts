@@ -60,10 +60,12 @@ export class ZaDropDownFormControlComponent {
     }
   }
 
-  ngAfterViewInit() {
-    this.dropdownWidth = this.dropdownButton.nativeElement.offsetWidth;
-    this.cdr.detectChanges();
-  }
+  // ngAfterViewInit() {
+  //   setTimeout(() => {
+  //     this.dropdownWidth = this.dropdownButton.nativeElement.getBoundingClientRect().width;
+  //   });
+  //   this.cdr.detectChanges();
+  // }
 
   writeValue(value: any): void {
     if (this.selectMulti) {
@@ -145,7 +147,12 @@ export class ZaDropDownFormControlComponent {
     this.selectedItems = [];
     this.selectedValues = [];
     this.onChange([]);
-
   }
+
+  onOpen(open: boolean) {
+  if (open) {
+    this.dropdownWidth = this.dropdownButton.nativeElement.getBoundingClientRect().width;
+  }
+}
 }
 

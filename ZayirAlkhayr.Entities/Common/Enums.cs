@@ -54,4 +54,11 @@ namespace ZayirAlkhayr.Entities.Common
         Paid = 3, // تم سداد الرسوم بالكامل
         Cancelled = 4 // تم إلغاء هذا الرسم
     }
+
+    public enum PaymentMethod
+    {
+        Cash = 1,
+        InstaPay = 2,
+        VodafoneCash = 3
+    }
 }

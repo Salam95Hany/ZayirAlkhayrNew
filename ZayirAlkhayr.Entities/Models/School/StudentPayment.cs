@@ -13,17 +13,18 @@ namespace ZayirAlkhayr.Entities.Models.School
     {
         public int Id { get; set; }
         public int StudentFeeId { get; set; }
-        public string ReceiptNumber { get; set; } = null!;
+        public string? ReceiptNumber { get; set; } = null!;
         public DateTime PaymentDate { get; set; }
         public double Amount { get; set; }
-        public DateTime NextInstallmentDate { get; set; }
-        public string PaymentMethod { get; set; } = null!;
+        public double? NextAmount { get; set; }
+        public DateTime? NextInstallmentDate { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
         public string? Note { get; set; }
         public string? CancelledBy { get; set; }
         public DateTime? CancelledDate { get; set; }
-        public bool? IsCancelled { get; set; }
+        public bool IsCancelled { get; set; }
 
         // Navigation
-        public virtual StudentFee StudentFee { get; set; } = null!;
+        public virtual StudentFee? StudentFee { get; set; } = null!;
     }
 }

@@ -26,8 +26,9 @@ namespace ZayirAlkhayr.Entities.Models.School
         public StudentFeeStatus Status { get; set; }
 
         // Navigation
-        public virtual StudentEnrollment StudentEnrollment { get; set; } = null!;
-        public virtual DiscountType DiscountType { get; set; } = null!;
+        public virtual StudentEnrollment? StudentEnrollment { get; set; } = null!;
+        public virtual DiscountType? DiscountType { get; set; } = null!;
+        public virtual FeeType? FeeType { get; set; } = null!;
         public virtual ICollection<StudentPayment> StudentPayments { get; set; } = new HashSet<StudentPayment>();
     }
 }

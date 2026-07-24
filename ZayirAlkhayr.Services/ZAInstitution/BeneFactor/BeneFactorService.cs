@@ -637,7 +637,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.BeneFactor
                 BeneFactorObj.Nationality = Model.Nationality;
                 BeneFactorObj.FaceBook = Model.FaceBook;
                 BeneFactorObj.UpdateUser = Model.InsertUser;
-                BeneFactorObj.UpdateDate = DateTime.UtcNow.EgyptNow().AddHours(1);
+                BeneFactorObj.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                 if (Model.Files != null)
                 {

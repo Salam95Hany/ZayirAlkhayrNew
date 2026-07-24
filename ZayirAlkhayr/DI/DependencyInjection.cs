@@ -101,8 +101,7 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IFeeTemplateService, FeeTemplateService>();
             services.AddScoped<IFeeTypeService, FeeTypeService>();
             services.AddScoped<IStudentFeeService, StudentFeeService>();
-            
-
+            services.AddScoped<IReceivePaymentService, ReceivePaymentService>();
 
             #region ReportsDI
 

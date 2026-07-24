@@ -1,12 +1,5 @@
-﻿using Azure;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Entities.Contracts.Requests;
@@ -145,7 +138,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                     OrphansObj.Notes = Model.Notes;
                     OrphansObj.IsGuaranteed = Model.IsGuaranteed;
                     OrphansObj.UpdateUser = Model.InsertUser;
-                    OrphansObj.UpdateDate = DateTime.UtcNow.EgyptNow().AddHours(1);
+                    OrphansObj.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                     await _unitOfWork.CompleteAsync();
 

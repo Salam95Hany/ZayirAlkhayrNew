@@ -63,7 +63,30 @@ export class CustomValidators extends Validators {
 
             return null;
         };
-    } 
+    }
+
+    static greaterThanToday(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+
+            if (!control.value) {
+                return null;
+            }
+
+            const selectedDate = new Date(control.value);
+            const today = new Date();
+
+            selectedDate.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+
+            if (selectedDate <= today) {
+                return {
+                    greaterThanToday: true
+                };
+            }
+
+            return null;
+        };
+    }
 }
 
 export interface RegexModel {

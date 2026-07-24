@@ -112,7 +112,7 @@ namespace ZayirAlkhayr.Services.ZAInstitution.GeneralServices
                 {
                     CategoryObj.Name = Model.Name;
                     CategoryObj.UpdateUser = Model.InsertUser;
-                    CategoryObj.UpdateDate = DateTime.UtcNow.EgyptNow().AddHours(1);
+                    CategoryObj.UpdateDate = DateTime.UtcNow.EgyptNow();
 
                     await _unitOfWork.CompleteAsync();
 

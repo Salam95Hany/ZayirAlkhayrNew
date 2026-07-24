@@ -1075,6 +1075,11 @@ tr {
     color: #fff;
 }
 
+.button-table-action.btn-print:hover {
+    background-color: #6c757d;
+    color: #fff;
+}
+
 .search-box {
     min-width: 200px;
 }

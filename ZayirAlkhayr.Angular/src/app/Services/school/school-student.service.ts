@@ -43,4 +43,56 @@ export class SchoolStudentService {
   DeleteStudent(ParentId: number, StudentId: number) {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Student/DeleteStudent?ParentId=' + ParentId + '&StudentId=' + StudentId);
   }
+
+  // ============================= StudentFee ==============================
+
+  GetAllStudentFeeData(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'StudentFee/GetAllStudentFeeData', PagingFilter);
+  }
+
+  GetAllStudentFeeFilters(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'StudentFee/GetAllStudentFeeFilters', PagingFilter);
+  }
+
+  AddNewStudentFee(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'StudentFee/AddNewStudentFee', Model);
+  }
+
+  UpdateStudentFee(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'StudentFee/UpdateStudentFee', Model);
+  }
+
+  CancelStudentFee(StudentFeeId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'StudentFee/CancelStudentFee?StudentFeeId=' + StudentFeeId);
+  }
+
+  GetFeeTemplates(EnrollmentId: number) {
+    return this.http.get<any[]>(this.apiURL + 'StudentFee/GetFeeTemplates?EnrollmentId=' + EnrollmentId);
+  }
+
+  GetStudents() {
+    return this.http.get<any[]>(this.apiURL + 'StudentFee/GetStudents');
+  }
+
+  GetDiscountTypes() {
+    return this.http.get<any[]>(this.apiURL + 'StudentFee/GetDiscountTypes');
+  }
+
+  // ============================= ReceivePayment ==============================
+
+  GetAllStudentFeesByEnrollmentId(EnrollmentId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'ReceivePayment/GetAllStudentFeesByEnrollmentId?EnrollmentId=' + EnrollmentId);
+  }
+
+  ReceivePayment(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'ReceivePayment/ReceivePayment', Model);
+  }
+
+  CancelPayment(StudentPaymentId: number, CancelledBy: string) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'ReceivePayment/CancelPayment?StudentPaymentId=' + StudentPaymentId + '&CancelledBy=' + CancelledBy);
+  }
+
+  GetStudentFees(EnrollmentId: number) {
+    return this.http.get<any[]>(this.apiURL + 'ReceivePayment/GetStudentFees?EnrollmentId=' + EnrollmentId);
+  }
 }

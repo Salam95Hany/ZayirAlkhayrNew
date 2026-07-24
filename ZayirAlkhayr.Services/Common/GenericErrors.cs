@@ -75,7 +75,11 @@ namespace ZayirAlkhayr.Services.Common
 
         public static Error CannotEditDiscountAfterPayment = new("لا يمكن تعديل الخصم بعد تحصيل الرسوم من الطالب.");
 
-        
+        public static Error EditStudentPaymentExist = new("لا يمكن تعديل الرسوم لوجود دفعات مرتبطة بها.");
+
+        public static Error CancelStudentPaymentExist = new("لا يمكن إلغاء الرسوم لوجود دفعات مرتبطة بها.");
+
+
 
 
     }

@@ -15,6 +15,14 @@ namespace ZayirAlkhayr.Entities.Specifications.School
         }
     }
 
+    public class StudentEnrollmentSpecification : BaseSpecification<Student>
+    {
+        public StudentEnrollmentSpecification() : base(i => i.StudentEnrollments.Any(e => e.IsCurrent && e.StudentStatusId != Common.StudentStatus.Deleted))
+        {
+            AddInclude(i => i.StudentEnrollments.Where(i => i.IsCurrent));
+        }
+    }
+
     public class StudentCanEditDiscountSpecification : BaseSpecification<StudentEnrollment>
     {
         public StudentCanEditDiscountSpecification(int StudentId) : base(i => i.StudentId == StudentId && i.IsCurrent)

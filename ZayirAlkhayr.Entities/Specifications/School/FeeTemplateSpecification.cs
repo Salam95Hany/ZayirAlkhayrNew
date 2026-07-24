@@ -39,4 +39,24 @@ namespace ZayirAlkhayr.Entities.Specifications.School
                 ApplyPaging((filterModel.Currentpage - 1) * filterModel.Pagesize, filterModel.Pagesize);
         }
     }
+
+
+    public class StudentFeeTemplateSpecification : BaseSpecification<FeeTemplate>
+    {
+        public StudentFeeTemplateSpecification(int AcademicYearId, int AcademicStageId)
+            : base(i => i.AcademicYearId == AcademicYearId && i.AcademicStageId == AcademicStageId)
+        {
+            AddInclude(x => x.FeeType);
+            AddInclude(x => x.AcademicYear);
+            AddInclude(x => x.AcademicStage);
+        }
+    }
+
+    public class StudentFeeSpecification : BaseSpecification<StudentFee>
+    {
+        public StudentFeeSpecification(int EnrollmentId) : base(i => i.StudentEnrollmentId == EnrollmentId && i.Status != StudentFeeStatus.Cancelled)
+        {
+            AddInclude(i => i.FeeType);
+        }
+    }
 }

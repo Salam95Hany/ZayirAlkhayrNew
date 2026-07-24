@@ -3,6 +3,11 @@
     color: #eeeeef
 }
 
+:host {
+    display: block;
+    width: 100%;
+}
+
 .dropdown-as-input>button {
     position: relative;
     display: flex;
