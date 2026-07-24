@@ -95,4 +95,14 @@ export class SchoolStudentService {
   GetStudentFees(EnrollmentId: number) {
     return this.http.get<any[]>(this.apiURL + 'ReceivePayment/GetStudentFees?EnrollmentId=' + EnrollmentId);
   }
+
+   // ============================= StudentPayment ==============================
+
+  GetAllStudentPaymentData(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'StudentPayment/GetAllStudentPaymentData', PagingFilter);
+  }
+
+  GetAllStudentPaymentFilters(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any[]>>(this.apiURL + 'StudentPayment/GetAllStudentPaymentFilters', PagingFilter);
+  }
 }
