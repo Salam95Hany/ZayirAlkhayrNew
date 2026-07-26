@@ -11,6 +11,7 @@ using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.School.Students.ManageFee;
+using ZayirAlkhayr.Interfaces.School.Students.ManageParent;
 using ZayirAlkhayr.Interfaces.School.Students.ManageStudent;
 using ZayirAlkhayr.Interfaces.School.Students.Setting;
 using ZayirAlkhayr.Interfaces.Settings;
@@ -25,6 +26,7 @@ using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
 using ZayirAlkhayr.Services.School.Students.ManageFee;
+using ZayirAlkhayr.Services.School.Students.ManageParent;
 using ZayirAlkhayr.Services.School.Students.ManageStudent;
 using ZayirAlkhayr.Services.School.Students.Setting;
 using ZayirAlkhayr.Services.Settings;
@@ -103,6 +105,9 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IStudentFeeService, StudentFeeService>();
             services.AddScoped<IReceivePaymentService, ReceivePaymentService>();
             services.AddScoped<IStudentPaymentService, StudentPaymentService>();
+            services.AddScoped<IStudentTypeService, StudentTypeService>();
+            services.AddScoped<IParentService, ParentService>();
+            
 
             #region ReportsDI
 

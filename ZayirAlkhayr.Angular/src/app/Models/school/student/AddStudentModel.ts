@@ -29,6 +29,8 @@ export interface StudentDetails {
     studyPeriodName: string; // فترة الدراسة
     nationalityId: string; // الجنسية
     nationalityName: string; // اسم الجنسية
+    studentTypeId: string; // نوع الطالب
+    studentTypeName: string; // اسم نوع الطالب
     isHaveHealthCondition: boolean; // هل لديه حالة صحية
     healthConditionNote: string; // ملاحظات الحالة الصحية
     gender: number; // الجنس

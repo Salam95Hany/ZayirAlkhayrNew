@@ -32,6 +32,7 @@ namespace ZayirAlkhayr.Entities.Common
         public int? StudentId { get; set; }
         public string StudentName { get; set; } // اسم الطالب
         public int AcademicStageId { get; set; } // المرحلة الدراسية
+        public int StudentTypeId { get; set; }
         public DateTime BirthDay { get; set; } // تاريخ الميلاد
         public string GovernmentSchool { get; set; } // المدرسة الحكومية 
         public StudyPeriod StudyPeriodId { get; set; } // فترة الدراسة
@@ -45,7 +46,7 @@ namespace ZayirAlkhayr.Entities.Common
         public string? StudentStatusReason { get; set; } // لو كان منسحب سبب الانسحاب
         public int OrderAmongChildren { get; set; } // ترتيب الطفل بين إخوانه
         public DateTime EnrollmentDate { get; set; }
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
     }
 
     public class StudentDiscount

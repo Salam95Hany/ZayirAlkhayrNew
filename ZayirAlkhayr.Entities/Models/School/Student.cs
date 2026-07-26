@@ -14,6 +14,7 @@ namespace ZayirAlkhayr.Entities.Models.School
         public int Id { get; set; }
         public int NationalityId { get; set; }
         public int ParentId { get; set; }
+        public int StudentTypeId { get; set; }
         public string StudentName { get; set; } = null!;
         public string Code { get; set; } = null!;
         public DateTime BirthDay { get; set; }
@@ -26,6 +27,7 @@ namespace ZayirAlkhayr.Entities.Models.School
         // Navigation
         public virtual Parent Parent { get; set; } = null!;
         public virtual StudentNationality Nationality { get; set; } = null!;
+        public virtual StudentType StudentType { get; set; } = null!;
         public virtual ICollection<StudentEnrollment> StudentEnrollments { get; set; } = new HashSet<StudentEnrollment>();
     }
 }

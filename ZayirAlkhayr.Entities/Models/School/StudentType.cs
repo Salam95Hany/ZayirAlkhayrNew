@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ZayirAlkhayr.Entities.Common;
+
+namespace ZayirAlkhayr.Entities.Models.School
+{
+    [Table(name: "StudentTypes", Schema = "school")]
+    public class StudentType: AuditableEntity
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+
+        // Navigation
+        public virtual ICollection<Student> Students { get; set; } = new HashSet<Student>();
+    }
+}

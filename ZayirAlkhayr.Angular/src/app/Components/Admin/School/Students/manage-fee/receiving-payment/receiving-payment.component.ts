@@ -62,7 +62,7 @@ export class ReceivingPaymentComponent {
   ngOnInit(): void {
     this.UserId = this.authService.userId;
     this.FormInit();
-    this.GetStudents();
+    this.GetReceiveStudents();
   }
 
   FormInit() {
@@ -143,8 +143,8 @@ export class ReceivingPaymentComponent {
     });
   }
 
-  GetStudents() {
-    this.studentService.GetStudents().subscribe(data => {
+  GetReceiveStudents() {
+    this.studentService.GetReceiveStudents().subscribe(data => {
       this.Students = data;
     });
   }

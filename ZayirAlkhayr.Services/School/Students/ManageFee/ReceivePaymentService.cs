@@ -185,5 +185,20 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
             }).ToList();
             return data;
         }
+
+        public async Task<List<FormDropdownModel>> GetReceiveStudents()
+        {
+            var results = await _unitOfWork.Repository<Student>().GetAllWithSpecAsync(new StudentReceiveSpecification());
+            var data = results.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.StudentName,
+                ExtraData = new Dictionary<string, object>
+                {
+                    { "enrollmentId", i.StudentEnrollments.FirstOrDefault()?.Id ?? 0 }
+                }
+            }).ToList();
+            return data;
+        }
     }
 }

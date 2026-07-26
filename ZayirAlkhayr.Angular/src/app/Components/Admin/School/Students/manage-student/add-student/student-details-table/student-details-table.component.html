@@ -33,6 +33,10 @@
                         <td class="table-value fs-5">{{item.nationalityName}}</td>
                     </tr>
                     <tr>
+                        <td class="table-feature">نوع الطالب</td>
+                        <td class="table-value fs-5">{{item.studentTypeName}}</td>
+                    </tr>
+                    <tr>
                         <td class="table-feature">هل لديه حالة صحية</td>
                         <td class="table-value">
                             <div class="d-flex align-items-center">
@@ -60,7 +64,7 @@
                         <td class="table-feature">السنة الدراسية</td>
                         <td class="table-value fs-5">{{item.academicYear}}</td>
                     </tr>
-                    <tr>
+                    <tr *ngIf="UpdateMode">
                         <td class="table-feature">حالة الطالب</td>
                         <td class="table-value fs-5">{{item.studentStatusId == 1 ? 'موجود' : 'منسحب'}}</td>
                     </tr>

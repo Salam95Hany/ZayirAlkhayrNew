@@ -1,0 +1,195 @@
+<div class="app-shell">
+
+    <!-- dark rail navigation -->
+    <!-- <div class="rail">
+        <div class="rail-avatar">
+            <img src="https://i.pravatar.cc/80?img=13" alt="user">
+        </div>
+        <div class="rail-icon" title="الرئيسية"><i class="fa-solid fa-house"></i></div>
+        <div class="rail-icon" title="الإشعارات"><i class="fa-regular fa-bell"></i><span class="badge-dot">5</span></div>
+        <div class="rail-icon" title="جهات الاتصال"><i class="fa-solid fa-address-book"></i></div>
+        <div class="rail-icon" title="الصور"><i class="fa-regular fa-image"></i></div>
+        <div class="rail-icon active" title="واتساب"><i class="fa-brands fa-whatsapp"></i></div>
+        <div class="rail-icon" title="المستخدمين"><i class="fa-solid fa-user-group"></i></div>
+        <div class="rail-icon" title="التقويم"><i class="fa-regular fa-calendar"></i></div>
+        <div class="rail-icon" title="التحرير"><i class="fa-solid fa-pen-nib"></i></div>
+        <div class="rail-icon" title="التقارير"><i class="fa-solid fa-chart-column"></i></div>
+        <div class="rail-icon" title="السجلات"><i class="fa-solid fa-clock-rotate-left"></i></div>
+        <div class="rail-spacer"></div>
+    </div> -->
+
+    <div class="stage">
+        <div class="builder-modal">
+
+            <!-- header -->
+            <div class="builder-header">
+                <div class="title-wrap">
+                    <div class="wa-badge"><i class="fa-brands fa-whatsapp"></i></div>
+                    <h5>إنشاء قالب واتساب جديد</h5>
+
+                </div>
+                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+
+            </div>
+
+            <!-- body -->
+            <div class="builder-body">
+                <!-- variables column -->
+                <div class="vars-col">
+                    <div class="vars-heading">المتغيرات المتاحة</div>
+                    <div class="var-group group-parent">
+                        <div class="var-group-title">
+                            <span class="g-ic"><i class="fa-solid fa-user-group"></i></span> بيانات ولي الأمر
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">اسم ولي الأمر</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">رقم جوال ولي الأمر</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                    </div>
+                    <div class="var-group group-student">
+                        <div class="var-group-title">
+                            <span class="g-ic"><i class="fa-solid fa-graduation-cap"></i></span> بيانات الطالب
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">اسم الطالب</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">الصف الدراسي</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">الفصل</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">رقم الطالب</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                    </div>
+                    <div class="var-group group-fees">
+                        <div class="var-group-title">
+                            <span class="g-ic"><i class="fa-solid fa-sack-dollar"></i></span> بيانات الرسوم
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">إجمالي الرسوم</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">المدفوع</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">المبلغ المتبقي</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">تاريخ الاستحقاق</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">رقم الإيصال</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                    </div>
+                    <div class="var-group group-school">
+                        <div class="var-group-title">
+                            <span class="g-ic"><i class="fa-solid fa-school"></i></span> بيانات المدرسة
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">اسم المدرسة</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                        <div class="var-row">
+                            <span class="var-name">رقم جوال المدرسة</span>
+                            <span class="var-tag">{{ '{{ParentName}}' }}</span>
+                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- editor column -->
+                <div class="editor-col">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="field-label">اسم القالب <span class="req">*</span></label>
+                            <input type="text" class="form-control" value="تذكير بالأقساط">
+                        </div>
+                    </div>
+                    <div class="rich-editor">
+                        <div class="rich-toolbar">
+                            <div class="tb-sep"></div>
+                            <button class="tb-btn"><b>U</b></button>
+                            <button class="tb-btn"><i class="fa-solid fa-italic"></i></button>
+                            <button class="tb-btn"><b>B</b></button>
+                            <div class="tb-sep"></div>
+                            <button class="tb-btn"><i class="fa-solid fa-list-ul"></i></button>
+                            <div class="tb-sep"></div>
+                            <button class="tb-btn"><i class="fa-regular fa-face-smile"></i></button>
+                        </div>
+
+                        <div class="rich-content" contenteditable="true" spellcheck="false">
+                            السلام عليكم
+                            <span class="var-chip chip-blue">
+                                <span class="chip-ic"><i class="fa-solid fa-user"></i></span> اسم ولي الأمر
+                            </span>
+                            ،
+                            <br><br> نذكركم بأن الطالب
+                            <span class="var-chip chip-green">
+                                <span class="chip-ic"><i class="fa-solid fa-graduation-cap"></i></span> اسم الطالب
+                            </span>
+                            <br><br> لديه قسط مستحق بقيمة
+                            <span class="var-chip chip-orange">
+                                <span class="chip-ic"><i class="fa-solid fa-dollar-sign"></i></span> المبلغ المتبقي
+                            </span>
+                            جنيه.
+                            <br><br> تاريخ الاستحقاق:
+                            <span class="var-chip chip-purple">
+                                <span class="chip-ic"><i class="fa-regular fa-calendar"></i></span> تاريخ الاستحقاق
+                            </span>
+                            <br><br> شكراً لكم.
+                        </div>
+
+                        <div class="editor-footer">
+                            <span>عدد الحروف: 96</span>
+                            <span>عدد المتغيرات: 4</span>
+                        </div>
+                    </div>
+                    <div class="preview-heading">
+                        <div class="h-left"><i class="fa-regular fa-eye"></i> معاينة الرسالة</div>
+                        <button class="toggle-data-btn">
+                            <i class="fa-solid fa-user-group"></i>
+                            معاينة الرسالة
+                        </button>
+                    </div>
+                    <div class="wa-preview">
+                        <div class="wa-bubble">
+                            السلام عليكم أ. أحمد محمد،<br> نذكركم بأن الطالب <b>محمد أحمد</b><br> لديه قسط مستحق بقيمة 350.00 جنيه.<br> تاريخ الاستحقاق: 15/08/2024<br> شكراً لكم.
+                            <div class="wa-time">10:30 ص <i class="fa-solid fa-check-double" style="color:#53bdeb;"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-save"><i class="fa-regular fa-floppy-disk"></i> حفظ القالب</button>
+                        <button class="btn-cancel"><i class="fa-solid fa-xmark"></i> إلغاء</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

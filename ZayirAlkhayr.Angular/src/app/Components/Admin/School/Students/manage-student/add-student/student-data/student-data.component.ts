@@ -26,6 +26,7 @@ export class StudentDataComponent {
   @Input() StudentDetails: StudentDetails[] = [];
   @Input() AcademicStages: FormDropdownModel[] = [];
   @Input() Nationalities: FormDropdownModel[] = [];
+  @Input() StudentTypes: FormDropdownModel[] = [];
   @Input() CurrentYear: FormDropdownModel;
   @Input() UpdateMode = false;
   @Input() DetailsMode = false;
@@ -54,6 +55,7 @@ export class StudentDataComponent {
     governmentSchool: '',
     studyPeriodId: '',
     nationalityId: '',
+    studentTypeId: '',
     isHaveHealthCondition: '',
     healthConditionNote: '',
     gender: '',
@@ -83,6 +85,7 @@ export class StudentDataComponent {
       governmentSchool: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       studyPeriodId: ['', [Validators.required]],
       nationalityId: ['', [Validators.required]],
+      studentTypeId: ['', [Validators.required]],
       isHaveHealthCondition: [''],
       healthConditionNote: [''],
       gender: ['', [Validators.required]],
@@ -127,6 +130,7 @@ export class StudentDataComponent {
       governmentSchool: item.governmentSchool,
       studyPeriodId: item.studyPeriodId,
       nationalityId: item.nationalityId,
+      studentTypeId: item.studentTypeId,
       isHaveHealthCondition: item.isHaveHealthCondition,
       healthConditionNote: item.healthConditionNote ?? '',
       gender: item.gender,
@@ -144,6 +148,9 @@ export class StudentDataComponent {
     this.ItemForm.get('id').setValue(0);
     this.ItemForm.get('academicYearId').setValue(this.CurrentYear.value);
     this.ItemForm.get('academicYear').setValue(this.CurrentYear.name);
+    if (!this.UpdateMode) {
+      this.ItemForm.get('studentStatusId').setValue(1);
+    }
   }
 
   OpenModalClicked(event: any) {
@@ -227,6 +234,7 @@ export class StudentDataComponent {
     let nationalityName = this.Nationalities.find(i => i.value == formData.nationalityId)?.name;
     let studyPeriodName = this.StudyPeriods.find(i => i.value == formData.studyPeriodId)?.name;
     let genderName = this.Genders.find(i => i.value == formData.gender)?.name;
+    let studentTypeName = this.StudentTypes.find(i => i.value == formData.studentTypeId)?.name;
     let arryNum = this.StudentDetails.map(i => i.id);
     let id = arryNum.length > 0 ? Math.max(...arryNum) : 0;
     if (this.addMode) {
@@ -241,6 +249,8 @@ export class StudentDataComponent {
         studyPeriodName: studyPeriodName,
         nationalityId: formData.nationalityId,
         nationalityName: nationalityName,
+        studentTypeId: formData.studentTypeId,
+        studentTypeName: studentTypeName,
         isHaveHealthCondition: formData.isHaveHealthCondition,
         healthConditionNote: formData.healthConditionNote,
         gender: formData.gender,
@@ -265,6 +275,8 @@ export class StudentDataComponent {
         obj.studyPeriodName = studyPeriodName;
         obj.nationalityId = formData.nationalityId;
         obj.nationalityName = nationalityName;
+        obj.studentTypeId = formData.studentTypeId;
+        obj.studentTypeName = studentTypeName;
         obj.isHaveHealthCondition = formData.isHaveHealthCondition;
         obj.healthConditionNote = formData.healthConditionNote;
         obj.gender = formData.gender;

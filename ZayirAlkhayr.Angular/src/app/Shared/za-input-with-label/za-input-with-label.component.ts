@@ -26,6 +26,9 @@ export class ZaInputWithLabelComponent {
   @Input() allowCopy: boolean = true;
   @Input() allowCut: boolean = true;
   @Input() disabled: boolean = false;
+  @Input() name = '';
+  @Input() autocomplete = '';
+
   @Output() inputChanged = new EventEmitter<string>();
   value: any = '';
 

@@ -11,66 +11,52 @@ import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.
 import { NgxLoadingModule } from 'ngx-loading';
 import { FilterModel } from '../../../../../../Models/shared/FilterModel';
 import { PagingFilterModel } from '../../../../../../Models/shared/PagingFilterModel ';
-import { ParentService } from '../../../../../../Services/school/parent.service';
 import { FormService } from '../../../../../../Services/shared/form.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../../../Auth/auth.service';
-import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
+import { StudentSettingService } from '../../../../../../Services/school/student-setting.service';
 
 @Component({
-  selector: 'app-parents',
+  selector: 'app-student-type',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
+   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
     NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule],
-  templateUrl: './parents.component.html',
-  styleUrl: './parents.component.css'
+  templateUrl: './student-type.component.html',
+  styleUrl: './student-type.component.css'
 })
-export class ParentsComponent {
-  TitleList = ['مركز بشائر القرآن', 'أولياء الأمور', 'قائمة أولياء الأمور'];
+export class StudentTypeComponent {
+ TitleList = ['مركز بشائر القرآن', 'الإعدادات', 'أنواع الطلاب'];
   Results: any[] = [];
-  FilterList: FilterModel[] = [
-    {
-      categoryDisplayName: 'بالاسم, رقم التلفون',
-      categoryName: 'SearchText',
-      filterType: 'SearchText'
-    }
-  ];
+  FilterList: FilterModel[] = [];
   showLoader = false;
   isFilter = true;
   TotalCount = 0;
   ItemForm: FormGroup;
   UserId: any;
-  ParentId: any;
+  StudentTypeId: any;
   PagingFilter: PagingFilterModel = {
     filterList: [],
     currentPage: 1,
     pageSize: 20
   };
   formErrors = {
-    name: '',
-    parentPhone: '',
-    motherPhone: '',
-    address: '',
-    whatsappNumber: ''
+    name: ''
   };
 
-  constructor(private modalService: NgbModal, private parentService: ParentService, private formService: FormService
+  constructor(private modalService: NgbModal, private studentSettingService: StudentSettingService, private formService: FormService
     , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.UserId = this.authService.userId;
     this.FormInit();
-    this.GetAllParentData();
+    this.GetAllStudentTypeData();
+    this.GetAllStudentTypeFilter();
   }
 
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
-      name: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      parentPhone: ['', [Validators.required]],
-      motherPhone: ['', [Validators.required]],
-      address: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      whatsappNumber: ['', [Validators.required]],
+      name: ['', [Validators.required]],
       insertUser: null
     });
 
@@ -83,10 +69,6 @@ export class ParentsComponent {
     this.ItemForm.setValue({
       id: item.id,
       name: item?.name,
-      parentPhone: item?.parentPhone,
-      motherPhone: item?.motherPhone,
-      address: item?.address,
-      whatsappNumber: item?.whatsappNumber,
       insertUser: this.UserId,
     });
   }
@@ -109,7 +91,7 @@ export class ParentsComponent {
   }
 
   openDeleteItemModal(content: any, item: any) {
-    this.ParentId = item.id;
+    this.StudentTypeId = item.id;
     this.modalService.open(content, {
       size: 'md',
       scrollable: true,
@@ -117,12 +99,18 @@ export class ParentsComponent {
     });
   }
 
-  GetAllParentData() {
+  GetAllStudentTypeData() {
     this.showLoader = true;
-    this.parentService.GetAllParentData(this.PagingFilter).subscribe(data => {
+    this.studentSettingService.GetAllStudentTypeData(this.PagingFilter).subscribe(data => {
       this.showLoader = false;
       this.Results = data.results;
       this.TotalCount = data.totalCount;
+    });
+  }
+
+  GetAllStudentTypeFilter() {
+    this.studentSettingService.GetAllStudentTypeFilter().subscribe(data => {
+      this.FilterList = data.results;
     });
   }
 
@@ -132,7 +120,7 @@ export class ParentsComponent {
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
-    this.GetAllParentData();
+    this.GetAllStudentTypeData();
   }
 
   validateForm(): boolean {
@@ -156,10 +144,11 @@ export class ParentsComponent {
 
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
-      this.parentService.AddNewParent(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.AddNewStudentType(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
-          this.GetAllParentData();
+          this.GetAllStudentTypeData();
+          this.GetAllStudentTypeFilter();
           this.modalService.dismissAll();
         }
         else
@@ -167,10 +156,11 @@ export class ParentsComponent {
         this.showLoader = false;
       });
     } else {
-      this.parentService.UpdateParent(this.ItemForm.value).subscribe(data => {
+      this.studentSettingService.UpdateStudentType(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
-          this.GetAllParentData();
+          this.GetAllStudentTypeData();
+          this.GetAllStudentTypeFilter();
           this.modalService.dismissAll();
         }
         else
@@ -182,10 +172,11 @@ export class ParentsComponent {
 
   DeleteItem() {
     this.showLoader = true;
-    this.parentService.DeleteParent(this.ParentId).subscribe(data => {
+    this.studentSettingService.DeleteStudentType(this.StudentTypeId).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
-        this.GetAllParentData();
+        this.GetAllStudentTypeData();
+        this.GetAllStudentTypeFilter();
         this.modalService.dismissAll();
       }
       else

@@ -155,4 +155,30 @@ export class StudentSettingService {
   DeleteStudentNationality(StudentNationalityId: number) {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'StudentNationality/DeleteStudentNationality?StudentNationalityId=' + StudentNationalityId);
   }
+
+  // ============================= StudentType ==============================
+
+  GetAllStudentTypeData(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'StudentType/GetAllStudentTypeData', PagingFilter);
+  }
+
+  GetAllStudentTypeFilter() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'StudentType/GetAllStudentTypeFilter');
+  }
+
+  AddNewStudentType(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'StudentType/AddNewStudentType', Model);
+  }
+
+  UpdateStudentType(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'StudentType/UpdateStudentType', Model);
+  }
+
+  DeleteStudentType(StudentTypeId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'StudentType/DeleteStudentType?StudentTypeId=' + StudentTypeId);
+  }
+
+   GetStudentTypes() {
+    return this.http.get<any[]>(this.apiURL + 'StudentType/GetStudentTypes');
+  }
 }

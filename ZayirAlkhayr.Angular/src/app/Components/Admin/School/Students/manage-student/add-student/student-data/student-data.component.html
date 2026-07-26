@@ -84,7 +84,7 @@
             </table>
         </div> -->
 
-        <app-student-details-table [StudentDetails]="StudentDetails" [DetailsMode]="DetailsMode" (ModalClicked)="OpenModalClicked($event)"></app-student-details-table>
+        <app-student-details-table [StudentDetails]="StudentDetails" [DetailsMode]="DetailsMode" [UpdateMode]="UpdateMode" (ModalClicked)="OpenModalClicked($event)"></app-student-details-table>
         <div *ngIf="!StudentDetails.length">
             <app-za-empty-data [showEmptyData]="!StudentDetails.length" class="text-center"></app-za-empty-data>
         </div>
@@ -163,6 +163,17 @@
                             </td>
                         </tr>
                         <tr>
+                            <td class="table-feature">نوع الطالب</td>
+                            <td class="table-value">
+                                <div class="form-floating">
+                                    <app-za-drop-down-form-control [data]="StudentTypes" [showSearch]="true" [placeholder]="'نوع الطالب'" formControlName="studentTypeId" [hasError]="formErrors.studentTypeId"></app-za-drop-down-form-control>
+                                </div>
+                                <div class="error-message" *ngIf="formErrors.studentTypeId">
+                                    {{ formErrors.studentTypeId }}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
                             <td class="table-feature">المرحلة الدراسية</td>
                             <td class="table-value">
                                 <div class="form-floating">
@@ -196,7 +207,7 @@
                                 <app-za-input-with-label [type]="'text'" [placeholder]="'المدرسة الحكومية...'" [error]="formErrors.governmentSchool" formControlName="governmentSchool"></app-za-input-with-label>
                             </td>
                         </tr>
-                        <tr>
+                        <tr *ngIf="UpdateMode || DetailsMode">
                             <td class="table-feature">حالة الطالب</td>
                             <td class="table-value">
                                 <div class="form-floating">

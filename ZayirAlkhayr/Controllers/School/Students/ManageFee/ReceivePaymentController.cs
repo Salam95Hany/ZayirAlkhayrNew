@@ -43,5 +43,12 @@ namespace ZayirAlkhayr.Controllers.School.Students.ManageFee
             var results = await _receivePaymentService.GetStudentFees(EnrollmentId);
             return results;
         }
+
+        [HttpGet("GetReceiveStudents")]
+        public async Task<List<FormDropdownModel>> GetReceiveStudents()
+        {
+            var results = await _receivePaymentService.GetReceiveStudents();
+            return results;
+        }
     }
 }

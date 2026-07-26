@@ -117,7 +117,6 @@ export class StudentFeesComponent {
   }
 
   FillEditForm(item: any) {
-    debugger;
     this.ItemForm.setValue({
       id: item.id,
       studentId: item?.studentId,

@@ -59,4 +59,14 @@ namespace ZayirAlkhayr.Entities.Specifications.School
             AddInclude(i => i.FeeType);
         }
     }
+
+    public class StudentReceiveSpecification : BaseSpecification<Student>
+    {
+        public StudentReceiveSpecification() : 
+            base(i => i.StudentEnrollments.Any(e => e.IsCurrent && e.StudentStatusId != Common.StudentStatus.Deleted
+            && e.StudentStatusId != Common.StudentStatus.Withdrawn && e.StudentFees.Any(i => i.Status != StudentFeeStatus.Cancelled)))
+        {
+            AddInclude(i => i.StudentEnrollments.Where(i => i.IsCurrent));
+        }
+    }
 }

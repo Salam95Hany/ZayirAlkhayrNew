@@ -17,7 +17,8 @@
     </div>
     <div class="mb-5">
         <h3>بيانات الطالب</h3>
-        <app-student-data #StudentData [StudentDetails]="AddStudentModel.student" [AcademicStages]="StudentInfo?.lookups?.academicStages" [Nationalities]="StudentInfo?.lookups?.nationalities" [UpdateMode]="UpdateMode" [DetailsMode]="DetailsMode" [CurrentYear]="StudentInfo?.lookups?.currentYear"></app-student-data>
+        <app-student-data #StudentData [StudentDetails]="AddStudentModel.student" [AcademicStages]="StudentInfo?.lookups?.academicStages" [Nationalities]="StudentInfo?.lookups?.nationalities" [StudentTypes]="StudentInfo?.lookups?.studentTypes" [UpdateMode]="UpdateMode"
+            [DetailsMode]="DetailsMode" [CurrentYear]="StudentInfo?.lookups?.currentYear"></app-student-data>
     </div>
     <!-- <div class="mb-5">
         <h3>المراجعة النهائية</h3>

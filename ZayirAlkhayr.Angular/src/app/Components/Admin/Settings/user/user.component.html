@@ -96,13 +96,13 @@
                     <tr>
                         <td class="table-feature">رقم التلفون</td>
                         <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'رقم التلفون...'" [allowNumbersOnly]="true" formControlName="phoneNumber" [error]="formErrors.phoneNumber"></app-za-input-with-label>
+                            <app-za-input-with-label [type]="'text'" [placeholder]="'رقم التلفون...'" [allowNumbersOnly]="true" formControlName="phoneNumber" [error]="formErrors.phoneNumber" name="student-phone" autocomplete="new-tel"></app-za-input-with-label>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-feature">كلمة المرور</td>
                         <td class="table-value">
-                            <app-za-input-with-label [type]="'password'" [placeholder]="'كلمة المرور...'" formControlName="password" [error]="formErrors.password"></app-za-input-with-label>
+                            <app-za-input-with-label [type]="'password'" [placeholder]="'كلمة المرور...'" formControlName="password" [error]="formErrors.password" name="student-password" autocomplete="new-password"></app-za-input-with-label>
                         </td>
                     </tr>
                     <tr>

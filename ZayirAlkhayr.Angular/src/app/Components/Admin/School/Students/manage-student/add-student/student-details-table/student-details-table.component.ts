@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 export class StudentDetailsTableComponent {
   @Input() StudentDetails: StudentDetails[] = [];
   @Input() DetailsMode = false;
+  @Input() UpdateMode = false;
   @Output() ModalClicked = new EventEmitter<any>();
 
   openModal(key: string, item: any) {

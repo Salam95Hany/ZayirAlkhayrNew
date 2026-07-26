@@ -105,6 +105,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                         ParentId = parent.Id,
                         StudentName = item.StudentName.Trim(),
                         NationalityId = item.NationalityId,
+                        StudentTypeId = item.StudentTypeId,
                         BirthDay = item.BirthDay,
                         Gender = item.Gender,
                         GovernmentSchool = item.GovernmentSchool,
@@ -196,6 +197,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
 
                 student.StudentName = studentUpdated.StudentName;
                 student.NationalityId = studentUpdated.NationalityId;
+                student.StudentTypeId = studentUpdated.StudentTypeId;
                 student.BirthDay = studentUpdated.BirthDay;
                 student.Gender = studentUpdated.Gender;
                 student.GovernmentSchool = studentUpdated.GovernmentSchool;
@@ -260,6 +262,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                     ParentId = parentId,
                     StudentName = item.StudentName.Trim(),
                     NationalityId = item.NationalityId,
+                    StudentTypeId = item.StudentTypeId,
                     BirthDay = item.BirthDay,
                     Gender = item.Gender,
                     GovernmentSchool = item.GovernmentSchool,
@@ -368,12 +371,14 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
         {
             var AcademicStages = await GetAcademicStages();
             var Nationalities = await GetStudentNationalities();
+            var StudentTypes = await GetStudentTypes();
             var CurrentYear = await GetCurrentAcademicYear();
 
             var Model = new StudentLookups
             {
                 AcademicStages = AcademicStages,
                 Nationalities = Nationalities,
+                StudentTypes = StudentTypes,
                 CurrentYear = CurrentYear
             };
 
@@ -394,6 +399,17 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
         async Task<List<FormDropdownModel>> GetStudentNationalities()
         {
             var results = await _unitOfWork.Repository<StudentNationality>().GetAllAsync();
+            var data = results.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.Name
+            }).ToList();
+            return data;
+        }
+
+        async Task<List<FormDropdownModel>> GetStudentTypes()
+        {
+            var results = await _unitOfWork.Repository<StudentType>().GetAllAsync();
             var data = results.Select(i => new FormDropdownModel
             {
                 Value = i.Id.ToString(),

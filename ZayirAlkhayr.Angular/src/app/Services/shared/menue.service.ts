@@ -316,6 +316,14 @@ export class MenueService {
               icon: 'uil uil-user-plus',
               route: '/admin/school/add-parent',
               pageKey: 'School_ManageParents_AddParent',
+            },
+            {
+              displayName: 'القوالب',
+              menuItem: 'parent-template',
+              description: 'عرض وإضافة قالب جديد للنظام',
+              icon: 'uil uil-user-plus',
+              route: '/admin/school/parent-template',
+              pageKey: 'School_ManageParents_ParentTemplate',
             }
           ]
         },
@@ -477,6 +485,14 @@ export class MenueService {
               icon: 'uil uil-globe',
               route: '/admin/school/nationalities',
               pageKey: 'School_Settings_Nationalities',
+            },
+            {
+              displayName: 'أنواع الطلاب',
+              menuItem: 'student-types',
+              description: 'إدارة أنواع الطلاب',
+              icon: 'uil uil-globe',
+              route: '/admin/school/student-types',
+              pageKey: 'School_Settings_StudentTypes',
             }
           ]
         }

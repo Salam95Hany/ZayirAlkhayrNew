@@ -23,7 +23,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Controllers\School\Students\ManageParent\" />
 		<Folder Include="wwwroot\ExportFiles\" />
 		<Folder Include="wwwroot\Template\" />
 	</ItemGroup>

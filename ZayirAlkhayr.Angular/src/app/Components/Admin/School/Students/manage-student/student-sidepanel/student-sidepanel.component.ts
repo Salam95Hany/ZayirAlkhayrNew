@@ -118,6 +118,7 @@ export class StudentSidepanelComponent {
     const nationalityName = this.StudentInfo.lookups.nationalities.find(x => +x.value === student.nationalityId)?.name ?? '';
     const studyPeriodName = this.StudyPeriods.find(x => +x.value === enrollment.studyPeriodId)?.name ?? '';
     const genderName = this.Genders.find(x => +x.value === +student.gender)?.name ?? '';
+    const studentTypeName = this.StudentInfo.lookups.studentTypes.find(x => +x.value === +student.studentTypeId)?.name ?? '';
 
     this.AddStudentModel.parentStudent = {
       parentId: parent.id,
@@ -141,6 +142,8 @@ export class StudentSidepanelComponent {
       studyPeriodName,
       nationalityId: student.nationalityId,
       nationalityName,
+      studentTypeId: student.studentTypeId,
+      studentTypeName,
       isHaveHealthCondition: student.isHaveHealthCondition,
       healthConditionNote: student.healthConditionNote,
       gender: +student.gender,
@@ -151,7 +154,7 @@ export class StudentSidepanelComponent {
       studentStatusReason: enrollment.studentStatusReason,
       orderAmongChildren: student.orderAmongChildren,
       enrollmentDate: enrollment.enrollmentDate,
-      notes: enrollment.notes
+      notes: enrollment.notes ?? ''
     }];
 
     // const feeTemplate = this.StudentInfo.lookups.feeTemplates.find(x => x.academicStageId === enrollment.academicStageId);

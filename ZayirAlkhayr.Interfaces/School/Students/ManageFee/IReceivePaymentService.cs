@@ -15,5 +15,6 @@ namespace ZayirAlkhayr.Interfaces.School.Students.ManageFee
         Task<ApiResponseModel<string>> ReceivePayment(StudentPayment model);
         Task<ApiResponseModel<string>> CancelPayment(int StudentPaymentId, string CancelledBy);
         Task<List<FormDropdownModel>> GetStudentFees(int EnrollmentId);
+        Task<List<FormDropdownModel>> GetReceiveStudents();
     }
 }
