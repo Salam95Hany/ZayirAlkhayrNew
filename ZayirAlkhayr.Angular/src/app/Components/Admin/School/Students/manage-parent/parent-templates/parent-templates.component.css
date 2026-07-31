@@ -1,0 +1,4 @@
+:host ::ng-deep .template-variable {
+    color: red;
+    font-weight: 600;
+}

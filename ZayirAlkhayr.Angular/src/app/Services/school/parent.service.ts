@@ -34,4 +34,34 @@ export class ParentService {
   GetParents() {
     return this.http.get<any[]>(this.apiURL + 'Parent/GetParents');
   }
+
+  // ============================= Template ==============================
+
+  GetAllTemplateData(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Template/GetAllTemplateData', PagingFilter);
+  }
+
+  GetAllTemplateFilter() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'Template/GetAllTemplateFilter');
+  }
+
+  GetTemplateById(TemplateId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Template/GetTemplateById?TemplateId=' + TemplateId);
+  }
+
+  GetTemplateVariableData() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'Template/GetTemplateVariableData');
+  }
+
+  AddNewTemplate(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Template/AddNewTemplate', Model);
+  }
+
+  UpdateTemplate(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Template/UpdateTemplate', Model);
+  }
+
+  DeleteTemplate(TemplateId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Template/DeleteTemplate?TemplateId=' + TemplateId);
+  }
 }

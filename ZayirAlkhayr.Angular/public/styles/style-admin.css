@@ -1159,6 +1159,38 @@ tr {
     cursor: pointer;
 }
 
+.modal-xxl .modal-dialog {
+    max-width: 1600px;
+}
+
+.modal-custom .modal-dialog {
+    width: 90%;
+    max-width: 1800px;
+}
+
+.var-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px 4px 6px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: .92rem;
+    margin: 0 2px;
+    white-space: nowrap;
+}
+
+.var-chip .chip-ic {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #fff;
+}
+
 @media (max-width: 575px) {
     .mt-msm-2 {
         margin-top: 0.5rem;

@@ -4,11 +4,11 @@
     <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
         <div class="col-md-8 mb-2">
             <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" routerLink="/admin/school/add-student" appRole pageKey="School_Student" action="canAdd">
+                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" routerLink="/admin/school/add-student" appRole pageKey="School_ManageStudents_Student" action="canAdd">
                     <i class="fas fa-plus-circle"></i>
                     <span>إضافة</span>
                 </button>
-                <div ngbDropdown class="d-inline-block" appRole pageKey="School_Student" action="canExport">
+                <div ngbDropdown class="d-inline-block" appRole pageKey="School_ManageStudents_Student" action="canExport">
                     <button type="button" class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" id="dropdownBasic1" ngbDropdownToggle>
                         <i class="uil uil-export"></i>
                         <span>تنزيل</span>
@@ -88,15 +88,15 @@
                             <td>{{item.insertDateStr}}</td>
                             <td>
                                 <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="item.studentStatusId != 3">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_FamilyStatus" action="canEdit" (click)="openUpdateStudentSidePanel(item,true,false)">
+                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="School_ManageStudents_Student" action="canEdit" (click)="openUpdateStudentSidePanel(item,true,false)">
                                         <i class="uil uil-pen"></i>
                                         <span>تعديل</span>
                                     </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_FamilyStatus" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="School_ManageStudents_Student" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
                                         <i class="uil uil-trash-alt"></i>
                                         <span>حذف</span>
                                     </button>
-                                    <button class="button-table-action btn-details d-flex align-items-center justify-content-center gap-2" appRole pageKey="ZAInstitution_FamilyStatus" action="canAdd" (click)="openUpdateStudentSidePanel(item,false,true)">
+                                    <button class="button-table-action btn-details d-flex align-items-center justify-content-center gap-2" appRole pageKey="School_ManageStudents_Student" action="canAdd" (click)="openUpdateStudentSidePanel(item,false,true)">
                                         <i class="uil uil-document-info"></i>
                                         <span>معاينة</span>
                                     </button>

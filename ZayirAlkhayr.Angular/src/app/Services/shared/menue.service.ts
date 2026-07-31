@@ -309,14 +309,14 @@ export class MenueService {
               route: '/admin/school/parents',
               pageKey: 'School_ManageParents_Parents',
             },
-            {
-              displayName: 'إضافة ولي أمر',
-              menuItem: 'add-parent',
-              description: 'إضافة ولي أمر جديد للنظام',
-              icon: 'uil uil-user-plus',
-              route: '/admin/school/add-parent',
-              pageKey: 'School_ManageParents_AddParent',
-            },
+            // {
+            //   displayName: 'إضافة ولي أمر',
+            //   menuItem: 'add-parent',
+            //   description: 'إضافة ولي أمر جديد للنظام',
+            //   icon: 'uil uil-user-plus',
+            //   route: '/admin/school/add-parent',
+            //   pageKey: 'School_ManageParents_AddParent',
+            // },
             {
               displayName: 'القوالب',
               menuItem: 'parent-template',

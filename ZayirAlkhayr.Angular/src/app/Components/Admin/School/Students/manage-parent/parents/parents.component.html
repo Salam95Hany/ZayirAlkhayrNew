@@ -4,10 +4,10 @@
     <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
         <div class="col-md-8 mb-2">
             <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="ZAInstitution_FamilyNationality" action="canAdd" (click)="openItemModal(OpenItemModal,null)">
+                <!-- <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="ZAInstitution_FamilyNationality" action="canAdd" (click)="openItemModal(OpenItemModal,null)">
                     <i class="fas fa-plus-circle"></i>
                     <span>إضافة</span>
-                </button>
+                </button> -->
                 <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
                     <i class="uil uil-filter"></i>
                     <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
@@ -31,6 +31,11 @@
                 <thead>
                     <tr>
                         <th>الاسم</th>
+                        <th>رقم تلفون الأب</th>
+                        <th>رقم تلفون الأم</th>
+                        <th>العنوان</th>
+                        <th>رقم الواتساب</th>
+                        <th>عدد الأبناء</th>
                         <th>أُضيف بواسطة</th>
                         <th>تاريخ الاضافة</th>
                         <th>عمليات</th>
@@ -40,17 +45,26 @@
                     <ng-container>
                         <tr *ngFor="let item of Results">
                             <td>{{item.name}}</td>
+                            <td>{{item.parentPhone ?? '-'}}</td>
+                            <td>{{item.motherPhone ?? '-'}}</td>
+                            <td>{{item.address}}</td>
+                            <td>{{item.whatsappNumber ?? '-'}}</td>
+                            <td>{{item.childrenCount ?? '-'}}</td>
                             <td>{{item.createdBy}}</td>
                             <td>{{item.insertDateStr}}</td>
                             <td>
                                 <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="!item.isSystem">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_FamilyNationality" action="canEdit" (click)="openItemModal(OpenItemModal,item)">
+                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="School_ManageParents_Parents" action="canEdit" (click)="openItemModal(OpenItemModal,item)">
                                         <i class="uil uil-pen"></i>
                                         <span>تعديل</span>
                                     </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" appRole pageKey="ZAInstitution_FamilyNationality" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="School_ManageParents_Parents" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
                                         <i class="uil uil-trash-alt"></i>
                                         <span>حذف</span>
+                                    </button>
+                                    <button class="button-table-action btn-success d-flex align-items-center justify-content-center gap-2" appRole pageKey="School_ManageParents_Parents" action="canDelete">
+                                        <i class="uil uil-whatsapp"></i>
+                                        <span>ارسال</span>
                                     </button>
                                 </div>
                             </td>
@@ -85,6 +99,30 @@
                         <td class="table-feature">الاسم</td>
                         <td class="table-value d-flex">
                             <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'الاسم...'" formControlName="name" [error]="formErrors.name"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">رقم تلفون الأب</td>
+                        <td class="table-value d-flex">
+                            <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'رقم تلفون الأب...'" formControlName="parentPhone" [error]="formErrors.parentPhone" [allowNumbersOnly]="true"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">رقم تلفون الأم</td>
+                        <td class="table-value d-flex">
+                            <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'رقم تلفون الأم...'" formControlName="motherPhone" [allowNumbersOnly]="true"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">العنوان</td>
+                        <td class="table-value d-flex">
+                            <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'العنوان...'" formControlName="address" [error]="formErrors.address"></app-za-input-with-label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-feature">رقم الواتساب</td>
+                        <td class="table-value d-flex">
+                            <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'رقم الواتساب...'" formControlName="whatsappNumber" [allowNumbersOnly]="true"></app-za-input-with-label>
                         </td>
                     </tr>
                 </tbody>

@@ -8,20 +8,28 @@ using ZayirAlkhayr.Entities.Models.School;
 
 namespace ZayirAlkhayr.Entities.Specifications.School
 {
-    public class ParentSpecification : BaseSpecification<Parent>
+    public class TemplateSpecification : BaseSpecification<Template>
     {
-        public ParentSpecification(PagingFilterModel filterModel, bool applyPaging = true) : base()
+        public TemplateSpecification(PagingFilterModel filterModel, bool applyPaging = true) : base()
         {
             var searchText = filterModel.FilterList.FirstOrDefault(f => f.CategoryName == "SearchText")?.ItemId;
 
             if (!string.IsNullOrEmpty(searchText))
-                AddCriteria(fc => fc.Name.Contains(searchText) || fc.ParentPhone.Contains(searchText) || fc.MotherPhone.Contains(searchText));
+                AddCriteria(fc => fc.Name.Contains(searchText) || fc.Body.Contains(searchText));
 
-            AddInclude("Students.CreatedBy");
+            AddInclude(i => i.CreatedBy);
 
             //ApplyOrderByDescending(fc => fc.InsertDate);
             if (applyPaging)
                 ApplyPaging((filterModel.Currentpage - 1) * filterModel.Pagesize, filterModel.Pagesize);
+        }
+    }
+
+    public class TemplateByIdSpecification : BaseSpecification<Template>
+    {
+        public TemplateByIdSpecification(int TemplateId) : base(i => i.Id == TemplateId)
+        {
+            AddInclude("TemplateVariableMappings.TemplateVariable");
         }
     }
 }

@@ -10,7 +10,7 @@
                 <app-za-drop-down-form-control *ngIf="StudentFees.length > 0" [data]="StudentFees" [showSearch]="true" [placeholder]="'اختر الرسوم'" [(ngModel)]="StudentFeeId" (valueChanged)="StudentFeeChanged($event)"></app-za-drop-down-form-control>
             </div>
             <div class="col-lg-6 col-md-2 d-flex justify-content-end">
-                <button class="btn-add-new" (click)="openItemModal(OpenItemModal)" [disabled]="Fees?.status == 3">
+                <button class="btn-add-new" (click)="openItemModal(OpenItemModal)" [disabled]="Fees?.status == 3" appRole pageKey="School_ManageFee_ReceivingPayment" action="canAdd">
                     <i class="fas fa-plus"></i>
                     تسجيل دفعة جديدة
                 </button>
@@ -186,11 +186,11 @@
                             <td>{{item.note ?? '-'}}</td>
                             <td>
                                 <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="!item.isCancelled">
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_FamilyNationality" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="School_ManageFee_ReceivingPayment" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
                                         <i class="uil uil-trash-alt"></i>
                                         <span>الغاء</span>
                                     </button>
-                                    <button class="button-table-action btn-print d-flex align-items-center justify-content-center gap-2" appRole pageKey="ZAInstitution_FamilyNationality" action="canDelete">
+                                    <button class="button-table-action btn-print d-flex align-items-center justify-content-center gap-2" appRole pageKey="School_ManageFee_ReceivingPayment" action="canExport">
                                         <i class="uil uil-print"></i>
                                         <span>طباعة</span>
                                     </button>

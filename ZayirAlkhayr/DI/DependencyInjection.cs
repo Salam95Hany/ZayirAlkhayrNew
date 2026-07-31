@@ -107,7 +107,9 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IStudentPaymentService, StudentPaymentService>();
             services.AddScoped<IStudentTypeService, StudentTypeService>();
             services.AddScoped<IParentService, ParentService>();
+            services.AddScoped<ITemplateService, TemplateService>();
             
+
 
             #region ReportsDI
 

@@ -49,9 +49,7 @@ export class ParentsComponent {
   formErrors = {
     name: '',
     parentPhone: '',
-    motherPhone: '',
-    address: '',
-    whatsappNumber: ''
+    address: ''
   };
 
   constructor(private modalService: NgbModal, private parentService: ParentService, private formService: FormService
@@ -68,9 +66,9 @@ export class ParentsComponent {
       id: 0,
       name: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       parentPhone: ['', [Validators.required]],
-      motherPhone: ['', [Validators.required]],
+      motherPhone: [''],
       address: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      whatsappNumber: ['', [Validators.required]],
+      whatsappNumber: [''],
       insertUser: null
     });
 

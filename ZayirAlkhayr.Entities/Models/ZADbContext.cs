@@ -72,9 +72,27 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     public virtual DbSet<StudentPayment> StudentPayments { get; set; }
     public virtual DbSet<FeeType> FeeTypes { get; set; }
     public virtual DbSet<StudentType> StudentTypes { get; set; }
-    
+    public virtual DbSet<Template> Templates { get; set; }
+    public virtual DbSet<TemplateVariableMapping> TemplateVariableMappings { get; set; }
+    public virtual DbSet<TemplateVariable> TemplateVariables { get; set; }
 
     #endregion
+
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<TemplateVariableMapping>()
+            .HasOne(x => x.Template)
+            .WithMany(x => x.TemplateVariableMappings)
+            .HasForeignKey(x => x.TemplateId);
+
+        builder.Entity<TemplateVariableMapping>()
+            .HasOne(x => x.TemplateVariable)
+            .WithMany(x => x.TemplateVariableMappings)
+            .HasForeignKey(x => x.VariableId);
+    }
 
 
 }

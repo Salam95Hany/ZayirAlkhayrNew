@@ -15,7 +15,7 @@ namespace ZayirAlkhayr.Entities.Models.School
         public string ParentPhone { get; set; } = null!;
         public string? MotherPhone { get; set; }
         public string Address { get; set; } = null!;
-        public string TelegramCode { get; set; } = null!;
+        public string? TelegramCode { get; set; } = null!;
         public string? WhatsappNumber { get; set; }
         public bool IsActive { get; set; }
 

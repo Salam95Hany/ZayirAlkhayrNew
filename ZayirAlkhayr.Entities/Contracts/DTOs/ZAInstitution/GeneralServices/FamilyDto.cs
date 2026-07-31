@@ -10,6 +10,7 @@ namespace ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.GeneralServices
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string? Body { get; set; }
         public double? Amount { get; set; }
         public bool? IsSystem { get; set; }
         public string CreatedBy { get; set; }
