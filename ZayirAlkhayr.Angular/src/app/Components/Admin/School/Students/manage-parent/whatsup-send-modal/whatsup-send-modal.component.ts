@@ -5,6 +5,7 @@ import { ZaDropDownFormControlComponent } from "../../../../../../Shared/za-drop
 import { FormsModule } from '@angular/forms';
 import { FormDropdownModel } from '../../../../../../Models/shared/FormDropdownModel';
 import { ToastrService } from 'ngx-toastr';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -24,7 +25,7 @@ export class WhatsupSendModalComponent implements OnInit {
   ParentName = '';
   MessageHtml = '';
   MessageTxt = '';
-  constructor(private parentService: ParentService, private toaster: ToastrService) { }
+  constructor(private parentService: ParentService, private toaster: ToastrService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.GetParentStudents();
@@ -42,7 +43,7 @@ export class WhatsupSendModalComponent implements OnInit {
       this.MessageTxt = data.results;
       this.MessageHtml = data.results?.replace(/\n/g, '<br>');
       console.log(this.MessageHtml);
-      
+
     });
   }
 
@@ -75,6 +76,8 @@ export class WhatsupSendModalComponent implements OnInit {
     const message = encodeURIComponent(this.MessageTxt);
 
     window.open(`https://wa.me/${this.WhatsupPhone}?text=${message}`, '_blank');
+    this.modalService.dismissAll();
+
   }
 
 

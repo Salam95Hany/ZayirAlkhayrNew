@@ -30,7 +30,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageParent
         {
             var templateResult = await GetTemplateById(TemplateId);
             var studentResult = await GetStudentTempDetails(ParentId, StudentId);
-            if(!templateResult.IsSuccess || !studentResult.IsSuccess || studentResult.Results.Rows.Count == 0)
+            if (!templateResult.IsSuccess || !studentResult.IsSuccess || studentResult.Results.Rows.Count == 0)
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
 
             var body = templateResult.Results.Body;
@@ -253,7 +253,8 @@ namespace ZayirAlkhayr.Services.School.Students.ManageParent
         public async Task<List<ParentStudentsModel>> GetParentStudents(int ParentId)
         {
             var Parent = await _unitOfWork.Repository<Parent>().GetByIdWithSpecAsync(new ParentStudentsSpecification(ParentId));
-            var data = Parent.Students.Select(s => new ParentStudentsModel
+            var data = Parent.Students.Where(i => i.StudentEnrollments.Any(x => x.IsCurrent && x.StudentStatusId != StudentStatus.Withdrawn
+            && x.StudentStatusId != StudentStatus.Deleted)).Select(s => new ParentStudentsModel
             {
                 StudentId = s.Id,
                 StudentName = s.StudentName ?? "",

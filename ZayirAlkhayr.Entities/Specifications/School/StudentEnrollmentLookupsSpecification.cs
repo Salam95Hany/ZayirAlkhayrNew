@@ -27,7 +27,7 @@ namespace ZayirAlkhayr.Entities.Specifications.School
     {
         public StudentCanEditDiscountSpecification(int StudentId) : base(i => i.StudentId == StudentId && i.IsCurrent)
         {
-            AddInclude(i => i.StudentFees.Where(i => i.FeeTypeId == 3));
+            AddInclude(i => i.StudentFees.Where(i => i.FeeTypeId == 1));
         }
     }
 }

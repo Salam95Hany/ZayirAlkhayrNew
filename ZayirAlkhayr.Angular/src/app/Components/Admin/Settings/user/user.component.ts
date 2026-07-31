@@ -12,6 +12,7 @@ import { ZaInputWithLabelComponent } from '../../../../Shared/za-input-with-labe
 import { CustomValidators, RegexType } from '../../../../Services/shared/custom-validators';
 import { PagePermissionComponent } from "../page-permission/page-permission.component";
 import { NgxLoadingModule } from "ngx-loading";
+import { AuthService } from '../../../../Auth/auth.service';
 
 @Component({
   selector: 'app-user',
@@ -27,6 +28,7 @@ export class UserComponent implements OnInit {
   showLoader = false;
   ItemForm: FormGroup;
   UserId: any;
+  LoginUserId: string;
   Roles = [
     { value: 'SupperAdmin', name: 'مدير' }
   ];
@@ -40,12 +42,13 @@ export class UserComponent implements OnInit {
     address: ''
   };
 
-  constructor(private modalService: NgbModal, private settingService: SettingService, private formService: FormService
-    , private fb: FormBuilder, private toaster: ToastrService,private offcanvasService: NgbOffcanvas, private injector: Injector) {
+  constructor(private modalService: NgbModal, private settingService: SettingService, private formService: FormService, private authService: AuthService,
+     private fb: FormBuilder, private toaster: ToastrService, private offcanvasService: NgbOffcanvas, private injector: Injector) {
 
   }
 
   ngOnInit(): void {
+    this.LoginUserId = this.authService.userId
     this.FormInit();
     this.GetAllUsers();
   }

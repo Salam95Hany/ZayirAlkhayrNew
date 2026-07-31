@@ -27,8 +27,7 @@ namespace ZayirAlkhayr.Entities.Specifications.School
 
     public class ParentStudentsSpecification : BaseSpecification<Parent>
     {
-        public ParentStudentsSpecification(int ParentId) : base(i => i.Id == ParentId 
-        && i.Students.Any(i => i.StudentEnrollments.Any(x => x.IsCurrent && x.StudentStatusId != StudentStatus.Withdrawn && x.StudentStatusId != StudentStatus.Deleted)))
+        public ParentStudentsSpecification(int ParentId) : base(i => i.Id == ParentId)
         {
             AddInclude("Students.StudentEnrollments");
         }

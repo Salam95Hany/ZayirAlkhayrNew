@@ -48,7 +48,7 @@
                                         <i class="uil uil-pen"></i>
                                         <span>تعديل</span>
                                     </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item.userId)">
+                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item.userId)" *ngIf="LoginUserId == '5c3262ec-d2b4-4272-9bd3-4a0dc3e07a26'">
                                         <i class="uil uil-trash-alt"></i>
                                         <span>حذف</span>
                                     </button>
