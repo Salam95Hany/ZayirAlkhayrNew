@@ -14,6 +14,7 @@ import { PagingFilterModel } from '../../../../../../Models/shared/PagingFilterM
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { ParentService } from '../../../../../../Services/school/parent.service';
+import { WhatsupSendModalComponent } from "../whatsup-send-modal/whatsup-send-modal.component";
 
 @Component({
   selector: 'app-parent-templates',
@@ -127,7 +128,7 @@ export class ParentTemplatesComponent {
     this.TemplateVariables.forEach(variable => {
       const regex = new RegExp(`{{${variable.displayKey}}}`, 'g');
 
-      bodyStr = bodyStr.replace(
+      bodyStr = bodyStr?.replace(
         regex,
         `<span class="template-variable">${variable.displayName}</span>`
       );

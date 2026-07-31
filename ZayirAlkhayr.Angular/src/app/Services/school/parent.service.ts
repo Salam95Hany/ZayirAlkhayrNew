@@ -64,4 +64,16 @@ export class ParentService {
   DeleteTemplate(TemplateId: number) {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Template/DeleteTemplate?TemplateId=' + TemplateId);
   }
+
+  GetStudentTempMessage(TemplateId: number, ParentId: number, StudentId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Template/GetStudentTempMessage?TemplateId=' + TemplateId + '&ParentId=' + ParentId + '&StudentId=' + StudentId);
+  }
+
+  GetTemplates() {
+    return this.http.get<any[]>(this.apiURL + 'Template/GetTemplates');
+  }
+
+  GetParentStudents(ParentId: number) {
+    return this.http.get<any[]>(this.apiURL + 'Template/GetParentStudents?ParentId=' + ParentId);
+  }
 }

@@ -24,4 +24,13 @@ namespace ZayirAlkhayr.Entities.Specifications.School
                 ApplyPaging((filterModel.Currentpage - 1) * filterModel.Pagesize, filterModel.Pagesize);
         }
     }
+
+    public class ParentStudentsSpecification : BaseSpecification<Parent>
+    {
+        public ParentStudentsSpecification(int ParentId) : base(i => i.Id == ParentId 
+        && i.Students.Any(i => i.StudentEnrollments.Any(x => x.IsCurrent && x.StudentStatusId != StudentStatus.Withdrawn && x.StudentStatusId != StudentStatus.Deleted)))
+        {
+            AddInclude("Students.StudentEnrollments");
+        }
+    }
 }

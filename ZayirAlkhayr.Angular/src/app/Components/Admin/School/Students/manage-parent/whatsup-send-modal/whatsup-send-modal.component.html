@@ -1,0 +1,35 @@
+<div class="send-modal">
+    <section>
+        <app-za-drop-down-form-control [data]="Templates" [showSearch]="true" [placeholder]="'اختر قالب'" [(ngModel)]="TemplateId" (valueChanged)="TempChanged($event)"></app-za-drop-down-form-control>
+        <app-za-drop-down-form-control [data]="ParentStudents" [showSearch]="true" [placeholder]="'اختر طالب'" [(ngModel)]="StudentId" (valueChanged)="StudentChanged($event)"></app-za-drop-down-form-control>
+    </section>
+    <section class="preview-card main-preview-card">
+        <div class="preview-content">
+            <div class="whatsapp-phone">
+                <header class="whatsapp-header">
+                    <div class="contact-side">
+                        <i class="fa-solid fa-arrow-left back-icon" aria-hidden="true"></i>
+                        <img class="contact-avatar" [src]="'user.jfif'" [alt]="ParentName">
+                        <div class="contact-data">
+                            <strong>{{ParentName}}</strong>
+                        </div>
+                    </div>
+                    <div class="whatsapp-actions" aria-hidden="true">
+                        <i class="fa-solid fa-video"></i>
+                        <i class="fa-solid fa-phone"></i>
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </div>
+                </header>
+                <div class="whatsapp-wallpaper">
+                    <article class="whatsapp-bubble" [innerHTML]="MessageHtml"></article>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="send-footer">
+        <button type="button" class="send-button" (click)="SendWhatsup()">
+            <i class="fa-regular fa-paper-plane"></i>
+            <span>إرسال الآن</span>
+        </button>
+    </footer>
+</div>

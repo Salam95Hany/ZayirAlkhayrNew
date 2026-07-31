@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { ZaBreadcrumbComponent } from '../../../../../../Shared/za-breadcrumb/za-breadcrumb.component';
 import { ZaPaginationComponent } from '../../../../../../Shared/za-pagination/za-pagination.component';
 import { ZaFiltersComponent } from '../../../../../../Shared/za-filters/za-filters.component';
@@ -16,16 +16,18 @@ import { FormService } from '../../../../../../Services/shared/form.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
+import { WhatsupSendModalComponent } from "../whatsup-send-modal/whatsup-send-modal.component";
 
 @Component({
   selector: 'app-parents',
   standalone: true,
   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
-    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule],
+    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule, WhatsupSendModalComponent],
   templateUrl: './parents.component.html',
   styleUrl: './parents.component.css'
 })
 export class ParentsComponent {
+  @ViewChild('SendWhatsupModal') SendWhatsupModal!: TemplateRef<any>;
   TitleList = ['مركز بشائر القرآن', 'أولياء الأمور', 'قائمة أولياء الأمور'];
   Results: any[] = [];
   FilterList: FilterModel[] = [
@@ -41,6 +43,8 @@ export class ParentsComponent {
   ItemForm: FormGroup;
   UserId: any;
   ParentId: any;
+  WhatsupPhone = '';
+  Templates: any[] = [];
   PagingFilter: PagingFilterModel = {
     filterList: [],
     currentPage: 1,
@@ -59,6 +63,7 @@ export class ParentsComponent {
     this.UserId = this.authService.userId;
     this.FormInit();
     this.GetAllParentData();
+    this.GetTemplates();
   }
 
   FormInit() {
@@ -95,6 +100,21 @@ export class ParentsComponent {
     this.ItemForm.get('insertUser').setValue(this.UserId);
   }
 
+  openSendWhatsupModal(item: any) {
+    if (!item.whatsappNumber) {
+      this.toaster.warning('برجاء ادخال رقم واتساب لولي الأمر');
+      return;
+    }
+    
+    this.ParentId = item.id;
+    this.WhatsupPhone = item.whatsappNumber;
+    this.modalService.open(this.SendWhatsupModal, {
+      size: 'xl',
+      scrollable: true,
+      centered: true
+    });
+  }
+
   openItemModal(content: any, item: any) {
     this.ResetForm();
     if (item)
@@ -113,6 +133,12 @@ export class ParentsComponent {
       scrollable: true,
       centered: true
     });
+  }
+
+  GetTemplates() {
+    this.parentService.GetTemplates().subscribe(data => {
+      this.Templates = data;
+    })
   }
 
   GetAllParentData() {

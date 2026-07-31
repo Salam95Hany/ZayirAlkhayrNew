@@ -274,7 +274,6 @@ export class TemplateModalComponent implements OnInit {
   }
 
   PreviewHtml() {
-    console.log(this.editor.nativeElement.innerHTML);
     let template = this.ExtractTemplate();
     this.TemplateVariables.forEach(variable => {
       const regex = new RegExp(`{{${variable.displayKey}}}`, 'g');
@@ -340,7 +339,7 @@ export class TemplateModalComponent implements OnInit {
       });
     } else {
       this.ItemForm.patchValue({ id: this.TemplateId });
-      this.parentService.UpdateParent(this.ItemForm.value).subscribe(data => {
+      this.parentService.UpdateTemplate(this.ItemForm.value).subscribe(data => {
         if (data.isSuccess) {
           this.toaster.success(data.message);
           this.RefreshData.emit(true);

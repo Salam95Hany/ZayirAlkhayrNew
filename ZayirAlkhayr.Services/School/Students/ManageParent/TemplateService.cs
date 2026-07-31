@@ -1,11 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Globalization;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Entities.Contracts.Requests;
 using ZayirAlkhayr.Entities.Models.School;
 using ZayirAlkhayr.Entities.Specifications.School;
+using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.School.Students.ManageParent;
 using ZayirAlkhayr.Services.Common;
@@ -15,9 +19,40 @@ namespace ZayirAlkhayr.Services.School.Students.ManageParent
     public class TemplateService : ITemplateService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public TemplateService(IUnitOfWork unitOfWork)
+        private readonly ISQLHelper _sQLHelper;
+        public TemplateService(IUnitOfWork unitOfWork, ISQLHelper sQLHelper)
         {
             _unitOfWork = unitOfWork;
+            _sQLHelper = sQLHelper;
+        }
+
+        public async Task<ApiResponseModel<string>> GetStudentTempMessage(int TemplateId, int ParentId, int? StudentId)
+        {
+            var templateResult = await GetTemplateById(TemplateId);
+            var studentResult = await GetStudentTempDetails(ParentId, StudentId);
+            if(!templateResult.IsSuccess || !studentResult.IsSuccess || studentResult.Results.Rows.Count == 0)
+                return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+
+            var body = templateResult.Results.Body;
+            DataRow row = studentResult.Results.Rows[0];
+
+            foreach (DataColumn column in studentResult.Results.Columns)
+            {
+                var value = row[column.ColumnName] == DBNull.Value ? string.Empty : row[column.ColumnName]?.ToString();
+                body = body.Replace($"{{{{{column.ColumnName}}}}}", value);
+            }
+
+            body = body.TrimEnd();
+            return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, body);
+        }
+
+        public async Task<ApiResponseModel<DataTable>> GetStudentTempDetails(int ParentId, int? StudentId)
+        {
+            var Params = new SqlParameter[2];
+            Params[0] = new SqlParameter("@ParentId", ParentId);
+            Params[1] = new SqlParameter("@StudentId", StudentId);
+            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetStudentTempDetails", Params);
+            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
         public async Task<ApiResponseModel<List<FamilyDto>>> GetAllTemplateData(PagingFilterModel PagingFilter)
@@ -202,6 +237,30 @@ namespace ZayirAlkhayr.Services.School.Students.ManageParent
                 await transaction.RollbackAsync(cancellationToken);
                 return ApiResponseModel<string>.Failure(GenericErrors.TransFailed);
             }
+        }
+
+        public async Task<List<FormDropdownModel>> GetTemplates()
+        {
+            var results = await _unitOfWork.Repository<Template>().GetAllAsync();
+            var data = results.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.Name
+            }).ToList();
+            return data;
+        }
+
+        public async Task<List<ParentStudentsModel>> GetParentStudents(int ParentId)
+        {
+            var Parent = await _unitOfWork.Repository<Parent>().GetByIdWithSpecAsync(new ParentStudentsSpecification(ParentId));
+            var data = Parent.Students.Select(s => new ParentStudentsModel
+            {
+                StudentId = s.Id,
+                StudentName = s.StudentName ?? "",
+                ParentName = Parent.Name
+            }).ToList();
+
+            return data;
         }
     }
 }

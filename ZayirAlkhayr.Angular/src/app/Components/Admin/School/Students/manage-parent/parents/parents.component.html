@@ -62,7 +62,7 @@
                                         <i class="uil uil-trash-alt"></i>
                                         <span>حذف</span>
                                     </button>
-                                    <button class="button-table-action btn-success d-flex align-items-center justify-content-center gap-2" appRole pageKey="School_ManageParents_Parents" action="canDelete">
+                                    <button class="button-table-action btn-success d-flex align-items-center justify-content-center gap-2" appRole pageKey="School_ManageParents_Parents" action="canDelete" (click)="openSendWhatsupModal(item)">
                                         <i class="uil uil-whatsapp"></i>
                                         <span>ارسال</span>
                                     </button>
@@ -80,6 +80,12 @@
         </div>
     </div>
 </div>
+
+<ng-template #SendWhatsupModal let-modal>
+    <app-whatsup-send-modal [Templates]="Templates" [ParentId]="ParentId" [WhatsupPhone]=""></app-whatsup-send-modal>
+</ng-template>
+
+
 
 <ng-template #OpenItemModal let-modal>
     <div class="modal-header modal-header-bg justify-content-between">

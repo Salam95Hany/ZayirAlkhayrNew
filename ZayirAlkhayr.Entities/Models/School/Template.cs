@@ -13,7 +13,7 @@ namespace ZayirAlkhayr.Entities.Models.School
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Body { get; set; }
+        public string? Body { get; set; }
 
         public virtual ICollection<TemplateVariableMapping> TemplateVariableMappings { get; set; } = new HashSet<TemplateVariableMapping>();
     }
