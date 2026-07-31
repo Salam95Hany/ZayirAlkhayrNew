@@ -1159,10 +1159,6 @@ tr {
     cursor: pointer;
 }
 
-.modal-xxl .modal-dialog {
-    max-width: 1600px;
-}
-
 .modal-custom .modal-dialog {
     width: 90%;
     max-width: 1800px;

@@ -57,7 +57,7 @@ export class ParentTemplatesComponent {
   openItemModal(item: any) {
     this.TemplateId = item?.id;
     this.modalService.open(this.OpenItemModal, {
-      windowClass: 'modal-xxl',
+      size:'xl',
       scrollable: true,
       centered: true
     });
