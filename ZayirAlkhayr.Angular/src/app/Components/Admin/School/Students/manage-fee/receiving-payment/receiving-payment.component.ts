@@ -7,7 +7,7 @@ import { SchoolStudentService } from '../../../../../../Services/school/school-s
 import { FormService } from '../../../../../../Services/shared/form.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../../../Auth/auth.service';
-import { ZaBreadcrumbComponent } from "../../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaDropDownFormControlComponent } from "../../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component";
 import { ZaEmptyDataComponent } from '../../../../../../Shared/za-empty-data/za-empty-data.component';
 import { NgFor, NgIf } from '@angular/common';
@@ -19,7 +19,7 @@ import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-wit
 @Component({
   selector: 'app-receiving-payment',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaDropDownFormControlComponent, ZaEmptyDataComponent, NgIf, NgFor, FormsModule, ArabicDateWithTimePipe, NgxLoadingModule,
+  imports: [AdminBreadcrumbComponent, ZaDropDownFormControlComponent, ZaEmptyDataComponent, NgIf, NgFor, FormsModule, ArabicDateWithTimePipe, NgxLoadingModule,
     ReactiveFormsModule, ZaInputWithLabelComponent
   ],
   templateUrl: './receiving-payment.component.html',

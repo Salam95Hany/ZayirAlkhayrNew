@@ -1,0 +1,18 @@
+:host { display: block; min-width: 0; }
+.parents-hero p { max-width: 42rem; }
+.parents-table { min-width: 76rem; }
+.parent-column { min-width: 14rem; }
+.address-column { max-width: 15rem; overflow: hidden; text-overflow: ellipsis; }
+.actions-column { min-width: 14rem; text-align: center; }
+.whatsapp-number, .children-count { display: inline-flex; align-items: center; gap: .35rem; }
+.whatsapp-number { color: #268a68; }
+.children-count { padding: .28rem .5rem; border-radius: .45rem; color: #385d7b; background: #edf4f8; font-weight: 800; }
+.row-action--message { border-color: #cde9dc; color: #16805c; background: #effaf5; }
+.parent-modal__body { padding: 1.2rem; }
+.parent-field--wide { grid-column: 1 / -1; }
+.parent-field app-za-input-with-label { display: block; min-width: 0; }
+@media (max-width: 767.98px) { .parents-table { min-width: 74rem; } }
+@media (max-width: 575.98px) {
+    .parents-toolbar p { line-height: 1.6; }
+    .parent-field--wide { grid-column: auto; }
+}

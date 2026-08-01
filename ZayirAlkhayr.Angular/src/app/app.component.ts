@@ -18,7 +18,7 @@ export class AppComponent {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         if (event.url.startsWith('/admin')) {
-          this.styleManager.setStyle('styles/style-admin.css?v=1');
+          this.styleManager.setStyle('styles/style-admin.css?v=2');
         } else {
           this.styleManager.setStyle('styles/style-website.css?v=1');
         }

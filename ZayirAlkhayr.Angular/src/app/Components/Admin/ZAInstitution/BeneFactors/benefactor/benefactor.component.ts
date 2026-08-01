@@ -1,5 +1,5 @@
 import { Component, ElementRef, TemplateRef, ViewChild } from '@angular/core';
-import { ZaBreadcrumbComponent } from "../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from "../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../Shared/za-filters/za-filters.component";
 import { CommonModule, DatePipe } from '@angular/common';
@@ -26,7 +26,7 @@ import { NgxLoadingModule } from "ngx-loading";
 @Component({
   selector: 'app-benefactor',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
+  imports: [CommonModule, FormsModule, AdminBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
     ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, ZaDropDownFormControlComponent, NgxLoadingModule],
   providers: [DatePipe],
   templateUrl: './benefactor.component.html',

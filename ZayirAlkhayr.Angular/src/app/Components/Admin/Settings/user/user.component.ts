@@ -1,5 +1,5 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { ZaBreadcrumbComponent } from "../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from "../../../../Shared/za-pagination/za-pagination.component";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
@@ -13,12 +13,13 @@ import { CustomValidators, RegexType } from '../../../../Services/shared/custom-
 import { PagePermissionComponent } from "../page-permission/page-permission.component";
 import { NgxLoadingModule } from "ngx-loading";
 import { AuthService } from '../../../../Auth/auth.service';
+import { UserProfileComponent } from "../user-profile/user-profile.component";
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaEmptyDataComponent, NgbModule,
-    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, NgxLoadingModule],
+  imports: [ZaPaginationComponent, ZaEmptyDataComponent, NgbModule,
+    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, NgxLoadingModule, UserProfileComponent, AdminBreadcrumbComponent],
   templateUrl: './user.component.html',
   styleUrl: './user.component.css'
 })

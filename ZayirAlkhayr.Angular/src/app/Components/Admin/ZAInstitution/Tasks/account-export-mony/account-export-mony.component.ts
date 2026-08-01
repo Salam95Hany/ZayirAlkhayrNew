@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ZaBreadcrumbComponent } from "../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from "../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../Shared/za-filters/za-filters.component";
 import { ZaEmptyDataComponent } from '../../../../../Shared/za-empty-data/za-empty-data.component';
@@ -25,7 +25,7 @@ import { DonationMethodPipe } from '../../../../../Pipes/donation-method.pipe';
 @Component({
   selector: 'app-account-export-mony',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
+  imports: [AdminBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RoleCheckerDirective, ZaInputWithLabelComponent,
     NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule,DonationMethodPipe],
   templateUrl: './account-export-mony.component.html',

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ZaFiltersComponent } from "../../../../../Shared/za-filters/za-filters.component";
-import { ZaBreadcrumbComponent } from "../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { TaskService } from '../../../../../Services/zainstitution/task.service';
 import { PagingFilterModel } from '../../../../../Models/shared/PagingFilterModel ';
 import { CommonModule } from '@angular/common';
@@ -9,7 +9,7 @@ import { FilterModel } from '../../../../../Models/shared/FilterModel';
 @Component({
   selector: 'app-net-value',
   standalone: true,
-  imports: [ZaFiltersComponent, ZaBreadcrumbComponent, CommonModule],
+  imports: [ZaFiltersComponent, AdminBreadcrumbComponent, CommonModule],
   templateUrl: './net-value.component.html',
   styleUrl: './net-value.component.css'
 })

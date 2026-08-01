@@ -1,0 +1,111 @@
+<header class="admin-header" dir="rtl">
+    <nav class="admin-header__bar" aria-label="شريط إدارة النظام">
+        <a class="brand" routerLink="/admin/home" aria-label="الانتقال إلى لوحة التحكم">
+            <span class="brand__mark" aria-hidden="true"><i class="fa-solid fa-school"></i></span>
+            <span class="brand__copy">
+        <strong>ZA ERP</strong>
+        <small>نظام الإدارة المتكامل</small>
+      </span>
+        </a>
+
+        <div class="module-context">
+            <span class="module-context__label">مساحة العمل الحالية</span>
+            <strong>{{ currentModuleName }}</strong>
+        </div>
+
+        <div class="admin-header__actions">
+            <a class="header-action header-action--home" routerLink="/admin/home" routerLinkActive="is-active" aria-label="الرئيسية" title="الرئيسية">
+                <i class="fa-solid fa-house"></i>
+            </a>
+
+            <div ngbDropdown class="header-dropdown notification-dropdown" placement="bottom-start" autoClose="outside">
+                <button ngbDropdownToggle class="header-action" type="button" aria-label="فتح الإشعارات" [attr.aria-label]="unreadCount ? 'فتح الإشعارات، ' + unreadCount + ' غير مقروءة' : 'فتح الإشعارات'">
+          <i class="fa-regular fa-bell"></i>
+          <span *ngIf="unreadCount" class="notification-badge">{{ unreadBadge }}</span>
+        </button>
+
+                <div ngbDropdownMenu class="notification-menu">
+                    <div class="notification-menu__header">
+                        <div>
+                            <h2>الإشعارات</h2>
+                            <p *ngIf="unreadCount; else allRead">لديك {{ unreadCount }} إشعارات غير مقروءة</p>
+                            <ng-template #allRead>
+                                <p>لا توجد إشعارات جديدة</p>
+                            </ng-template>
+                        </div>
+                        <button *ngIf="unreadCount" type="button" (click)="markAllAsRead($event)">تحديد الكل كمقروء</button>
+                    </div>
+
+                    <div *ngIf="notifications.length; else emptyNotifications" class="notification-list">
+                        <a *ngFor="let notification of notifications; trackBy: trackNotification" class="notification-item" [class.notification-item--unread]="!notification.isRead" [class]="'notification-item notification-item--' + (notification.category || 'info') + (!notification.isRead ? ' notification-item--unread' : '')"
+                            [routerLink]="notificationLink(notification)" (click)="markAsRead(notification)">
+                            <span class="notification-item__icon">
+                <i [class]="notification.icon || 'fa-regular fa-bell'"></i>
+              </span>
+                            <span class="notification-item__content">
+                <strong>{{ notification.title }}</strong>
+                <span *ngIf="notification.message">{{ notification.message }}</span>
+                            <small *ngIf="notification.createdAt">{{ formatNotificationTime(notification.createdAt) }}</small>
+                            </span>
+                            <span *ngIf="!notification.isRead" class="notification-item__dot" aria-label="غير مقروء"></span>
+                        </a>
+                    </div>
+
+                    <ng-template #emptyNotifications>
+                        <div class="notification-empty">
+                            <span><i class="fa-regular fa-bell-slash"></i></span>
+                            <strong>لا توجد إشعارات حالياً</strong>
+                            <p>ستظهر هنا التنبيهات والتحديثات الجديدة عند وصولها.</p>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+
+            <div ngbDropdown class="header-dropdown profile-dropdown" placement="bottom-start">
+                <button ngbDropdownToggle class="profile-button" type="button" aria-label="فتح قائمة الحساب">
+          <span class="profile-avatar">{{ userInitials }}</span>
+          <span class="profile-copy">
+            <strong>{{ userName }}</strong>
+            <small>{{ userRole }}</small>
+          </span>
+          <i class="fa-solid fa-chevron-down profile-chevron" aria-hidden="true"></i>
+        </button>
+
+                <div ngbDropdownMenu class="profile-menu">
+                    <div class="profile-menu__identity">
+                        <span class="profile-avatar profile-avatar--large">{{ userInitials }}</span>
+                        <span><strong>{{ userName }}</strong><small>{{ userRole }}</small></span>
+                    </div>
+                    <div class="profile-menu__divider"></div>
+                    <a ngbDropdownItem routerLink="/admin/home"><i class="fa-solid fa-table-columns"></i> لوحة التحكم</a>
+                    <a ngbDropdownItem routerLink="/admin/settings" *ngIf="isSuperAdmin"><i class="fa-solid fa-gear"></i> إعدادات النظام</a>
+                    <a ngbDropdownItem routerLink="/admin/user-profile"><i class="fa-solid fa-user"></i> ملفي الشخصي</a>
+                    <div class="profile-menu__divider"></div>
+                    <button ngbDropdownItem class="logout-action" type="button" (click)="logout()" [disabled]="isLoggingOut">
+            <i [class]="isLoggingOut ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-arrow-right-from-bracket'"></i>
+            {{ isLoggingOut ? 'جارٍ تسجيل الخروج...' : 'تسجيل الخروج' }}
+          </button>
+                </div>
+            </div>
+
+            <button class="mobile-menu-toggle" type="button" (click)="toggleMobileMenu()" [attr.aria-expanded]="mobileMenuOpen" aria-controls="admin-mobile-menu" aria-label="فتح قائمة المستخدم">
+        <i [class]="mobileMenuOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars'"></i>
+      </button>
+        </div>
+    </nav>
+
+    <div id="admin-mobile-menu" class="mobile-menu" [class.mobile-menu--open]="mobileMenuOpen">
+        <div class="mobile-menu__identity">
+            <span class="profile-avatar profile-avatar--large">{{ userInitials }}</span>
+            <span><strong>{{ userName }}</strong><small>{{ userRole }}</small></span>
+        </div>
+        <div class="mobile-menu__links">
+            <a routerLink="/admin/home"><i class="fa-solid fa-house"></i> لوحة التحكم</a>
+            <a routerLink="/admin/settings"><i class="fa-solid fa-gear"></i> إعدادات النظام</a>
+            <button type="button" (click)="logout()" [disabled]="isLoggingOut">
+        <i [class]="isLoggingOut ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-arrow-right-from-bracket'"></i>
+        تسجيل الخروج
+      </button>
+        </div>
+    </div>
+</header>

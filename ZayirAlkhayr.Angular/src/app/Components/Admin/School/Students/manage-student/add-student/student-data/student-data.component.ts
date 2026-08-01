@@ -32,7 +32,7 @@ export class StudentDataComponent {
   @Input() DetailsMode = false;
   @Output() StudentDetailsChange = new EventEmitter<StudentDetails[]>();
   studentStatus: FormDropdownModel[] = [
-    { value: 1, name: 'موجود' },
+    { value: 1, name: 'مستمر' },
     { value: 2, name: 'منسحب' }
   ];
   Genders: FormDropdownModel[] = [
@@ -165,14 +165,10 @@ export class StudentDataComponent {
     this.ResetForm();
     this.addMode = true;
     this.ItemForm.get('academicStageId')?.enable();
-    this.ItemForm.get('enrollmentDate')?.enable();
-    this.ItemForm.get('gender')?.enable();
     if (item) {
       this.addMode = false;
       if (this.UpdateMode && item.studentId) {
         this.ItemForm.get('academicStageId')?.disable();
-        this.ItemForm.get('enrollmentDate')?.disable();
-        this.ItemForm.get('gender')?.disable();
       }
       this.FillEditForm(item);
     }
@@ -214,7 +210,7 @@ export class StudentDataComponent {
     if (this.addMode) {
       let checked = this.StudentDetails.find(i => i.studentName == this.ItemForm.value.studentName);
       if (checked) {
-        this.toaster.warning('هذا الطالب موجود');
+      this.toaster.warning('هذا الطالب مسجل بالفعل');
         return;
       }
     }

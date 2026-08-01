@@ -60,7 +60,7 @@ export class ParentDataComponent {
     }
 
     if (!this.ItemForm.value.fatherPhone && !this.ItemForm.value.motherPhone) {
-      this.toaster.warning('أدخل رقم هاتف الأب او الأم')
+      this.toaster.warning('أدخل رقم هاتف الأب أو الأم')
       return null;
     }
 

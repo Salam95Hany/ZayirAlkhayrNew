@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ZaBreadcrumbComponent } from "../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from "../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../Shared/za-filters/za-filters.component";
 import { CommonModule } from '@angular/common';
@@ -14,7 +14,7 @@ import { NgxLoadingModule } from "ngx-loading";
 @Component({
   selector: 'app-benefactor-notes',
   standalone: true,
-  imports: [CommonModule, ZaBreadcrumbComponent, ZaPaginationComponent,
+  imports: [CommonModule, AdminBreadcrumbComponent, ZaPaginationComponent,
     ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, NgxLoadingModule],
   templateUrl: './benefactor-notes.component.html',
   styleUrl: './benefactor-notes.component.css'

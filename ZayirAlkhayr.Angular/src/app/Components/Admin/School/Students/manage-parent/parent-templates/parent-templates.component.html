@@ -1,100 +1,120 @@
-<app-za-breadcrumb [TitleList]="TitleList"></app-za-breadcrumb>
+<div class="templates-page" dir="rtl">
+    <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2">
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="School_Settings_StudentTypes" action="canAdd" (click)="openItemModal(null)">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>إضافة</span>
-                </button>
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
-                    <i class="uil uil-filter"></i>
-                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
-                </button>
+    <header class="templates-hero">
+        <div>
+            <span class="templates-hero__eyebrow">إدارة التواصل الأسري</span>
+            <h1>قوالب رسائل أولياء الأمور</h1>
+            <p>أنشئ رسائل احترافية قابلة لإعادة الاستخدام لتواصل أسرع وأكثر اتساقاً مع أولياء الأمور.</p>
+        </div>
+        <div class="templates-hero__metrics" aria-label="ملخص القوالب">
+            <div class="hero-metric"><span class="hero-metric__icon"><i
+            class="fa-regular fa-message"></i></span><span><small>إجمالي القوالب</small><strong>{{ TotalCount
+            }}</strong></span></div>
+            <div class="hero-metric"><span class="hero-metric__icon hero-metric__icon--teal"><i
+            class="fa-solid fa-code-branch"></i></span><span><small>المتغيرات المتاحة</small><strong>{{
+            TemplateVariables.length }}</strong></span></div>
+        </div>
+    </header>
+
+    <section class="templates-panel" aria-labelledby="templates-table-title">
+        <div class="templates-toolbar">
+            <div class="templates-toolbar__heading">
+                <span class="templates-toolbar__icon"><i class="fa-solid fa-file-lines"></i></span>
+                <div>
+                    <h2 id="templates-table-title">مكتبة القوالب</h2>
+                    <p>إدارة قوالب الرسائل والمتغيرات الديناميكية المستخدمة فيها.</p>
+                </div>
+            </div>
+            <div class="templates-toolbar__actions">
+                <button type="button" class="toolbar-button toolbar-button--primary" appRole pageKey="School_Settings_StudentTypes" action="canAdd" (click)="openItemModal(null)"><i
+            class="fa-solid fa-plus"></i><span>إنشاء قالب</span></button>
+                <button type="button" class="toolbar-button toolbar-button--filter" (click)="isFilter = !isFilter" [class.is-active]="!isFilter" [attr.aria-expanded]="!isFilter" aria-controls="templateFilters"><i
+            class="fa-solid fa-sliders"></i><span>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}</span></button>
             </div>
         </div>
-        <div class="col-md-4 mb-2">
+
+        <div id="templateFilters" class="templates-filters" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <div class="templates-filters__header"><span><i class="fa-solid fa-filter"></i> تصفية مكتبة
+          القوالب</span><small>استخدم حقول البحث للوصول إلى القالب المطلوب بسرعة.</small></div>
+            <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
+        </div>
+
+        <div class="templates-list-meta">
+            <div class="templates-list-meta__count"><span class="status-dot"></span><span>تم العثور على <strong>{{ TotalCount
+            }}</strong> قالب</span></div>
             <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
         </div>
-        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
-            <div class="d-flex align-items-center">
-                <ng-container>
-                    <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
-                </ng-container>
-            </div>
-        </div>
-    </div>
-    <div class="p-3 bg-white">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+
+        <div class="templates-table-wrap" role="region" aria-label="جدول قوالب الرسائل" tabindex="0">
+            <table class="templates-table">
                 <thead>
                     <tr>
-                        <th>الاسم</th>
-                        <th>القالب</th>
+                        <th class="name-column">اسم القالب</th>
+                        <th class="preview-column">معاينة الرسالة</th>
                         <th>أُضيف بواسطة</th>
-                        <th>تاريخ الاضافة</th>
-                        <th>عمليات</th>
+                        <th>تاريخ الإضافة</th>
+                        <th class="actions-column">الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of Results">
-                            <td>{{item.name}}</td>
-                            <td [innerHTML]="PreviewHtml(item.body)"></td>
-                            <td>{{item.createdBy}}</td>
-                            <td>{{item.insertDateStr}}</td>
-                            <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="!item.isSystem">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="School_Settings_StudentTypes" action="canEdit" (click)="openItemModal(item)">
-                                        <i class="uil uil-pen"></i>
-                                        <span>تعديل</span>
-                                    </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" appRole pageKey="School_Settings_StudentTypes" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
-                                        <i class="uil uil-trash-alt"></i>
-                                        <span>حذف</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!Results.length">
-                            <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
+                    <tr *ngFor="let item of Results">
+                        <td class="name-column">
+                            <div class="template-identity"><span class="template-icon"><i
+                    class="fa-regular fa-message"></i></span><span><strong>{{ item.name || '-' }}</strong><small>{{
+                    item.isSystem ? 'قالب نظام' : 'قالب مخصص' }}</small></span></div>
+                        </td>
+                        <td class="preview-column">
+                            <div class="message-preview"><i class="fa-brands fa-whatsapp"></i>
+                                <div [innerHTML]="PreviewHtml(item.body)"></div>
+                            </div>
+                        </td>
+                        <td>{{ item.createdBy || '-' }}</td>
+                        <td>{{ item.insertDateStr || '-' }}</td>
+                        <td class="actions-column">
+                            <div class="row-actions" *ngIf="!item.isSystem">
+                                <button type="button" class="row-action row-action--edit" title="تعديل القالب" appRole pageKey="School_Settings_StudentTypes" action="canEdit" (click)="openItemModal(item)"><i
+                    class="fa-regular fa-pen-to-square"></i><span>تعديل</span></button>
+                                <button type="button" class="row-action row-action--delete" title="حذف القالب" appRole pageKey="School_Settings_StudentTypes" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)"><i
+                    class="fa-regular fa-trash-can"></i><span>حذف</span></button>
+                            </div>
+                            <span class="system-record" *ngIf="item.isSystem"><i class="fa-solid fa-shield-halved"></i>قالب
+                محمي</span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="!Results.length">
+                        <td colspan="5" class="empty-cell">
+                            <app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-    </div>
+    </section>
 </div>
 
 <ng-template #OpenItemModal let-modal>
     <app-template-modal [TemplateId]="TemplateId" [TemplateVariables]="TemplateVariables" (RefreshData)="RefreshData($event)"></app-template-modal>
 </ng-template>
 
-
 <ng-template #deleteItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <span>تأكيد الإجراء</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+    <div class="template-modal" dir="rtl">
+        <div class="template-modal__header">
+            <div class="template-modal__title"><span class="template-modal__icon"><i
+            class="fa-regular fa-trash-can"></i></span>
+                <div>
+                    <h2>تأكيد حذف القالب</h2>
+                    <p>يرجى مراجعة الإجراء قبل المتابعة.</p>
+                </div>
+            </div><button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i
+          class="fa-solid fa-xmark"></i></button>
         </div>
-    </div>
-    <div class="modal-body">
-        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
-    </div>
-    <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success" (click)="DeleteItem()">
-            <i class="fas fa-check"></i>
-            <span class="ms-2">نعم</span>
-        </button>
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
-            <i class="fas fa-times"></i>
-            <span class="ms-2">لا</span>
-        </button>
+        <div class="template-modal__body">
+            <div class="delete-warning"><i class="fa-solid fa-triangle-exclamation"></i>
+                <p>هل أنت متأكد أنك تريد حذف قالب الرسالة؟ لا يمكن التراجع عن هذا الإجراء بعد تأكيده.</p>
+            </div>
+        </div>
+        <div class="template-modal__footer"><button type="button" class="modal-button modal-button--secondary" (click)="modal.close()">إلغاء</button><button type="button" class="modal-button modal-button--danger" (click)="DeleteItem()"><i class="fa-regular fa-trash-can"></i>تأكيد الحذف</button></div>
     </div>
 </ng-template>
 

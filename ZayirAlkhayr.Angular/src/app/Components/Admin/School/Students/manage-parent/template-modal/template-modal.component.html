@@ -1,104 +1,98 @@
-<div class="app-shell">
-
-    <!-- dark rail navigation -->
-    <!-- <div class="rail">
-        <div class="rail-avatar">
-            <img src="https://i.pravatar.cc/80?img=13" alt="user">
-        </div>
-        <div class="rail-icon" title="الرئيسية"><i class="fa-solid fa-house"></i></div>
-        <div class="rail-icon" title="الإشعارات"><i class="fa-regular fa-bell"></i><span class="badge-dot">5</span></div>
-        <div class="rail-icon" title="جهات الاتصال"><i class="fa-solid fa-address-book"></i></div>
-        <div class="rail-icon" title="الصور"><i class="fa-regular fa-image"></i></div>
-        <div class="rail-icon active" title="واتساب"><i class="fa-brands fa-whatsapp"></i></div>
-        <div class="rail-icon" title="المستخدمين"><i class="fa-solid fa-user-group"></i></div>
-        <div class="rail-icon" title="التقويم"><i class="fa-regular fa-calendar"></i></div>
-        <div class="rail-icon" title="التحرير"><i class="fa-solid fa-pen-nib"></i></div>
-        <div class="rail-icon" title="التقارير"><i class="fa-solid fa-chart-column"></i></div>
-        <div class="rail-icon" title="السجلات"><i class="fa-solid fa-clock-rotate-left"></i></div>
-        <div class="rail-spacer"></div>
-    </div> -->
-
-    <div class="stage">
-        <div class="builder-modal">
-
-            <!-- header -->
-            <div class="builder-header">
-                <div class="title-wrap">
-                    <div class="wa-badge"><i class="fa-brands fa-whatsapp"></i></div>
-                    <h5>إنشاء قالب واتساب جديد</h5>
-                </div>
-                <button class="close-btn" (click)="CloseModal()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <!-- body -->
-            <div class="builder-body">
-                <!-- variables column -->
-                <div class="vars-col">
-                    <div class="vars-heading">المتغيرات المتاحة</div>
-                    <div class="var-group" *ngFor="let group of groupedVariables">
-                        <div class="var-group-title" [style.background]="group.backColor" [style.color]="group.color">
-                            <span [style.color]="group.color"><i [class]="group.icon"></i></span> {{group.categoryName}}
-                        </div>
-                        <div class="var-row" *ngFor="let item of group.variables" (click)="insertVariable(item)">
-                            <span class="var-name">{{item.displayName}}</span>
-                            <span class="add-ic"><i class="fa-solid fa-plus"></i></span>
-                        </div>
-                    </div>
-                </div>
-                <!-- editor column -->
-                <div class="editor-col">
-                    <form [formGroup]="ItemForm" autocomplete="off">
-                        <div class="row g-3">
-                            <div class="col-md-12">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'اسم القالب...'" formControlName="name" [error]="formErrors.name"></app-za-input-with-label>
-                                <!-- <label class="field-label">اسم القالب <span class="req">*</span></label>
-                            <input type="text" class="form-control" placeholder="اسم القالب"> -->
-                            </div>
-                        </div>
-                    </form>
-
-                    <div class="rich-editor">
-                        <div class="rich-toolbar">
-                            <!-- <div class="tb-sep"></div>
-                            <button class="tb-btn"><b>U</b></button>
-                            <button class="tb-btn"><i class="fa-solid fa-italic"></i></button>
-                            <button class="tb-btn"><b>B</b></button>
-                            <div class="tb-sep"></div>
-                            <button class="tb-btn"><i class="fa-solid fa-list-ul"></i></button> -->
-                            <div class="tb-sep"></div>
-                            <button class="tb-btn"><i class="fa-regular fa-face-smile"></i></button>
-                        </div>
-
-                        <div #Editor class="rich-content" contenteditable="true" spellcheck="false" (click)="EditorClick($event)" (keyup)="SaveSelection()" (mouseup)="SaveSelection()" (focus)="SaveSelection()" (keydown)="OnEditorKeyDown($event)" (input)="UpdateStatistics()">
-                        </div>
-
-                        <div class="editor-footer">
-                            <span>عدد الحروف: {{charactersCount}}</span>
-                            <span>عدد المتغيرات: {{variablesCount}}</span>
-                        </div>
-                    </div>
-                    <div class="preview-heading">
-                        <button class="toggle-data-btn" (click)="PreviewHtml()">
-                            <i class="fa-regular fa-eye"></i>
-                            معاينة الرسالة
-                        </button>
-                    </div>
-                    <div class="wa-preview">
-                        <div class="wa-bubble" *ngIf="PreviewTemp">
-                            <div class="wa-message" [innerHTML]="previewHtml"></div>
-                            <div class="wa-time">{{previewTime}}<i class="fa-solid fa-check-double" style="color:#53bdeb;"></i></div>
-                        </div>
-                    </div>
-                    <div class="modal-actions">
-                        <button class="btn-save" (click)="SaveTemplate()"><i class="fa-regular fa-floppy-disk"></i> حفظ
-                            القالب</button>
-                        <button class="btn-cancel" (click)="CloseModal()"><i class="fa-solid fa-xmark"></i>
-                            إلغاء</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="template-builder" dir="rtl">
+  <header class="builder-header">
+    <div class="builder-title">
+      <span class="builder-title__icon"><i class="fa-brands fa-whatsapp"></i></span>
+      <div>
+        <span class="builder-title__eyebrow">مركز التواصل الأسري</span>
+        <h2>{{ TemplateId ? 'تعديل قالب الرسالة' : 'إنشاء قالب رسالة جديد' }}</h2>
+        <p>صمّم رسالة قابلة لإعادة الاستخدام وأضف البيانات الديناميكية بنقرة واحدة.</p>
+      </div>
     </div>
+    <button type="button" class="close-button" aria-label="إغلاق النافذة" (click)="CloseModal()"><i class="fa-solid fa-xmark"></i></button>
+  </header>
+
+  <div class="builder-body">
+    <aside class="variables-panel" aria-labelledby="variables-title">
+      <div class="variables-panel__header">
+        <span class="variables-panel__icon"><i class="fa-solid fa-code"></i></span>
+        <div><h3 id="variables-title">المتغيرات المتاحة</h3><p>ضع المؤشر داخل الرسالة ثم اختر المتغير.</p></div>
+      </div>
+
+      <div class="variables-summary"><span><i class="fa-solid fa-layer-group"></i>{{ groupedVariables.length }} مجموعات</span><span><i class="fa-solid fa-code-branch"></i>{{ TemplateVariables.length }} متغير</span></div>
+
+      <div class="variables-groups">
+        <section class="variable-group" *ngFor="let group of groupedVariables">
+          <header class="variable-group__title" [style.background]="group.backColor" [style.color]="group.color">
+            <span><i [class]="group.icon"></i></span><strong>{{ group.categoryName }}</strong><small>{{ group.variables.length }}</small>
+          </header>
+          <button type="button" class="variable-button" *ngFor="let item of group.variables" (click)="insertVariable(item)" [title]="'إضافة ' + item.displayName">
+            <span class="variable-button__name">{{ item.displayName }}</span>
+            <span class="variable-button__add"><i class="fa-solid fa-plus"></i></span>
+          </button>
+        </section>
+      </div>
+    </aside>
+
+    <main class="editor-panel">
+      <form [formGroup]="ItemForm" autocomplete="off">
+        <label class="template-name-field">
+          <span>اسم القالب <em>*</em></span>
+          <app-za-input-with-label [type]="'text'" [placeholder]="'مثال: تذكير بسداد المصروفات'" formControlName="name" [error]="formErrors.name"></app-za-input-with-label>
+        </label>
+      </form>
+
+      <section class="message-editor" aria-labelledby="message-editor-title">
+        <header class="message-editor__header">
+          <div><span class="section-icon"><i class="fa-regular fa-pen-to-square"></i></span><span><strong id="message-editor-title">محتوى الرسالة</strong><small>اكتب الرسالة وأدرج المتغيرات من القائمة.</small></span></div>
+          <div class="editor-tools">
+            <button #emojiTrigger type="button" class="emoji-button" [class.is-active]="isEmojiPickerOpen"
+              aria-label="إضافة رمز تعبيري" title="إضافة رمز تعبيري" [attr.aria-expanded]="isEmojiPickerOpen"
+              (mousedown)="PreserveSelectionForEmoji($event)" (click)="ToggleEmojiPicker()">
+              <i class="fa-regular fa-face-smile"></i><span>رمز تعبيري</span>
+            </button>
+            <span class="required-label">مطلوب</span>
+          </div>
+        </header>
+        <div #Editor class="message-editor__content" contenteditable="true" role="textbox" aria-multiline="true"
+          data-placeholder="اكتب رسالة واضحة ومختصرة لولي الأمر..." spellcheck="false"
+          (click)="EditorClick($event)" (keyup)="SaveSelection()" (mouseup)="SaveSelection()"
+          (focus)="SaveSelection()" (keydown)="OnEditorKeyDown($event)" (input)="UpdateStatistics()"></div>
+        <footer class="message-editor__footer">
+          <span><i class="fa-solid fa-font"></i><strong>{{ charactersCount }}</strong> حرف</span>
+          <span><i class="fa-solid fa-code-branch"></i><strong>{{ variablesCount }}</strong> متغير</span>
+          <span class="editor-hint"><i class="fa-regular fa-lightbulb"></i>يمكن حذف المتغير من علامة ×</span>
+        </footer>
+      </section>
+
+      <div #emojiPopover class="emoji-picker-popover" *ngIf="isEmojiPickerOpen"
+        [style.top]="emojiPickerPosition.top" [style.left]="emojiPickerPosition.left"
+        [style.width]="emojiPickerPosition.width" role="dialog" aria-label="اختيار رمز تعبيري">
+        <app-template-emoji-picker (emojiSelected)="InsertEmoji($event)"></app-template-emoji-picker>
+      </div>
+
+      <section class="preview-section" aria-labelledby="preview-title">
+        <header class="preview-section__header">
+          <div><span class="section-icon section-icon--preview"><i class="fa-regular fa-eye"></i></span><span><strong id="preview-title">معاينة الرسالة</strong><small>شاهد الرسالة كما ستظهر لولي الأمر.</small></span></div>
+          <button type="button" class="preview-button" (click)="PreviewHtml()"><i class="fa-solid fa-rotate"></i><span>{{ PreviewTemp ? 'تحديث المعاينة' : 'عرض المعاينة' }}</span></button>
+        </header>
+        <div class="whatsapp-preview">
+          <div class="preview-placeholder" *ngIf="!PreviewTemp"><span><i class="fa-brands fa-whatsapp"></i></span><strong>المعاينة جاهزة</strong><small>اضغط على «عرض المعاينة» لمشاهدة الرسالة.</small></div>
+          <div class="whatsapp-bubble" *ngIf="PreviewTemp">
+            <div class="whatsapp-message" [innerHTML]="previewHtml"></div>
+            <div class="whatsapp-time"><span>{{ previewTime }}</span><i class="fa-solid fa-check-double"></i></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="builder-actions">
+    <div class="builder-actions__note"><i class="fa-solid fa-circle-info"></i><span>سيتم استبدال المتغيرات تلقائياً عند إرسال الرسالة.</span></div>
+    <div class="builder-actions__buttons">
+      <button type="button" class="action-button action-button--secondary" (click)="CloseModal()"><i class="fa-solid fa-xmark"></i><span>إلغاء</span></button>
+      <button type="button" class="action-button action-button--primary" (click)="SaveTemplate()"><i class="fa-regular fa-floppy-disk"></i><span>{{ TemplateId ? 'حفظ التعديلات' : 'حفظ القالب' }}</span></button>
+    </div>
+  </footer>
 </div>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

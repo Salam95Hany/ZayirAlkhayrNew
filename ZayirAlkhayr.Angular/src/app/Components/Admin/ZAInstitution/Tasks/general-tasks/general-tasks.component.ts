@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ZaBreadcrumbComponent } from "../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from "../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../Shared/za-filters/za-filters.component";
 import { FilterModel } from '../../../../../Models/shared/FilterModel';
@@ -22,7 +22,7 @@ import { NgxLoadingModule } from "ngx-loading";
 @Component({
   selector: 'app-general-tasks',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent,
+  imports: [AdminBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, ZaInputWithLabelComponent, RoleCheckerDirective,
     NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule],
   templateUrl: './general-tasks.component.html',

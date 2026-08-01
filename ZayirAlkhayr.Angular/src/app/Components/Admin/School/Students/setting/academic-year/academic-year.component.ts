@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ZaBreadcrumbComponent } from '../../../../../../Shared/za-breadcrumb/za-breadcrumb.component';
+import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from '../../../../../../Shared/za-pagination/za-pagination.component';
 import { ZaFiltersComponent } from '../../../../../../Shared/za-filters/za-filters.component';
 import { ZaEmptyDataComponent } from '../../../../../../Shared/za-empty-data/za-empty-data.component';
@@ -20,7 +20,7 @@ import { StudentSettingService } from '../../../../../../Services/school/student
 @Component({
   selector: 'app-academic-year',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,FormsModule,
+  imports: [AdminBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,FormsModule,
     NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule, ArabicDateWithTimePipe],
   providers: [DatePipe],
   templateUrl: './academic-year.component.html',

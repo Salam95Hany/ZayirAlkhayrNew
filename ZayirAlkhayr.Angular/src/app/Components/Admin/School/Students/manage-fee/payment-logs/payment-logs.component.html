@@ -1,85 +1,185 @@
-<app-za-breadcrumb [TitleList]="TitleList"></app-za-breadcrumb>
+<app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2">
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
-                    <i class="uil uil-filter"></i>
-                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
-                </button>
+<main class="payment-logs-page" dir="rtl">
+    <section class="page-hero">
+        <div class="hero-content">
+            <span class="hero-eyebrow"><i class="uil uil-shield-check"></i> الإدارة المالية للطلاب</span>
+            <h1>سجل الدفعات</h1>
+            <p>راجع عمليات التحصيل والإيصالات والأقساط القادمة من مكان واحد.</p>
+        </div>
+
+        <div class="hero-summary" aria-label="ملخص سجل الدفعات">
+            <div class="hero-stat">
+                <i class="uil uil-receipt"></i>
+                <span>إجمالي السجلات</span>
+                <strong>{{ TotalCount }}</strong>
+            </div>
+            <div class="hero-stat">
+                <i class="uil uil-file-check-alt"></i>
+                <span>المعروض حاليًا</span>
+                <strong>{{ Results.length }}</strong>
+            </div>
+            <div class="hero-stat">
+                <i class="uil uil-file-alt"></i>
+                <span>الصفحة الحالية</span>
+                <strong>{{ PagingFilter.currentPage }}</strong>
             </div>
         </div>
-        <div class="col-md-4 mb-2">
-            <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
-        </div>
-        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
-            <div class="d-flex align-items-center">
-                <ng-container>
-                    <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
-                </ng-container>
+    </section>
+
+    <section class="filter-card">
+        <div class="filter-toolbar">
+            <div class="section-heading">
+                <span class="heading-icon"><i class="uil uil-filter"></i></span>
+                <div>
+                    <h2>البحث والتصفية</h2>
+                    <p>استخدم الفلاتر للوصول إلى عملية دفع أو طالب محدد.</p>
+                </div>
             </div>
+
+            <button
+                type="button"
+                class="filter-toggle"
+                (click)="isFilter = !isFilter"
+                [attr.aria-expanded]="!isFilter">
+                <i class="uil" [class.uil-filter]="isFilter" [class.uil-times]="!isFilter"></i>
+                <span>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}</span>
+                <i class="uil uil-angle-down toggle-arrow" [class.is-open]="!isFilter"></i>
+            </button>
         </div>
-    </div>
-    <div class="p-3 bg-white">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+
+        <div class="filter-content" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <app-za-filters
+                [FilterList]="FilterList"
+                (filterChanged)="FilterChecked($event)">
+            </app-za-filters>
+        </div>
+    </section>
+
+    <section class="ledger-card">
+        <header class="ledger-header">
+            <div class="section-heading compact">
+                <span class="heading-icon"><i class="uil uil-list-ul"></i></span>
+                <div>
+                    <h2>عمليات السداد</h2>
+                    <p>سجل تفصيلي بجميع الدفعات وحالة كل عملية.</p>
+                </div>
+            </div>
+
+            <div class="ledger-tools">
+                <span class="records-badge"><b>{{ TotalCount }}</b> سجل</span>
+                <app-za-pagination
+                    (pageChanged)="PageChange($event)"
+                    [currentPage]="PagingFilter.currentPage"
+                    [pageSize]="PagingFilter.pageSize"
+                    [totalCount]="TotalCount">
+                </app-za-pagination>
+            </div>
+        </header>
+
+        <div class="table-shell">
+            <table class="payment-table">
                 <thead>
                     <tr>
                         <th>رقم الإيصال</th>
-                        <th>اسم الطالب</th>
+                        <th>الطالب</th>
                         <th>السنة الدراسية</th>
                         <th>نوع الرسوم</th>
                         <th>المبلغ</th>
                         <th>طريقة الدفع</th>
                         <th>تاريخ الدفع</th>
                         <th>القسط القادم</th>
-                        <th>تاريخ القسط القادم</th>
+                        <th>موعد القسط</th>
                         <th>المتبقي</th>
                         <th>الحالة</th>
-                        <th>عمليات</th>
+                        <th>الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of Results">
-                            <td>{{item.receiptNumber}}</td>
-                            <td>{{item.studentName}}</td>
-                            <td>{{item.academicYearName}}</td>
-                            <td>{{item.feeTypeName}}</td>
-                            <td>{{item.amount}}</td>
-                            <td>{{item.paymentMethodName}}</td>
-                            <td>{{item.paymentDate | arabicDateWithTime}}</td>
-                            <td>{{item.nextAmount ?? '-'}}</td>
-                            <td>{{item.nextInstallmentDate | arabicDateWithTime}}</td>
-                            <td>{{item.remainingAmount}}</td>
-                            <td>
-                                <span class="status-chip badge-danger" *ngIf="item.isCancelled">{{item.paymentStatusName}}</span>
-                                <span class="status-chip badge-success" *ngIf="!item.isCancelled">{{item.paymentStatusName}}</span>
-                            </td>
-                            <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="!item.isCancelled">
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="School_ManageFee_PaymentLogs" action="canDelete">
-                                        <i class="uil uil-trash-alt"></i>
-                                        <span>الغاء</span>
-                                    </button>
-                                    <button class="button-table-action btn-print d-flex align-items-center justify-content-center gap-2" appRole pageKey="School_ManageFee_PaymentLogs" action="canExport">
-                                        <i class="uil uil-print"></i>
-                                        <span>طباعة</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!Results.length">
-                            <td colspan="15" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
+                    <tr *ngFor="let item of Results">
+                        <td>
+                            <span class="receipt-number">
+                                <i class="uil uil-receipt"></i>
+                                <bdi>{{ item.receiptNumber }}</bdi>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="student-cell">
+                                <span class="student-avatar">{{ item.studentName?.charAt(0) || 'ط' }}</span>
+                                <strong>{{ item.studentName }}</strong>
+                            </div>
+                        </td>
+                        <td><span class="academic-year">{{ item.academicYearName }}</span></td>
+                        <td><span class="fee-name">{{ item.feeTypeName }}</span></td>
+                        <td><strong class="amount-value">{{ item.amount }}</strong></td>
+                        <td>
+                            <span class="payment-method">
+                                <i class="uil uil-wallet"></i>
+                                {{ item.paymentMethodName }}
+                            </span>
+                        </td>
+                        <td><span class="date-value">{{ item.paymentDate | arabicDateWithTime }}</span></td>
+                        <td>{{ item.nextAmount ?? '-' }}</td>
+                        <td>
+                            <span class="date-value">
+                                {{ item.nextInstallmentDate ? (item.nextInstallmentDate | arabicDateWithTime) : '-' }}
+                            </span>
+                        </td>
+                        <td><strong class="remaining-value">{{ item.remainingAmount }}</strong></td>
+                        <td>
+                            <span class="status-badge cancelled" *ngIf="item.isCancelled">
+                                <i class="uil uil-times-circle"></i>{{ item.paymentStatusName }}
+                            </span>
+                            <span class="status-badge completed" *ngIf="!item.isCancelled">
+                                <i class="uil uil-check-circle"></i>{{ item.paymentStatusName }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="row-actions" *ngIf="!item.isCancelled">
+                                <button
+                                    type="button"
+                                    class="action-button cancel"
+                                    title="إلغاء الدفعة"
+                                    aria-label="إلغاء الدفعة"
+                                    appRole
+                                    pageKey="School_ManageFee_PaymentLogs"
+                                    action="canDelete">
+                                    <i class="uil uil-times-circle"></i>
+                                </button>
+                                <button
+                                    type="button"
+                                    class="action-button print"
+                                    title="طباعة الإيصال"
+                                    aria-label="طباعة الإيصال"
+                                    appRole
+                                    pageKey="School_ManageFee_PaymentLogs"
+                                    action="canExport">
+                                    <i class="uil uil-print"></i>
+                                </button>
+                            </div>
+                            <span class="no-actions" *ngIf="item.isCancelled">—</span>
+                        </td>
+                    </tr>
+
+                    <tr class="empty-row" *ngIf="!Results.length">
+                        <td colspan="12">
+                            <app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-    </div>
-</div>
+
+        <footer class="ledger-footer" *ngIf="TotalCount > 0">
+            <span>عرض {{ Results.length }} من أصل {{ TotalCount }} عملية دفع</span>
+            <app-za-pagination
+                (pageChanged)="PageChange($event)"
+                [currentPage]="PagingFilter.currentPage"
+                [pageSize]="PagingFilter.pageSize"
+                [totalCount]="TotalCount">
+            </app-za-pagination>
+        </footer>
+    </section>
+</main>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

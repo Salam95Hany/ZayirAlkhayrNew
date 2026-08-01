@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ZaBreadcrumbComponent } from "../../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../../Shared/za-filters/za-filters.component";
 import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-with-label/za-input-with-label.component';
@@ -20,7 +20,7 @@ import { NgxLoadingModule } from "ngx-loading";
 @Component({
   selector: 'app-family-patienttypes',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaInputWithLabelComponent, ZaEmptyDataComponent, ReactiveFormsModule,
+  imports: [AdminBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaInputWithLabelComponent, ZaEmptyDataComponent, ReactiveFormsModule,
     NgFor, NgIf, NgbModule, RoleCheckerDirective, NgxLoadingModule],
   templateUrl: './family-patienttypes.component.html',
   styleUrl: './family-patienttypes.component.css'

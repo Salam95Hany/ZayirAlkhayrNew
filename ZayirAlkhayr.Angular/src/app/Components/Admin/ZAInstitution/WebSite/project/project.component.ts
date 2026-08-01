@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
-import { ZaBreadcrumbComponent } from '../../../../../Shared/za-breadcrumb/za-breadcrumb.component';
+import { AdminBreadcrumbComponent } from '../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from '../../../../../Shared/za-pagination/za-pagination.component';
 import { ZaFiltersComponent } from '../../../../../Shared/za-filters/za-filters.component';
 import { ZaEmptyDataComponent } from '../../../../../Shared/za-empty-data/za-empty-data.component';
@@ -22,7 +22,7 @@ import { NgxLoadingModule } from 'ngx-loading';
 @Component({
   selector: 'app-project',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZaBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
+  imports: [CommonModule, FormsModule, AdminBreadcrumbComponent, ZaPaginationComponent, RoleCheckerDirective,
     ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ReactiveFormsModule, NgxLoadingModule],
   templateUrl: './project.component.html',
   styleUrl: './project.component.css'

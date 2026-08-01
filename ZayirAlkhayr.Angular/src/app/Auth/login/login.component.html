@@ -1,61 +1,88 @@
-<div class="animated-bg">
-    <div class="floating-shapes">
-        @for (shape of shapes(); track $index) {
-        <div class="shape" [style.width.px]="shape.size" [style.height.px]="shape.size" [style.top.%]="shape.top" [style.left.%]="shape.left" [style.animation-delay.s]="shape.delay">
-        </div>
-        }
-    </div>
-</div>
+<main class="admin-login" dir="rtl">
+  <section class="brand-panel" aria-label="نظام زائر الخير لإدارة المؤسسات">
+    <div class="brand-orb orb-one"></div>
+    <div class="brand-orb orb-two"></div>
 
-<div class="container">
+    <div class="brand-content">
+      <div class="brand-mark">
+        <img src="logo-2.png" alt="شعار زائر الخير">
+        <div><strong>زائر الخير</strong><span>نظام الإدارة المتكامل</span></div>
+      </div>
+
+      <div class="brand-message">
+        <span class="brand-label"><i class="uil uil-graduation-cap"></i> منصة إدارة احترافية</span>
+        <h1>إدارة مؤسستك<br><em>بكفاءة ووضوح</em></h1>
+        <p>منصة موحدة تساعد فريقك على متابعة العمليات والبيانات واتخاذ القرارات بثقة.</p>
+      </div>
+
+      <div class="feature-list">
+        <div><i class="uil uil-shield-check"></i><span><strong>دخول آمن</strong><small>حماية موثوقة لبيانات الإدارة</small></span></div>
+        <div><i class="uil uil-chart-growth"></i><span><strong>رؤية متكاملة</strong><small>كل أعمالك من لوحة تحكم واحدة</small></span></div>
+        <div><i class="uil uil-clock"></i><span><strong>متاح دائمًا</strong><small>وصول سريع وسهل إلى نظامك</small></span></div>
+      </div>
+    </div>
+
+    <footer class="brand-footer"><i class="uil uil-lock-alt"></i> بيئة إدارية آمنة وموثوقة</footer>
+  </section>
+
+  <section class="form-panel">
+    <div class="mobile-brand">
+      <img src="logo-2.png" alt="شعار زائر الخير">
+      <div><strong>زائر الخير</strong><span>نظام الإدارة المتكامل</span></div>
+    </div>
+
     <div class="login-card" [class.shake]="showError()">
-        <div class="logo-section">
-            <div class="logo"></div>
-            <h1>زائر الخير</h1>
-            <p class="subtitle">معا نصنع الأمل</p>
+      <header class="login-header">
+        <span class="welcome-badge"><i class="uil uil-shield-check"></i> بوابة الإدارة</span>
+        <h2>مرحبًا بعودتك</h2>
+        <p>أدخل بيانات حسابك للوصول إلى لوحة التحكم.</p>
+      </header>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-group">
+          <label for="admin-user-name">اسم المستخدم</label>
+          <div class="input-wrapper" [class.has-error]="loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched">
+            <i class="uil uil-user input-icon"></i>
+            <input id="admin-user-name" type="text" class="input-field" placeholder="أدخل اسم المستخدم" formControlName="userName" autocomplete="username">
+          </div>
+          @if (loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched) {
+            <div class="field-error"><i class="uil uil-exclamation-circle"></i> اسم المستخدم مطلوب</div>
+          }
         </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <div class="form-group">
-                <div class="input-wrapper">
-                    <input type="text" class="input-field" placeholder="اسم المستخدم" formControlName="userName" [class.error]="loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched">
-                    <span class="input-icon">📧</span>
-                </div>
-                @if (loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched) {
-                <div class="error-message">اسم المستخدم مطلوب</div>
-                }
-            </div>
-
-            <div class="form-group">
-                <div class="input-wrapper">
-                    <input [type]="showPassword() ? 'text' : 'password'" class="input-field" placeholder="كلمة المرور" formControlName="password" [class.error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-                    <button type="button" class="password-toggle" (click)="togglePassword()">
-            {{ showPassword() ? '🙈' : '👁️' }}
-          </button>
-                </div>
-                @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-                <div class="error-message">كلمة المرور مطلوبة (6 أحرف على الأقل)</div>
-                }
-            </div>
-
-            @if (showError()) {
-            <div class="login-error">
-                بيانات تسجيل الدخول غير صحيحة
-            </div>
-            }
-
-            <button type="submit" class="login-button" [disabled]="isLoading() || loginForm.invalid" [class.loading]="isLoading()">
-        @if (isLoading()) {
-        <div class="spinner"></div>
-        }
-        <span class="button-text">
-          @if (isLoading()) {
-          جارٍ تسجيل الدخول...
-          } @else {
-          تسجيل الدخول
+        <div class="form-group">
+          <div class="label-row"><label for="admin-password">كلمة المرور</label><span>بياناتك مشفرة وآمنة</span></div>
+          <div class="input-wrapper" [class.has-error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <i class="uil uil-lock input-icon"></i>
+            <input id="admin-password" [type]="showPassword() ? 'text' : 'password'" class="input-field" placeholder="أدخل كلمة المرور" formControlName="password" autocomplete="current-password">
+            <button type="button" class="password-toggle" (click)="togglePassword()" [attr.aria-label]="showPassword() ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'">
+              <i class="uil" [class.uil-eye]="!showPassword()" [class.uil-eye-slash]="showPassword()"></i>
+            </button>
+          </div>
+          @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+            <div class="field-error"><i class="uil uil-exclamation-circle"></i> كلمة المرور مطلوبة ويجب ألا تقل عن 6 أحرف</div>
           }
-        </span>
-      </button>
-        </form>
+        </div>
+
+        @if (showError()) {
+          <div class="login-error" role="alert">
+            <i class="uil uil-exclamation-triangle"></i>
+            <div><strong>تعذر تسجيل الدخول</strong><span>تأكد من اسم المستخدم وكلمة المرور ثم حاول مرة أخرى.</span></div>
+          </div>
+        }
+
+        <button type="submit" class="login-button" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <span class="spinner" aria-hidden="true"></span><span>جارٍ تسجيل الدخول...</span>
+          } @else {
+            <span>تسجيل الدخول</span><i class="uil uil-arrow-left"></i>
+          }
+        </button>
+      </form>
+
+      <div class="login-security"><i class="uil uil-shield-check"></i><span>اتصال آمن ومحمي</span><span class="security-dot"></span><span>لوحة الإدارة</span></div>
     </div>
-</div>
+
+    <footer class="form-footer">جميع الحقوق محفوظة © زائر الخير</footer>
+  </section>
+</main>

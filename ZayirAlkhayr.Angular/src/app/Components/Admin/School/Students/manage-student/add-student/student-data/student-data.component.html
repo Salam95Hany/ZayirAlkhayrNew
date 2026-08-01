@@ -1,304 +1,93 @@
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2" *ngIf="!DetailsMode">
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)" *ngIf="!DetailsMode">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>إضافة</span>
-                </button>
-            </div>
-        </div>
-        <div class="col-md-4 mb-2"></div>
-        <div class="col-md-12 mt-3"></div>
+<div class="students-panel">
+  <header class="students-panel__header">
+    <div>
+      <span class="students-panel__eyebrow">ملفات الطلاب</span>
+      <h3>الطلاب المراد تسجيلهم</h3>
+      <p>يمكن تسجيل أكثر من طالب تابع لولي الأمر نفسه.</p>
     </div>
-    <div class="p-3 bg-white">
-        <!-- <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
-                <thead>
-                    <tr>
-                        <th>الاسم</th>
-                        <th>المرحلة الدراسية</th>
-                        <th>تاريخ الميلاد</th>
-                        <th>المدرسة الحكومية</th>
-                        <th>الفترة الدراسية</th>
-                        <th>الجنسية</th>
-                        <th>هل لديه حالة صحية</th>
-                        <th>ملاحظات الحالة الصحية</th>
-                        <th>الجنس</th>
-                        <th>السنة الدراسية</th>
-                        <th>حالة الطالب</th>
-                        <th>سبب الانسحاب</th>
-                        <th>ترتيب الطالب بين اخوته</th>
-                        <th>تاريخ التسجيل</th>
-                        <th *ngIf="!DetailsMode">عمليات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of StudentDetails">
-                            <td>{{item.studentName}}</td>
-                            <td>{{item.academicStageName}}</td>
-                            <td>{{item.birthDay | arabicDateWithTime}}</td>
-                            <td>{{item.governmentSchool}}</td>
-                            <td>{{item.studyPeriodName}}</td>
-                            <td>{{item.nationalityName}}</td>
-                            <td class="table-value">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <div class="me-2">نعم</div>
-                                    <label class="jtoggler-wrapper m-0 mx-0">
-                                <input type="checkbox" [(ngModel)]="item.isHaveHealthCondition" class="jtoggler" disabled>
-                                <div class="jtoggler-control">
-                                    <div class="jtoggler-handle"></div>
-                                </div>
-                            </label>
-                                    <div class="ms-2">لا</div>
-                                </div>
-                            </td>
-                            <td>{{item.healthConditionNote}}</td>
-                            <td>{{item.genderName}}</td>
-                            <td>{{item.academicYear}}</td>
-                            <td>{{item.studentStatusId == 1 ? 'موجود' : 'منسحب'}}</td>
-                            <td>{{item.studentStatusReason}}</td>
-                            <td>{{item.orderAmongChildren}}</td>
-                            <td>{{item.enrollmentDate | arabicDateWithTime}}</td>
-                            <td *ngIf="!DetailsMode">
-                                <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
-                                        <i class="uil uil-pen"></i>
-                                        <span>تعديل</span>
-                                    </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item.id)">
-                                        <i class="uil uil-trash-alt"></i>
-                                        <span>حذف</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!StudentDetails.length">
-                            <td colspan="16" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!StudentDetails.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-        </div> -->
+    <button type="button" class="add-student-button" *ngIf="!DetailsMode" (click)="openItemModal(OpenItemModal, null)">
+      <i class="fa-solid fa-plus"></i><span>إضافة طالب</span>
+    </button>
+  </header>
 
-        <app-student-details-table [StudentDetails]="StudentDetails" [DetailsMode]="DetailsMode" [UpdateMode]="UpdateMode" (ModalClicked)="OpenModalClicked($event)"></app-student-details-table>
-        <div *ngIf="!StudentDetails.length">
-            <app-za-empty-data [showEmptyData]="!StudentDetails.length" class="text-center"></app-za-empty-data>
-        </div>
-        <div class="row mt-3 g-3">
-            <div class="col-md-6">
-                <div class="stats-card border radius-10 p-3 bg-light d-flex align-items-center justify-content-between">
-                    <div class="stats-label">
-                        <i class="fas fa-child me-2 text-primary"></i>
-                        <span class="fw-semibold">عدد الأبناء</span>
-                    </div>
-                    <div class="stats-value">
-                        <span class="badge bg-primary fs-6 px-3 py-2">{{FamilyChildCount}}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="stats-card border radius-10 p-3 bg-light d-flex align-items-center justify-content-between">
-                    <div class="stats-label">
-                        <i class="fas fa-calendar-alt me-2 text-success"></i>
-                        <span class="fw-semibold">السنة الدراسية</span>
-                    </div>
-                    <div class="stats-value">
-                        <span class="badge bg-success fs-6 px-3 py-2">{{CurrentYear?.name}}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <app-student-details-table [StudentDetails]="StudentDetails" [DetailsMode]="DetailsMode" [UpdateMode]="UpdateMode" (ModalClicked)="OpenModalClicked($event)"></app-student-details-table>
+
+  <div *ngIf="!StudentDetails.length" class="students-empty">
+    <span><i class="fa-solid fa-user-graduate"></i></span>
+    <strong>لم تتم إضافة أي طالب بعد</strong>
+    <p>اضغط على «إضافة طالب» لإدخال البيانات الشخصية والدراسية.</p>
+  </div>
+
+  <div class="students-summary">
+    <div class="summary-card">
+      <span class="summary-card__icon"><i class="fa-solid fa-children"></i></span>
+      <span><small>عدد الطلاب المضافين</small><strong>{{ FamilyChildCount }}</strong></span>
+    </div>
+    <div class="summary-card summary-card--year">
+      <span class="summary-card__icon"><i class="fa-regular fa-calendar"></i></span>
+      <span><small>العام الدراسي الحالي</small><strong>{{ CurrentYear?.name || '—' }}</strong></span>
+    </div>
+  </div>
+</div>
+
+<ng-template #OpenItemModal let-modal>
+  <div class="student-modal" dir="rtl">
+    <header class="student-modal__header">
+      <span class="student-modal__header-icon"><i [class]="addMode ? 'fa-solid fa-user-plus' : 'fa-solid fa-user-pen'"></i></span>
+      <div><span>{{ addMode ? 'إضافة ملف جديد' : 'تحديث ملف الطالب' }}</span><h2>{{ addMode ? 'بيانات الطالب' : 'تعديل بيانات الطالب' }}</h2><p>أكمل البيانات المطلوبة بدقة قبل الحفظ.</p></div>
+      <button type="button" (click)="modal.dismiss()" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+
+    <div class="student-modal__body">
+      <form [formGroup]="ItemForm" autocomplete="off">
+        <section class="modal-form-section">
+          <header><span><i class="fa-regular fa-id-card"></i></span><div><h3>البيانات الشخصية</h3><p>معلومات الهوية والتواصل الأساسية.</p></div></header>
+          <div class="modal-form-grid">
+            <div class="modal-field modal-field--wide"><label>اسم الطالب <em>*</em></label><app-za-input-with-label type="text" placeholder="أدخل الاسم الكامل للطالب" [error]="formErrors.studentName" formControlName="studentName"></app-za-input-with-label></div>
+            <div class="modal-field"><label>الجنس <em>*</em></label><app-za-drop-down-form-control [data]="Genders" [showSearch]="true" placeholder="اختر الجنس" formControlName="gender" [hasError]="formErrors.gender"></app-za-drop-down-form-control><div class="error-message" *ngIf="formErrors.gender">{{ formErrors.gender }}</div></div>
+            <div class="modal-field"><label>تاريخ الميلاد <em>*</em></label><app-za-input-with-label type="date" placeholder="تاريخ الميلاد" [error]="formErrors.birthDay" formControlName="birthDay"></app-za-input-with-label></div>
+            <div class="modal-field"><label>الجنسية <em>*</em></label><app-za-drop-down-form-control [data]="Nationalities" [showSearch]="true" placeholder="اختر الجنسية" formControlName="nationalityId" [hasError]="formErrors.nationalityId"></app-za-drop-down-form-control><div class="error-message" *ngIf="formErrors.nationalityId">{{ formErrors.nationalityId }}</div></div>
+            <div class="modal-field"><label>نوع الطالب <em>*</em></label><app-za-drop-down-form-control [data]="StudentTypes" [showSearch]="true" placeholder="اختر نوع الطالب" formControlName="studentTypeId" [hasError]="formErrors.studentTypeId"></app-za-drop-down-form-control><div class="error-message" *ngIf="formErrors.studentTypeId">{{ formErrors.studentTypeId }}</div></div>
+          </div>
+        </section>
+
+        <section class="modal-form-section">
+          <header><span><i class="fa-solid fa-graduation-cap"></i></span><div><h3>البيانات الدراسية</h3><p>التسكين الأكاديمي وبيانات الالتحاق.</p></div></header>
+          <div class="modal-form-grid">
+            <div class="modal-field"><label>المرحلة الدراسية <em>*</em></label><app-za-drop-down-form-control [data]="AcademicStages" [showSearch]="true" placeholder="اختر المرحلة" formControlName="academicStageId" [hasError]="formErrors.academicStageId"></app-za-drop-down-form-control><div class="error-message" *ngIf="formErrors.academicStageId">{{ formErrors.academicStageId }}</div></div>
+            <div class="modal-field"><label>العام الدراسي</label><app-za-input-with-label type="text" placeholder="العام الدراسي" [error]="formErrors.academicYear" formControlName="academicYear"></app-za-input-with-label></div>
+            <div class="modal-field"><label>الفترة الدراسية <em>*</em></label><app-za-drop-down-form-control [data]="StudyPeriods" [showSearch]="true" placeholder="اختر الفترة" formControlName="studyPeriodId" [hasError]="formErrors.studyPeriodId"></app-za-drop-down-form-control><div class="error-message" *ngIf="formErrors.studyPeriodId">{{ formErrors.studyPeriodId }}</div></div>
+            <div class="modal-field"><label>المدرسة الحكومية <em>*</em></label><app-za-input-with-label type="text" placeholder="اسم المدرسة الحكومية" [error]="formErrors.governmentSchool" formControlName="governmentSchool"></app-za-input-with-label></div>
+            <div class="modal-field"><label>تاريخ التسجيل <em>*</em></label><app-za-input-with-label type="date" placeholder="تاريخ التسجيل" [error]="formErrors.enrollmentDate" formControlName="enrollmentDate"></app-za-input-with-label></div>
+            <div class="modal-field"><label>ترتيبه بين إخوته <em>*</em></label><app-za-input-with-label type="text" placeholder="مثال: 2" [error]="formErrors.orderAmongChildren" formControlName="orderAmongChildren" [allowNumbersOnly]="true"></app-za-input-with-label></div>
+          </div>
+        </section>
+
+        <section class="modal-form-section">
+          <header><span><i class="fa-solid fa-notes-medical"></i></span><div><h3>الحالة والملاحظات</h3><p>الحالة الدراسية والصحية وأي معلومات إضافية.</p></div></header>
+          <div class="modal-form-grid">
+            <div class="modal-field" *ngIf="UpdateMode || DetailsMode"><label>حالة الطالب <em>*</em></label><app-za-drop-down-form-control [data]="studentStatus" [showSearch]="true" placeholder="اختر الحالة" formControlName="studentStatusId" [hasError]="formErrors.studentStatusId"></app-za-drop-down-form-control><div class="error-message" *ngIf="formErrors.studentStatusId">{{ formErrors.studentStatusId }}</div></div>
+            <div class="modal-field" *ngIf="ItemForm.get('studentStatusId')?.value == 2"><label>سبب الانسحاب <em>*</em></label><app-za-input-with-label type="text" placeholder="أدخل سبب الانسحاب" [error]="formErrors.studentStatusReason" formControlName="studentStatusReason"></app-za-input-with-label></div>
+            <div class="health-toggle modal-field--wide"><span><strong>هل توجد حالة صحية؟</strong><small>فعّل الخيار لإضافة تفاصيل الحالة الصحية.</small></span><label class="switch"><input type="checkbox" formControlName="isHaveHealthCondition"><span></span></label></div>
+            <div class="modal-field modal-field--wide" *ngIf="ItemForm.get('isHaveHealthCondition')?.value"><label>ملاحظات الحالة الصحية <em>*</em></label><app-za-input-with-label type="text" placeholder="اكتب تفاصيل الحالة الصحية" [error]="formErrors.healthConditionNote" formControlName="healthConditionNote"></app-za-input-with-label></div>
+            <div class="modal-field modal-field--wide"><label>ملاحظات إضافية</label><app-za-input-with-label type="text" placeholder="أضف أي ملاحظات مهمة" formControlName="notes"></app-za-input-with-label></div>
+          </div>
+        </section>
+      </form>
     </div>
 
-    <ng-template #OpenItemModal let-modal>
-        <div class="modal-header modal-header-bg justify-content-between">
-            <h2 class="d-flex align-items-center gap-2">
-                <i class="uil uil-plus"></i>
-                <span>املأ البيانات الأتية</span>
-            </h2>
-            <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-                <i class="uil uil-times-circle"></i>
-            </div>
-        </div>
-        <div class="modal-body">
-            <form [formGroup]="ItemForm" autocomplete="off">
-                <table class="table table-bordered table-feature-value align-middle border m-0">
-                    <tbody>
-                        <tr>
-                            <td class="table-feature">الاسم</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'الاسم...'" [error]="formErrors.studentName" formControlName="studentName"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">الجنس</td>
-                            <td class="table-value">
-                                <div class="form-floating">
-                                    <app-za-drop-down-form-control [data]="Genders" [showSearch]="true" [placeholder]="'الجنس'" formControlName="gender" [hasError]="formErrors.gender"></app-za-drop-down-form-control>
-                                </div>
-                                <div class="error-message" *ngIf="formErrors.gender">
-                                    {{ formErrors.gender }}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">تاريخ الميلاد</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ الميلاد...'" [error]="formErrors.birthDay" formControlName="birthDay"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">الجنسية</td>
-                            <td class="table-value">
-                                <div class="form-floating">
-                                    <app-za-drop-down-form-control [data]="Nationalities" [showSearch]="true" [placeholder]="'الجنسية'" formControlName="nationalityId" [hasError]="formErrors.nationalityId"></app-za-drop-down-form-control>
-                                </div>
-                                <div class="error-message" *ngIf="formErrors.nationalityId">
-                                    {{ formErrors.nationalityId }}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">نوع الطالب</td>
-                            <td class="table-value">
-                                <div class="form-floating">
-                                    <app-za-drop-down-form-control [data]="StudentTypes" [showSearch]="true" [placeholder]="'نوع الطالب'" formControlName="studentTypeId" [hasError]="formErrors.studentTypeId"></app-za-drop-down-form-control>
-                                </div>
-                                <div class="error-message" *ngIf="formErrors.studentTypeId">
-                                    {{ formErrors.studentTypeId }}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">المرحلة الدراسية</td>
-                            <td class="table-value">
-                                <div class="form-floating">
-                                    <app-za-drop-down-form-control [data]="AcademicStages" [showSearch]="true" [placeholder]="'المرحلة الدراسية'" formControlName="academicStageId" [hasError]="formErrors.academicStageId"></app-za-drop-down-form-control>
-                                </div>
-                                <div class="error-message" *ngIf="formErrors.academicStageId">
-                                    {{ formErrors.academicStageId }}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">السنة الدراسية</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'السنة الدراسية...'" [error]="formErrors.academicYear" formControlName="academicYear" [allowNumbersOnly]="true"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">الفترة الدراسية</td>
-                            <td class="table-value">
-                                <div class="form-floating">
-                                    <app-za-drop-down-form-control [data]="StudyPeriods" [showSearch]="true" [placeholder]="'الفترة الدراسية'" formControlName="studyPeriodId" [hasError]="formErrors.studyPeriodId"></app-za-drop-down-form-control>
-                                </div>
-                                <div class="error-message" *ngIf="formErrors.studyPeriodId">
-                                    {{ formErrors.studyPeriodId }}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">المدرسة الحكومية</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'المدرسة الحكومية...'" [error]="formErrors.governmentSchool" formControlName="governmentSchool"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                        <tr *ngIf="UpdateMode || DetailsMode">
-                            <td class="table-feature">حالة الطالب</td>
-                            <td class="table-value">
-                                <div class="form-floating">
-                                    <app-za-drop-down-form-control [data]="studentStatus" [showSearch]="true" [placeholder]="'حالة الطالب'" formControlName="studentStatusId" [hasError]="formErrors.studentStatusId"></app-za-drop-down-form-control>
-                                </div>
-                                <div class="error-message" *ngIf="formErrors.studentStatusId">
-                                    {{ formErrors.studentStatusId }}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="ItemForm.get('studentStatusId')?.value == 2">
-                            <td class="table-feature">سبب الانسحاب</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'سبب الانسحاب...'" [error]="formErrors.studentStatusReason" formControlName="studentStatusReason"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">ترتيب الطالب بين اخوته</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'ترتيب الطالب بين اخوته...'" [error]="formErrors.orderAmongChildren" formControlName="orderAmongChildren" [allowNumbersOnly]="true"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">تاريخ التسجيل</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ التسجيل...'" [error]="formErrors.enrollmentDate" formControlName="enrollmentDate"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">هل لديه حالة صحية</td>
-                            <td class="table-value">
-                                <div class="d-flex align-items-center">
-                                    <div class="me-2">نعم</div>
-                                    <label class="jtoggler-wrapper m-0 mx-0">
-                                        <input type="checkbox" formControlName="isHaveHealthCondition" class="jtoggler">
-                                        <div class="jtoggler-control">
-                                            <div class="jtoggler-handle"></div>
-                                        </div>
-                                    </label>
-                                    <div class="ms-2">لا</div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="ItemForm.get('isHaveHealthCondition')?.value">
-                            <td class="table-feature">ملاحظات الحالة الصحية</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'ملاحظات الحالة الصحية...'" [error]="formErrors.healthConditionNote" formControlName="healthConditionNote"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">ملاحظات</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'text'" [placeholder]="'ملاحظات...'" formControlName="notes"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </form>
-        </div>
-        <div class="modal-footer flex-nowrap gap-2">
-            <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
-                <i class="uil uil-save fs-3"></i>
-                <span>حفظ</span>
-            </button>
-            <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-                <i class="uil uil-times-circle fs-3"></i>
-                <span>الغاء</span>
-            </button>
-        </div>
-    </ng-template>
+    <footer class="student-modal__footer">
+      <button type="button" class="modal-button modal-button--secondary" (click)="modal.close()">إلغاء</button>
+      <button type="button" class="modal-button modal-button--primary" (click)="AddNewItem()"><i class="fa-solid fa-floppy-disk"></i><span>{{ addMode ? 'إضافة الطالب' : 'حفظ التعديلات' }}</span></button>
+    </footer>
+  </div>
+</ng-template>
 
-    <ng-template #deleteItemModal let-modal>
-        <div class="modal-header modal-header-bg justify-content-between">
-            <h2 class="d-flex align-items-center gap-2">
-                <span>تأكيد الإجراء</span>
-            </h2>
-            <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-                <i class="uil uil-times-circle"></i>
-            </div>
-        </div>
-        <div class="modal-body">
-            <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
-        </div>
-        <div class="modal-footer justify-content-start">
-            <button type="button" class="btn btn-success" (click)="DeleteItem()">
-                <i class="fas fa-check"></i>
-                <span class="ms-2">نعم</span>
-            </button>
-            <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
-                <i class="fas fa-times"></i>
-                <span class="ms-2">لا</span>
-            </button>
-        </div>
-    </ng-template>
+<ng-template #deleteItemModal let-modal>
+  <div class="delete-dialog" dir="rtl">
+    <span class="delete-dialog__icon"><i class="fa-regular fa-trash-can"></i></span>
+    <h2>حذف بيانات الطالب؟</h2>
+    <p>سيتم حذف الطالب من قائمة التسجيل الحالية. لا يمكن التراجع عن هذا الإجراء بعد الحفظ.</p>
+    <div class="delete-dialog__actions"><button type="button" (click)="modal.close()">إلغاء</button><button type="button" class="delete-button" (click)="DeleteItem()">نعم، حذف الطالب</button></div>
+  </div>
+</ng-template>

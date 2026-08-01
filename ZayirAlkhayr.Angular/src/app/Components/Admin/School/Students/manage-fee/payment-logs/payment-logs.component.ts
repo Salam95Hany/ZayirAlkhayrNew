@@ -7,7 +7,7 @@ import { AuthService } from '../../../../../../Auth/auth.service';
 import { NgxLoadingModule } from "ngx-loading";
 import { ZaFiltersComponent } from "../../../../../../Shared/za-filters/za-filters.component";
 import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za-pagination.component";
-import { ZaBreadcrumbComponent } from "../../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgFor, NgIf } from '@angular/common';
 import { ArabicDateWithTimePipe } from '../../../../../../Pipes/arabic-date-with-time.pipe';
@@ -15,7 +15,7 @@ import { ArabicDateWithTimePipe } from '../../../../../../Pipes/arabic-date-with
 @Component({
   selector: 'app-payment-logs',
   standalone: true,
-  imports: [NgxLoadingModule, ZaFiltersComponent, ZaPaginationComponent, ZaBreadcrumbComponent, NgbModule, NgIf, NgFor, ArabicDateWithTimePipe],
+  imports: [NgxLoadingModule, ZaFiltersComponent, ZaPaginationComponent, AdminBreadcrumbComponent, NgbModule, NgIf, NgFor, ArabicDateWithTimePipe],
   templateUrl: './payment-logs.component.html',
   styleUrl: './payment-logs.component.css'
 })

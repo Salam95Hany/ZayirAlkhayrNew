@@ -1,10 +1,2 @@
-th {
-    text-align: inherit;
-    text-align: -webkit-match-parent;
-    font-size: 20px;
-}
-
-.table-feature-value th {
-    background-color: #eee;
-    border-left: none;
-}
+:host{display:block;min-width:0}.guardian-form{display:grid;gap:1.25rem}.form-section-heading{display:flex;align-items:center;gap:.7rem;padding-bottom:1rem;border-bottom:1px solid #e7edf1}.form-section-heading__icon{display:grid;width:2.7rem;height:2.7rem;place-items:center;border-radius:.75rem;color:#16877f;background:#e8f5f3}.form-section-heading strong,.form-section-heading small{display:block}.form-section-heading strong{font-size:.88rem;font-weight:900;color:#22384b}.form-section-heading small{margin-top:.2rem;color:#728191;font-size:.66rem}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.form-field{min-width:0}.form-field--wide{grid-column:1/-1}.form-field label{display:block;margin-bottom:.4rem;color:#405568;font-size:.72rem;font-weight:800}.form-field label span{color:#ce4854}.contact-note{display:flex;align-items:flex-start;gap:.5rem;padding:.7rem .8rem;border:1px solid #d9e8ea;border-radius:.75rem;color:#4f6c70;background:#f1f8f8;font-size:.68rem;line-height:1.7}.contact-note i{margin-top:.2rem;color:#16877f}
+@media(max-width:575.98px){.form-grid{grid-template-columns:1fr}.form-field--wide{grid-column:auto}.form-section-heading{align-items:flex-start}}

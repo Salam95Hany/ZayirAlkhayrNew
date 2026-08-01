@@ -1,158 +1,147 @@
-<app-za-breadcrumb [TitleList]="TitleList"></app-za-breadcrumb>
+<app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="">
-    <div class="card-custom p-4 mb-3">
-        <div class="row align-items-center">
-            <div class="col-lg-3 col-md-5">
-                <app-za-drop-down-form-control [data]="Students" [showSearch]="true" [placeholder]="'اختر طالب'" [(ngModel)]="StudentId" (valueChanged)="StudentChanged($event)"></app-za-drop-down-form-control>
-            </div>
-            <div class="col-lg-3 col-md-5">
-                <app-za-drop-down-form-control *ngIf="StudentFees.length > 0" [data]="StudentFees" [showSearch]="true" [placeholder]="'اختر الرسوم'" [(ngModel)]="StudentFeeId" (valueChanged)="StudentFeeChanged($event)"></app-za-drop-down-form-control>
-            </div>
-            <div class="col-lg-6 col-md-2 d-flex justify-content-end">
-                <button class="btn-add-new" (click)="openItemModal(OpenItemModal)" [disabled]="Fees?.status == 3" appRole pageKey="School_ManageFee_ReceivingPayment" action="canAdd">
-                    <i class="fas fa-plus"></i>
-                    تسجيل دفعة جديدة
-                </button>
+<main class="receiving-payment-page" dir="rtl">
+    <section class="page-hero">
+        <div class="hero-copy">
+            <span class="hero-eyebrow"><i class="uil uil-shield-check"></i> الإدارة المالية للطلاب</span>
+            <h1>استلام دفعة دراسية</h1>
+            <p>اختر الطالب وبند الرسوم لتسجيل الدفعة ومتابعة الرصيد وسجل الإيصالات بسهولة.</p>
+        </div>
+        <div class="hero-icon" aria-hidden="true"><i class="uil uil-money-withdrawal"></i></div>
+    </section>
+
+    <section class="selector-card">
+        <div class="section-heading">
+            <span class="heading-icon"><i class="uil uil-user-check"></i></span>
+            <div>
+                <h2>تحديد ملف السداد</h2>
+                <p>ابدأ باختيار الطالب ثم حدد بند الرسوم المطلوب تحصيله.</p>
             </div>
         </div>
-    </div>
 
-    <div class="card-custom mb-3" *ngIf="Results">
-        <div class="student-info-card">
-            <div class="d-flex align-items-center gap-3" style="flex: 1;">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=ahmed" alt="Student" class="student-avatar">
+        <div class="selector-grid">
+            <label class="field-group">
+                <span class="field-label">الطالب</span>
+                <app-za-drop-down-form-control
+                    [data]="Students"
+                    [showSearch]="true"
+                    [placeholder]="'اختر الطالب'"
+                    [(ngModel)]="StudentId"
+                    (valueChanged)="StudentChanged($event)">
+                </app-za-drop-down-form-control>
+            </label>
+
+            <label class="field-group">
+                <span class="field-label">بند الرسوم</span>
+                <app-za-drop-down-form-control
+                    *ngIf="StudentFees.length > 0"
+                    [data]="StudentFees"
+                    [showSearch]="true"
+                    [placeholder]="'اختر بند الرسوم'"
+                    [(ngModel)]="StudentFeeId"
+                    (valueChanged)="StudentFeeChanged($event)">
+                </app-za-drop-down-form-control>
+                <span class="field-placeholder" *ngIf="StudentFees.length === 0">
+                    <i class="uil uil-info-circle"></i>
+                    اختر طالبًا لعرض الرسوم
+                </span>
+            </label>
+
+            <button
+                type="button"
+                class="primary-action"
+                (click)="openItemModal(OpenItemModal)"
+                [disabled]="Fees?.status == 3"
+                appRole
+                pageKey="School_ManageFee_ReceivingPayment"
+                action="canAdd">
+                <i class="uil uil-plus-circle"></i>
+                <span>تسجيل دفعة جديدة</span>
+            </button>
+        </div>
+    </section>
+
+    <ng-container *ngIf="Results">
+        <section class="student-card">
+            <div class="student-identity">
+                <span class="student-avatar">{{ Results?.studentName?.charAt(0) || 'ط' }}</span>
                 <div>
-                    <h3 class="student-name">{{Results?.studentName}}</h3>
-                    <p class="student-code">كود الطالب: {{Results?.studentCode}}</p>
-                    <button class="btn-profile">
-                        نشط
-                    </button>
+                    <span class="active-badge"><i class="uil uil-check-circle"></i> ملف نشط</span>
+                    <h2>{{ Results?.studentName }}</h2>
+                    <p>كود الطالب: <bdi>{{ Results?.studentCode }}</bdi></p>
                 </div>
             </div>
-            <div class="d-flex align-items-center">
-                <div class="info-item">
-                    <div class="info-label">السنة الدراسية</div>
-                    <div class="info-value">{{Results?.academicYear}}</div>
+
+            <div class="student-details">
+                <div class="detail-item">
+                    <span><i class="uil uil-calender"></i> السنة الدراسية</span>
+                    <strong>{{ Results?.academicYear || '-' }}</strong>
                 </div>
-                <div class="student-info-divider"></div>
-                <div class="info-item">
-                    <div class="info-label">المرحلة الدراسية</div>
-                    <div class="info-value">{{Results?.academicStage}}</div>
+                <div class="detail-item">
+                    <span><i class="uil uil-graduation-cap"></i> المرحلة الدراسية</span>
+                    <strong>{{ Results?.academicStage || '-' }}</strong>
                 </div>
-                <div class="student-info-divider"></div>
-                <div class="info-item">
-                    <div class="info-label">رقم الهاتف</div>
-                    <div class="info-value">{{Results?.parentPhone}}</div>
+                <div class="detail-item">
+                    <span><i class="uil uil-user-square"></i> ولي الأمر</span>
+                    <strong>{{ Results?.parentName || '-' }}</strong>
                 </div>
-                <div class="student-info-divider"></div>
-                <div class="info-item">
-                    <div class="info-label">ولي الأمر</div>
-                    <div class="info-value">{{Results?.parentName}}</div>
-                </div>
-                <div class="student-info-divider"></div>
-                <div class="info-item">
-                    <div class="info-label">نوع الرسوم</div>
-                    <div class="info-value">{{Fees?.feeTypeName}}</div>
-                </div>
-                <div class="student-info-divider"></div>
-                <div class="info-item">
-                    <div class="info-label">إجمالي الرسوم</div>
-                    <div class="info-value">{{Fees?.totalAmount}}</div>
-                </div>
-                <div class="student-info-divider"></div>
-                <div class="info-item">
-                    <div class="info-label">المدفوع</div>
-                    <div class="info-value">{{Fees?.paidAmount}}</div>
-                </div>
-                <div class="student-info-divider"></div>
-                <div class="info-item">
-                    <div class="info-label">نسبة الخصم %</div>
-                    <div class="info-value">{{Fees?.discountAmountPer}} %</div>
-                </div>
-                <div class="student-info-divider"></div>
-                <div class="info-item">
-                    <div class="info-label">قيمة الخصم</div>
-                    <div class="info-value">{{Fees?.discountAmount}}</div>
-                </div>
-                <div class="student-info-divider"></div>
-                <div class="info-item">
-                    <div class="info-label">الصافي</div>
-                    <div class="info-value">{{Fees?.netAmount}}</div>
-                </div>
-                <div class="student-info-divider"></div>
-                <div class="info-item">
-                    <div class="info-label">المتبقي</div>
-                    <div class="info-value">{{Fees?.remainingAmount}}</div>
+                <div class="detail-item">
+                    <span><i class="uil uil-phone"></i> رقم الهاتف</span>
+                    <strong dir="ltr">{{ Results?.parentPhone || '-' }}</strong>
                 </div>
             </div>
+        </section>
+
+        <section class="stats-grid" aria-label="ملخص حساب الطالب">
+            <article class="stat-card stat-total">
+                <span class="stat-icon"><i class="uil uil-invoice"></i></span>
+                <div><span>إجمالي الرسوم</span><strong>{{ Results?.totalFees ?? 0 }}</strong></div>
+            </article>
+            <article class="stat-card stat-paid">
+                <span class="stat-icon"><i class="uil uil-check-circle"></i></span>
+                <div><span>إجمالي المدفوع</span><strong>{{ Results?.totalPaid ?? 0 }}</strong></div>
+            </article>
+            <article class="stat-card stat-remaining">
+                <span class="stat-icon"><i class="uil uil-wallet"></i></span>
+                <div><span>إجمالي المتبقي</span><strong>{{ Results?.totalRemaining ?? 0 }}</strong></div>
+            </article>
+            <article class="stat-card stat-count">
+                <span class="stat-icon"><i class="uil uil-receipt"></i></span>
+                <div><span>عدد الدفعات</span><strong>{{ TotalCount }}</strong></div>
+            </article>
+        </section>
+
+        <section class="fee-card" *ngIf="Fees">
+            <div class="fee-title">
+                <div>
+                    <span class="section-kicker">البند المحدد</span>
+                    <h2>{{ Fees?.feeTypeName || 'تفاصيل الرسوم' }}</h2>
+                </div>
+                <span class="fee-status status-unpaid" *ngIf="Fees?.status == 1"><i class="uil uil-clock"></i> غير مدفوع</span>
+                <span class="fee-status status-partial" *ngIf="Fees?.status == 2"><i class="uil uil-chart-pie"></i> مدفوع جزئيًا</span>
+                <span class="fee-status status-complete" *ngIf="Fees?.status == 3"><i class="uil uil-check-circle"></i> مدفوع بالكامل</span>
+            </div>
+            <div class="fee-breakdown">
+                <div><span>القيمة الأساسية</span><strong>{{ Fees?.totalAmount ?? 0 }}</strong></div>
+                <div><span>الخصم ({{ Fees?.discountAmountPer ?? 0 }}%)</span><strong>{{ Fees?.discountAmount ?? 0 }}</strong></div>
+                <div><span>صافي الرسوم</span><strong>{{ Fees?.netAmount ?? 0 }}</strong></div>
+                <div><span>المدفوع</span><strong class="positive-value">{{ Fees?.paidAmount ?? 0 }}</strong></div>
+                <div class="remaining-cell"><span>المتبقي للتحصيل</span><strong>{{ Fees?.remainingAmount ?? 0 }}</strong></div>
+            </div>
+        </section>
+    </ng-container>
+
+    <section class="ledger-card">
+        <div class="ledger-header">
+            <div class="section-heading compact">
+                <span class="heading-icon"><i class="uil uil-receipt-alt"></i></span>
+                <div><h2>سجل الدفعات</h2><p>جميع عمليات التحصيل المرتبطة ببند الرسوم المحدد.</p></div>
+            </div>
+            <span class="record-count"><b>{{ Payments.length }}</b> دفعة</span>
         </div>
-    </div>
-    <div class="row g-3 mb-3" *ngIf="Results">
-        <div class="col">
-            <div class="stat-card">
-                <div class="stat-content">
-                    <div class="stat-label">إجمالي الرسوم</div>
-                    <div class="stat-value">{{Results?.totalFees ?? 0}}</div>
-                </div>
-                <div class="stat-icon-wrapper stat-icon-blue">
-                    <i class="uil uil-credit-card"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="stat-card">
-                <div class="stat-content">
-                    <div class="stat-label">إجمالي المدفوع</div>
-                    <div class="stat-value">{{Results?.totalPaid ?? 0}}</div>
-                </div>
-                <div class="stat-icon-wrapper stat-icon-green">
-                    <i class="uil uil-check-circle"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="stat-card">
-                <div class="stat-content">
-                    <div class="stat-label">المتبقي</div>
-                    <div class="stat-value">{{Results?.totalRemaining ?? 0}}</div>
-                </div>
-                <div class="stat-icon-wrapper stat-icon-orange">
-                    <i class="uil uil-exclamation-circle"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="stat-card">
-                <div class="stat-content">
-                    <div class="stat-label">عدد الدفعات</div>
-                    <div class="stat-value">{{TotalCount}} دفعات</div>
-                </div>
-                <div class="stat-icon-wrapper stat-icon-purple">
-                    <i class="uil uil-receipt"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="stat-card">
-                <div class="stat-content">
-                    <div class="stat-label">الحالة</div>
-                    <div class="stat-value">
-                        <span *ngIf="Fees?.status == 1">غير مدفوع</span>
-                        <span *ngIf="Fees?.status == 2">جزئي</span>
-                        <span *ngIf="Fees?.status == 3">مدفوع بالكامل</span>
-                    </div>
-                </div>
-                <div class="stat-icon-wrapper stat-icon-purple">
-                    <i class="uil uil-receipt"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="card-custom p-4">
-        <!-- <h3 class="section-title">الدفعات</h3> -->
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+
+        <div class="table-shell">
+            <table class="payments-table">
                 <thead>
                     <tr>
                         <th>رقم الإيصال</th>
@@ -160,158 +149,106 @@
                         <th>طريقة الدفع</th>
                         <th>تاريخ الدفع</th>
                         <th>القسط القادم</th>
-                        <th>تاريخ القسط القادم</th>
+                        <th>موعد القسط</th>
                         <th>الحالة</th>
                         <th>ملاحظات</th>
-                        <th>عمليات</th>
+                        <th>الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of Payments">
-                            <td>{{item.receiptNumber}}</td>
-                            <td>{{item.amount}}</td>
-                            <td>
-                                <span *ngIf="item.paymentMethod == 1">كاش</span>
-                                <span *ngIf="item.paymentMethod == 2">انستاباي</span>
-                                <span *ngIf="item.paymentMethod == 3">فودافون كاش</span>
-                            </td>
-                            <td>{{item.paymentDate | arabicDateWithTime}}</td>
-                            <td>{{item.nextAmount ?? '-'}}</td>
-                            <td>{{item.nextInstallmentDate | arabicDateWithTime}}</td>
-                            <td>
-                                <span class="status-chip badge-danger" *ngIf="item.isCancelled">ملغي</span>
-                                <span class="status-chip badge-success" *ngIf="!item.isCancelled">مدفوع</span>
-                            </td>
-                            <td>{{item.note ?? '-'}}</td>
-                            <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="!item.isCancelled">
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="School_ManageFee_ReceivingPayment" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
-                                        <i class="uil uil-trash-alt"></i>
-                                        <span>الغاء</span>
-                                    </button>
-                                    <button class="button-table-action btn-print d-flex align-items-center justify-content-center gap-2" appRole pageKey="School_ManageFee_ReceivingPayment" action="canExport">
-                                        <i class="uil uil-print"></i>
-                                        <span>طباعة</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!Payments.length">
-                            <td colspan="15" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!Payments.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
+                    <tr *ngFor="let item of Payments">
+                        <td><span class="receipt-number"><i class="uil uil-receipt"></i>{{ item.receiptNumber }}</span></td>
+                        <td><strong class="amount-value">{{ item.amount }}</strong></td>
+                        <td>
+                            <span class="method-chip" *ngIf="item.paymentMethod == 1"><i class="uil uil-money-bill"></i> نقدي</span>
+                            <span class="method-chip" *ngIf="item.paymentMethod == 2"><i class="uil uil-mobile-android"></i> إنستاباي</span>
+                            <span class="method-chip" *ngIf="item.paymentMethod == 3"><i class="uil uil-mobile-android"></i> فودافون كاش</span>
+                        </td>
+                        <td>{{ item.paymentDate | arabicDateWithTime }}</td>
+                        <td>{{ item.nextAmount ?? '-' }}</td>
+                        <td>{{ item.nextInstallmentDate ? (item.nextInstallmentDate | arabicDateWithTime) : '-' }}</td>
+                        <td>
+                            <span class="table-status cancelled" *ngIf="item.isCancelled"><i class="uil uil-times-circle"></i> ملغي</span>
+                            <span class="table-status completed" *ngIf="!item.isCancelled"><i class="uil uil-check-circle"></i> مدفوع</span>
+                        </td>
+                        <td><span class="note-text">{{ item.note ?? '-' }}</span></td>
+                        <td>
+                            <div class="row-actions" *ngIf="!item.isCancelled">
+                                <button type="button" class="icon-action danger" title="إلغاء الدفعة" aria-label="إلغاء الدفعة" appRole pageKey="School_ManageFee_ReceivingPayment" action="canDelete" (click)="openDeleteItemModal(deleteItemModal, item)"><i class="uil uil-times-circle"></i></button>
+                                <button type="button" class="icon-action print" title="طباعة الإيصال" aria-label="طباعة الإيصال" appRole pageKey="School_ManageFee_ReceivingPayment" action="canExport"><i class="uil uil-print"></i></button>
+                            </div>
+                            <span class="no-actions" *ngIf="item.isCancelled">—</span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="!Payments.length" class="empty-row">
+                        <td colspan="9"><app-za-empty-data [showEmptyData]="!Payments.length"></app-za-empty-data></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-    </div>
-</div>
-
+    </section>
+</main>
 
 <ng-template #OpenItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-plus"></i>
-            <span>املأ البيانات الأتية</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+    <div class="payment-modal" dir="rtl">
+        <div class="modal-header payment-modal-header">
+            <div class="modal-title-wrap">
+                <span class="modal-title-icon"><i class="uil uil-money-insert"></i></span>
+                <div><h2>تسجيل دفعة جديدة</h2><p>أدخل بيانات التحصيل وتفاصيل القسط القادم.</p></div>
+            </div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
         </div>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="ItemForm" autocomplete="off">
-            <table class="table table-bordered table-feature-value align-middle border m-0">
-                <tbody>
-                    <tr>
-                        <td class="table-feature">المتبقي</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'المتبقي...'" formControlName="remainingAmount"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">المبلغ</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'المبلغ...'" formControlName="amount" [allowNumbersOnly]="true" [error]="formErrors.amount"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">تاريخ الدفع</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ الدفع...'" formControlName="paymentDate" [error]="formErrors.paymentDate"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">طريقة الدفع</td>
-                        <td class="table-value">
-                            <div class="form-floating">
-                                <app-za-drop-down-form-control [data]="PaymentMethods" [showSearch]="true" [placeholder]="'طريقة الدفع'" formControlName="paymentMethod" [hasError]="formErrors.paymentMethod"></app-za-drop-down-form-control>
-                            </div>
-                            <div class="error-message" *ngIf="formErrors.paymentMethod">
-                                {{ formErrors.paymentMethod }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">القسط القادم</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'القسط القادم...'" formControlName="nextAmount" [allowNumbersOnly]="true" [error]="formErrors.nextAmount"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">تاريخ القسط القادم</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ القسط القادم...'" formControlName="nextInstallmentDate" [error]="formErrors.nextInstallmentDate"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">ملاحظات</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'ملاحظات...'" formControlName="note" [error]="formErrors.note"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ و طباعة</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
+        <div class="modal-body payment-modal-body">
+            <div class="balance-banner">
+                <span><i class="uil uil-wallet"></i> الرصيد المتبقي قبل الدفعة</span>
+                <strong>{{ Fees?.remainingAmount ?? 0 }}</strong>
+            </div>
+
+            <form [formGroup]="ItemForm" autocomplete="off" class="payment-form">
+                <div class="form-field">
+                    <label>المبلغ المدفوع <em>*</em></label>
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'أدخل المبلغ'" formControlName="amount" [allowNumbersOnly]="true" [error]="formErrors.amount"></app-za-input-with-label>
+                </div>
+                <div class="form-field">
+                    <label>تاريخ الدفع <em>*</em></label>
+                    <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ الدفع'" formControlName="paymentDate" [error]="formErrors.paymentDate"></app-za-input-with-label>
+                </div>
+                <div class="form-field">
+                    <label>طريقة الدفع <em>*</em></label>
+                    <app-za-drop-down-form-control [data]="PaymentMethods" [showSearch]="true" [placeholder]="'اختر طريقة الدفع'" formControlName="paymentMethod" [hasError]="formErrors.paymentMethod"></app-za-drop-down-form-control>
+                    <span class="field-error" *ngIf="formErrors.paymentMethod">{{ formErrors.paymentMethod }}</span>
+                </div>
+                <div class="form-field">
+                    <label>قيمة القسط القادم</label>
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'أدخل قيمة القسط القادم'" formControlName="nextAmount" [allowNumbersOnly]="true" [error]="formErrors.nextAmount"></app-za-input-with-label>
+                </div>
+                <div class="form-field">
+                    <label>تاريخ القسط القادم</label>
+                    <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ القسط القادم'" formControlName="nextInstallmentDate" [error]="formErrors.nextInstallmentDate"></app-za-input-with-label>
+                </div>
+                <div class="form-field form-field-wide">
+                    <label>ملاحظات</label>
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'أضف ملاحظة اختيارية'" formControlName="note" [error]="formErrors.note"></app-za-input-with-label>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer payment-modal-footer">
+            <button type="button" class="modal-btn secondary" (click)="modal.close()"><i class="uil uil-times"></i> إلغاء</button>
+            <button type="button" class="modal-btn outline" (click)="AddNewItem()"><i class="uil uil-print"></i> حفظ وطباعة</button>
+            <button type="button" class="modal-btn primary" (click)="AddNewItem()"><i class="uil uil-check-circle"></i> حفظ الدفعة</button>
+        </div>
     </div>
 </ng-template>
 
 <ng-template #deleteItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <span>تأكيد الإجراء</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+    <div class="confirm-modal" dir="rtl">
+        <div class="confirm-icon"><i class="uil uil-exclamation-triangle"></i></div>
+        <h2>إلغاء الدفعة؟</h2>
+        <p>سيتم إلغاء هذه العملية من سجل التحصيل. هل تريد المتابعة؟</p>
+        <div class="confirm-actions">
+            <button type="button" class="modal-btn secondary" (click)="modal.close('Save click')">تراجع</button>
+            <button type="button" class="modal-btn danger" (click)="DeleteItem()"><i class="uil uil-times-circle"></i> نعم، إلغاء الدفعة</button>
         </div>
-    </div>
-    <div class="modal-body">
-        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
-    </div>
-    <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success" (click)="DeleteItem()">
-            <i class="uil uil-check"></i>
-            <span class="ms-2">نعم</span>
-        </button>
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
-            <i class="uil uil-times"></i>
-            <span class="ms-2">لا</span>
-        </button>
     </div>
 </ng-template>
 

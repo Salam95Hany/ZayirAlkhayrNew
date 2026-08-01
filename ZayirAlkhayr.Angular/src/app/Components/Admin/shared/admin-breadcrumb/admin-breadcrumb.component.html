@@ -1,0 +1,32 @@
+<nav class="admin-breadcrumb" aria-label="مسار التنقل" dir="rtl">
+  <a class="admin-breadcrumb__home" routerLink="/admin/home" aria-label="لوحة التحكم">
+    <span class="admin-breadcrumb__home-icon"><i class="fa-solid fa-house"></i></span>
+    <span class="admin-breadcrumb__home-label">لوحة التحكم</span>
+  </a>
+
+  <span *ngIf="items.length" class="admin-breadcrumb__divider" aria-hidden="true">
+    <i class="fa-solid fa-chevron-left"></i>
+  </span>
+
+  <ol class="admin-breadcrumb__list">
+    <li *ngFor="let item of items; let index = index" class="admin-breadcrumb__item">
+      <a *ngIf="item.route && !isCurrent(index); else breadcrumbLabel" [routerLink]="item.route">
+        <i *ngIf="item.icon" [class]="item.icon" aria-hidden="true"></i>
+        <span>{{ item.label }}</span>
+      </a>
+
+      <ng-template #breadcrumbLabel>
+        <span
+          class="admin-breadcrumb__text"
+          [class.admin-breadcrumb__text--current]="isCurrent(index)"
+          [attr.aria-current]="isCurrent(index) ? 'page' : null"
+        >
+          <i *ngIf="item.icon" [class]="item.icon" aria-hidden="true"></i>
+          <span>{{ item.label }}</span>
+        </span>
+      </ng-template>
+
+      <i *ngIf="!isCurrent(index)" class="fa-solid fa-chevron-left admin-breadcrumb__separator" aria-hidden="true"></i>
+    </li>
+  </ol>
+</nav>

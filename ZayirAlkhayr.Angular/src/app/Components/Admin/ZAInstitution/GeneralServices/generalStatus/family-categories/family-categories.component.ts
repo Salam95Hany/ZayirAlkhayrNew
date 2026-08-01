@@ -7,7 +7,7 @@ import { GeneralStatusService } from '../../../../../../Services/zainstitution/g
 import { FormService } from '../../../../../../Services/shared/form.service';
 import { ToastrService } from 'ngx-toastr';
 import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
-import { ZaBreadcrumbComponent } from "../../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../../Shared/za-filters/za-filters.component";
 import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-with-label/za-input-with-label.component';
@@ -20,7 +20,7 @@ import { NgxLoadingModule } from "ngx-loading";
 @Component({
   selector: 'app-family-categories',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaInputWithLabelComponent, ZaEmptyDataComponent, ReactiveFormsModule,
+  imports: [AdminBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaInputWithLabelComponent, ZaEmptyDataComponent, ReactiveFormsModule,
     NgFor, NgIf, NgbModule, RoleCheckerDirective, NgxLoadingModule],
   templateUrl: './family-categories.component.html',
   styleUrl: './family-categories.component.css'

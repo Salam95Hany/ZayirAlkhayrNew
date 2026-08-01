@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ZaBreadcrumbComponent } from '../../../../../../Shared/za-breadcrumb/za-breadcrumb.component';
+import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from '../../../../../../Shared/za-pagination/za-pagination.component';
 import { ZaFiltersComponent } from '../../../../../../Shared/za-filters/za-filters.component';
 import { ZaEmptyDataComponent } from '../../../../../../Shared/za-empty-data/za-empty-data.component';
@@ -19,7 +19,7 @@ import { StudentSettingService } from '../../../../../../Services/school/student
 @Component({
   selector: 'app-student-type',
   standalone: true,
-   imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
+   imports: [AdminBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
     NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule],
   templateUrl: './student-type.component.html',
   styleUrl: './student-type.component.css'

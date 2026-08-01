@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ParentService } from '../../../../../../Services/school/parent.service';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
@@ -9,21 +9,26 @@ import { FormService } from '../../../../../../Services/shared/form.service';
 import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
 import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { AuthService } from '../../../../../../Auth/auth.service';
+import { TemplateEmojiPickerComponent } from './template-emoji-picker.component';
 
 @Component({
   selector: 'app-template-modal',
   standalone: true,
-  imports: [NgFor, NgIf, NgxLoadingModule, ReactiveFormsModule, ZaInputWithLabelComponent],
+  imports: [NgFor, NgIf, NgxLoadingModule, ReactiveFormsModule, ZaInputWithLabelComponent, TemplateEmojiPickerComponent],
   templateUrl: './template-modal.component.html',
   styleUrl: './template-modal.component.css',
   providers: [DatePipe]
 })
-export class TemplateModalComponent implements OnInit {
+export class TemplateModalComponent implements OnInit, OnDestroy {
   @ViewChild('Editor', { static: true }) editor!: ElementRef<HTMLDivElement>;
+  @ViewChild('emojiTrigger') emojiTrigger?: ElementRef<HTMLButtonElement>;
+  @ViewChild('emojiPopover') emojiPopover?: ElementRef<HTMLDivElement>;
   @Input() TemplateId: number;
   @Input() TemplateVariables: any[] = [];
   @Output() RefreshData = new EventEmitter<boolean>();
   savedRange: Range | null = null;
+  isEmojiPickerOpen = false;
+  emojiPickerPosition = { top: '0px', left: '0px', width: '22rem' };
 
   charactersCount = 0;
   variablesCount = 0;
@@ -125,6 +130,124 @@ export class TemplateModalComponent implements OnInit {
     if (this.editor.nativeElement.contains(range.commonAncestorContainer)) {
       this.savedRange = range.cloneRange();
     }
+  }
+
+  PreserveSelectionForEmoji(event: MouseEvent): void {
+    event.preventDefault();
+    this.SaveSelection();
+  }
+
+  ToggleEmojiPicker(): void {
+    if (this.isEmojiPickerOpen) {
+      this.CloseEmojiPicker();
+      return;
+    }
+
+    this.isEmojiPickerOpen = true;
+    requestAnimationFrame(() => {
+      this.AttachEmojiPickerToViewport();
+      this.PositionEmojiPicker();
+    });
+  }
+
+  InsertEmoji(emoji: string): void {
+    const range = this.GetInsertionRange();
+    range.deleteContents();
+    const emojiNode = document.createTextNode(emoji);
+    range.insertNode(emojiNode);
+    range.setStartAfter(emojiNode);
+    range.collapse(true);
+
+    this.editor.nativeElement.focus();
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    this.savedRange = range.cloneRange();
+    this.UpdateStatistics();
+  }
+
+  private GetInsertionRange(): Range {
+    if (this.savedRange && this.editor.nativeElement.contains(this.savedRange.commonAncestorContainer))
+      return this.savedRange.cloneRange();
+
+    const range = document.createRange();
+    range.selectNodeContents(this.editor.nativeElement);
+    range.collapse(false);
+    return range;
+  }
+
+  private PositionEmojiPicker(): void {
+    if (!this.emojiTrigger || !this.emojiPopover)
+      return;
+
+    const margin = 12;
+    const trigger = this.emojiTrigger.nativeElement.getBoundingClientRect();
+    const popover = this.emojiPopover.nativeElement;
+    const width = Math.min(352, window.innerWidth - margin * 2);
+    const availableBelow = window.innerHeight - trigger.bottom - margin - 8;
+    const height = Math.min(popover.offsetHeight || 435, Math.max(availableBelow, 180));
+    const left = Math.min(Math.max(trigger.right - width, margin), window.innerWidth - width - margin);
+    const top = Math.min(trigger.bottom + 8, window.innerHeight - height - margin);
+
+    this.emojiPickerPosition = { top: `${top}px`, left: `${left}px`, width: `${width}px` };
+    Object.assign(popover.style, {
+      top: `${top}px`,
+      left: `${left}px`,
+      width: `${width}px`,
+      maxHeight: `${Math.max(availableBelow, 180)}px`
+    });
+  }
+
+  private AttachEmojiPickerToViewport(): void {
+    const popover = this.emojiPopover?.nativeElement;
+    if (popover && popover.parentElement !== document.body)
+      document.body.appendChild(popover);
+  }
+
+  private CloseEmojiPicker(restoreEditorFocus = false): void {
+    if (!this.isEmojiPickerOpen)
+      return;
+
+    const popover = this.emojiPopover?.nativeElement;
+    this.isEmojiPickerOpen = false;
+    popover?.remove();
+    if (restoreEditorFocus)
+      requestAnimationFrame(() => {
+        this.editor.nativeElement.focus();
+        const range = this.GetInsertionRange();
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      });
+  }
+
+  @HostListener('document:pointerdown', ['$event'])
+  OnDocumentPointerDown(event: PointerEvent): void {
+    if (!this.isEmojiPickerOpen)
+      return;
+
+    const target = event.target as Node;
+    if (!this.emojiPopover?.nativeElement.contains(target) && !this.emojiTrigger?.nativeElement.contains(target))
+      this.CloseEmojiPicker();
+  }
+
+  @HostListener('document:keydown.escape', ['$event'])
+  OnEscape(event: KeyboardEvent): void {
+    if (!this.isEmojiPickerOpen)
+      return;
+
+    event.preventDefault();
+    this.CloseEmojiPicker(true);
+  }
+
+  @HostListener('window:resize')
+  OnViewportResize(): void {
+    if (this.isEmojiPickerOpen)
+      this.PositionEmojiPicker();
+  }
+
+  ngOnDestroy(): void {
+    this.emojiPopover?.nativeElement.remove();
   }
 
   insertVariable(variable: any) {

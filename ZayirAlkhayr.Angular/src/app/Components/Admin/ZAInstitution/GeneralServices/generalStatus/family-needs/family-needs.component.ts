@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ZaBreadcrumbComponent } from "../../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../../Shared/za-filters/za-filters.component";
 import { FilterModel } from '../../../../../../Models/shared/FilterModel';
@@ -22,7 +22,7 @@ import { NgxLoadingModule } from "ngx-loading";
 @Component({
   selector: 'app-family-needs',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
+  imports: [AdminBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule,
     NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, ZaDropDownFormControlComponent, RoleCheckerDirective, NgxLoadingModule],
   templateUrl: './family-needs.component.html',
   styleUrl: './family-needs.component.css'

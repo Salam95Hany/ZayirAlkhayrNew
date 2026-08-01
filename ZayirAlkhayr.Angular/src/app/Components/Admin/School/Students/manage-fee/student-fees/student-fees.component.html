@@ -1,199 +1,87 @@
-<app-za-breadcrumb [TitleList]="TitleList"></app-za-breadcrumb>
+<div class="fees-page" dir="rtl">
+  <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2">
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="School_ManageFee_StudentFees" action="canAdd" (click)="openItemModal(OpenItemModal,null)">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>إضافة</span>
-                </button>
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
-                    <i class="uil uil-filter"></i>
-                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
-                </button>
-            </div>
-        </div>
-        <div class="col-md-4 mb-2">
-            <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
-        </div>
-        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
-            <div class="d-flex align-items-center">
-                <ng-container>
-                    <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
-                </ng-container>
-            </div>
-        </div>
+  <header class="fees-hero">
+    <div>
+      <span class="fees-hero__eyebrow">الإدارة المالية للطلاب</span>
+      <h1>رسوم الطلاب</h1>
+      <p>إدارة الرسوم والخصومات ومتابعة المدفوعات والأقساط المستحقة لكل طالب.</p>
     </div>
-    <div class="p-3 bg-white">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
-                <thead>
-                    <tr>
-                        <th>كود الطالب</th>
-                        <th>اسم الطالب</th>
-                        <th>ولي الأمر</th>
-                        <th>المرحلة</th>
-                        <th>السنة الدراسية</th>
-                        <th>نوع الرسوم</th>
-                        <th>إجمالي الرسوم</th>
-                        <th>الخصم</th>
-                        <th>الصافي</th>
-                        <th>المدفوع</th>
-                        <th>المتبقي</th>
-                        <th>الحالة</th>
-                        <th>القسط القادم</th>
-                        <th>تاريخ القسط القادم</th>
-                        <th>عمليات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of Results">
-                            <td>{{item.code}}</td>
-                            <td>{{item.studentName}}</td>
-                            <td>{{item.parentName}}</td>
-                            <td>{{item.academicStageName}}</td>
-                            <td>{{item.academicYearName}}</td>
-                            <td>{{item.feeTypeName}}</td>
-                            <td>{{item.totalAmount}}</td>
-                            <td>{{item.discountAmount}}</td>
-                            <td>{{item.netAmount}}</td>
-                            <td>{{item.paidAmount}}</td>
-                            <td>{{item.remainingAmount}}</td>
-                            <td>
-                                <span class="status-chip badge-sky" *ngIf="item.statusId == 1">{{item.statusName}}</span>
-                                <span class="status-chip badge-warning" *ngIf="item.statusId == 2">{{item.statusName}}</span>
-                                <span class="status-chip badge-success" *ngIf="item.statusId == 3">{{item.statusName}}</span>
-                                <span class="status-chip badge-danger" *ngIf="item.statusId == 4">{{item.statusName}}</span>
-                            </td>
-                            <td>{{item.nextAmount}}</td>
-                            <td>{{item.nextInstallmentDate | arabicDateWithTime}}</td>
-                            <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="School_ManageFee_StudentFees" action="canEdit" (click)="openItemModal(OpenItemModal,item)" [disabled]="item.statusId == 4">
-                                        <i class="uil uil-pen"></i>
-                                        <span>تعديل</span>
-                                    </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" appRole pageKey="School_ManageFee_StudentFees" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)" [disabled]="item.statusId == 4">
-                                        <i class="uil uil-trash-alt"></i>
-                                        <span>حذف</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!Results.length">
-                            <td colspan="15" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-        </div>
+    <div class="fees-hero__metrics" aria-label="ملخص الرسوم">
+      <div class="hero-metric"><span class="hero-metric__icon"><i class="fa-solid fa-file-invoice-dollar"></i></span><span><small>إجمالي سجلات الرسوم</small><strong>{{ TotalCount }}</strong></span></div>
+      <div class="hero-metric"><span class="hero-metric__icon hero-metric__icon--teal"><i class="fa-solid fa-list-check"></i></span><span><small>المعروض حالياً</small><strong>{{ Results.length }}</strong></span></div>
     </div>
+  </header>
+
+  <section class="fees-panel" aria-labelledby="fees-table-title">
+    <div class="fees-toolbar">
+      <div class="fees-toolbar__heading">
+        <span class="fees-toolbar__icon"><i class="fa-solid fa-receipt"></i></span>
+        <div><h2 id="fees-table-title">سجل الرسوم الدراسية</h2><p>استعرض الرسوم وحدّث الخصومات أو أضف رسوماً جديدة للطلاب.</p></div>
+      </div>
+      <div class="fees-toolbar__actions">
+        <button type="button" class="toolbar-button toolbar-button--primary" appRole pageKey="School_ManageFee_StudentFees" action="canAdd" (click)="openItemModal(OpenItemModal,null)"><i class="fa-solid fa-plus"></i><span>إضافة رسوم</span></button>
+        <button type="button" class="toolbar-button toolbar-button--filter" (click)="isFilter = !isFilter" [class.is-active]="!isFilter" [attr.aria-expanded]="!isFilter" aria-controls="feeFilters"><i class="fa-solid fa-sliders"></i><span>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}</span></button>
+      </div>
+    </div>
+
+    <div id="feeFilters" class="fees-filters" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+      <div class="fees-filters__header"><span><i class="fa-solid fa-filter"></i> تصفية سجل الرسوم</span><small>استخدم حقول البحث للوصول إلى الطالب أو حالة السداد المطلوبة.</small></div>
+      <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
+    </div>
+
+    <div class="fees-list-meta">
+      <div class="fees-list-meta__count"><span class="status-dot"></span><span>تم العثور على <strong>{{ TotalCount }}</strong> سجل رسوم</span></div>
+      <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
+    </div>
+
+    <div class="fees-table-wrap" role="region" aria-label="جدول رسوم الطلاب" tabindex="0">
+      <table class="fees-table">
+        <thead><tr><th class="student-column">الطالب</th><th>كود الطالب</th><th>ولي الأمر</th><th>المرحلة</th><th>السنة الدراسية</th><th>نوع الرسوم</th><th>إجمالي الرسوم</th><th>الخصم</th><th>الصافي</th><th>المدفوع</th><th>المتبقي</th><th>الحالة</th><th>القسط القادم</th><th>تاريخ القسط القادم</th><th class="actions-column">الإجراءات</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let item of Results">
+            <td class="student-column"><div class="student-identity"><span class="student-avatar">{{ item.studentName?.charAt(0) || 'ط' }}</span><span><strong>{{ item.studentName || '-' }}</strong><small>{{ item.academicStageName || 'غير محدد' }}</small></span></div></td>
+            <td><span class="student-code">{{ item.code || '-' }}</span></td><td>{{ item.parentName || '-' }}</td><td>{{ item.academicStageName || '-' }}</td><td>{{ item.academicYearName || '-' }}</td><td><span class="fee-type"><i class="fa-solid fa-tag"></i>{{ item.feeTypeName || '-' }}</span></td>
+            <td><span class="money money--total">{{ item.totalAmount ?? 0 }}</span></td><td><span class="money money--discount">{{ item.discountAmount ?? 0 }}</span></td><td><span class="money money--net">{{ item.netAmount ?? 0 }}</span></td><td><span class="money money--paid">{{ item.paidAmount ?? 0 }}</span></td><td><span class="money money--remaining">{{ item.remainingAmount ?? 0 }}</span></td>
+            <td><span class="fee-status fee-status--new" *ngIf="item.statusId == 1"><i class="fa-solid fa-circle-info"></i>{{ item.statusName }}</span><span class="fee-status fee-status--partial" *ngIf="item.statusId == 2"><i class="fa-solid fa-clock"></i>{{ item.statusName }}</span><span class="fee-status fee-status--paid" *ngIf="item.statusId == 3"><i class="fa-solid fa-circle-check"></i>{{ item.statusName }}</span><span class="fee-status fee-status--cancelled" *ngIf="item.statusId == 4"><i class="fa-solid fa-circle-xmark"></i>{{ item.statusName }}</span></td>
+            <td><span class="money">{{ item.nextAmount ?? 0 }}</span></td><td>{{ item.nextInstallmentDate ? (item.nextInstallmentDate | arabicDateWithTime) : '-' }}</td>
+            <td class="actions-column"><div class="row-actions"><button type="button" class="row-action row-action--edit" title="تعديل الرسوم" appRole pageKey="School_ManageFee_StudentFees" action="canEdit" (click)="openItemModal(OpenItemModal,item)" [disabled]="item.statusId == 4"><i class="fa-regular fa-pen-to-square"></i><span>تعديل</span></button><button type="button" class="row-action row-action--cancel" title="إلغاء الرسوم" appRole pageKey="School_ManageFee_StudentFees" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)" [disabled]="item.statusId == 4"><i class="fa-solid fa-ban"></i><span>إلغاء</span></button></div></td>
+          </tr>
+          <tr *ngIf="!Results.length"><td colspan="15" class="empty-cell"><app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </div>
 
 <ng-template #OpenItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-plus"></i>
-            <span>املأ البيانات الأتية</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+  <div class="fee-modal" dir="rtl">
+    <div class="fee-modal__header"><div class="fee-modal__title"><span class="fee-modal__icon"><i class="fa-solid fa-file-invoice-dollar"></i></span><div><h2>{{ ItemForm.get('id')?.value ? 'تعديل رسوم الطالب' : 'إضافة رسوم للطالب' }}</h2><p>حدد الطالب وبند الرسوم، ثم أضف الخصم عند الحاجة.</p></div></div><button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="fa-solid fa-xmark"></i></button></div>
+    <form [formGroup]="ItemForm" autocomplete="off">
+      <div class="fee-modal__body">
+        <div class="form-section-title"><span><i class="fa-solid fa-graduation-cap"></i></span><div><strong>بيانات الرسوم</strong><small>الحقول المميزة بعلامة النجمة مطلوبة.</small></div></div>
+        <div class="fee-form-grid">
+          <label class="fee-field"><span>الطالب <em>*</em></span><app-za-drop-down-form-control [data]="Students" [showSearch]="true" [placeholder]="'اختر الطالب'" formControlName="studentId" [hasError]="formErrors.studentId"></app-za-drop-down-form-control><small class="field-error" *ngIf="formErrors.studentId">{{ formErrors.studentId }}</small></label>
+          <label class="fee-field"><span>قالب الرسوم <em>*</em></span><app-za-drop-down-form-control [data]="FeeTemplates" [showSearch]="true" [placeholder]="'اختر الرسوم'" formControlName="feeTemplateId" [hasError]="formErrors.feeTemplateId"></app-za-drop-down-form-control><small class="field-error" *ngIf="formErrors.feeTemplateId">{{ formErrors.feeTemplateId }}</small></label>
+          <label class="fee-field"><span>نوع الخصم</span><app-za-drop-down-form-control [data]="DiscountTypes" [showSearch]="true" [placeholder]="'بدون خصم'" formControlName="discountTypeId"></app-za-drop-down-form-control></label>
+          <label class="fee-field amount-field"><span>إجمالي المبلغ</span><app-za-input-with-label [type]="'text'" [placeholder]="'إجمالي المبلغ'" formControlName="totalAmount"></app-za-input-with-label></label>
         </div>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="ItemForm" autocomplete="off">
-            <table class="table table-bordered table-feature-value align-middle border m-0">
-                <tbody>
-                    <tr>
-                        <td class="table-feature">الطالب</td>
-                        <td class="table-value">
-                            <div class="form-floating">
-                                <app-za-drop-down-form-control [data]="Students" [showSearch]="true" [placeholder]="'الطالب'" formControlName="studentId" [hasError]="formErrors.studentId"></app-za-drop-down-form-control>
-                            </div>
-                            <div class="error-message" *ngIf="formErrors.studentId">
-                                {{ formErrors.studentId }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الرسوم</td>
-                        <td class="table-value">
-                            <div class="form-floating">
-                                <app-za-drop-down-form-control [data]="FeeTemplates" [showSearch]="true" [placeholder]="'الرسوم'" formControlName="feeTemplateId" [hasError]="formErrors.feeTemplateId"></app-za-drop-down-form-control>
-                            </div>
-                            <div class="error-message" *ngIf="formErrors.feeTemplateId">
-                                {{ formErrors.feeTemplateId }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">نوع الخصم</td>
-                        <td class="table-value">
-                            <div class="form-floating">
-                                <app-za-drop-down-form-control [data]="DiscountTypes" [showSearch]="true" [placeholder]="'نوع الخصم'" formControlName="discountTypeId"></app-za-drop-down-form-control>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr *ngIf="ItemForm.get('discountTypeId')?.value">
-                        <td class="table-feature">نسبة الخصم %</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'نسبة الخصم %...'" formControlName="discountAmountPer" [allowNumbersOnly]="true" [error]="formErrors.discountAmountPer"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr *ngIf="ItemForm.get('discountTypeId')?.value">
-                        <td class="table-feature">سبب الخصم</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'سبب الخصم...'" formControlName="discountReason" [error]="formErrors.discountReason"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">المبلغ</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'المبلغ...'" formControlName="totalAmount"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
+        <section class="discount-section" *ngIf="ItemForm.get('discountTypeId')?.value">
+          <div class="discount-section__header"><i class="fa-solid fa-percent"></i><span><strong>تفاصيل الخصم</strong><small>أدخل نسبة الخصم والسبب المعتمد.</small></span></div>
+          <div class="fee-form-grid"><label class="fee-field"><span>نسبة الخصم % <em>*</em></span><app-za-input-with-label [type]="'text'" [placeholder]="'نسبة الخصم'" formControlName="discountAmountPer" [allowNumbersOnly]="true" [error]="formErrors.discountAmountPer"></app-za-input-with-label></label><label class="fee-field"><span>سبب الخصم <em>*</em></span><app-za-input-with-label [type]="'text'" [placeholder]="'اكتب سبب الخصم'" formControlName="discountReason" [error]="formErrors.discountReason"></app-za-input-with-label></label></div>
+        </section>
+      </div>
+      <div class="fee-modal__footer"><button type="button" class="modal-button modal-button--secondary" (click)="modal.close()"><i class="fa-solid fa-xmark"></i>إلغاء</button><button type="button" class="modal-button modal-button--primary" (click)="AddNewItem()"><i class="fa-solid fa-floppy-disk"></i>حفظ الرسوم</button></div>
+    </form>
+  </div>
 </ng-template>
 
 <ng-template #deleteItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <span>تأكيد الإجراء</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
-    </div>
-    <div class="modal-body">
-        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
-    </div>
-    <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success" (click)="DeleteItem()">
-            <i class="fas fa-check"></i>
-            <span class="ms-2">نعم</span>
-        </button>
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
-            <i class="fas fa-times"></i>
-            <span class="ms-2">لا</span>
-        </button>
-    </div>
+  <div class="fee-modal" dir="rtl">
+    <div class="fee-modal__header"><div class="fee-modal__title"><span class="fee-modal__icon fee-modal__icon--danger"><i class="fa-solid fa-ban"></i></span><div><h2>تأكيد إلغاء الرسوم</h2><p>يرجى مراجعة الإجراء قبل المتابعة.</p></div></div><button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="fee-modal__body"><div class="cancel-warning"><i class="fa-solid fa-triangle-exclamation"></i><p>هل أنت متأكد أنك تريد إلغاء سجل الرسوم؟ سيظهر السجل بحالة ملغي بعد تأكيد الإجراء.</p></div></div>
+    <div class="fee-modal__footer"><button type="button" class="modal-button modal-button--secondary" (click)="modal.close()">تراجع</button><button type="button" class="modal-button modal-button--danger" (click)="DeleteItem()"><i class="fa-solid fa-ban"></i>تأكيد الإلغاء</button></div>
+  </div>
 </ng-template>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

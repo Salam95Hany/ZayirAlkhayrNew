@@ -1,43 +1,32 @@
-<div class="table-responsive shadow-sm radius-10">
-    <form [formGroup]="ItemForm" autocomplete="off">
-        <table class="table table-bordered table-feature-value align-middle border m-0">
-            <thead>
-                <tr>
-                    <th colspan="2">بيانات ولي الأمر</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="table-feature">اسم ولي الأمر</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'اسم ولي الأمر...'" formControlName="parentName" [error]="formErrors.parentName"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">رقم هاتف الأب</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'رقم هاتف الأب...'" formControlName="fatherPhone" [allowNumbersOnly]="true"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">رقم هاتف الأم</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'رقم هاتف الأم...'" formControlName="motherPhone" [allowNumbersOnly]="true"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">رقم الواتساب</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'رقم الواتساب...'" formControlName="whatsappNumber" [allowNumbersOnly]="true"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">العنوان</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'العنوان...'" formControlName="address" [error]="formErrors.address"></app-za-input-with-label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
-</div>
+<form class="guardian-form" [formGroup]="ItemForm" autocomplete="off">
+  <div class="form-section-heading">
+    <span class="form-section-heading__icon"><i class="fa-solid fa-address-card"></i></span>
+    <span><strong>بيانات ولي الأمر الأساسية</strong><small>ستُستخدم هذه البيانات للتواصل والمتابعة مع الأسرة.</small></span>
+  </div>
+
+  <div class="form-grid">
+    <div class="form-field form-field--wide">
+      <label>اسم ولي الأمر <span>*</span></label>
+      <app-za-input-with-label type="text" placeholder="أدخل الاسم الكامل لولي الأمر" formControlName="parentName" [error]="formErrors.parentName"></app-za-input-with-label>
+    </div>
+
+    <div class="form-field">
+      <label>رقم هاتف الأب</label>
+      <app-za-input-with-label type="text" placeholder="أدخل رقم هاتف الأب" formControlName="fatherPhone" [allowNumbersOnly]="true"></app-za-input-with-label>
+    </div>
+    <div class="form-field">
+      <label>رقم هاتف الأم</label>
+      <app-za-input-with-label type="text" placeholder="أدخل رقم هاتف الأم" formControlName="motherPhone" [allowNumbersOnly]="true"></app-za-input-with-label>
+    </div>
+    <div class="form-field">
+      <label>رقم واتساب</label>
+      <app-za-input-with-label type="text" placeholder="أدخل رقم التواصل عبر واتساب" formControlName="whatsappNumber" [allowNumbersOnly]="true"></app-za-input-with-label>
+    </div>
+    <div class="form-field">
+      <label>العنوان <span>*</span></label>
+      <app-za-input-with-label type="text" placeholder="أدخل عنوان السكن بالتفصيل" formControlName="address" [error]="formErrors.address"></app-za-input-with-label>
+    </div>
+  </div>
+
+  <div class="contact-note"><i class="fa-solid fa-circle-info"></i><span>يجب إدخال رقم هاتف واحد على الأقل للأب أو الأم لإكمال التسجيل.</span></div>
+</form>

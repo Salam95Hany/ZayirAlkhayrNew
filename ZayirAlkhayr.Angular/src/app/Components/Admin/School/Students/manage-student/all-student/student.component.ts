@@ -6,7 +6,7 @@ import { NgbModal, NgbModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { StudentSidepanelComponent } from '../student-sidepanel/student-sidepanel.component';
-import { ZaBreadcrumbComponent } from '../../../../../../Shared/za-breadcrumb/za-breadcrumb.component';
+import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from '../../../../../../Shared/za-pagination/za-pagination.component';
 import { ZaFiltersComponent } from '../../../../../../Shared/za-filters/za-filters.component';
 import { ZaEmptyDataComponent } from '../../../../../../Shared/za-empty-data/za-empty-data.component';
@@ -23,7 +23,7 @@ import { AuthService } from '../../../../../../Auth/auth.service';
 @Component({
   selector: 'app-student',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,ArabicDateWithTimePipe,
+  imports: [AdminBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,ArabicDateWithTimePipe,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RouterModule, RoleCheckerDirective,
     NgIf, NgFor, NgxLoadingModule],
   templateUrl: './student.component.html',

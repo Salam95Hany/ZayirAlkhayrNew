@@ -1,0 +1,80 @@
+<button
+  class="side-menu-launcher"
+  type="button"
+  (click)="toggle()"
+  [attr.aria-expanded]="isOpen"
+  aria-controls="admin-side-navigation"
+  aria-label="فتح القائمة الجانبية"
+>
+  <i class="fa-solid fa-bars" aria-hidden="true"></i>
+  <span>القائمة</span>
+</button>
+
+<aside id="admin-side-navigation" class="side-menu" [class.side-menu--open]="isOpen" dir="rtl">
+  <header class="side-menu__header">
+    <div class="side-menu__module-icon"><i [class]="moduleIcon"></i></div>
+    <div class="side-menu__identity">
+      <span>مساحة العمل</span>
+      <h2>{{ moduleTitle }}</h2>
+      <p>{{ moduleSubtitle }}</p>
+    </div>
+    <button class="side-menu__close" type="button" (click)="close()" aria-label="إغلاق القائمة">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </header>
+
+  <div class="side-menu__divider"></div>
+
+  <nav class="side-menu__navigation" aria-label="القائمة الجانبية">
+    <div class="side-menu__section-label">القائمة الرئيسية</div>
+
+    <a
+      class="side-menu__link side-menu__link--home"
+      [routerLink]="moduleHomeRoute"
+      routerLinkActive="is-active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      ariaCurrentWhenActive="page"
+    >
+      <span class="side-menu__link-icon"><i class="fa-solid fa-table-columns"></i></span>
+      <span class="side-menu__link-copy"><strong>نظرة عامة</strong><small>الصفحة الرئيسية للنظام</small></span>
+      <span class="side-menu__active-mark"></span>
+    </a>
+
+    <ul *ngIf="items.length" class="side-menu__list">
+      <li *ngFor="let item of items">
+        <a
+          class="side-menu__link"
+          [routerLink]="item.route"
+          routerLinkActive="is-active"
+          ariaCurrentWhenActive="page"
+        >
+          <span class="side-menu__link-icon"><i [class]="item.icon || 'fa-solid fa-folder'"></i></span>
+          <span class="side-menu__link-copy"><strong>{{ itemTitle(item) }}</strong><small>فتح مساحة العمل</small></span>
+          <span *ngIf="itemCount(item)" class="side-menu__count">{{ itemCount(item) }}</span>
+          <span class="side-menu__active-mark"></span>
+        </a>
+      </li>
+    </ul>
+
+    <div *ngIf="!items.length" class="side-menu__empty">
+      <i class="fa-solid fa-lock"></i>
+      <span>لا توجد أقسام متاحة</span>
+    </div>
+  </nav>
+
+  <footer class="side-menu__footer">
+    <a routerLink="/admin/home">
+      <span><i class="fa-solid fa-arrow-right-arrow-left"></i></span>
+      <span><strong>تغيير النظام</strong><small>العودة إلى الأنظمة الرئيسية</small></span>
+      <i class="fa-solid fa-chevron-left"></i>
+    </a>
+  </footer>
+</aside>
+
+<button
+  class="side-menu-overlay"
+  [class.side-menu-overlay--visible]="isOpen"
+  type="button"
+  (click)="close()"
+  aria-label="إغلاق القائمة الجانبية"
+></button>

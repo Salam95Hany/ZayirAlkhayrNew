@@ -1,106 +1,41 @@
-<div class="row">
-    <div class="mb-3" *ngFor="let item of StudentDetails;let i = index" [class.col-lg-12]="StudentDetails.length === 1" [class.col-lg-6]="StudentDetails.length > 1">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-bordered table-feature-value align-middle border m-0">
-                <thead>
-                    <tr>
-                        <th colspan="2">بيانات الطالب ({{i + 1}})</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="table-feature">الاسم</td>
-                        <td class="table-value fs-5">{{item.studentName}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">المرحلة الدراسية</td>
-                        <td class="table-value fs-5">{{item.academicStageName}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">تاريخ الميلاد</td>
-                        <td class="table-value fs-5">{{item.birthDay | arabicDateWithTime}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">المدرسة الحكومية</td>
-                        <td class="table-value fs-5">{{item.governmentSchool}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الفترة الدراسية</td>
-                        <td class="table-value fs-5">{{item.studyPeriodName}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الجنسية</td>
-                        <td class="table-value fs-5">{{item.nationalityName}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">نوع الطالب</td>
-                        <td class="table-value fs-5">{{item.studentTypeName}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">هل لديه حالة صحية</td>
-                        <td class="table-value">
-                            <div class="d-flex align-items-center">
-                                <div class="me-2 fs-5">نعم</div>
-                                <label class="jtoggler-wrapper m-0 mx-0">
-                                    <input type="checkbox" [(ngModel)]="item.isHaveHealthCondition" class="jtoggler"
-                                        disabled>
-                                    <div class="jtoggler-control">
-                                        <div class="jtoggler-handle"></div>
-                                    </div>
-                                </label>
-                                <div class="ms-2 fs-5">لا</div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">ملاحظات الحالة الصحية</td>
-                        <td class="table-value fs-5">{{item.healthConditionNote}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الجنس</td>
-                        <td class="table-value fs-5">{{item.genderName}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">السنة الدراسية</td>
-                        <td class="table-value fs-5">{{item.academicYear}}</td>
-                    </tr>
-                    <tr *ngIf="UpdateMode">
-                        <td class="table-feature">حالة الطالب</td>
-                        <td class="table-value fs-5">{{item.studentStatusId == 1 ? 'موجود' : 'منسحب'}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">سبب الانسحاب</td>
-                        <td class="table-value fs-5">{{item.studentStatusReason}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">ترتيب الطالب بين اخوته</td>
-                        <td class="table-value fs-5">{{item.orderAmongChildren}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">تاريخ التسجيل</td>
-                        <td class="table-value fs-5">{{item.enrollmentDate | arabicDateWithTime}}</td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">ملاحظات</td>
-                        <td class="table-value fs-5">{{item.notes}}</td>
-                    </tr>
-                    <tr *ngIf="!DetailsMode">
-                        <td class="table-feature">عمليات</td>
-                        <td class="table-value">
-                            <div class="w-100 d-flex align-items-center">
-                                <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openModal('Edit',item)">
-                                    <i class="uil uil-pen"></i>
-                                    <span>تعديل</span>
-                                </button>
-                                <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openModal('Delete',item)">
-                                    <i class="uil uil-trash-alt"></i>
-                                    <span>حذف</span>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<div class="student-cards" *ngIf="StudentDetails.length">
+  <article class="student-card" *ngFor="let item of StudentDetails; let i = index">
+    <header class="student-card__header">
+      <span class="student-card__avatar"><i class="fa-solid fa-user-graduate"></i></span>
+      <div class="student-card__identity">
+        <span>الطالب {{ i + 1 }}</span>
+        <h4>{{ item.studentName }}</h4>
+        <p>{{ item.academicStageName }} · {{ item.academicYear }}</p>
+      </div>
+      <span class="student-card__status" [class.student-card__status--inactive]="item.studentStatusId == 2">
+        {{ item.studentStatusId == 2 ? 'منسحب' : 'مستمر' }}
+      </span>
+    </header>
+
+    <dl class="student-card__details">
+      <div><dt>تاريخ الميلاد</dt><dd>{{ item.birthDay | arabicDateWithTime }}</dd></div>
+      <div><dt>الجنس</dt><dd>{{ item.genderName || '—' }}</dd></div>
+      <div><dt>الجنسية</dt><dd>{{ item.nationalityName || '—' }}</dd></div>
+      <div><dt>نوع الطالب</dt><dd>{{ item.studentTypeName || '—' }}</dd></div>
+      <div><dt>الفترة الدراسية</dt><dd>{{ item.studyPeriodName || '—' }}</dd></div>
+      <div><dt>المدرسة الحكومية</dt><dd>{{ item.governmentSchool || '—' }}</dd></div>
+      <div><dt>تاريخ التسجيل</dt><dd>{{ item.enrollmentDate | arabicDateWithTime }}</dd></div>
+      <div><dt>ترتيبه بين إخوته</dt><dd>{{ item.orderAmongChildren || '—' }}</dd></div>
+    </dl>
+
+    <div class="student-card__notice" *ngIf="item.isHaveHealthCondition">
+      <i class="fa-solid fa-notes-medical"></i>
+      <span><strong>حالة صحية مسجلة</strong><small>{{ item.healthConditionNote || 'لم تتم إضافة تفاصيل' }}</small></span>
     </div>
+    <div class="student-card__notice student-card__notice--warning" *ngIf="item.studentStatusId == 2">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span><strong>سبب الانسحاب</strong><small>{{ item.studentStatusReason || 'غير محدد' }}</small></span>
+    </div>
+    <div class="student-card__notes" *ngIf="item.notes"><strong>ملاحظات:</strong> {{ item.notes }}</div>
+
+    <footer class="student-card__actions" *ngIf="!DetailsMode">
+      <button type="button" class="edit-button" (click)="openModal('Edit', item)"><i class="fa-regular fa-pen-to-square"></i><span>تعديل البيانات</span></button>
+      <button type="button" class="delete-button" (click)="openModal('Delete', item)"><i class="fa-regular fa-trash-can"></i><span>حذف</span></button>
+    </footer>
+  </article>
 </div>

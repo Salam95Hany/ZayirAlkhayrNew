@@ -19,47 +19,36 @@ export class LoginComponent {
   isLoading = signal(false);
   showError = signal(false);
   showPassword = signal(false);
-  shapes = signal(this.generateShapes());
 
   loginForm: FormGroup = this.fb.group({
     userName: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-  constructor() {
-    setInterval(() => {
-      this.shapes.set(this.generateShapes());
-    }, 3000);
-  }
-
-  private generateShapes() {
-    return Array.from({ length: 6 }, () => ({
-      size: Math.random() * 80 + 40,
-      top: Math.random() * 100,
-      left: Math.random() * 100,
-      delay: Math.random() * 6
-    }));
-  }
-
-  togglePassword() {
+  togglePassword(): void {
     this.showPassword.update(show => !show);
   }
 
-  onSubmit() {
-    if (this.loginForm.valid) {
-      this.isLoading.set(true);
-      this.showError.set(false);
-      this.authService.AdminLogin(this.loginForm.value).subscribe(data => {
-        if (data.isSuccess) {
-          this.showError.set(false);
-          this.isLoading.set(false);
-          localStorage.setItem('UserModel', JSON.stringify(data.results));
-          this.router.navigateByUrl('admin/home');
-        } else {
+  onSubmit(): void {
+    this.loginForm.markAllAsTouched();
+    if (this.loginForm.invalid || this.isLoading()) return;
+
+    this.isLoading.set(true);
+    this.showError.set(false);
+    this.authService.AdminLogin(this.loginForm.value).subscribe({
+      next: data => {
+        this.isLoading.set(false);
+        if (!data.isSuccess) {
           this.showError.set(true);
-          this.isLoading.set(false);
+          return;
         }
-      });
-    }
+        localStorage.setItem('UserModel', JSON.stringify(data.results));
+        this.router.navigateByUrl('admin/home');
+      },
+      error: () => {
+        this.isLoading.set(false);
+        this.showError.set(true);
+      }
+    });
   }
 }

@@ -1,174 +1,97 @@
-<app-za-breadcrumb [TitleList]="TitleList"></app-za-breadcrumb>
+<div class="parents-page" dir="rtl">
+  <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2">
-            <div class="d-flex align-items-center gap-2">
-                <!-- <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="ZAInstitution_FamilyNationality" action="canAdd" (click)="openItemModal(OpenItemModal,null)">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>إضافة</span>
-                </button> -->
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
-                    <i class="uil uil-filter"></i>
-                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
-                </button>
-            </div>
-        </div>
-        <div class="col-md-4 mb-2">
-            <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
-        </div>
-        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
-            <div class="d-flex align-items-center">
-                <ng-container>
-                    <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
-                </ng-container>
-            </div>
-        </div>
+  <header class="parents-hero">
+    <div>
+      <span class="parents-hero__eyebrow">إدارة التواصل الأسري</span>
+      <h1>أولياء الأمور</h1>
+      <p>إدارة بيانات أولياء الأمور ووسائل التواصل والطلاب المرتبطين بكل أسرة.</p>
     </div>
-    <div class="p-3 bg-white">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
-                <thead>
-                    <tr>
-                        <th>الاسم</th>
-                        <th>رقم تلفون الأب</th>
-                        <th>رقم تلفون الأم</th>
-                        <th>العنوان</th>
-                        <th>رقم الواتساب</th>
-                        <th>عدد الأبناء</th>
-                        <th>أُضيف بواسطة</th>
-                        <th>تاريخ الاضافة</th>
-                        <th>عمليات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of Results">
-                            <td>{{item.name}}</td>
-                            <td>{{item.parentPhone ?? '-'}}</td>
-                            <td>{{item.motherPhone ?? '-'}}</td>
-                            <td>{{item.address}}</td>
-                            <td>{{item.whatsappNumber ?? '-'}}</td>
-                            <td>{{item.childrenCount ?? '-'}}</td>
-                            <td>{{item.createdBy}}</td>
-                            <td>{{item.insertDateStr}}</td>
-                            <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="!item.isSystem">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="School_ManageParents_Parents" action="canEdit" (click)="openItemModal(OpenItemModal,item)">
-                                        <i class="uil uil-pen"></i>
-                                        <span>تعديل</span>
-                                    </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="School_ManageParents_Parents" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
-                                        <i class="uil uil-trash-alt"></i>
-                                        <span>حذف</span>
-                                    </button>
-                                    <button class="button-table-action btn-success d-flex align-items-center justify-content-center gap-2" appRole pageKey="School_ManageParents_Parents" action="canDelete" (click)="openSendWhatsupModal(item)">
-                                        <i class="uil uil-whatsapp"></i>
-                                        <span>ارسال</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!Results.length">
-                            <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-        </div>
+    <div class="parents-hero__metrics" aria-label="ملخص أولياء الأمور">
+      <div class="hero-metric"><span class="hero-metric__icon"><i class="fa-solid fa-people-roof"></i></span><span><small>إجمالي أولياء الأمور</small><strong>{{ TotalCount }}</strong></span></div>
+      <div class="hero-metric"><span class="hero-metric__icon hero-metric__icon--teal"><i class="fa-solid fa-address-book"></i></span><span><small>المعروض حالياً</small><strong>{{ Results.length }}</strong></span></div>
     </div>
+  </header>
+
+  <section class="parents-panel" aria-labelledby="parents-table-title">
+    <div class="parents-toolbar">
+      <div class="parents-toolbar__heading">
+        <span class="parents-toolbar__icon"><i class="fa-solid fa-user-group"></i></span>
+        <div><h2 id="parents-table-title">سجل أولياء الأمور</h2><p>استعرض بيانات التواصل وحدّث ملفات أولياء الأمور.</p></div>
+      </div>
+      <button type="button" class="toolbar-button" (click)="isFilter = !isFilter" [class.is-active]="!isFilter" [attr.aria-expanded]="!isFilter" aria-controls="parentFilters"><i class="fa-solid fa-sliders"></i><span>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}</span></button>
+    </div>
+
+    <div id="parentFilters" class="parents-filters" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+      <div class="parents-filters__header"><span><i class="fa-solid fa-filter"></i> تصفية سجل أولياء الأمور</span><small>ابحث بالاسم أو رقم الهاتف للوصول إلى الأسرة المطلوبة.</small></div>
+      <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
+    </div>
+
+    <div class="parents-list-meta">
+      <div class="parents-list-meta__count"><span class="status-dot"></span><span>تم العثور على <strong>{{ TotalCount }}</strong> ولي أمر</span></div>
+      <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
+    </div>
+
+    <div class="parents-table-wrap" role="region" aria-label="جدول بيانات أولياء الأمور" tabindex="0">
+      <table class="parents-table">
+        <thead><tr><th class="parent-column">ولي الأمر</th><th>هاتف الأب</th><th>هاتف الأم</th><th class="address-column">العنوان</th><th>رقم واتساب</th><th>عدد الأبناء</th><th>أُضيف بواسطة</th><th>تاريخ الإضافة</th><th class="actions-column">الإجراءات</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let item of Results">
+            <td class="parent-column"><div class="parent-identity"><span class="parent-avatar">{{ item.name?.charAt(0) || 'و' }}</span><span><strong>{{ item.name || '-' }}</strong><small>ولي أمر {{ item.childrenCount ? 'لـ ' + item.childrenCount + ' طالب' : '' }}</small></span></div></td>
+            <td><span class="phone-value" dir="ltr">{{ item.parentPhone ?? '-' }}</span></td>
+            <td><span class="phone-value" dir="ltr">{{ item.motherPhone ?? '-' }}</span></td>
+            <td class="address-column" [title]="item.address || ''">{{ item.address || '-' }}</td>
+            <td><span class="whatsapp-number" dir="ltr"><i class="fa-brands fa-whatsapp"></i>{{ item.whatsappNumber ?? '-' }}</span></td>
+            <td><span class="children-count"><i class="fa-solid fa-children"></i>{{ item.childrenCount ?? 0 }}</span></td>
+            <td>{{ item.createdBy || '-' }}</td><td>{{ item.insertDateStr || '-' }}</td>
+            <td class="actions-column">
+              <div class="row-actions" *ngIf="!item.isSystem">
+                <button type="button" class="row-action row-action--message" title="إرسال رسالة واتساب" appRole pageKey="School_ManageParents_Parents" action="canDelete" (click)="openSendWhatsupModal(item)"><i class="fa-brands fa-whatsapp"></i><span>إرسال</span></button>
+                <button type="button" class="row-action row-action--edit" title="تعديل بيانات ولي الأمر" appRole pageKey="School_ManageParents_Parents" action="canEdit" (click)="openItemModal(OpenItemModal,item)"><i class="fa-regular fa-pen-to-square"></i><span>تعديل</span></button>
+                <button type="button" class="row-action row-action--delete" title="حذف ولي الأمر" appRole pageKey="School_ManageParents_Parents" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)"><i class="fa-regular fa-trash-can"></i><span>حذف</span></button>
+              </div>
+              <span class="system-record" *ngIf="item.isSystem"><i class="fa-solid fa-shield-halved"></i>سجل نظام</span>
+            </td>
+          </tr>
+          <tr *ngIf="!Results.length"><td colspan="9" class="empty-cell"><app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </div>
 
 <ng-template #SendWhatsupModal let-modal>
-    <app-whatsup-send-modal [Templates]="Templates" [ParentId]="ParentId" [WhatsupPhone]="WhatsupPhone"></app-whatsup-send-modal>
+  <app-whatsup-send-modal [Templates]="Templates" [ParentId]="ParentId" [WhatsupPhone]="WhatsupPhone"></app-whatsup-send-modal>
 </ng-template>
 
-
-
 <ng-template #OpenItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-plus"></i>
-            <span>املأ البيانات الأتية</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+  <div class="parent-modal" dir="rtl">
+    <div class="parent-modal__header">
+      <div class="parent-modal__title"><span class="parent-modal__icon"><i class="fa-solid fa-user-pen"></i></span><div><h2>{{ ItemForm.get('id')?.value ? 'تعديل بيانات ولي الأمر' : 'إضافة ولي أمر' }}</h2><p>أدخل البيانات الأساسية ووسائل التواصل بدقة.</p></div></div>
+      <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form [formGroup]="ItemForm" autocomplete="off">
+      <div class="parent-modal__body">
+        <div class="form-section-title"><span><i class="fa-regular fa-address-card"></i></span><div><strong>البيانات الأساسية</strong><small>الحقول المميزة بعلامة النجمة مطلوبة.</small></div></div>
+        <div class="parent-form-grid">
+          <label class="parent-field parent-field--wide"><span>اسم ولي الأمر <em>*</em></span><app-za-input-with-label [type]="'text'" [placeholder]="'أدخل اسم ولي الأمر'" formControlName="name" [error]="formErrors.name"></app-za-input-with-label></label>
+          <label class="parent-field"><span>هاتف الأب <em>*</em></span><app-za-input-with-label [type]="'text'" [placeholder]="'رقم هاتف الأب'" formControlName="parentPhone" [error]="formErrors.parentPhone" [allowNumbersOnly]="true"></app-za-input-with-label></label>
+          <label class="parent-field"><span>هاتف الأم</span><app-za-input-with-label [type]="'text'" [placeholder]="'رقم هاتف الأم'" formControlName="motherPhone" [allowNumbersOnly]="true"></app-za-input-with-label></label>
+          <label class="parent-field parent-field--wide"><span>العنوان <em>*</em></span><app-za-input-with-label [type]="'text'" [placeholder]="'أدخل عنوان السكن'" formControlName="address" [error]="formErrors.address"></app-za-input-with-label></label>
+          <label class="parent-field parent-field--wide"><span>رقم واتساب</span><app-za-input-with-label [type]="'text'" [placeholder]="'رقم واتساب للتواصل'" formControlName="whatsappNumber" [allowNumbersOnly]="true"></app-za-input-with-label></label>
         </div>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="ItemForm" autocomplete="off">
-            <table class="table table-bordered table-feature-value align-middle border m-0">
-                <tbody>
-                    <tr>
-                        <td class="table-feature">الاسم</td>
-                        <td class="table-value d-flex">
-                            <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'الاسم...'" formControlName="name" [error]="formErrors.name"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">رقم تلفون الأب</td>
-                        <td class="table-value d-flex">
-                            <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'رقم تلفون الأب...'" formControlName="parentPhone" [error]="formErrors.parentPhone" [allowNumbersOnly]="true"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">رقم تلفون الأم</td>
-                        <td class="table-value d-flex">
-                            <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'رقم تلفون الأم...'" formControlName="motherPhone" [allowNumbersOnly]="true"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">العنوان</td>
-                        <td class="table-value d-flex">
-                            <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'العنوان...'" formControlName="address" [error]="formErrors.address"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">رقم الواتساب</td>
-                        <td class="table-value d-flex">
-                            <app-za-input-with-label class="w-100" [type]="'text'" [placeholder]="'رقم الواتساب...'" formControlName="whatsappNumber" [allowNumbersOnly]="true"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
+      </div>
+      <div class="parent-modal__footer"><button type="button" class="modal-button modal-button--secondary" (click)="modal.close()"><i class="fa-solid fa-xmark"></i>إلغاء</button><button type="button" class="modal-button modal-button--primary" (click)="AddNewItem()"><i class="fa-solid fa-floppy-disk"></i>حفظ البيانات</button></div>
+    </form>
+  </div>
 </ng-template>
 
 <ng-template #deleteItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <span>تأكيد الإجراء</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
-    </div>
-    <div class="modal-body">
-        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
-    </div>
-    <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success" (click)="DeleteItem()">
-            <i class="fas fa-check"></i>
-            <span class="ms-2">نعم</span>
-        </button>
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
-            <i class="fas fa-times"></i>
-            <span class="ms-2">لا</span>
-        </button>
-    </div>
+  <div class="parent-modal" dir="rtl">
+    <div class="parent-modal__header"><div class="parent-modal__title"><span class="parent-modal__icon parent-modal__icon--danger"><i class="fa-regular fa-trash-can"></i></span><div><h2>تأكيد حذف ولي الأمر</h2><p>يرجى مراجعة الإجراء قبل المتابعة.</p></div></div><button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="parent-modal__body"><div class="delete-warning"><i class="fa-solid fa-triangle-exclamation"></i><p>هل أنت متأكد أنك تريد حذف سجل ولي الأمر؟ لا يمكن التراجع عن هذا الإجراء بعد تأكيده.</p></div></div>
+    <div class="parent-modal__footer"><button type="button" class="modal-button modal-button--secondary" (click)="modal.close()">إلغاء</button><button type="button" class="modal-button modal-button--danger" (click)="DeleteItem()"><i class="fa-regular fa-trash-can"></i>تأكيد الحذف</button></div>
+  </div>
 </ng-template>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

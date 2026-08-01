@@ -1,4 +1,69 @@
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.templates-hero h1 {
+    font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+}
+
+.templates-hero p {
+    max-width: 44rem;
+}
+
+.templates-table {
+    min-width: 68rem;
+}
+
+.name-column {
+    min-width: 13rem;
+}
+
+.preview-column {
+    width: 48%;
+    min-width: 24rem;
+}
+
+.actions-column {
+    min-width: 10rem;
+    text-align: center;
+}
+
+.template-icon {
+    font-weight: initial;
+}
+
+.message-preview {
+    display: flex;
+    align-items: flex-start;
+    gap: .55rem;
+    max-height: 5.2rem;
+    overflow: auto;
+    padding: .65rem .75rem;
+    border: 1px solid #dce9e4;
+    border-radius: .7rem;
+    color: #405448;
+    background: #f0f8f4;
+    line-height: 1.7;
+}
+
+.message-preview>i {
+    flex: 0 0 auto;
+    margin-top: .15rem;
+    color: #159a63;
+    font-size: .9rem;
+}
+
+.message-preview>div {
+    white-space: normal;
+}
+
 :host ::ng-deep .template-variable {
-    color: red;
-    font-weight: 600;
+    display: inline-block;
+    margin: .05rem .12rem;
+    padding: .05rem .3rem;
+    border-radius: .3rem;
+    color: #3e56a6;
+    background: #e8ecff;
+    font-weight: 800;
 }

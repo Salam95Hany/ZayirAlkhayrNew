@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ZaBreadcrumbComponent } from "../../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../../Shared/za-filters/za-filters.component";
 import { NgxLoadingModule } from "ngx-loading";
@@ -23,7 +23,7 @@ import { ArabicDateWithTimePipe } from '../../../../../../Pipes/arabic-date-with
 @Component({
   selector: 'app-student-fees',
   standalone: true,
-  imports: [ZaBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ArabicDateWithTimePipe,
+  imports: [AdminBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ArabicDateWithTimePipe,
     NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule, ZaDropDownFormControlComponent],
   templateUrl: './student-fees.component.html',
   styleUrl: './student-fees.component.css'

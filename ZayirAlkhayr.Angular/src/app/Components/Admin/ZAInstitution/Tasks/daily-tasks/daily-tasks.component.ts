@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ZaBreadcrumbComponent } from "../../../../../Shared/za-breadcrumb/za-breadcrumb.component";
+import { AdminBreadcrumbComponent } from '../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { TaskService } from '../../../../../Services/zainstitution/task.service';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../../../Auth/auth.service';
@@ -16,7 +16,7 @@ import { NgxLoadingModule } from "ngx-loading";
 @Component({
   selector: 'app-daily-tasks',
   standalone: true,
-  imports: [FormsModule, NgClass, NgIf, ZaBreadcrumbComponent, FormsModule, ZaPaginationComponent, NgFor, CommonModule,
+  imports: [FormsModule, NgClass, NgIf, AdminBreadcrumbComponent, FormsModule, ZaPaginationComponent, NgFor, CommonModule,
     ZaInputWithLabelComponent, ReactiveFormsModule, NgbModule, NgxLoadingModule],
   templateUrl: './daily-tasks.component.html',
   styleUrl: './daily-tasks.component.css'

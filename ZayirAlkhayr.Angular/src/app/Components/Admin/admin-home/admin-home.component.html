@@ -1,0 +1,105 @@
+<div class="admin-home" dir="rtl">
+    <div class="p-2">
+        <app-admin-header></app-admin-header>
+
+        <main class="admin-home__content">
+            <section class="welcome-panel" aria-labelledby="welcome-title">
+                <div class="welcome-panel__content">
+                    <div class="welcome-panel__eyebrow">
+                        <span class="status-dot" aria-hidden="true"></span>
+                        <span>لوحة التحكم الرئيسية</span>
+                    </div>
+
+                    <h1 id="welcome-title">مرحباً، {{ userDisplayName }}</h1>
+                    <p>
+                        اختر النظام الذي تريد العمل عليه وابدأ إدارة عملياتك اليومية من مكان واحد.
+                    </p>
+
+                    <div class="welcome-panel__meta">
+                        <div class="meta-item">
+                            <span class="meta-item__icon"><i class="fa-regular fa-calendar"></i></span>
+                            <span>
+                <small>التاريخ</small>
+                <strong>{{ formattedDate }}</strong>
+              </span>
+                        </div>
+
+                        <div class="meta-item">
+                            <span class="meta-item__icon"><i class="fa-regular fa-clock"></i></span>
+                            <span>
+                <small>الوقت الحالي</small>
+                <strong class="numeric-value">{{ formattedTime }}</strong>
+              </span>
+                        </div>
+
+                        <div class="meta-item">
+                            <span class="meta-item__icon"><i class="fa-solid fa-shield-halved"></i></span>
+                            <span>
+                <small>نوع الحساب</small>
+                <strong>{{ userRole }}</strong>
+              </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="welcome-panel__visual" aria-hidden="true">
+                    <div class="visual-orbit visual-orbit--large"></div>
+                    <div class="visual-orbit visual-orbit--small"></div>
+                    <div class="visual-mark">
+                        <i class="fa-solid fa-school"></i>
+                    </div>
+                </div>
+            </section>
+
+            <section class="systems-section" aria-labelledby="systems-title">
+                <header class="section-heading">
+                    <div>
+                        <span class="section-heading__label">مساحة العمل</span>
+                        <h2 id="systems-title">الأنظمة المتاحة</h2>
+                        <p>تظهر لك الأنظمة وفقاً للصلاحيات الممنوحة لحسابك.</p>
+                    </div>
+
+                    <div class="systems-count" aria-label="عدد الأنظمة المتاحة">
+                        <strong class="numeric-value">{{ visibleModules.length }}</strong>
+                        <span>أنظمة متاحة</span>
+                    </div>
+                </header>
+
+                <div *ngIf="visibleModules.length; else noSystems" class="systems-grid">
+                    <a *ngFor="let module of visibleModules" class="system-card" [class]="'system-card system-card--' + module.tone" [routerLink]="module.route">
+                        <div class="system-card__topline"></div>
+                        <div class="system-card__header">
+                            <span class="system-card__icon"><i [class]="module.icon"></i></span>
+                            <span class="system-card__status">
+                <span class="status-dot" aria-hidden="true"></span> متاح
+                            </span>
+                        </div>
+
+                        <div class="system-card__body">
+                            <h3>{{ module.title }}</h3>
+                            <p>{{ module.description }}</p>
+                        </div>
+
+                        <div class="system-card__action">
+                            <span>{{ module.actionLabel }}</span>
+                            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <ng-template #noSystems>
+                    <div class="empty-state">
+                        <span class="empty-state__icon"><i class="fa-solid fa-lock"></i></span>
+                        <h3>لا توجد أنظمة متاحة</h3>
+                        <p>تواصل مع مسؤول النظام لمراجعة صلاحيات حسابك.</p>
+                    </div>
+                </ng-template>
+            </section>
+
+            <footer class="admin-home__footer">
+                <span><i class="fa-solid fa-shield-check" aria-hidden="true"></i> بيئة إدارة آمنة ومحمية</span>
+                <span>جميع العمليات تخضع لصلاحيات المستخدم</span>
+            </footer>
+        </main>
+    </div>
+</div>

@@ -1,0 +1,157 @@
+<app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
+
+<main class="user-profile-page admin-page" dir="rtl">
+  <section class="profile-hero">
+    <div class="hero-copy">
+      <span class="hero-eyebrow"><i class="uil uil-shield-check"></i> الحساب الشخصي</span>
+      <h1>الملف الشخصي</h1>
+      <p>راجع بيانات حسابك ومعلومات التواصل وإعدادات الأمان من مكان واحد.</p>
+    </div>
+    <div class="hero-decoration" aria-hidden="true"><i class="uil uil-user-circle"></i></div>
+  </section>
+
+  <section class="profile-grid">
+    <aside class="identity-panel admin-card">
+      <div class="identity-cover"></div>
+      <div class="identity-content">
+        <span class="profile-avatar">{{ userInitials }}</span>
+        <span class="account-status"><i class="uil uil-check-circle"></i> حساب نشط</span>
+        <h2>{{ currentUser?.userName || 'مستخدم النظام' }}</h2>
+        <p class="identity-email">{{ currentUser?.email || 'لا يوجد بريد إلكتروني' }}</p>
+        <span class="role-badge"><i class="uil uil-award"></i>{{ roleName }}</span>
+      </div>
+
+      <div class="profile-completeness">
+        <div><span>اكتمال بيانات الحساب</span><strong>100%</strong></div>
+        <div class="progress-track"><span></span></div>
+      </div>
+
+      <div class="security-note">
+        <i class="uil uil-shield-check"></i>
+        <div><strong>حسابك محمي</strong><p>احرص على تحديث كلمة المرور دوريًا وعدم مشاركتها.</p></div>
+      </div>
+    </aside>
+
+    <section class="profile-details admin-card">
+      <header class="details-header">
+        <div>
+          <span class="section-label">البيانات العامة</span>
+          <h2>معلومات الحساب</h2>
+          <p>البيانات الأساسية المسجلة لحسابك داخل لوحة الإدارة.</p>
+        </div>
+        <button type="button" class="btn-primary-admin edit-profile-button" (click)="openProfileModal(profileModal)">
+          <i class="uil uil-edit"></i> تحديث المعلومات
+        </button>
+      </header>
+
+      <div class="information-grid">
+        <article class="information-item">
+          <span class="information-icon blue"><i class="uil uil-user"></i></span>
+          <div><small>اسم المستخدم</small><strong>{{ currentUser?.userName || 'غير مسجل' }}</strong></div>
+        </article>
+        <article class="information-item">
+          <span class="information-icon violet"><i class="uil uil-envelope"></i></span>
+          <div><small>البريد الإلكتروني</small><strong dir="ltr">{{ currentUser?.email || 'غير مسجل' }}</strong></div>
+        </article>
+        <article class="information-item">
+          <span class="information-icon green"><i class="uil uil-phone"></i></span>
+          <div><small>رقم الهاتف</small><strong dir="ltr">{{ currentUser?.phoneNumber || 'غير مسجل' }}</strong></div>
+        </article>
+        <article class="information-item">
+          <span class="information-icon orange"><i class="uil uil-map-marker"></i></span>
+          <div><small>العنوان</small><strong>{{ currentUser?.address || 'غير مسجل' }}</strong></div>
+        </article>
+        <article class="information-item">
+          <span class="information-icon cyan"><i class="uil uil-award"></i></span>
+          <div><small>نوع الحساب</small><strong>{{ roleName }}</strong></div>
+        </article>
+        <article class="information-item">
+          <span class="information-icon green"><i class="uil uil-check-circle"></i></span>
+          <div><small>حالة الحساب</small><strong class="status-value">نشط</strong></div>
+        </article>
+      </div>
+
+      <section class="account-security">
+        <div class="security-copy">
+          <span class="security-icon"><i class="uil uil-lock-alt"></i></span>
+          <div><small>أمان الحساب</small><h3>كلمة المرور</h3><p>حدّث كلمة المرور للحفاظ على أمان حسابك وبياناتك.</p></div>
+        </div>
+        <button type="button" class="password-action" (click)="openPasswordModal(passwordModal)">
+          <i class="uil uil-key-skeleton"></i> تحديث كلمة المرور
+        </button>
+      </section>
+    </section>
+  </section>
+</main>
+
+<ng-template #profileModal let-modal>
+  <section class="profile-modal" dir="rtl">
+    <header class="modal-heading">
+      <div class="modal-title-group"><span><i class="uil uil-user-square"></i></span><div><small>الملف الشخصي</small><h2>تحديث المعلومات</h2><p>عدّل بيانات حسابك ثم احفظ التغييرات.</p></div></div>
+      <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+    </header>
+
+    <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" autocomplete="off">
+      <div class="modal-form-grid">
+        <div class="form-field">
+          <label for="profile-user-name">اسم المستخدم <em>*</em></label>
+          <div class="input-shell" [class.invalid]="isProfileFieldInvalid('userName')"><i class="uil uil-user"></i><input id="profile-user-name" type="text" formControlName="userName" placeholder="أدخل اسم المستخدم"></div>
+          <small class="validation-message" *ngIf="isProfileFieldInvalid('userName')">اسم المستخدم مطلوب</small>
+        </div>
+        <div class="form-field">
+          <label for="profile-email">البريد الإلكتروني <em>*</em></label>
+          <div class="input-shell" [class.invalid]="isProfileFieldInvalid('email')"><i class="uil uil-envelope"></i><input id="profile-email" type="email" formControlName="email" placeholder="name@example.com" dir="ltr"></div>
+          <small class="validation-message" *ngIf="profileForm.controls.email.hasError('required') && isProfileFieldInvalid('email')">البريد الإلكتروني مطلوب</small>
+          <small class="validation-message" *ngIf="profileForm.controls.email.hasError('email') && isProfileFieldInvalid('email')">صيغة البريد الإلكتروني غير صحيحة</small>
+        </div>
+        <div class="form-field">
+          <label for="profile-phone">رقم الهاتف <em>*</em></label>
+          <div class="input-shell" [class.invalid]="isProfileFieldInvalid('phoneNumber')"><i class="uil uil-phone"></i><input id="profile-phone" type="tel" formControlName="phoneNumber" placeholder="أدخل رقم الهاتف" dir="ltr"></div>
+          <small class="validation-message" *ngIf="isProfileFieldInvalid('phoneNumber')">رقم الهاتف مطلوب</small>
+        </div>
+        <div class="form-field">
+          <label for="profile-address">العنوان <em>*</em></label>
+          <div class="input-shell" [class.invalid]="isProfileFieldInvalid('address')"><i class="uil uil-map-marker"></i><input id="profile-address" type="text" formControlName="address" placeholder="أدخل العنوان"></div>
+          <small class="validation-message" *ngIf="isProfileFieldInvalid('address')">العنوان مطلوب</small>
+        </div>
+      </div>
+      <footer class="modal-actions">
+        <button type="button" class="modal-cancel" (click)="modal.dismiss()"><i class="uil uil-times"></i> إلغاء</button>
+        <button type="submit" class="btn-primary-admin modal-submit" [disabled]="showLoader || profileForm.pristine"><i class="uil uil-check-circle"></i> حفظ التغييرات</button>
+      </footer>
+    </form>
+  </section>
+</ng-template>
+
+<ng-template #passwordModal let-modal>
+  <section class="profile-modal" dir="rtl">
+    <header class="modal-heading password-heading">
+      <div class="modal-title-group"><span><i class="uil uil-lock-alt"></i></span><div><small>أمان الحساب</small><h2>تحديث كلمة المرور</h2><p>اختر كلمة مرور قوية يصعب تخمينها.</p></div></div>
+      <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+    </header>
+
+    <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()" autocomplete="off">
+      <div class="password-modal-body">
+        <div class="password-guidance"><i class="uil uil-shield-check"></i><div><strong>نصيحة أمنية</strong><p>استخدم أربعة أحرف على الأقل، ويفضل الجمع بين الحروف والأرقام والرموز.</p></div></div>
+        <div class="form-field">
+          <label for="new-password">كلمة المرور الجديدة <em>*</em></label>
+          <div class="input-shell" [class.invalid]="isPasswordFieldInvalid('newPassword')"><i class="uil uil-lock"></i><input id="new-password" [type]="showNewPassword ? 'text' : 'password'" formControlName="newPassword" placeholder="أدخل كلمة المرور الجديدة" autocomplete="new-password"><button type="button" class="password-toggle" (click)="showNewPassword = !showNewPassword" [attr.aria-label]="showNewPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'"><i class="uil" [class.uil-eye]="!showNewPassword" [class.uil-eye-slash]="showNewPassword"></i></button></div>
+          <small class="validation-message" *ngIf="passwordForm.controls.newPassword.hasError('required') && isPasswordFieldInvalid('newPassword')">كلمة المرور الجديدة مطلوبة</small>
+          <small class="validation-message" *ngIf="passwordForm.controls.newPassword.hasError('minlength') && isPasswordFieldInvalid('newPassword')">يجب ألا تقل كلمة المرور عن أربعة أحرف</small>
+        </div>
+        <div class="form-field">
+          <label for="confirm-password">تأكيد كلمة المرور <em>*</em></label>
+          <div class="input-shell" [class.invalid]="isPasswordFieldInvalid('confirmPassword') || (passwordForm.hasError('passwordMismatch') && passwordForm.controls.confirmPassword.touched)"><i class="uil uil-lock-access"></i><input id="confirm-password" [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" placeholder="أعد إدخال كلمة المرور" autocomplete="new-password"><button type="button" class="password-toggle" (click)="showConfirmPassword = !showConfirmPassword" [attr.aria-label]="showConfirmPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'"><i class="uil" [class.uil-eye]="!showConfirmPassword" [class.uil-eye-slash]="showConfirmPassword"></i></button></div>
+          <small class="validation-message" *ngIf="isPasswordFieldInvalid('confirmPassword')">تأكيد كلمة المرور مطلوب</small>
+          <small class="validation-message" *ngIf="passwordForm.hasError('passwordMismatch') && passwordForm.controls.confirmPassword.touched">كلمتا المرور غير متطابقتين</small>
+        </div>
+      </div>
+      <footer class="modal-actions">
+        <button type="button" class="modal-cancel" (click)="modal.dismiss()"><i class="uil uil-times"></i> إلغاء</button>
+        <button type="submit" class="btn-primary-admin modal-submit" [disabled]="showLoader"><i class="uil uil-lock-access"></i> تحديث كلمة المرور</button>
+      </footer>
+    </form>
+  </section>
+</ng-template>
+
+<ngx-loading [show]="showLoader"></ngx-loading>

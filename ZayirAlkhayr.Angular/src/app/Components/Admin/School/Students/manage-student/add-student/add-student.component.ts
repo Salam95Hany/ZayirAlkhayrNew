@@ -8,11 +8,12 @@ import { StudentDataComponent } from './student-data/student-data.component';
 import { StudentLookups } from '../../../../../../Models/school/student/StudentLookups';
 import { AddStudentModel, StudentDetails } from '../../../../../../Models/school/student/AddStudentModel';
 import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
+import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 
 @Component({
   selector: 'app-add-student',
   standalone: true,
-  imports: [NgFor, NgIf, NgClass, NgxLoadingModule, ParentDataComponent, StudentDataComponent],
+  imports: [NgFor, NgIf, NgClass, NgxLoadingModule, ParentDataComponent, StudentDataComponent, AdminBreadcrumbComponent],
   templateUrl: './add-student.component.html',
   styleUrl: './add-student.component.css'
 })
@@ -30,10 +31,15 @@ export class AddStudentComponent {
   viewChilds = [];
   Steps: any[] = [];
   StepList: any[] = [
-    { stepName: 'بيانات ولي الأمر', stepId: 'ParentData', number: 1 },
-    { stepName: 'بيانات الطالب', stepId: 'StudentData', number: 2 }
+    { stepName: 'بيانات ولي الأمر', stepDescription: 'بيانات التواصل والعنوان', stepId: 'ParentData', number: 1, icon: 'fa-solid fa-people-roof' },
+    { stepName: 'بيانات الطلاب', stepDescription: 'البيانات الشخصية والدراسية', stepId: 'StudentData', number: 2, icon: 'fa-solid fa-user-graduate' }
     // { stepName: 'المراجعة النهائية', stepId: 'DiscountData', number: 3 }
   ]
+  readonly TitleList = [
+    { label: 'إدارة المدرسة', route: '/admin/school/home' },
+    { label: 'إدارة الطلاب', route: '/admin/school/home/1' },
+    'تسجيل طالب جديد'
+  ];
 
   constructor(private schoolStudentService: SchoolStudentService, private toaster: ToastrService, private router: Router
   ) {
