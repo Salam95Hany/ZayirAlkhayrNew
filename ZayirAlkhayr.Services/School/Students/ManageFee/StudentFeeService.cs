@@ -21,6 +21,12 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<ApiResponseModel<DataTable>> GetCurrentAcademicYearFinancialSummary()
+        {
+            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetCurrentAcademicYearFinancialSummary", Array.Empty<SqlParameter>());
+            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+        }
+
         public async Task<ApiResponseModel<DataSet>> GetAllStudentFeeData(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();

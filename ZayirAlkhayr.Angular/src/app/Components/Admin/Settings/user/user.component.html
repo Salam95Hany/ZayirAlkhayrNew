@@ -1,154 +1,156 @@
 <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2">
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>إضافة</span>
-                </button>
-            </div>
-        </div>
-        <div class="col-md-4 mb-2">
-            <app-za-pagination [currentPage]="1" [pageSize]="20" [totalCount]="TotalCount"></app-za-pagination>
-        </div>
+<main class="users-page admin-page" dir="rtl">
+  <header class="users-hero">
+    <div class="hero-copy">
+      <span class="hero-eyebrow"><i class="uil uil-shield-check"></i> إدارة الوصول</span>
+      <h1>إدارة المستخدمين</h1>
+      <p>إدارة حسابات فريق العمل وصلاحيات الوصول إلى أقسام النظام.</p>
     </div>
-    <div class="p-3 bg-white">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
-                <thead>
-                    <tr>
-                        <th>الاسم</th>
-                        <th>البريد الالكترونى</th>
-                        <th>رقم التلفون</th>
-                        <th>العنوان</th>
-                        <th>تاريخ الدخول</th>
-                        <th>الحالة</th>
-                        <th>الصلاحية</th>
-                        <th>عمليات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of UsersData">
-                            <td class="text-info cursor-pointer" (click)="OpenUserPermissionSidePanel(item)">{{item.userName}}</td>
-                            <td>{{item.email}}</td>
-                            <td>{{item.phoneNumber}}</td>
-                            <td>{{item?.address}}</td>
-                            <td>{{item?.loginDate}}</td>
-                            <td>
-                                <div class="status-tag active" *ngIf="item.isActive">نشط</div>
-                                <div class="status-tag inactive" *ngIf="!item.isActive">غير نشط</div>
-                            </td>
-                            <td>{{item.roleNameAr}}</td>
-                            <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
-                                        <i class="uil uil-pen"></i>
-                                        <span>تعديل</span>
-                                    </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item.userId)" *ngIf="LoginUserId == '5c3262ec-d2b4-4272-9bd3-4a0dc3e07a26'">
-                                        <i class="uil uil-trash-alt"></i>
-                                        <span>حذف</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!UsersData.length">
-                            <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!UsersData.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-        </div>
+    <button type="button" class="add-user-button" (click)="openItemModal(OpenItemModal, null)">
+      <i class="uil uil-user-plus"></i><span>إضافة مستخدم</span>
+    </button>
+  </header>
+
+  <section class="stats-grid" aria-label="إحصائيات المستخدمين">
+    <article class="stat-card total">
+      <span class="stat-icon"><i class="uil uil-users-alt"></i></span>
+      <div><small>إجمالي المستخدمين</small><strong>{{ TotalCount }}</strong><p>جميع الحسابات المسجلة</p></div>
+    </article>
+    <article class="stat-card active">
+      <span class="stat-icon"><i class="uil uil-user-check"></i></span>
+      <div><small>الحسابات النشطة</small><strong>{{ activeUsersCount }}</strong><p>يمكنها الوصول إلى النظام</p></div>
+    </article>
+    <article class="stat-card inactive">
+      <span class="stat-icon"><i class="uil uil-user-times"></i></span>
+      <div><small>الحسابات غير النشطة</small><strong>{{ inactiveUsersCount }}</strong><p>حسابات موقوفة حاليًا</p></div>
+    </article>
+  </section>
+
+  <section class="users-card admin-card">
+    <header class="users-toolbar">
+      <div class="toolbar-title">
+        <span><i class="uil uil-users-alt"></i></span>
+        <div><small>دليل المستخدمين</small><h2>حسابات النظام</h2><p>اضغط على الصلاحيات لإدارة وصول المستخدم.</p></div>
+      </div>
+      <div class="toolbar-actions">
+        <label class="search-box">
+          <i class="uil uil-search"></i>
+          <input type="search" placeholder="البحث بالاسم أو البريد أو الهاتف..." (input)="onSearch($event)" aria-label="البحث في المستخدمين">
+          <span *ngIf="searchTerm">{{ filteredUsers.length }} نتيجة</span>
+        </label>
+      </div>
+    </header>
+
+    <div class="users-table-wrap">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>المستخدم</th>
+            <th>معلومات التواصل</th>
+            <th>العنوان</th>
+            <th>آخر دخول</th>
+            <th>الحالة</th>
+            <th>الدور</th>
+            <th>الصلاحيات</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredUsers; trackBy: trackUser">
+            <td>
+              <div class="user-cell">
+                <span class="user-avatar">{{ getUserInitials(item.userName) }}</span>
+                <div><strong>{{ item.userName }}</strong><small>حساب إداري</small></div>
+              </div>
+            </td>
+            <td>
+              <div class="contact-cell"><span><i class="uil uil-envelope"></i>{{ item.email || '—' }}</span><span dir="ltr"><i class="uil uil-phone"></i>{{ item.phoneNumber || '—' }}</span></div>
+            </td>
+            <td><span class="address-cell"><i class="uil uil-map-marker"></i>{{ item.address || 'غير مسجل' }}</span></td>
+            <td><span class="login-date"><i class="uil uil-clock"></i>{{ item.loginDate || 'لم يسجل الدخول' }}</span></td>
+            <td><span class="account-badge" [class.active]="item.isActive" [class.inactive]="!item.isActive"><i class="uil" [class.uil-check-circle]="item.isActive" [class.uil-times-circle]="!item.isActive"></i>{{ item.isActive ? 'نشط' : 'غير نشط' }}</span></td>
+            <td><span class="role-badge"><i class="uil uil-award"></i>{{ item.roleNameAr || 'مستخدم' }}</span></td>
+            <td><button type="button" class="permission-button" (click)="OpenUserPermissionSidePanel(item)"><i class="uil uil-key-skeleton"></i><span>إدارة الصلاحيات</span></button></td>
+            <td>
+              <div class="row-actions">
+                <button type="button" class="icon-action edit" title="تعديل المستخدم" aria-label="تعديل المستخدم" (click)="openItemModal(OpenItemModal, item)"><i class="uil uil-pen"></i></button>
+                <button type="button" class="icon-action delete" title="حذف المستخدم" aria-label="حذف المستخدم" (click)="openDeleteItemModal(deleteItemModal, item.userId)" *ngIf="LoginUserId == '5c3262ec-d2b4-4272-9bd3-4a0dc3e07a26'"><i class="uil uil-trash-alt"></i></button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="!filteredUsers.length">
+            <td colspan="8" class="empty-cell"><app-za-empty-data [showEmptyData]="!filteredUsers.length"></app-za-empty-data></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-</div>
+
+    <footer class="users-footer">
+      <span><i class="uil uil-info-circle"></i> إجمالي النتائج: <strong>{{ filteredUsers.length }}</strong></span>
+      <app-za-pagination [currentPage]="1" [pageSize]="20" [totalCount]="filteredUsers.length"></app-za-pagination>
+    </footer>
+  </section>
+</main>
 
 <ng-template #OpenItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-plus"></i>
-            <span>املأ البيانات الأتية</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+  <section class="user-modal" dir="rtl">
+    <header class="user-modal-header">
+      <div class="modal-heading">
+        <span><i class="uil" [class.uil-user-plus]="!isEditing" [class.uil-user-square]="isEditing"></i></span>
+        <div><small>{{ isEditing ? 'تعديل الحساب' : 'مستخدم جديد' }}</small><h2>{{ isEditing ? 'تحديث بيانات المستخدم' : 'إضافة مستخدم جديد' }}</h2><p>أدخل بيانات الحساب المطلوبة بشكل صحيح.</p></div>
+      </div>
+      <button type="button" class="modal-close-button" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+    </header>
+
+    <form [formGroup]="ItemForm" autocomplete="off" (ngSubmit)="AddNewItem()">
+      <div class="user-form-grid">
+        <div class="user-form-field">
+          <label><i class="uil uil-user"></i> اسم المستخدم <em>*</em></label>
+          <app-za-input-with-label [type]="'text'" [placeholder]="'اسم المستخدم...'" formControlName="userName" [error]="formErrors.userName"></app-za-input-with-label>
+          <small>يُستخدم الاسم عند تسجيل الدخول إلى النظام.</small>
         </div>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="ItemForm" autocomplete="off">
-            <table class="table table-bordered table-feature-value align-middle border m-0">
-                <tbody>
-                    <tr>
-                        <td class="table-feature">اسم المستخدم</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'اسم المستخدم...'" formControlName="userName" [error]="formErrors.userName"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">البريد الالكتروني</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'البريد الالكتروني...'" formControlName="email" [error]="formErrors.email"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">رقم التلفون</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'رقم التلفون...'" [allowNumbersOnly]="true" formControlName="phoneNumber" [error]="formErrors.phoneNumber" name="student-phone" autocomplete="new-tel"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">كلمة المرور</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'password'" [placeholder]="'كلمة المرور...'" formControlName="password" [error]="formErrors.password" name="student-password" autocomplete="new-password"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">عنوان المستخدم</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'عنوان المستخدم...'" formControlName="address" [error]="formErrors.address"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
+        <div class="user-form-field">
+          <label><i class="uil uil-envelope"></i> البريد الإلكتروني <em>*</em></label>
+          <app-za-input-with-label [type]="'text'" [placeholder]="'البريد الإلكتروني...'" formControlName="email" [error]="formErrors.email"></app-za-input-with-label>
+          <small>سيُستخدم لاستقبال التنبيهات الإدارية.</small>
+        </div>
+        <div class="user-form-field">
+          <label><i class="uil uil-phone"></i> رقم الهاتف <em>*</em></label>
+          <app-za-input-with-label [type]="'text'" [placeholder]="'رقم الهاتف...'" [allowNumbersOnly]="true" formControlName="phoneNumber" [error]="formErrors.phoneNumber" name="user-phone" autocomplete="new-tel"></app-za-input-with-label>
+        </div>
+        <div class="user-form-field">
+          <label><i class="uil uil-lock"></i> كلمة المرور <em *ngIf="!isEditing">*</em></label>
+          <app-za-input-with-label [type]="'password'" [placeholder]="isEditing ? 'اتركها فارغة دون تغيير' : 'كلمة المرور...'" formControlName="password" [error]="formErrors.password" name="user-password" autocomplete="new-password"></app-za-input-with-label>
+          <small>{{ isEditing ? 'أدخل كلمة مرور فقط إذا أردت تغييرها.' : 'يجب ألا تقل عن أربعة أحرف.' }}</small>
+        </div>
+        <div class="user-form-field full-width">
+          <label><i class="uil uil-map-marker"></i> عنوان المستخدم <em>*</em></label>
+          <app-za-input-with-label [type]="'text'" [placeholder]="'عنوان المستخدم...'" formControlName="address" [error]="formErrors.address"></app-za-input-with-label>
+        </div>
+      </div>
+
+      <div class="form-security-note"><i class="uil uil-shield-check"></i><div><strong>بيانات حساب آمنة</strong><p>سيتم حفظ بيانات المستخدم وربطها بصلاحيات الوصول داخل النظام.</p></div></div>
+
+      <footer class="user-modal-footer">
+        <button type="button" class="modal-cancel-button" (click)="modal.dismiss()"><i class="uil uil-times"></i> إلغاء</button>
+        <button type="submit" class="modal-save-button" [disabled]="showLoader"><i class="uil uil-check-circle"></i>{{ isEditing ? 'حفظ التعديلات' : 'إضافة المستخدم' }}</button>
+      </footer>
+    </form>
+  </section>
 </ng-template>
 
 <ng-template #deleteItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <span>تأكيد الإجراء</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
+  <section class="delete-modal" dir="rtl">
+    <button type="button" class="modal-close-button" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+    <span class="delete-icon"><i class="uil uil-trash-alt"></i></span>
+    <h2>حذف المستخدم؟</h2>
+    <p>هل أنت متأكد من حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.</p>
+    <div class="delete-actions">
+      <button type="button" class="modal-cancel-button" (click)="modal.dismiss()">إلغاء</button>
+      <button type="button" class="confirm-delete-button" (click)="DeleteItem()"><i class="uil uil-trash-alt"></i> نعم، حذف المستخدم</button>
     </div>
-    <div class="modal-body">
-        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
-    </div>
-    <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success" (click)="DeleteItem()">
-            <i class="fas fa-check"></i>
-            <span class="ms-2">نعم</span>
-        </button>
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
-            <i class="fas fa-times"></i>
-            <span class="ms-2">لا</span>
-        </button>
-    </div>
+  </section>
 </ng-template>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

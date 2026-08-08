@@ -46,6 +46,10 @@ export class SchoolStudentService {
 
   // ============================= StudentFee ==============================
 
+  GetCurrentAcademicYearFinancialSummary() {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'StudentFee/GetCurrentAcademicYearFinancialSummary');
+  }
+
   GetAllStudentFeeData(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'StudentFee/GetAllStudentFeeData', PagingFilter);
   }

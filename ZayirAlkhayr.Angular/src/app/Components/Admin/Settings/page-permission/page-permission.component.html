@@ -1,116 +1,99 @@
-<div class="offcanvas-header justify-content-between gap-3 fs-4 border-bottom py-3">
-    <div class="d-flex align-items-center gap-2">
-        <i class="fas fa-info-circle offcanvas-header-icon"></i>
-        <span>
-            {{ UserName }} - {{ RoleName }}
-        </span>
+<main class="permission-panel" dir="rtl">
+  <header class="panel-header">
+    <div class="header-copy">
+      <span class="header-icon"><i class="uil uil-shield-check"></i></span>
+      <div><small>إدارة الوصول</small><h1>الأدوار والصلاحيات</h1><p>حدد الصفحات والإجراءات المتاحة لهذا المستخدم.</p></div>
     </div>
-    <div class="cursor-pointer text-danger fs-2" (click)="dismissSidePanel()">
-        <i class="uil uil-times-circle"></i>
-    </div>
-</div>
-<div class="offcanvas-body pt-4 bg-light scroll-body" #sidepanelEditStatus>
-    <div class="mb-5">
-        <div class="container">
-            <div class="mb-3">
-                <div class="role-card">
-                    <div class="role-header">
-                        الصلاحيات
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input me-2" type="checkbox" [(ngModel)]="IsSuperAdmin" id="adminRole">
-                        <label class="form-check-label" for="adminRole">
-                            مدير
-                        </label>
-                        <div class="role-description">
-                            الوصول الكامل إلى جميع ميزات النظام و الإعدادات
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="settings-card mb-3" *ngFor="let app of Applications">
-                <div class="settings-header">
-                    <h2>
-                        <i class="fas fa-shield-alt"></i> {{ app.applicationName }}
-                    </h2>
-                </div>
-                <div class="menu-item level-1" *ngFor="let subApp of app.children">
-                    <div class="menu-header" [class.active]="subApp.active" (click)="toggleExpand(subApp, $event)">
-                        <div class="left-section">
-                            <i class="fas fa-file-alt"></i>
-                            <span>{{ subApp.applicationName }}</span>
-                            <span class="expand-icon" [class.expanded]="subApp.expanded">▶</span>
-                        </div>
-                        <div class="toggle-switch" [class.active]="subApp.active" (click)="toggleSwitch(subApp, $event)">
-                            <div class="toggle-slider"></div>
-                        </div>
-                    </div>
-                    <div class="submenu" [class.expanded]="subApp.expanded">
-                        <div class="menu-item level-2" *ngFor="let subsubApp of subApp.children">
-                            <div class="menu-header" [class.active]="subsubApp.active" (click)="toggleExpand(subsubApp, $event)">
-                                <div class="left-section">
-                                    <i class="fas fa-file-alt"></i>
-                                    <span>{{ subsubApp.applicationName }}</span>
-                                    <span class="expand-icon" [class.expanded]="subsubApp.expanded">▶</span>
-                                </div>
-                                <div class="toggle-switch" [class.active]="subsubApp.active" (click)="toggleSwitch(subsubApp, $event)">
-                                    <div class="toggle-slider"></div>
-                                </div>
-                            </div>
-                            <div class="submenu" [class.expanded]="subsubApp.expanded">
-                                <div class="menu-item level-3">
-                                    <div class="menu-header" [class.active]="subsubApp.canAdd">
-                                        <div>
-                                            <i class="fas fa-circle me-2"></i>
-                                            <span>إضافة</span>
-                                        </div>
-                                        <div class="toggle-switch" [class.active]="subsubApp.canAdd" (click)="togglePermission(subsubApp, 'canAdd', Applications)">
-                                            <div class="toggle-slider"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="menu-item level-3">
-                                    <div class="menu-header" [class.active]="subsubApp.canEdit">
-                                        <div>
-                                            <i class="fas fa-circle me-2"></i>
-                                            <span>تعديل</span>
-                                        </div>
-                                        <div class="toggle-switch" [class.active]="subsubApp.canEdit" (click)="togglePermission(subsubApp, 'canEdit', Applications)">
-                                            <div class="toggle-slider"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="menu-item level-3">
-                                    <div class="menu-header" [class.active]="subsubApp.canDelete">
-                                        <div>
-                                            <i class="fas fa-circle me-2"></i>
-                                            <span>حذف</span>
-                                        </div>
-                                        <div class="toggle-switch" [class.active]="subsubApp.canDelete" (click)="togglePermission(subsubApp, 'canDelete', Applications)">
-                                            <div class="toggle-slider"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="menu-item level-3">
-                                    <div class="menu-header" [class.active]="subsubApp.canExport">
-                                        <div>
-                                            <i class="fas fa-circle me-2"></i>
-                                            <span>تنزيل</span>
-                                        </div>
-                                        <div class="toggle-switch" [class.active]="subsubApp.canExport" (click)="togglePermission(subsubApp, 'canExport', Applications)">
-                                            <div class="toggle-slider"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <button type="button" class="close-panel" aria-label="إغلاق" (click)="dismissSidePanel()"><i class="uil uil-times"></i></button>
+  </header>
+
+  <section class="panel-body">
+    <article class="user-summary">
+      <span class="user-avatar">{{ userInitials }}</span>
+      <div class="user-identity"><small>يتم تعديل صلاحيات</small><h2>{{ UserName }}</h2><span><i class="uil uil-award"></i>{{ RoleName || 'مستخدم النظام' }}</span></div>
+      <div class="access-summary"><strong>{{ IsSuperAdmin ? 'كامل' : activeApplicationsCount }}</strong><small>{{ IsSuperAdmin ? 'وصول شامل' : 'صفحة مفعّلة' }}</small></div>
+    </article>
+
+    <article class="super-admin-card" [class.enabled]="IsSuperAdmin">
+      <div class="super-admin-copy">
+        <span><i class="uil uil-shield-plus"></i></span>
+        <div><h3>صلاحية مدير النظام</h3><p>وصول كامل إلى جميع الصفحات والإعدادات والإجراءات.</p></div>
+      </div>
+      <label class="access-switch">
+        <input type="checkbox" [(ngModel)]="IsSuperAdmin" aria-label="تفعيل صلاحية مدير النظام">
+        <span></span>
+      </label>
+    </article>
+
+    <section class="permissions-section">
+      <header class="section-header">
+        <div><span>صلاحيات النظام</span><h2>الوصول إلى الصفحات</h2><p>{{ activeApplicationsCount }} من {{ totalApplicationsCount }} صفحة مفعلة</p></div>
+        <div class="expand-actions" *ngIf="!IsSuperAdmin">
+          <button type="button" (click)="expandAll(true)"><i class="uil uil-expand-arrows-alt"></i> فتح الكل</button>
+          <button type="button" (click)="expandAll(false)"><i class="uil uil-compress-arrows"></i> طي الكل</button>
         </div>
-    </div>
-    <hr>
-    <button class="w-100 btn-color" (click)="AssignApplicationToUser()">حفظ</button>
-</div>
+      </header>
+
+      <div class="full-access-state" *ngIf="IsSuperAdmin">
+        <span><i class="uil uil-shield-check"></i></span>
+        <h3>الوصول الكامل مفعّل</h3>
+        <p>يمتلك هذا المستخدم تلقائيًا جميع صلاحيات العرض والإضافة والتعديل والحذف والتنزيل.</p>
+      </div>
+
+      <div class="application-list" *ngIf="!IsSuperAdmin">
+        <article class="application-card" *ngFor="let app of Applications">
+          <header class="application-header">
+            <div><span class="application-icon"><i class="uil uil-apps"></i></span><div><small>قسم النظام</small><h3>{{ app.applicationName }}</h3></div></div>
+            <span class="module-count">{{ app.children?.length || 0 }} وحدات</span>
+          </header>
+
+          <div class="module-list">
+            <section class="module-item" *ngFor="let subApp of app.children">
+              <div class="module-header" [class.active]="subApp.active">
+                <button type="button" class="module-name" (click)="toggleExpand(subApp, $event)" [attr.aria-expanded]="subApp.expanded">
+                  <span class="module-arrow" [class.expanded]="subApp.expanded"><i class="uil uil-angle-left-b"></i></span>
+                  <span class="module-icon"><i class="uil uil-folder"></i></span>
+                  <span><strong>{{ subApp.applicationName }}</strong><small>{{ subApp.active ? 'الوصول مفعّل' : 'الوصول غير مفعّل' }}</small></span>
+                </button>
+                <button type="button" class="toggle-switch" role="switch" [class.active]="subApp.active" [attr.aria-checked]="subApp.active" [attr.aria-label]="'تفعيل ' + subApp.applicationName" (click)="toggleSwitch(subApp, $event)"><span></span></button>
+              </div>
+
+              <div class="module-content" [class.expanded]="subApp.expanded">
+                <div class="permission-grid leaf-permissions" *ngIf="!subApp.children?.length">
+                  <button type="button" [class.active]="subApp.canAdd" (click)="togglePermission(subApp, 'canAdd', Applications)"><i class="uil uil-plus-circle"></i><span>إضافة</span><i class="uil uil-check"></i></button>
+                  <button type="button" [class.active]="subApp.canEdit" (click)="togglePermission(subApp, 'canEdit', Applications)"><i class="uil uil-edit"></i><span>تعديل</span><i class="uil uil-check"></i></button>
+                  <button type="button" [class.active]="subApp.canDelete" (click)="togglePermission(subApp, 'canDelete', Applications)"><i class="uil uil-trash-alt"></i><span>حذف</span><i class="uil uil-check"></i></button>
+                  <button type="button" [class.active]="subApp.canExport" (click)="togglePermission(subApp, 'canExport', Applications)"><i class="uil uil-download-alt"></i><span>تنزيل</span><i class="uil uil-check"></i></button>
+                </div>
+
+                <section class="page-item" *ngFor="let subsubApp of subApp.children">
+                  <div class="permission-page-header" [class.active]="subsubApp.active">
+                    <button type="button" class="page-name" (click)="toggleExpand(subsubApp, $event)" [attr.aria-expanded]="subsubApp.expanded">
+                      <span class="module-arrow" [class.expanded]="subsubApp.expanded"><i class="uil uil-angle-left-b"></i></span>
+                      <i class="uil uil-file-alt"></i><span>{{ subsubApp.applicationName }}</span>
+                    </button>
+                    <button type="button" class="toggle-switch small" role="switch" [class.active]="subsubApp.active" [attr.aria-checked]="subsubApp.active" [attr.aria-label]="'تفعيل ' + subsubApp.applicationName" (click)="toggleSwitch(subsubApp, $event)"><span></span></button>
+                  </div>
+
+                  <div class="permission-grid" [class.expanded]="subsubApp.expanded">
+                    <button type="button" [class.active]="subsubApp.canAdd" (click)="togglePermission(subsubApp, 'canAdd', Applications)"><i class="uil uil-plus-circle"></i><span>إضافة</span><i class="uil uil-check"></i></button>
+                    <button type="button" [class.active]="subsubApp.canEdit" (click)="togglePermission(subsubApp, 'canEdit', Applications)"><i class="uil uil-edit"></i><span>تعديل</span><i class="uil uil-check"></i></button>
+                    <button type="button" [class.active]="subsubApp.canDelete" (click)="togglePermission(subsubApp, 'canDelete', Applications)"><i class="uil uil-trash-alt"></i><span>حذف</span><i class="uil uil-check"></i></button>
+                    <button type="button" [class.active]="subsubApp.canExport" (click)="togglePermission(subsubApp, 'canExport', Applications)"><i class="uil uil-download-alt"></i><span>تنزيل</span><i class="uil uil-check"></i></button>
+                  </div>
+                </section>
+              </div>
+            </section>
+          </div>
+        </article>
+      </div>
+    </section>
+  </section>
+
+  <footer class="panel-footer">
+    <button type="button" class="cancel-button" (click)="dismissSidePanel()">إلغاء</button>
+    <button type="button" class="save-button" [disabled]="showLoader" (click)="AssignApplicationToUser()"><i class="uil uil-shield-check"></i> حفظ الصلاحيات</button>
+  </footer>
+</main>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

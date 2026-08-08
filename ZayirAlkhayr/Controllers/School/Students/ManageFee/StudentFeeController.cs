@@ -16,6 +16,13 @@ namespace ZayirAlkhayr.Controllers.School.Students.ManageFee
             _studentFeeService = studentFeeService;
         }
 
+        [HttpGet("GetCurrentAcademicYearFinancialSummary")]
+        public async Task<ApiResponseModel<DataTable>> GetCurrentAcademicYearFinancialSummary()
+        {
+            var results = await _studentFeeService.GetCurrentAcademicYearFinancialSummary();
+            return results;
+        }
+
         [HttpPost("GetAllStudentFeeData")]
         public async Task<ApiResponseModel<DataSet>> GetAllStudentFeeData(PagingFilterModel PagingFilter)
         {

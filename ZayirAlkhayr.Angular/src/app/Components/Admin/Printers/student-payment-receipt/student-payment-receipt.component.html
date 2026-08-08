@@ -1,0 +1,361 @@
+<div class="thermal-page" #printArea dir="rtl">
+
+    <article class="receipt">
+
+        <!-- =========================
+             Header
+        ========================== -->
+        <header class="school-header">
+            <div class="school-brand">
+                <div class="school-logo">
+                    <div class="stars">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+
+                    <div class="logo-shield">
+                        <i class="fa-solid fa-book-open"></i>
+                        <i class="fa-solid fa-graduation-cap cap"></i>
+                    </div>
+                </div>
+                <div class="school-title">
+                    <h1>مدرسة بشائر القرآن</h1>
+                    <div class="en-name">
+                        Bashayer Al-Quran School
+                    </div>
+                    <p>
+                        تعليم متميز .. لمستقبل أفضل
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="contact-row">
+                <div class="contact-item">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>012 3456 7890</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <span>القاهرة - مصر</span>
+                </div>
+            </div>
+        </header>
+
+
+        <!-- =========================
+             Receipt Title
+        ========================== -->
+        <section class="receipt-title">
+            <i class="fa-solid fa-receipt"></i>
+            <span>إيصال سداد</span>
+        </section>
+
+        <!-- =========================
+             Receipt information
+        ========================== -->
+        <section class="meta-grid">
+            <!-- Right -->
+            <div class="meta-column">
+                <div class="meta-row">
+                    <span class="meta-label">
+                        رقم الإيصال :
+                    </span>
+                    <strong class="meta-value" dir="ltr">
+                        {{ Data.studentReceipt.receiptNumber }}
+                    </strong>
+                </div>
+
+
+                <div class="meta-row">
+                    <span class="meta-label">
+                        تاريخ الإيصال :
+                    </span>
+
+                    <strong class="meta-value" dir="ltr">
+                        {{ Data.studentReceipt.receiptDate }}
+                    </strong>
+                </div>
+
+
+                <div class="meta-row">
+                    <span class="meta-label">
+                        وقت الإيصال :
+                    </span>
+
+                    <strong class="meta-value" dir="ltr">
+                        {{ Data.studentReceipt.receiptTime }}
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- Left -->
+            <div class="meta-column payment-column">
+
+                <div class="meta-row">
+
+                    <span class="meta-label">
+                        نوع السداد :
+                    </span>
+
+                    <span class="tag" dir="ltr">
+                        {{ Data.studentReceipt.paymentType }}
+                    </span>
+
+                </div>
+
+
+                <div class="meta-row">
+
+                    <span class="meta-label">
+                        طريقة السداد :
+                    </span>
+
+                    <strong class="payment-method" dir="ltr">
+
+                        <i class="fa-solid fa-money-bill-wave"></i>
+
+                        {{ Data.studentReceipt.paymentMethod }}
+
+                    </strong>
+
+                </div>
+
+
+                <div class="meta-row">
+
+                    <span class="meta-label">
+                        حالة السداد :
+                    </span>
+
+                    <span class="tag" dir="ltr">
+                        {{ Data.studentReceipt.paymentStatus }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             Student / Guardian
+        ========================== -->
+        <section class="people-grid">
+
+            <!-- Student -->
+            <div class="person-card student-card">
+
+                <h2>
+                    <i class="fa-solid fa-user-graduate"></i> بيانات الطالب
+                </h2>
+
+
+                <div class="field-row">
+                    <span>اسم الطالب :</span>
+                    <strong>
+                        {{ Data.studentName }}
+                    </strong>
+                </div>
+
+
+                <div class="field-row">
+                    <span>المرحلة الدراسية :</span>
+                    <strong>
+                        {{ Data.academicStage }}
+                    </strong>
+                </div>
+
+
+                <div class="field-row">
+                    <span>رقم الطالب :</span>
+                    <strong>
+                        {{ Data.studentCode }}
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <!-- Guardian -->
+            <div class="person-card guardian-card">
+
+                <h2>
+                    <i class="fa-solid fa-people-group"></i> بيانات ولي الأمر
+                </h2>
+
+
+                <div class="field-row">
+                    <span>اسم ولي الأمر :</span>
+                    <strong>
+                        {{ Data.parentName }}
+                    </strong>
+                </div>
+
+
+                <div class="field-row">
+                    <span>رقم الهاتف :</span>
+                    <strong>
+                        {{ Data.parentPhone }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             Payments Table
+        ========================== -->
+        <section class="fees-table">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>البند</th>
+                        <th>المبلغ الكلي</th>
+                        <th>المدفوع</th>
+                        <th>المتبقي</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @for (fee of Data.studentPayment; track fee.feeName) {
+
+                    <tr>
+
+                        <td class="item-cell">
+
+                            <span>
+                        {{ fee.feeName }}
+                    </span>
+
+                        </td>
+
+                        <td>
+                            {{ fee.totalAmount }}
+                        </td>
+
+                        <td>
+                            {{ fee.paidAmount }}
+                        </td>
+
+                        <td>
+                            {{ fee.remainingAmount }}
+                        </td>
+
+                    </tr>
+
+                    }
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <!-- =========================
+             Totals
+        ========================== -->
+        <section class="totals-box">
+
+            <div class="total-card">
+
+                <i class="fa-solid fa-wallet total-icon"></i>
+
+                <span>
+                    المتبقي
+                </span>
+
+                <strong>
+                    {{ Data.totalRemaining }}
+                </strong>
+
+            </div>
+
+
+            <div class="total-card center">
+
+                <i class="fa-solid fa-money-bill-wave total-icon"></i>
+
+                <span>
+                    إجمالي المدفوع
+                </span>
+
+                <strong>
+                    {{ Data.totalPaid }}
+                </strong>
+
+            </div>
+
+
+            <div class="total-card">
+
+                <i class="fa-solid fa-sack-dollar total-icon"></i>
+
+                <span>
+                    إجمالي المبلغ
+                </span>
+
+                <strong>
+                    {{ Data.totalAmount }}
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             Amount in words
+        ========================== -->
+        <section class="amount-words">
+
+            <strong>
+                المبلغ المدفوع كتابة :
+            </strong>
+
+            <span>
+                {{ Data.totalPaidTxt }}
+            </span>
+
+        </section>
+
+
+        <!-- =========================
+             Footer
+        ========================== -->
+        <footer class="receipt-footer">
+
+            <div class="footer-thanks">
+
+                <span>
+                    شكراً لثقتكم بنا
+                </span>
+
+                <i class="fa-regular fa-heart"></i>
+
+            </div>
+
+
+            <div class="footer-note">
+
+                <strong>
+                    ملاحظة :
+                </strong> يرجى الاحتفاظ بالإيصال للمراجعة عند الحاجة.
+
+            </div>
+
+        </footer>
+
+    </article>
+
+</div>

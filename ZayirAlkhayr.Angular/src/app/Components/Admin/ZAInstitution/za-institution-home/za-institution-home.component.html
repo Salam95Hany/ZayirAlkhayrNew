@@ -1,142 +1,70 @@
-<div class="d-flex flex-column gap-5">
-    <section class="general-accounts-section d-flex flex-column gap-4">
-        <div class="section-content d-flex">
-            <div class="col-md-4 p-2" *ngFor="let data of statisticsCardList">
-                <app-overview-card [data]="data"></app-overview-card>
-            </div>
+<div class="institution-dashboard" dir="rtl">
+  <app-admin-breadcrumb [TitleList]="breadcrumbs"></app-admin-breadcrumb>
+
+  <section class="institution-hero" aria-labelledby="institution-page-title">
+    <div class="hero-content">
+      <span class="hero-label"><span class="status-dot"></span> نظام إدارة المؤسسة</span>
+      <h1 id="institution-page-title">{{ pageTitle }}</h1>
+      <p>{{ pageDescription }}</p>
+
+      <div class="hero-details">
+        <div class="hero-detail"><span><i class="uil uil-calendar-alt"></i></span><div><small>تاريخ اليوم</small><strong>{{ formattedDate }}</strong></div></div>
+        <div class="hero-detail"><span><i class="uil uil-shield-check"></i></span><div><small>نطاق الوصول</small><strong>حسب صلاحيات حسابك</strong></div></div>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <span class="hero-ring outer"></span><span class="hero-ring inner"></span>
+      <span class="institution-emblem"><i class="uil uil-heart-sign"></i></span>
+    </div>
+  </section>
+
+  <section class="metrics-grid" *ngIf="!isSectionView" aria-label="مؤشرات المؤسسة">
+    <article class="metric-card" [ngClass]="'metric-card--' + metric.tone" *ngFor="let metric of metrics">
+      <span class="metric-icon"><i class="uil {{ metric.icon }}"></i></span>
+      <div><small>{{ metric.title }}</small><strong>{{ metric.value }}</strong><p>{{ metric.description }}</p></div>
+      <span class="metric-state"><i class="uil uil-arrow-growth"></i> نشط</span>
+    </article>
+  </section>
+
+  <section class="quick-access" *ngIf="!isSectionView && quickActions.length" aria-labelledby="quick-actions-title">
+    <header class="section-heading compact"><div><span>اختصارات العمل</span><h2 id="quick-actions-title">الوصول السريع</h2></div></header>
+    <div class="quick-grid">
+      <a class="quick-link" [routerLink]="action.route" *ngFor="let action of quickActions">
+        <span class="quick-icon"><i class="uil {{ action.icon }}"></i></span>
+        <span class="quick-copy"><strong>{{ action.title }}</strong><small>{{ action.description }}</small></span>
+        <i class="uil uil-arrow-left quick-arrow"></i>
+      </a>
+    </div>
+  </section>
+
+  <section class="workspaces-section" aria-labelledby="workspaces-title">
+    <header class="section-heading">
+      <div>
+        <span>{{ isSectionView ? 'خدمات القسم' : 'مساحات العمل' }}</span>
+        <h2 id="workspaces-title">{{ isSectionView ? 'اختر الإجراء المطلوب' : 'أقسام إدارة المؤسسة' }}</h2>
+        <p>{{ isSectionView ? 'جميع الخدمات المتاحة داخل هذا القسم وفق صلاحيات حسابك.' : 'انتقل مباشرة إلى مساحة العمل التي تريد إدارتها.' }}</p>
+      </div>
+      <a class="back-link" routerLink="/admin/za-institution/home" *ngIf="isSectionView"><i class="uil uil-arrow-right"></i> جميع الأقسام</a>
+    </header>
+
+    <div class="workspace-grid" *ngIf="displayedCards.length; else emptyState">
+      <a class="workspace-card" [ngClass]="'workspace-card--' + card.tone" [routerLink]="card.route" *ngFor="let card of displayedCards">
+        <div class="workspace-header">
+          <span class="workspace-icon"><i class="uil {{ card.icon }}"></i></span>
+          <span class="workspace-count" *ngIf="card.itemCount !== undefined"><strong>{{ card.itemCount }}</strong> خدمات</span>
         </div>
-    </section>
-    <section *ngIf="selectedTabName && menuItem" class="general-accounts-section d-flex flex-column gap-4">
-        <header class="section-header d-flex flex-column gap-2">
-            <h2 class="section-title m-0">{{menuItem.displayName}}</h2>
-            <span class="text-muted">{{today | arabicDayDate}}</span>
-        </header>
-        <div *ngIf="menuItem?.subMenus?.length >0 " class="section-content">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-6 g-4">
-                <div *ngFor="let item of menuItem?.subMenus" class="col">
-                    <div [routerLink]="item.route" routerLinkActive="active" class="bg-white shadow-sm column-card d-flex flex-column align-items-center gap-3 text-center h-100  cursor-pointer hovered">
-                        <div class="column-card-icon">
-                            <i [class]="item.icon"></i>
-                        </div>
-                        <div class="column-card-title">{{item.displayName}}</div>
-                        <div class="column-card-description text-muted">
-                            {{item.description}}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+        <div class="workspace-content"><h3>{{ card.title }}</h3><p>{{ card.description }}</p></div>
+        <footer class="workspace-footer"><span>{{ isSectionView ? 'فتح الخدمة' : 'استعراض القسم' }}</span><span><i class="uil uil-arrow-left"></i></span></footer>
+      </a>
+    </div>
 
-    <!-- <section class="general-accounts-section d-flex flex-column gap-4">
-        <header class="section-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-            <h2 class="section-title m-0">الحسابات العامة</h2>
-            <div ngbDropdown class="nw-dropdown" display="dynamic">
-                <button id="month-toggle" type="button" class="btn bg-white-5 rounded d-flex align-items-center justify-content-between gap-2 px-3" ngbDropdownToggle>
-                    <span>هذا الشهر</span>
-                    <i class="fa-solid fa-chevron-down dropdown-arrow fs-13"></i>
-                </button>
-                <div ngbDropdownMenu aria-labelledby="month-toggle" class="border shadow-lg bg-white rounded">
-                    <button class="dropdown-item cursor-pointer">يناير</button>
-                    <button class="dropdown-item cursor-pointer">مارس</button>
-                    <button class="dropdown-item cursor-pointer">أبريل</button>
-                    <button class="dropdown-item cursor-pointer">أكتوبر</button>
-                </div>
-            </div>
-        </header>
-        <div class="section-content">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                <div class="col">
-                    <div class="bg-white shadow-sm column-card d-flex flex-column align-items-center gap-3 h-100">
-                        <header class="d-flex align-items-center justify-content-between gap-2 w-100 light-purple-header">
-                            <div class="d-flex flex-column gap-2">
-                                <div class="column-card-title">العمليات المالية</div>
-                                <div class="column-card-description text-muted">إجمالي العمليات اليومية</div>
-                            </div>
-                            <div class="column-card-icon">
-                                <i class="uil uil-university"></i>
-                            </div>
-                        </header>
-                        <div class="light-purple-content d-flex flex-column gap-3 w-100">
-                            <div class="light-purple-content-item">
-                                <div class="fw-bold">٣٥ عملية</div>
-                                <div class="text-success">١٢٪ أعلى من الأمس</div>
-                            </div>
-                            <div class="light-purple-content-item d-flex justify-content-between gap-2 flex-wrap">
-                                <div>
-                                    <div class="text-muted">إجمالي الإيرادات</div>
-                                    <div class="fw-bold">١٨,٥٠٠ ر.س</div>
-                                </div>
-                                <div>
-                                    <div class="text-muted">إجمالي المصروفات</div>
-                                    <div class="fw-bold">٧,٢٠٠ ر.س</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="bg-white shadow-sm column-card d-flex flex-column align-items-center gap-3 h-100">
-                        <header class="d-flex align-items-center justify-content-between gap-2 w-100 light-purple-header">
-                            <div class="d-flex flex-column gap-2">
-                                <div class="column-card-title">الإيرادات</div>
-                                <div class="column-card-description text-muted">إجمالي الإيرادات اليومية</div>
-                            </div>
-                            <div class="column-card-icon">
-                                <i class="uil uil-money-insert"></i>
-                            </div>
-                        </header>
-                        <div class="light-purple-content d-flex flex-column gap-3 w-100">
-                            <div class="light-purple-content-item">
-                                <div class="fw-bold">١٨,٥٠٠ ر.س</div>
-                                <div class="text-success">١٢٪ أعلى من الأمس</div>
-                            </div>
-                            <div class="light-purple-content-item d-flex justify-content-between gap-2 flex-wrap">
-                                <div>
-                                    <div class="text-muted">عدد العمليات</div>
-                                    <div class="fw-bold">٢٢ عملية</div>
-                                </div>
-                                <div>
-                                    <div class="text-muted">متوسط القيمة</div>
-                                    <div class="fw-bold">٨٤٠ ر.س</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="col">
-                    <div class="bg-white shadow-sm column-card d-flex flex-column align-items-center gap-3 h-100">
-                        <header class="d-flex align-items-center justify-content-between gap-2 w-100 light-purple-header">
-                            <div class="d-flex flex-column gap-2">
-                                <div class="column-card-title">الصادرات</div>
-                                <div class="column-card-description text-muted">إجمالي الصادرات اليومية</div>
-                            </div>
-                            <div class="column-card-icon">
-                                <i class="uil uil-money-stack"></i>
-                            </div>
-                        </header>
-                        <div class="light-purple-content d-flex flex-column gap-3 w-100">
-                            <div class="light-purple-content-item">
-                                <div class="fw-bold">٧,٢٠٠ ر.س</div>
-                                <div class="text-danger">٥٪ أقل من الأمس</div>
-                            </div>
-                            <div class="light-purple-content-item d-flex justify-content-between gap-2 flex-wrap">
-                                <div>
-                                    <div class="text-muted">عدد العمليات</div>
-                                    <div class="fw-bold">٢٢ عملية</div>
-                                </div>
-                                <div>
-                                    <div class="text-muted">متوسط القيمة</div>
-                                    <div class="fw-bold">٨٤٠ ر.س</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> -->
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <span><i class="uil uil-lock-alt"></i></span><h3>لا توجد خدمات متاحة</h3>
+        <p>لا توجد خدمات مرتبطة بصلاحيات حسابك داخل هذا القسم.</p>
+        <a routerLink="/admin/za-institution/home">العودة إلى أقسام المؤسسة</a>
+      </div>
+    </ng-template>
+  </section>
 </div>

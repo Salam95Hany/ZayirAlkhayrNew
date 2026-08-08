@@ -5,7 +5,7 @@ import { ZaFiltersComponent } from "../../../../../../Shared/za-filters/za-filte
 import { NgxLoadingModule } from "ngx-loading";
 import { ZaEmptyDataComponent } from '../../../../../../Shared/za-empty-data/za-empty-data.component';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-with-label/za-input-with-label.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RoleCheckerDirective } from '../../../../../../Directives/role-checker.directive';
@@ -24,7 +24,7 @@ import { ArabicDateWithTimePipe } from '../../../../../../Pipes/arabic-date-with
   selector: 'app-student-fees',
   standalone: true,
   imports: [AdminBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent, NgbModule, ArabicDateWithTimePipe,
-    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule, ZaDropDownFormControlComponent],
+    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, RoleCheckerDirective, NgxLoadingModule, ZaDropDownFormControlComponent,CommonModule],
   templateUrl: './student-fees.component.html',
   styleUrl: './student-fees.component.css'
 })
@@ -62,6 +62,7 @@ export class StudentFeesComponent {
     this.FormInit();
     this.GetAllStudentFeeData();
     this.GetAllStudentFeeFilters();
+    this.GetCurrentAcademicYearFinancialSummary();
     this.GetStudents();
     this.GetDiscountTypes();
   }
@@ -139,9 +140,9 @@ export class StudentFeesComponent {
 
   openItemModal(content: any, item: any) {
     this.ResetForm();
-      this.ItemForm.get('studentId')?.enable();
+    this.ItemForm.get('studentId')?.enable();
     if (item) {
-       this.ItemForm.get('studentId')?.disable();
+      this.ItemForm.get('studentId')?.disable();
       this.FillEditForm(item);
     }
 
@@ -179,6 +180,13 @@ export class StudentFeesComponent {
     });
   }
 
+  FeeSummary: any;
+  GetCurrentAcademicYearFinancialSummary() {
+    this.studentService.GetCurrentAcademicYearFinancialSummary().subscribe(data => {
+      this.FeeSummary = data.results[0];
+    });
+  }
+
   GetAllStudentFeeData() {
     this.showLoader = true;
     this.studentService.GetAllStudentFeeData(this.PagingFilter).subscribe(data => {
@@ -196,11 +204,12 @@ export class StudentFeesComponent {
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
+    this.GetAllStudentFeeData();
   }
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
-    this.GetAllStudentFeeData();
+
   }
 
   validateForm(): boolean {

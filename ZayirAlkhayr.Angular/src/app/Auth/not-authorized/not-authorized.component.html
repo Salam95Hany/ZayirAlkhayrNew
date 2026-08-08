@@ -1,43 +1,58 @@
-<canvas #particleCanvas class="particle-canvas"></canvas>
+<main class="access-page" dir="rtl">
+  <div class="background-grid" aria-hidden="true"></div>
+  <span class="decorative-orb orb-one" aria-hidden="true"></span>
+  <span class="decorative-orb orb-two" aria-hidden="true"></span>
 
-<div class="floating-elements">
-    <div class="floating-element" *ngFor="let element of floatingElements; trackBy: trackByFn" [style.left.%]="element.left" [style.width.px]="element.size" [style.height.px]="element.size" [style.animation-delay.s]="element.animationDelay" [style.animation-duration.s]="element.duration"
-        [@floatingRotate]>
+  <header class="access-header">
+    <div class="brand">
+      <img src="logo-2.png" alt="شعار زائر الخير">
+      <div><strong>زائر الخير</strong><span>نظام الإدارة المتكامل</span></div>
     </div>
-</div>
+    <span class="secure-area"><i class="uil uil-shield-check"></i> منطقة إدارية آمنة</span>
+  </header>
 
-<div class="geometric-shapes">
-    <div class="shape shape-1"></div>
-    <div class="shape shape-2"></div>
-    <div class="shape shape-3"></div>
-    <div class="shape shape-4"></div>
-</div>
+  <section class="access-content">
+    <aside class="security-visual" aria-label="تنبيه صلاحيات الوصول">
+      <div class="visual-copy">
+        <span class="visual-label"><i class="uil uil-lock-alt"></i> حماية النظام</span>
+        <h1>صلاحيات دقيقة.<br><em>بيانات أكثر أمانًا.</em></h1>
+        <p>نحمي كل قسم داخل النظام من خلال صلاحيات وصول مخصصة لكل مستخدم.</p>
+      </div>
 
-<div class="container" [@containerAnimation] [@textStagger]>
-    <div class="icon-container glow-effect" [@iconAnimation]>
-        <div class="icon">🔒</div>
-        <div class="icon-glow"></div>
-        <div class="icon-pulse"></div>
-    </div>
+      <div class="security-points">
+        <div><span><i class="uil uil-shield-check"></i></span><div><strong>وصول محكوم</strong><small>كل مستخدم يصل فقط إلى مهامه المصرح بها.</small></div></div>
+        <div><span><i class="uil uil-user-check"></i></span><div><strong>حسابك ما زال آمنًا</strong><small>لم يتم تسجيل أي تغيير على بيانات حسابك.</small></div></div>
+      </div>
+    </aside>
 
-    <h1 class="stagger-item glitch-effect">غير مصرح بالوصول</h1>
-    <div class="error-code stagger-item typing-effect">ERROR 403</div>
+    <section class="denied-card">
+      <div class="error-status"><span class="status-dot"></span><strong>HTTP 403</strong><span>تم رفض الوصول</span></div>
 
-    <p class="message stagger-item fade-in-up">
-        عذراً، لا تملك الصلاحيات اللازمة للوصول إلى هذه الصفحة. يرجى التواصل مع المسؤول للحصول على الإذن المطلوب.
-    </p>
+      <div class="lock-illustration" aria-hidden="true">
+        <span class="shield-ring"><i class="uil uil-shield-slash"></i></span>
+        <span class="lock-badge"><i class="uil uil-lock"></i></span>
+      </div>
 
-    <div class="actions stagger-item">
-        <button class="btn btn-primary magnetic-effect" [@buttonHover]="buttonStates['home']" (mouseenter)="onButtonHover('home', true)" (mouseleave)="onButtonHover('home', false)" (click)="goToHome()">
-      <span class="btn-icon">🏠</span>
-      <span class="btn-text">العودة للرئيسية</span>
-      <div class="btn-particles"></div>
-    </button>
+      <div class="denied-copy">
+        <span class="section-label">صلاحية غير متاحة</span>
+        <h2>لا يمكنك الوصول إلى هذه الصفحة</h2>
+        <p>حسابك لا يمتلك الصلاحية المطلوبة لعرض هذا المحتوى. يمكنك العودة إلى لوحة التحكم أو التواصل مع مدير النظام.</p>
+      </div>
 
-        <button class="btn btn-secondary magnetic-effect" [@buttonHover]="buttonStates['login']" (mouseenter)="onButtonHover('login', true)" (mouseleave)="onButtonHover('login', false)" (click)="goToLogin()">
-      <span class="btn-icon">🔑</span>
-      <span class="btn-text">تسجيل الخروج</span>
-      <div class="btn-particles"></div>
-    </button>
-    </div>
-</div>
+      <div class="account-context">
+        <span class="account-icon"><i class="uil uil-user"></i></span>
+        <div><small>الحساب الحالي</small><strong>{{ userName }}</strong></div>
+        <span class="restricted-badge"><i class="uil uil-lock-alt"></i> وصول محدود</span>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="home-button" (click)="goToHome()"><i class="uil uil-apps"></i><span>العودة إلى لوحة التحكم</span><i class="uil uil-arrow-left"></i></button>
+        <button type="button" class="logout-button" (click)="goToLogin()"><i class="uil uil-signout"></i><span>تسجيل الخروج</span></button>
+      </div>
+
+      <footer class="help-note"><i class="uil uil-info-circle"></i><span>إذا كنت تعتقد أن هذا خطأ، اطلب من مدير النظام تحديث صلاحيات حسابك.</span></footer>
+    </section>
+  </section>
+
+  <footer class="page-footer"><span>© زائر الخير — جميع الحقوق محفوظة</span><span><i class="uil uil-shield-check"></i> اتصال آمن ومحمي</span></footer>
+</main>

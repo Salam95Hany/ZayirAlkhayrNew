@@ -27,13 +27,12 @@ import { NgxLoadingModule } from "ngx-loading";
   styleUrl: './slide-image.component.css'
 })
 export class SlideImageComponent implements OnInit {
-  @ViewChild('InputFile') InputFile: ElementRef;
-  // @ViewChild('DetailsSidePanel', { static: true }) DetailsSidePanel: TemplateRef<any>;
+  @ViewChild('InputFile') InputFile: ElementRef<HTMLInputElement>;
   TitleList = ['مؤسسة زائر الخير', 'موقع زائر الخير', 'شريط الصور'];
   filterList: FilterModel[] = [];
   fileURL: any[] = [];
   ItemForm: FormGroup;
-  showLoader: boolean = false;
+  showLoader = false;
   isFilter = true;
   isFileExist = false;
   ImageFile: any;
@@ -62,6 +61,18 @@ export class SlideImageComponent implements OnInit {
     this.FormInit();
     this.GetHomeSliderImages();
     this.GetHomeSliderImageFilters();
+  }
+
+  get isEditing(): boolean {
+    return Number(this.ItemForm?.get('id')?.value) > 0;
+  }
+
+  get activeFiltersCount(): number {
+    return this.pagingFilterModel.filterList?.length ?? 0;
+  }
+
+  trackBySlide(_index: number, item: any): number {
+    return item.id;
   }
 
   FormInit() {
@@ -100,11 +111,6 @@ export class SlideImageComponent implements OnInit {
     this.ItemForm.get('InsertUser').setValue(this.UserId);
   }
 
-  // openSidePanel(journalEntryId: number) {
-  //   this.EntryId = journalEntryId;
-  //   this.offcanvasService.open(this.DetailsSidePanel, { panelClass: 'details-panel', position: 'end' });
-  // }
-
   openItemModal(content: any, item: any) {
     this.ResetForm();
     this.isFileExist = false;
@@ -114,7 +120,7 @@ export class SlideImageComponent implements OnInit {
       this.FillEditForm(item);
 
     this.modalService.open(content, {
-      size: 'xl',
+      size: 'lg',
       scrollable: true,
       centered: true
     })
@@ -156,9 +162,13 @@ export class SlideImageComponent implements OnInit {
   }
 
   onFileChange(event: any) {
+    if (!event.target.files?.length)
+      return;
+
     let fileSize = this.fileService.getFileSize(event.target.files[0]);
     if (fileSize > 1) {
       this.toaster.warning(`هذا الملف ${event.target.files[0].name} حجمه أكبر من 1 ميجا`);
+      event.target.value = '';
       return;
     }
 

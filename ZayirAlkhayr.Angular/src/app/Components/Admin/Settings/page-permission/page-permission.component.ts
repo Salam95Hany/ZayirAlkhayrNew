@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Injector, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { SettingService } from '../../../../Services/settings/setting.service';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
@@ -14,13 +14,12 @@ import { NgxLoadingModule } from "ngx-loading";
   styleUrl: './page-permission.component.css'
 })
 export class PagePermissionComponent implements OnInit {
-  @ViewChild('sidepanelEditStatus') sidepanelEditStatus: ElementRef;
   @Input() UserId: string;
   @Input() UserName: string;
   @Input() RoleName: string;
 
-  Applications = [];
-  SelectedApplications = [];
+  Applications: any[] = [];
+  SelectedApplications: any[] = [];
   flatApplications: any[] = [];
   showLoader = false;
   IsSuperAdmin = false;
@@ -32,6 +31,19 @@ export class PagePermissionComponent implements OnInit {
     this.UserName = this.injector.get('UserName');
     this.RoleName = this.injector.get('RoleName');
     this.GetAllApplicationsWithParents();
+  }
+
+  get userInitials(): string {
+    const parts = String(this.UserName || 'مستخدم').trim().split(/\s+/).filter(Boolean);
+    return `${parts[0]?.[0] || ''}${parts[1]?.[0] || ''}`;
+  }
+
+  get activeApplicationsCount(): number {
+    return this.flatApplications.filter(item => item.active).length;
+  }
+
+  get totalApplicationsCount(): number {
+    return this.flatApplications.length;
   }
 
   dismissSidePanel() {
@@ -78,6 +90,17 @@ export class PagePermissionComponent implements OnInit {
   toggleExpand(item: any, event: Event) {
     event.stopPropagation();
     item.expanded = !item.expanded;
+  }
+
+  expandAll(expanded: boolean): void {
+    this.setExpandedRecursive(this.Applications, expanded);
+  }
+
+  private setExpandedRecursive(items: any[], expanded: boolean): void {
+    items.forEach(item => {
+      item.expanded = expanded;
+      if (item.children?.length) this.setExpandedRecursive(item.children, expanded);
+    });
   }
 
   toggleSwitch(item: any, event: Event) {

@@ -1,1 +1,6 @@
-<app-coming-soon></app-coming-soon>
+<button class="btn btn-primary" (click)="Print()">Test</button>
+
+
+<ng-container #host></ng-container>
+
+<app-student-payment-receipt [Data]="receiptData" #studentPaymentReceipt></app-student-payment-receipt>

@@ -11,6 +11,7 @@ namespace ZayirAlkhayr.Interfaces.School.Students.ManageFee
 {
     public interface IStudentFeeService
     {
+        Task<ApiResponseModel<DataTable>> GetCurrentAcademicYearFinancialSummary();
         Task<ApiResponseModel<DataSet>> GetAllStudentFeeData(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<List<FilterModel>>> GetAllStudentFeeFilters(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<DataTable>> ExportStudentFee(List<FilterModel> FilterList);

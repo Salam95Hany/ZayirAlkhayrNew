@@ -13,13 +13,12 @@ import { CustomValidators, RegexType } from '../../../../Services/shared/custom-
 import { PagePermissionComponent } from "../page-permission/page-permission.component";
 import { NgxLoadingModule } from "ngx-loading";
 import { AuthService } from '../../../../Auth/auth.service';
-import { UserProfileComponent } from "../user-profile/user-profile.component";
 
 @Component({
   selector: 'app-user',
   standalone: true,
   imports: [ZaPaginationComponent, ZaEmptyDataComponent, NgbModule,
-    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, NgxLoadingModule, UserProfileComponent, AdminBreadcrumbComponent],
+    NgIf, NgFor, ZaInputWithLabelComponent, ReactiveFormsModule, NgxLoadingModule, AdminBreadcrumbComponent],
   templateUrl: './user.component.html',
   styleUrl: './user.component.css'
 })
@@ -35,6 +34,7 @@ export class UserComponent implements OnInit {
   ];
   ManagerUserId = '321db4e1-e32b-4aeb-8802-b076f9d7227d';
   TotalCount = 0;
+  searchTerm = '';
   formErrors = {
     userName: '',
     email: '',
@@ -52,6 +52,40 @@ export class UserComponent implements OnInit {
     this.LoginUserId = this.authService.userId
     this.FormInit();
     this.GetAllUsers();
+  }
+
+  get filteredUsers(): any[] {
+    const query = this.searchTerm.trim().toLowerCase();
+    if (!query) return this.UsersData;
+    return this.UsersData.filter(user =>
+      [user.userName, user.email, user.phoneNumber, user.address, user.roleNameAr]
+        .some(value => String(value ?? '').toLowerCase().includes(query))
+    );
+  }
+
+  get activeUsersCount(): number {
+    return this.UsersData.filter(user => user.isActive).length;
+  }
+
+  get inactiveUsersCount(): number {
+    return this.UsersData.length - this.activeUsersCount;
+  }
+
+  get isEditing(): boolean {
+    return Boolean(this.ItemForm?.controls['userId']?.value);
+  }
+
+  onSearch(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement).value;
+  }
+
+  getUserInitials(userName: string): string {
+    const parts = String(userName || 'مستخدم').trim().split(/\s+/).filter(Boolean);
+    return `${parts[0]?.[0] || ''}${parts[1]?.[0] || ''}`;
+  }
+
+  trackUser(_: number, item: any): string {
+    return item.userId;
   }
 
   FormInit() {
@@ -170,6 +204,7 @@ export class UserComponent implements OnInit {
       });
     } else {
       if (this.ManagerUserId == this.UserId) {
+        this.showLoader = false;
         this.toaster.warning('لا يمكن التعديل على هذا المستخدم');
         return;
       }
