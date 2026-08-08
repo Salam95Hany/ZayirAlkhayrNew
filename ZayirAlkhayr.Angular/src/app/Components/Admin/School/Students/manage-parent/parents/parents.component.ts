@@ -70,7 +70,7 @@ export class ParentsComponent {
     this.ItemForm = this.fb.group({
       id: 0,
       name: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
-      parentPhone: ['', [Validators.required]],
+      parentPhone: [''],
       motherPhone: [''],
       address: ['', [Validators.required, CustomValidators.regexPattern(RegexType.noSpace)]],
       whatsappNumber: [''],
@@ -105,7 +105,7 @@ export class ParentsComponent {
       this.toaster.warning('برجاء ادخال رقم واتساب لولي الأمر');
       return;
     }
-    
+
     this.ParentId = item.id;
     this.WhatsupPhone = item.whatsappNumber;
     this.modalService.open(this.SendWhatsupModal, {
@@ -177,6 +177,10 @@ export class ParentsComponent {
       return;
     }
 
+    if (!this.ItemForm.value.fatherPhone && !this.ItemForm.value.motherPhone) {
+      this.toaster.warning('أدخل رقم هاتف الأب أو الأم');
+      return;
+    }
 
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
