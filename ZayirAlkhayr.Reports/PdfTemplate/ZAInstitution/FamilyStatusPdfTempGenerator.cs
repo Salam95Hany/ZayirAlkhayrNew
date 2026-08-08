@@ -38,7 +38,7 @@ namespace ZayirAlkhayr.Reports.PdfTemplate.ZAInstitution
                     //page.Size(PageSizes.A4);
                     page.Size(PageSizes.A4.Landscape());
                     page.PageColor(Colors.White);
-                    page.DefaultTextStyle(x => x.FontSize(12).FontFamily("Arial"));
+                    page.DefaultTextStyle(x => x.FontSize(12).FontFamily("Cairo"));
                     page.ContentFromRightToLeft();
 
                     page.Header().AddHeaderContent(ImgPath, "الحالات", "بیانات الحالات");
@@ -47,7 +47,15 @@ namespace ZayirAlkhayr.Reports.PdfTemplate.ZAInstitution
                 });
             });
 
-            document.GeneratePdf(FullPath);
+            try
+            {
+                document.GeneratePdf(FullPath);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            
 
             return FullPath;
         }

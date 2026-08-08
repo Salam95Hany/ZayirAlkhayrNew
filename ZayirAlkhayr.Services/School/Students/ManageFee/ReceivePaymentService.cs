@@ -117,7 +117,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
                     fee.Status = StudentFeeStatus.PartiallyPaid;
 
                 await _unitOfWork.CompleteAsync();
-                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
+                return ApiResponseModel<string>.Success(GenericErrors.AddSuccess, payment.Id.ToString());
             }
             catch
             {

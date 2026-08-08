@@ -5,6 +5,7 @@ using QuestPDF.Infrastructure;
 using System.Data;
 using System.Globalization;
 using ZayirAlkhayr.Entities.Reports;
+using ZayirAlkhayr.Reports.POSPrinters;
 
 namespace ZayirAlkhayr.Reports.Service
 {
@@ -135,33 +136,74 @@ namespace ZayirAlkhayr.Reports.Service
 
         public static void AddFooterContent(this IContainer Container)
         {
-            string currentDate = DateTime.UtcNow.EgyptNow().ToString("d MMMM , yyyy hh:mm t", new CultureInfo("ar-AE"));
+            string currentDate = DateTime.UtcNow
+                .EgyptNow()
+                .ToString("d MMMM, yyyy hh:mm t", new CultureInfo("ar-AE"));
 
-            Container.Height(25).BackgroundLinearGradient(135,
+            Container
+                .Height(32)
+                .BackgroundLinearGradient(
+                    135,
                     new Color[]
                     {
-                    Color.FromHex("#2d5016"),
-                    Color.FromHex("#4a7c23")
-                    }).PaddingVertical(5)
+                Color.FromHex("#2d5016"),
+                Color.FromHex("#4a7c23")
+                    })
+                .PaddingVertical(5)
                 .Row(row =>
                 {
-                    row.RelativeItem().PaddingLeft(70).AlignLeft().Text(text =>
-                    {
-                        text.DefaultTextStyle(x => x.FontSize(10).FontColor(Colors.White));
-                        text.Span("📄 الصفحة ");
-                        text.CurrentPageNumber();
-                        text.Span(" من ");
-                        text.TotalPages();
-                    });
+                    // Page number
+                    row.RelativeItem()
+                        .PaddingLeft(70)
+                        .AlignLeft()
+                        .Row(inner =>
+                        {
+                            inner.AutoItem()
+                                .Width(12)
+                                .Height(12)
+                                .AlignMiddle()
+                                .Svg(ReceiptIcons.Document);
+
+                            inner.AutoItem()
+                                .PaddingLeft(4)
+                                .AlignMiddle()
+                                .Text(text =>
+                                {
+                                    text.DefaultTextStyle(x =>
+                                        x.FontFamily("Cairo")
+                                         .FontSize(10)
+                                         .FontColor(Colors.White));
+
+                                    text.Span("الصفحة ");
+                                    text.CurrentPageNumber();
+                                    text.Span(" من ");
+                                    text.TotalPages();
+                                });
+                        });
 
                     row.RelativeItem();
                     row.RelativeItem();
 
-                    row.RelativeItem().PaddingRight(20).AlignRight().Text(text =>
-                    {
-                        text.DefaultTextStyle(x => x.FontSize(10).FontColor(Colors.White));
-                        text.Span(" 📅 " + currentDate);
-                    });
+                    // Date
+                    row.RelativeItem()
+                        .PaddingRight(20)
+                        .AlignRight()
+                        .Row(inner =>
+                        {
+                            inner.AutoItem()
+                                .Width(12)
+                                .Height(12)
+                                .AlignMiddle()
+                                .Svg(ReceiptIcons.Calendar);
+
+                            inner.AutoItem()
+                                .PaddingLeft(4)
+                                .AlignMiddle()
+                                .Text(currentDate)
+                                .FontFamily("Cairo")
+                                .FontSize(10)
+                                .FontColor(Colors.White);
+                        });
                 });
         }
 
@@ -183,14 +225,25 @@ namespace ZayirAlkhayr.Reports.Service
                 .Padding(10)
                 .Row(row =>
                 {
-                    row.RelativeItem().AlignMiddle().Text(text =>
-                    {
-                        text.Span("💰 ").FontSize(18);
-                        text.Span(label)
-                            .FontSize(20)
-                            .FontColor(Color.FromHex("#2d5016"))
-                            .Bold();
-                    });
+                    row.RelativeItem()
+     .AlignMiddle()
+     .Row(inner =>
+     {
+         inner.AutoItem()
+             .Width(20)
+             .Height(20)
+             .AlignMiddle()
+             .Svg(ReceiptIcons.Money);
+
+         inner.AutoItem()
+             .PaddingLeft(6)
+             .AlignMiddle()
+             .Text(label)
+             .FontFamily("Cairo")
+             .FontSize(20)
+             .FontColor(Color.FromHex("#2d5016"))
+             .Bold();
+     });
 
                     row.AutoItem().AlignMiddle().Row(inner =>
                     {

@@ -10,4 +10,9 @@ import { ComingSoonComponent } from "../../../../../../Shared/coming-soon/coming
 })
 export class DebtsComponent {
 
+
+  constructor() { }
+
+ 
+
 }

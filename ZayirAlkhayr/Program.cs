@@ -1,4 +1,5 @@
 using ZayirAlkhayr.DI;
+using ZayirAlkhayr.Reports.Strapping;
 using ZayirAlkhayr.Services.Common;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,8 @@ builder.Services.AddDependencies(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+QuestPdfBootstrapper.Configure(builder.Environment);
+builder.Services.BootStrap(builder.Configuration,builder.Environment);
 
 var app = builder.Build();
 

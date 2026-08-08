@@ -37,11 +37,7 @@
                 </div>
             </div>
 
-            <button
-                type="button"
-                class="filter-toggle"
-                (click)="isFilter = !isFilter"
-                [attr.aria-expanded]="!isFilter">
+            <button type="button" class="filter-toggle" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
                 <i class="uil" [class.uil-filter]="isFilter" [class.uil-times]="!isFilter"></i>
                 <span>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}</span>
                 <i class="uil uil-angle-down toggle-arrow" [class.is-open]="!isFilter"></i>
@@ -49,9 +45,7 @@
         </div>
 
         <div class="filter-content" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
-            <app-za-filters
-                [FilterList]="FilterList"
-                (filterChanged)="FilterChecked($event)">
+            <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)">
             </app-za-filters>
         </div>
     </section>
@@ -68,11 +62,7 @@
 
             <div class="ledger-tools">
                 <span class="records-badge"><b>{{ TotalCount }}</b> سجل</span>
-                <app-za-pagination
-                    (pageChanged)="PageChange($event)"
-                    [currentPage]="PagingFilter.currentPage"
-                    [pageSize]="PagingFilter.pageSize"
-                    [totalCount]="TotalCount">
+                <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount">
                 </app-za-pagination>
             </div>
         </header>
@@ -136,24 +126,10 @@
                         </td>
                         <td>
                             <div class="row-actions" *ngIf="!item.isCancelled">
-                                <button
-                                    type="button"
-                                    class="action-button cancel"
-                                    title="إلغاء الدفعة"
-                                    aria-label="إلغاء الدفعة"
-                                    appRole
-                                    pageKey="School_ManageFee_PaymentLogs"
-                                    action="canDelete">
+                                <button type="button" class="action-button cancel" title="إلغاء الدفعة" aria-label="إلغاء الدفعة" appRole pageKey="School_ManageFee_PaymentLogs" action="canDelete">
                                     <i class="uil uil-times-circle"></i>
                                 </button>
-                                <button
-                                    type="button"
-                                    class="action-button print"
-                                    title="طباعة الإيصال"
-                                    aria-label="طباعة الإيصال"
-                                    appRole
-                                    pageKey="School_ManageFee_PaymentLogs"
-                                    action="canExport">
+                                <button type="button" class="action-button print" title="طباعة الإيصال" aria-label="طباعة الإيصال" appRole pageKey="School_ManageFee_PaymentLogs" action="canExport" (click)="Print(item.enrollmentId,item.id)">
                                     <i class="uil uil-print"></i>
                                 </button>
                             </div>
@@ -172,11 +148,7 @@
 
         <footer class="ledger-footer" *ngIf="TotalCount > 0">
             <span>عرض {{ Results.length }} من أصل {{ TotalCount }} عملية دفع</span>
-            <app-za-pagination
-                (pageChanged)="PageChange($event)"
-                [currentPage]="PagingFilter.currentPage"
-                [pageSize]="PagingFilter.pageSize"
-                [totalCount]="TotalCount">
+            <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount">
             </app-za-pagination>
         </footer>
     </section>

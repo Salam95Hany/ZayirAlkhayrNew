@@ -59,5 +59,63 @@ namespace ZayirAlkhayr.Reports.POSPrinters
                    4 0 6.5 2.8 6.5 8.2z" fill="#000000"/>
         </svg>
         """;
+
+        public const string Document =
+           """
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path fill="#FFFFFF"
+                    d="M6 2h8.5L20 7.5V22H6a2 2 0 0 1-2-2V4
+                       a2 2 0 0 1 2-2zm8 1.5V8h4.5L14 3.5z
+                       M8 11h8v1.5H8V11zm0 3.5h8V16H8v-1.5z
+                       M8 18h5v1.5H8V18z"/>
+            </svg>
+            """;
+
+        public const string Calendar =
+            """
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <rect x="3" y="5" width="18" height="16" rx="2"
+                    fill="none"
+                    stroke="#FFFFFF"
+                    stroke-width="2"/>
+
+              <path d="M7 3v4M17 3v4M3 9h18"
+                    fill="none"
+                    stroke="#FFFFFF"
+                    stroke-width="2"
+                    stroke-linecap="round"/>
+
+              <path d="M7 13h2M11 13h2M15 13h2
+                       M7 17h2M11 17h2M15 17h2"
+                    fill="none"
+                    stroke="#FFFFFF"
+                    stroke-width="1.5"
+                    stroke-linecap="round"/>
+            </svg>
+            """;
+
+        public const string Money =
+            """
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <rect x="2.5" y="5" width="19" height="14" rx="2"
+                    fill="none"
+                    stroke="#2d5016"
+                    stroke-width="2"/>
+
+              <circle cx="12" cy="12" r="3.2"
+                      fill="none"
+                      stroke="#2d5016"
+                      stroke-width="1.8"/>
+
+              <path d="M6 9c1.2 0 2.2-.8 2.5-2
+                       M18 9c-1.2 0-2.2-.8-2.5-2
+                       M6 15c1.2 0 2.2.8 2.5 2
+                       M18 15c-1.2 0-2.2.8-2.5 2"
+                    fill="none"
+                    stroke="#2d5016"
+                    stroke-width="1.4"
+                    stroke-linecap="round"/>
+            </svg>
+            """;
     }
 }

@@ -15,6 +15,8 @@ import { ArabicDateWithTimePipe } from '../../../../../../Pipes/arabic-date-with
 import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
 import { NgxLoadingModule } from "ngx-loading";
 import { ZaInputWithLabelComponent } from '../../../../../../Shared/za-input-with-label/za-input-with-label.component';
+import { QzPrintService } from '../../../../../../Services/shared/qz-print.service';
+import { PosPrinterService } from '../../../../../../Services/school/pos-printer.service';
 
 @Component({
   selector: 'app-receiving-payment',
@@ -57,7 +59,7 @@ export class ReceivingPaymentComponent {
   ]
 
   constructor(private modalService: NgbModal, private studentService: SchoolStudentService, private formService: FormService
-    , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService) { }
+    , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService, private qzPrintService: QzPrintService, private posPrinterService: PosPrinterService) { }
 
   ngOnInit(): void {
     this.UserId = this.authService.userId;
@@ -105,7 +107,7 @@ export class ReceivingPaymentComponent {
     }
 
     this.formService.updateFieldValidators(this.ItemForm, 'nextAmount', true, [Validators.required]);
-    this.formService.updateFieldValidators(this.ItemForm, 'nextInstallmentDate', true, [Validators.required,CustomValidators.greaterThanToday()]);
+    this.formService.updateFieldValidators(this.ItemForm, 'nextInstallmentDate', true, [Validators.required, CustomValidators.greaterThanToday()]);
   }
 
   ResetForm() {
@@ -191,7 +193,7 @@ export class ReceivingPaymentComponent {
     }
   }
 
-  AddNewItem() {
+  AddNewItem(needPrint: boolean) {
     this.ItemForm = this.formService.TrimFormInputValue(this.ItemForm);
     let isValid = this.validateForm();
 
@@ -215,6 +217,9 @@ export class ReceivingPaymentComponent {
     this.studentService.ReceivePayment(this.ItemForm.getRawValue()).subscribe(data => {
       if (data.isSuccess) {
         this.toaster.success(data.message);
+        if (needPrint) {
+          this.Print(data.results);
+        }
         this.GetAllStudentFeesByEnrollmentId();
         this.modalService.dismissAll();
       }
@@ -236,6 +241,17 @@ export class ReceivingPaymentComponent {
       else
         this.toaster.error(data.message);
       this.showLoader = false;
+    });
+  }
+
+  Print(paymentId: number) {
+    this.showLoader = true;
+    this.posPrinterService.GetStudentReceiptData(this.EnrollmentId, paymentId).subscribe({
+      next: async (arrayBuffer) => {
+        this.showLoader = false;
+        const base64Pdf = this.posPrinterService.arrayBufferToBase64(arrayBuffer);
+        await this.qzPrintService.Print(base64Pdf);
+      }
     });
   }
 

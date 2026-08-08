@@ -8,7 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="7.1.1" />
+    <PackageReference Include="Pro.Tafqeet.Arabic" Version="1.0.0" />
     <PackageReference Include="QuestPDF" Version="2025.7.2" />
+    <PackageReference Include="Scrutor" Version="6.1.0" />
   </ItemGroup>
 
   <ItemGroup>

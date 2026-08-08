@@ -47,14 +47,7 @@
                 </span>
             </label>
 
-            <button
-                type="button"
-                class="primary-action"
-                (click)="openItemModal(OpenItemModal)"
-                [disabled]="Fees?.status == 3"
-                appRole
-                pageKey="School_ManageFee_ReceivingPayment"
-                action="canAdd">
+            <button type="button" class="primary-action" (click)="openItemModal(OpenItemModal)" [disabled]="Fees?.status == 3" appRole pageKey="School_ManageFee_ReceivingPayment" action="canAdd">
                 <i class="uil uil-plus-circle"></i>
                 <span>تسجيل دفعة جديدة</span>
             </button>
@@ -135,7 +128,10 @@
         <div class="ledger-header">
             <div class="section-heading compact">
                 <span class="heading-icon"><i class="uil uil-receipt-alt"></i></span>
-                <div><h2>سجل الدفعات</h2><p>جميع عمليات التحصيل المرتبطة ببند الرسوم المحدد.</p></div>
+                <div>
+                    <h2>سجل الدفعات</h2>
+                    <p>جميع عمليات التحصيل المرتبطة ببند الرسوم المحدد.</p>
+                </div>
             </div>
             <span class="record-count"><b>{{ Payments.length }}</b> دفعة</span>
         </div>
@@ -175,13 +171,15 @@
                         <td>
                             <div class="row-actions" *ngIf="!item.isCancelled">
                                 <button type="button" class="icon-action danger" title="إلغاء الدفعة" aria-label="إلغاء الدفعة" appRole pageKey="School_ManageFee_ReceivingPayment" action="canDelete" (click)="openDeleteItemModal(deleteItemModal, item)"><i class="uil uil-times-circle"></i></button>
-                                <button type="button" class="icon-action print" title="طباعة الإيصال" aria-label="طباعة الإيصال" appRole pageKey="School_ManageFee_ReceivingPayment" action="canExport"><i class="uil uil-print"></i></button>
+                                <button type="button" class="icon-action print" title="طباعة الإيصال" aria-label="طباعة الإيصال" appRole pageKey="School_ManageFee_ReceivingPayment" action="canExport" (click)="Print(item.id)"><i class="uil uil-print"></i></button>
                             </div>
                             <span class="no-actions" *ngIf="item.isCancelled">—</span>
                         </td>
                     </tr>
                     <tr *ngIf="!Payments.length" class="empty-row">
-                        <td colspan="9"><app-za-empty-data [showEmptyData]="!Payments.length"></app-za-empty-data></td>
+                        <td colspan="9">
+                            <app-za-empty-data [showEmptyData]="!Payments.length"></app-za-empty-data>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -194,7 +192,10 @@
         <div class="modal-header payment-modal-header">
             <div class="modal-title-wrap">
                 <span class="modal-title-icon"><i class="uil uil-money-insert"></i></span>
-                <div><h2>تسجيل دفعة جديدة</h2><p>أدخل بيانات التحصيل وتفاصيل القسط القادم.</p></div>
+                <div>
+                    <h2>تسجيل دفعة جديدة</h2>
+                    <p>أدخل بيانات التحصيل وتفاصيل القسط القادم.</p>
+                </div>
             </div>
             <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
         </div>
@@ -234,8 +235,8 @@
         </div>
         <div class="modal-footer payment-modal-footer">
             <button type="button" class="modal-btn secondary" (click)="modal.close()"><i class="uil uil-times"></i> إلغاء</button>
-            <button type="button" class="modal-btn outline" (click)="AddNewItem()"><i class="uil uil-print"></i> حفظ وطباعة</button>
-            <button type="button" class="modal-btn primary" (click)="AddNewItem()"><i class="uil uil-check-circle"></i> حفظ الدفعة</button>
+            <button type="button" class="modal-btn outline" (click)="AddNewItem(true)"><i class="uil uil-print"></i> حفظ وطباعة</button>
+            <button type="button" class="modal-btn primary" (click)="AddNewItem(false)"><i class="uil uil-check-circle"></i> حفظ الدفعة</button>
         </div>
     </div>
 </ng-template>

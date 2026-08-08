@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using QuestPDF.Infrastructure;
 using System.Text;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Models;
@@ -20,8 +19,6 @@ using ZayirAlkhayr.Interfaces.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Interfaces.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Interfaces.ZAInstitution.Tasks;
 using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
-using ZayirAlkhayr.Reports.Interface;
-using ZayirAlkhayr.Reports.Service;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
@@ -109,18 +106,6 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IParentService, ParentService>();
             services.AddScoped<ITemplateService, TemplateService>();
             
-
-
-            #region ReportsDI
-
-            services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(c => c.AssignableTo<IReportGenerator>()).AsImplementedInterfaces().WithTransientLifetime());
-            QuestPDF.Settings.License = LicenseType.Community;
-            services.AddScoped<IReportGeneratorFactory, ReportGeneratorFactory>();
-            services.AddScoped<IExportManagerService, ExportManagerService>();
-            
-            #endregion
 
             return services;
         }

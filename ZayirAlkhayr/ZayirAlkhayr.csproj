@@ -27,4 +27,8 @@
 		<Folder Include="wwwroot\Template\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Include="wwwroot\Fonts\Cairo-Bold.ttf" />
+	</ItemGroup>
+
 </Project>
