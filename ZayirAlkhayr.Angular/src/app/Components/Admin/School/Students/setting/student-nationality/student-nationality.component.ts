@@ -117,6 +117,7 @@ export class StudentNationalityComponent {
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
+    this.GetAllStudentNationalityData();
   }
 
   FilterChecked(filterList: FilterModel[]) {

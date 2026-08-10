@@ -152,6 +152,7 @@ export class ParentsComponent {
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
+    this.GetAllParentData();
   }
 
   FilterChecked(filterList: FilterModel[]) {

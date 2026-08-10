@@ -95,6 +95,7 @@ export class ParentTemplatesComponent {
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
+    this.GetAllTemplateData();
   }
 
   FilterChecked(filterList: FilterModel[]) {

@@ -116,6 +116,7 @@ export class FeeTypeComponent {
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
+    this.GetAllFeeTypeData();
   }
 
   FilterChecked(filterList: FilterModel[]) {

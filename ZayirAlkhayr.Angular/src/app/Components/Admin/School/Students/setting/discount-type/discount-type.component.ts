@@ -117,6 +117,7 @@ export class DiscountTypeComponent {
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
+    this.GetAllDiscountTypeData();
   }
 
   FilterChecked(filterList: FilterModel[]) {

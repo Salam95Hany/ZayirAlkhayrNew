@@ -168,6 +168,7 @@ export class AcademicYearComponent {
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
+    this.GetAllAcademicYearData();
   }
 
   FilterChecked(filterList: FilterModel[]) {

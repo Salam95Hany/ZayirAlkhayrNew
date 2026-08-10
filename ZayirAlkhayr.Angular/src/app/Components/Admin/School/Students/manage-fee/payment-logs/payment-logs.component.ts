@@ -65,6 +65,7 @@ export class PaymentLogsComponent {
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
+    this.GetAllStudentPaymentData();
     
   }
 

@@ -118,6 +118,7 @@ export class AcademicStageComponent {
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
+    this.GetAllAcademicStageData();
   }
 
   FilterChecked(filterList: FilterModel[]) {

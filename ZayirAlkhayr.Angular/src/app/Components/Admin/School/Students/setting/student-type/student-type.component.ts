@@ -116,6 +116,7 @@ export class StudentTypeComponent {
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
+    this.GetAllStudentTypeData();
   }
 
   FilterChecked(filterList: FilterModel[]) {

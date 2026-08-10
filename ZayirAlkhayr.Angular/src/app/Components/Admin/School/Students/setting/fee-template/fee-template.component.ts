@@ -157,6 +157,7 @@ export class FeeTemplateComponent {
 
   PageChange(obj: any) {
     this.PagingFilter.currentPage = obj.page;
+    this.GetAllFeeTemplateData();
   }
 
   FilterChecked(filterList: FilterModel[]) {

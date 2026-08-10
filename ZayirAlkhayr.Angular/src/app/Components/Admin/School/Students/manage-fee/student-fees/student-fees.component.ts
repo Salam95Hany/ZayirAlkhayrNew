@@ -209,6 +209,7 @@ export class StudentFeesComponent {
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
+    this.GetAllStudentFeeData();
 
   }
 
