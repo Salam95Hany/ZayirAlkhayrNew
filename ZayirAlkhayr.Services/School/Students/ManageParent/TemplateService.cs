@@ -38,7 +38,16 @@ namespace ZayirAlkhayr.Services.School.Students.ManageParent
 
             foreach (DataColumn column in studentResult.Results.Columns)
             {
-                var value = row[column.ColumnName] == DBNull.Value ? string.Empty : row[column.ColumnName]?.ToString();
+                var rawValue = row[column.ColumnName];
+                string value;
+
+                if (rawValue == DBNull.Value || rawValue == null)
+                    value = string.Empty;
+                else if (rawValue is DateTime dateTime)
+                    value = dateTime.ToString("yyyy/MM/dd");
+                else
+                    value = rawValue.ToString();
+
                 body = body.Replace($"{{{{{column.ColumnName}}}}}", value);
             }
 
