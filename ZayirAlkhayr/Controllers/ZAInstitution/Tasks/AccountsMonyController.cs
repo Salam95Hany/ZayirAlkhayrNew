@@ -45,6 +45,13 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.Tasks
             return results;
         }
 
+        [HttpGet("GetFinancialNetValueChartsData")]
+        public async Task<ApiResponseModel<DataSet>> GetFinancialNetValueChartsData()
+        {
+            var results = await _accountsMonyService.GetFinancialNetValueChartsData();
+            return results;
+        }
+
         [HttpGet("GetFinancialTransactionStatisticFilter")]
         public async Task<ApiResponseModel<List<FilterModel>>> GetFinancialTransactionStatisticFilter()
         {

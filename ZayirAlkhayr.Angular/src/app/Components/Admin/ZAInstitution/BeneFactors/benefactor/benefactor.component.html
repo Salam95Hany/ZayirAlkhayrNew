@@ -6,8 +6,7 @@
             <h1>إدارة المتبرعين</h1>
             <p>دليل موحّد لبيانات المتبرعين وسجلات التبرعات، مع أدوات البحث والتصدير والمتابعة.</p>
         </div>
-        <button type="button" class="hero-action" appRole pageKey="ZAInstitution_Benefactors" action="canAdd"
-            (click)="openItemModal(OpenItemModal, null)">
+        <button type="button" class="hero-action" appRole pageKey="ZAInstitution_Benefactors" action="canAdd" (click)="openItemModal(OpenItemModal, null)">
             <i class="uil uil-user-plus"></i><span>إضافة متبرع جديد</span>
         </button>
     </section>
@@ -16,7 +15,10 @@
         <header class="admin-card-header directory-header">
             <div class="section-title">
                 <span><i class="uil uil-users-alt"></i></span>
-                <div><h2>دليل المتبرعين</h2><p>{{ pagedResponseModel.totalCount }} متبرعاً مسجلاً في النظام</p></div>
+                <div>
+                    <h2>دليل المتبرعين</h2>
+                    <p>{{ pagedResponseModel.totalCount }} متبرعاً مسجلاً في النظام</p>
+                </div>
             </div>
 
             <div class="directory-actions">
@@ -29,8 +31,7 @@
                         <button ngbDropdownItem (click)="DownloadExcelFile()"><i class="uil uil-file-download-alt"></i><span>ملف Excel</span></button>
                     </div>
                 </div>
-                <button type="button" class="filter-button" [class.filter-button--active]="!isFilter"
-                    (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                <button type="button" class="filter-button" [class.filter-button--active]="!isFilter" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
                     <i class="uil uil-filter"></i>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}
                     <b *ngIf="activeFiltersCount">{{ activeFiltersCount }}</b>
                 </button>
@@ -50,15 +51,14 @@
                         <th>العنوان والجنسية</th>
                         <th>بيانات إضافية</th>
                         <th>بيانات التسجيل</th>
-                        <th>الإجراءات</th>
+                        <th class="text-center">الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let item of pagedResponseModel.results; trackBy: trackByBenefactor">
                         <td data-label="المتبرع">
                             <div class="benefactor-identity">
-                                <img [src]="item.image || 'logo-2.png'" [alt]="item.fullName" loading="lazy"
-                                    (error)="$any($event.target).src = 'logo-2.png'">
+                                <img [src]="item.image || 'logo-2.png'" [alt]="item.fullName" loading="lazy" (error)="$any($event.target).src = 'logo-2.png'">
                                 <div>
                                     <strong>{{ item.fullName }}</strong>
                                     <span class="code-badge">{{ item.code }}</span>
@@ -93,19 +93,13 @@
                         </td>
                         <td data-label="الإجراءات">
                             <div class="row-actions">
-                                <button type="button" class="action-button action-button--donations" appRole
-                                    pageKey="ZAInstitution_Benefactors" action="canAdd"
-                                    (click)="openCashSidePanel(CashSidePanel, item)" title="سجل التبرعات">
+                                <button type="button" class="action-button action-button--donations" appRole pageKey="ZAInstitution_Benefactors" action="canAdd" (click)="openCashSidePanel(CashSidePanel, item)" title="سجل التبرعات">
                                     <i class="uil uil-money-bill"></i><span>التبرعات</span>
                                 </button>
-                                <button type="button" class="action-button action-button--edit" appRole
-                                    pageKey="ZAInstitution_Benefactors" action="canEdit"
-                                    (click)="openItemModal(OpenItemModal, item)" title="تعديل">
+                                <button type="button" class="action-button action-button--edit" appRole pageKey="ZAInstitution_Benefactors" action="canEdit" (click)="openItemModal(OpenItemModal, item)" title="تعديل">
                                     <i class="uil uil-pen"></i>
                                 </button>
-                                <button type="button" class="action-button action-button--delete" appRole
-                                    pageKey="ZAInstitution_Benefactors" action="canDelete"
-                                    (click)="openDeleteItemModal(deleteItemModal, item)" title="حذف">
+                                <button type="button" class="action-button action-button--delete" appRole pageKey="ZAInstitution_Benefactors" action="canDelete" (click)="openDeleteItemModal(deleteItemModal, item)" title="حذف">
                                     <i class="uil uil-trash-alt"></i>
                                 </button>
                             </div>
@@ -116,13 +110,14 @@
         </div>
 
         <ng-template #emptyState>
-            <div class="empty-state"><app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data></div>
+            <div class="empty-state">
+                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
+            </div>
         </ng-template>
 
         <footer class="admin-card-footer directory-footer" *ngIf="pagedResponseModel.totalCount">
             <p>يتم عرض {{ pagedResponseModel.results.length }} من أصل {{ pagedResponseModel.totalCount }} متبرع</p>
-            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage"
-                [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount">
+            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage" [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount">
             </app-za-pagination>
         </footer>
     </section>
@@ -133,7 +128,10 @@
         <header class="admin-modal-header modal-heading">
             <div class="modal-title">
                 <span><i class="uil" [ngClass]="isEditing ? 'uil-user-square' : 'uil-user-plus'"></i></span>
-                <div><h2>{{ isEditing ? 'تعديل بيانات المتبرع' : 'إضافة متبرع جديد' }}</h2><p>أدخل البيانات الشخصية ووسائل التواصل المتاحة.</p></div>
+                <div>
+                    <h2>{{ isEditing ? 'تعديل بيانات المتبرع' : 'إضافة متبرع جديد' }}</h2>
+                    <p>أدخل البيانات الشخصية ووسائل التواصل المتاحة.</p>
+                </div>
             </div>
             <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
         </header>
@@ -150,8 +148,7 @@
                         </div>
                         <div class="form-group-admin">
                             <label class="form-label-admin">الجنسية <em>*</em></label>
-                            <app-za-drop-down-form-control [data]="NationalityList" [showSearch]="true" [placeholder]="'اختر الجنسية'"
-                                formControlName="nationalityId" [hasError]="formErrors.nationalityId"></app-za-drop-down-form-control>
+                            <app-za-drop-down-form-control [data]="NationalityList" [showSearch]="true" [placeholder]="'اختر الجنسية'" formControlName="nationalityId" [hasError]="formErrors.nationalityId"></app-za-drop-down-form-control>
                             <small class="field-error" *ngIf="formErrors.nationalityId">{{ formErrors.nationalityId }}</small>
                         </div>
                         <div class="form-group-admin form-grid__full">
@@ -216,13 +213,20 @@
 <ng-template #CashSidePanel let-offcanvas>
     <section class="donation-panel" dir="rtl">
         <header class="donation-panel__header">
-            <div><span><i class="uil uil-money-bill"></i></span><div><h2>سجل التبرعات</h2><p>{{ BeneFactorValues.fullName }} · {{ BeneFactorValues.code }}</p></div></div>
+            <div><span><i class="uil uil-money-bill"></i></span>
+                <div>
+                    <h2>سجل التبرعات</h2>
+                    <p>{{ BeneFactorValues.fullName }} · {{ BeneFactorValues.code }}</p>
+                </div>
+            </div>
             <button type="button" aria-label="إغلاق" (click)="offcanvas.dismiss()"><i class="uil uil-times"></i></button>
         </header>
 
         <div class="donation-panel__body">
             <section class="new-donation-card">
-                <div class="panel-section-title"><i class="uil uil-plus-circle"></i><div><strong>تسجيل تبرع جديد</strong><span>أدخل قيمة التبرع وتاريخ الاستلام.</span></div></div>
+                <div class="panel-section-title"><i class="uil uil-plus-circle"></i>
+                    <div><strong>تسجيل تبرع جديد</strong><span>أدخل قيمة التبرع وتاريخ الاستلام.</span></div>
+                </div>
                 <div class="donation-form">
                     <label><span>مبلغ التبرع</span><div><i class="uil uil-money-bill"></i><input type="text" inputmode="decimal" placeholder="0" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="BeneFactorValues.totalValue"></div></label>
                     <label><span>تاريخ التبرع</span><div><i class="uil uil-calendar-alt"></i><input type="date" [(ngModel)]="BeneFactorValues.paymentDate"></div></label>
@@ -231,7 +235,9 @@
             </section>
 
             <section class="donation-history">
-                <div class="panel-section-title"><i class="uil uil-history"></i><div><strong>سجل الحسابات</strong><span>{{ BeneFactorValuesData.length }} سجل تبرع</span></div></div>
+                <div class="panel-section-title"><i class="uil uil-history"></i>
+                    <div><strong>سجل الحسابات</strong><span>{{ BeneFactorValuesData.length }} سجل تبرع</span></div>
+                </div>
 
                 <div class="donation-list" *ngIf="BeneFactorValuesData.length; else noDonations">
                     <article class="donation-record" *ngFor="let item of BeneFactorValuesData; trackBy: trackByDonation">
@@ -251,7 +257,9 @@
                     </article>
                 </div>
 
-                <ng-template #noDonations><div class="panel-empty"><i class="uil uil-receipt"></i><strong>لا توجد تبرعات مسجلة</strong><span>يمكنك إضافة أول تبرع من النموذج أعلاه.</span></div></ng-template>
+                <ng-template #noDonations>
+                    <div class="panel-empty"><i class="uil uil-receipt"></i><strong>لا توجد تبرعات مسجلة</strong><span>يمكنك إضافة أول تبرع من النموذج أعلاه.</span></div>
+                </ng-template>
             </section>
         </div>
     </section>
@@ -260,7 +268,12 @@
 <ng-template #PDFFileItemModal let-modal>
     <section class="admin-modal export-modal" dir="rtl">
         <header class="admin-modal-header modal-heading">
-            <div class="modal-title"><span><i class="uil uil-file-export"></i></span><div><h2>إعداد تقرير PDF</h2><p>اختر حتى ستة أعمدة وحدّد ترتيب ظهورها.</p></div></div>
+            <div class="modal-title"><span><i class="uil uil-file-export"></i></span>
+                <div>
+                    <h2>إعداد تقرير PDF</h2>
+                    <p>اختر حتى ستة أعمدة وحدّد ترتيب ظهورها.</p>
+                </div>
+            </div>
             <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
         </header>
 

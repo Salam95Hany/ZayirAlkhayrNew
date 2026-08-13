@@ -51,6 +51,7 @@ export class AccountImportMonyComponent {
   ImageFile: any;
   UserId: any;
   AccountId: any;
+  SelectedAccount: any;
   DonationMethods: any[] = [
     { value: 1, name: 'فودافون كاش' },
     { value: 2, name: 'انستا باي' },
@@ -73,6 +74,20 @@ export class AccountImportMonyComponent {
     insertDate: '',
     donationMethodId: ''
   };
+
+  get isEditing(): boolean {
+    return Number(this.ItemForm?.get('id')?.value) > 0;
+  }
+
+  get selectedCount(): number {
+    return this.AccountMoneyList.filter(item => item.isSelected).length;
+  }
+
+  get activeFiltersCount(): number {
+    return this.PagingFilter.filterList?.filter((filter: any) =>
+      filter?.isChecked || filter?.checked || filter?.selected
+    ).length ?? 0;
+  }
 
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private authService: AuthService,
     private formService: FormService, private taskService: TaskService, private datepipe: DatePipe, private sharedService: SharedService
@@ -140,6 +155,7 @@ export class AccountImportMonyComponent {
 
   openDeleteItemModal(content: any, item: any) {
     this.AccountId = item.id;
+    this.SelectedAccount = item;
     this.modalService.open(content, {
       size: 'md',
       scrollable: true,
@@ -203,6 +219,7 @@ export class AccountImportMonyComponent {
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
+    this.PagingFilter.currentPage = 1;
     this.SearchReport.filterItems = filterList;
     this.GetFinancialTransactionData();
     this.GetFinancialTransactionStatistics();
@@ -352,5 +369,9 @@ export class AccountImportMonyComponent {
           this.TotalValue += item.totalValue;
       });
     }
+  }
+
+  trackByAccount(_: number, item: any): number {
+    return item.id;
   }
 }

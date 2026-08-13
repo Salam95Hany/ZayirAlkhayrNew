@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { PagingFilterModel } from '../../Models/shared/PagingFilterModel ';
 import { ApiResponseModel } from '../../Models/shared/ErrorResponseModel';
+import { FinancialChartsResponseModel } from '../../Models/zainstitution/FinancialDashboardModel';
 
 @Injectable({
   providedIn: 'root'
@@ -37,12 +38,16 @@ export class TaskService {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/DeleteFinancialTransaction?AccountId=' + AccountId);
   }
 
-   GetFinancialTransactionStatisticsNetValue(PagingFilter: PagingFilterModel) {
+  GetFinancialTransactionStatisticsNetValue(PagingFilter: PagingFilterModel) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/GetFinancialTransactionStatisticsNetValue', PagingFilter);
   }
 
-   GetFinancialTransactionStatisticFilter() {
+  GetFinancialTransactionStatisticFilter() {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'AccountsMony/GetFinancialTransactionStatisticFilter');
+  }
+
+  GetFinancialNetValueChartsData() {
+    return this.http.get<ApiResponseModel<FinancialChartsResponseModel>>(this.apiURL + 'AccountsMony/GetFinancialNetValueChartsData');
   }
 
   // ============================= GeneralTasks ==============================

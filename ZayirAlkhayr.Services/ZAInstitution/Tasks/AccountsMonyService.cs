@@ -88,6 +88,12 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
+        public async Task<ApiResponseModel<DataSet>> GetFinancialNetValueChartsData()
+        {
+            var dt = await _sQLHelper.ExecuteDatasetAsync("[institution].[SP_GetFinancialNetValueChartsData]", Array.Empty<SqlParameter>());
+            return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
+        }
+
         public async Task<ApiResponseModel<FinancialTransactionStatisticsDto>> GetFinancialTransactionStatisticsNetValue(PagingFilterModel PagingFilter)
         {
             var SpecIncome = new FinancialTransactionStatisticsSpecification(PagingFilter, "Income");

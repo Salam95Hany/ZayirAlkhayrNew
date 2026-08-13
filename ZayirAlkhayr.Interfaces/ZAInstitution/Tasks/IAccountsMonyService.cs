@@ -17,6 +17,7 @@ namespace ZayirAlkhayr.Interfaces.ZAInstitution.Tasks
         Task<ApiResponseModel<List<FilterModel>>> GetFinancialTransactionFilters(PagingFilterModel PagingFilter, string TransactionType);
         Task<ApiResponseModel<DataTable>> GetFinancialTransactionStatistics(PagingFilterModel PagingFilter, string TransactionType);
         Task<ApiResponseModel<FinancialTransactionStatisticsDto>> GetFinancialTransactionStatisticsNetValue(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<DataSet>> GetFinancialNetValueChartsData();
         Task<ApiResponseModel<List<FilterModel>>> GetFinancialTransactionStatisticFilter();
         Task<ApiResponseModel<DataTable>> GetExportFinancialTransactionData(SearchReportModel Model, string TransactionType);
         Task<ApiResponseModel<string>> AddNewFinancialTransaction(FinancialTransaction Model);

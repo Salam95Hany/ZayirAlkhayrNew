@@ -1,293 +1,155 @@
 <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="section-content mb-3">
-    <div class="row">
-        <div class="col">
-            <div class="bg-white shadow-sm column-card d-flex flex-column align-items-center gap-3 text-center h-100 hovered">
-                <div class="column-card-icon">
-                    <i class="uil uil-usd-circle"></i>
-                </div>
-                <div class="column-card-title">إجمالي المصروفات</div>
-                <div class="column-card-description text-muted fs-4">
-                    {{TotalValue | number}}
-                </div>
-            </div>
+<main class="income-page admin-page" dir="rtl">
+    <section class="income-hero">
+        <div class="hero-copy">
+            <span class="hero-kicker"><i class="uil uil-chart-down"></i> الإدارة المالية</span>
+            <h1>سجل المصروفات</h1>
+            <p>سجّل المدفوعات الصادرة، راجع بنود الصرف وطرق الدفع، واستخرج التقارير المالية بدقة.</p>
         </div>
-        <div class="col">
-            <div class="bg-white shadow-sm column-card d-flex flex-column align-items-center gap-3 text-center h-100 hovered">
-                <div class="column-card-icon">
-                    <i class="uil uil-transaction"></i>
-                </div>
-                <div class="column-card-title">عدد العمليات</div>
-                <div class="column-card-description text-muted fs-4">
-                    {{TotalCount | number}}
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="bg-white shadow-sm column-card d-flex flex-column align-items-center gap-3 text-center h-100 hovered">
-                <div class="column-card-icon">
-                    <i class="uil uil-wallet"></i>
-                </div>
-                <div class="column-card-title">إجمالي المصروفات للشهر الحالي</div>
-                <div class="column-card-description text-muted fs-4">
-                    {{ExportValueMonth | number}}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        <button type="button" class="hero-action" appRole pageKey="ZAInstitution_AccountExportMoney" action="canAdd" (click)="openItemModal(OpenItemModal, null)">
+            <i class="uil uil-plus-circle"></i><span>تسجيل مصروف جديد</span>
+        </button>
+    </section>
 
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2">
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="ZAInstitution_AccountExportMoney" action="canAdd" (click)="openItemModal(OpenItemModal,null)">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>إضافة</span>
-                </button>
-                <div ngbDropdown class="d-inline-block" appRole pageKey="ZAInstitution_AccountExportMoney" action="canExport">
-                    <button type="button" class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" id="dropdownBasic1" ngbDropdownToggle>
-                        <i class="uil uil-export"></i>
-                        <span>تنزيل</span>
-                    </button>
-                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="border rounded">
-                        <button ngbDropdownItem class="d-flex align-items-center gap-2" (click)="OpenPdfFileItemModal(PDFFileItemModal)">
-                            <i class="fas fa-file-download"></i>
-                            <span class="px-2">PDF</span>
-                        </button>
-                        <button ngbDropdownItem (click)="DownloadExcelFile()">
-                            <i class="fas fa-file-download"></i>
-                            <span class="px-2">Excel</span>
-                        </button>
+    <section class="stats-grid" aria-label="ملخص المصروفات">
+        <article class="stat-card stat-card--total">
+            <span class="stat-icon"><i class="uil uil-money-withdraw"></i></span>
+            <div><small>{{ selectedCount ? 'إجمالي المحدد' : 'إجمالي المصروفات' }}</small><strong>{{ TotalValue | number }}</strong><p>جنيه مصري</p></div>
+            <span class="selection-count" *ngIf="selectedCount">{{ selectedCount }} محدد</span>
+        </article>
+        <article class="stat-card stat-card--month">
+            <span class="stat-icon"><i class="uil uil-calendar-alt"></i></span>
+            <div><small>مصروفات الشهر الحالي</small><strong>{{ ExportValueMonth | number }}</strong><p>جنيه مصري</p></div>
+        </article>
+        <article class="stat-card stat-card--transactions">
+            <span class="stat-icon"><i class="uil uil-transaction"></i></span>
+            <div><small>عدد العمليات</small><strong>{{ TotalCount | number }}</strong><p>عملية صرف مسجلة</p></div>
+        </article>
+    </section>
+
+    <section class="admin-card income-ledger">
+        <header class="admin-card-header ledger-header">
+            <div class="section-title">
+                <span><i class="uil uil-receipt"></i></span>
+                <div><h2>دفتر المصروفات</h2><p>تفاصيل جميع المعاملات المالية الصادرة من المؤسسة</p></div>
+            </div>
+            <div class="ledger-actions">
+                <div ngbDropdown class="export-menu" appRole pageKey="ZAInstitution_AccountExportMoney" action="canExport">
+                    <button type="button" class="export-button" ngbDropdownToggle><i class="uil uil-export"></i><span>تصدير التقرير</span></button>
+                    <div ngbDropdownMenu class="export-dropdown">
+                        <button ngbDropdownItem (click)="OpenPdfFileItemModal(PDFFileItemModal)"><span class="file-icon file-icon--pdf"><i class="uil uil-file-alt"></i></span><div><strong>ملف PDF</strong><small>تخصيص الأعمدة وتنزيل التقرير</small></div></button>
+                        <button ngbDropdownItem (click)="DownloadExcelFile()"><span class="file-icon file-icon--excel"><i class="uil uil-file-spreadsheet"></i></span><div><strong>ملف Excel</strong><small>تنزيل البيانات للتحليل</small></div></button>
                     </div>
                 </div>
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
-                    <i class="uil uil-filter"></i>
-                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
+                <button type="button" class="filter-button" [class.filter-button--active]="!isFilter" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                    <i class="uil uil-filter"></i>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}<b *ngIf="activeFiltersCount">{{ activeFiltersCount }}</b>
                 </button>
             </div>
+        </header>
+
+        <div class="filter-panel" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <app-za-filters [FilterList]="filterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
         </div>
-        <div class="col-md-4 mb-2">
-            <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
+
+        <div class="selection-bar" *ngIf="selectedCount">
+            <span><i class="uil uil-check-square"></i> تم تحديد {{ selectedCount }} عملية</span>
+            <strong>إجمالي المحدد: {{ TotalValue | number }} ج.م</strong>
+            <button type="button" (click)="IsSelectedAll = false; onInputSelecetAll(false)">إلغاء التحديد</button>
         </div>
-        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
-            <div class="d-flex align-items-center">
-                <ng-container>
-                    <app-za-filters [FilterList]="filterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
-                </ng-container>
-            </div>
-        </div>
-    </div>
-    <div class="p-3 bg-white">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
-                <thead>
-                    <tr>
-                        <th><input type="checkbox" (change)="onInputSelecetAll($event.target.checked)" [(ngModel)]="IsSelectedAll"></th>
-                        <th>اسم المتبرع</th>
-                        <th>نوع التبرع</th>
-                        <th>طريقة التبرع</th>
-                        <th>المبلغ</th>
-                        <th>التفاصيل</th>
-                        <th>أُضيف بواسطة</th>
-                        <th>تاريخ الاضافة</th>
-                        <th>عمليات</th>
-                    </tr>
-                </thead>
+
+        <div class="ledger-table-wrap" *ngIf="AccountMoneyList.length; else emptyState">
+            <table class="income-table">
+                <thead><tr>
+                    <th class="select-column"><input type="checkbox" aria-label="تحديد كل العمليات" (change)="onInputSelecetAll($event.target.checked)" [(ngModel)]="IsSelectedAll"></th>
+                    <th>المستفيد</th><th>بند الصرف</th><th>طريقة الدفع</th><th>المبلغ</th><th>التفاصيل</th><th>أُضيف بواسطة</th><th>تاريخ الصرف</th><th>الإجراءات</th>
+                </tr></thead>
                 <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of AccountMoneyList">
-                            <td><input type="checkbox" (change)="onInputSelected()" [(ngModel)]="item.isSelected"></td>
-                            <td>{{item.fullName}}</td>
-                            <td>{{item.name}}</td>
-                            <td>{{item.donationMethodId | donationMethod}}</td>
-                            <td>{{item.totalValue}}</td>
-                            <td>{{item.details}}</td>
-                            <td>{{item.createdBy}}</td>
-                            <td>{{item.insertDateStr}}</td>
-                            <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_AccountExportMoney" action="canEdit" (click)="openItemModal(OpenItemModal,item)">
-                                        <i class="uil uil-pen"></i>
-                                        <span>تعديل</span>
-                                    </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" appRole pageKey="ZAInstitution_AccountExportMoney" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
-                                        <i class="uil uil-trash-alt"></i>
-                                        <span>حذف</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!AccountMoneyList.length">
-                            <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!AccountMoneyList.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
+                    <tr *ngFor="let item of AccountMoneyList; trackBy: trackByAccount" [class.row-selected]="item.isSelected">
+                        <td class="select-column" data-label="تحديد"><input type="checkbox" aria-label="تحديد العملية" (change)="onInputSelected()" [(ngModel)]="item.isSelected"></td>
+                        <td data-label="المستفيد"><div class="donor-cell"><span><i class="uil uil-user"></i></span><strong>{{ item.fullName || 'غير محدد' }}</strong></div></td>
+                        <td data-label="بند الصرف"><span class="type-badge"><i class="uil uil-tag-alt"></i>{{ item.name || 'غير محدد' }}</span></td>
+                        <td data-label="طريقة الدفع"><span class="method-badge"><i class="uil uil-wallet"></i>{{ item.donationMethodId | donationMethod }}</span></td>
+                        <td data-label="المبلغ"><strong class="amount-value">{{ item.totalValue | number }} <small>ج.م</small></strong></td>
+                        <td data-label="التفاصيل"><span class="details-text" [title]="item.details">{{ item.details || '—' }}</span></td>
+                        <td data-label="أُضيف بواسطة"><span class="meta-value"><i class="uil uil-user-check"></i>{{ item.createdBy || 'غير محدد' }}</span></td>
+                        <td data-label="تاريخ الصرف"><span class="meta-value"><i class="uil uil-calendar-alt"></i>{{ item.insertDateStr || 'غير محدد' }}</span></td>
+                        <td data-label="الإجراءات"><div class="row-actions">
+                            <button type="button" class="action-button action-button--edit" appRole pageKey="ZAInstitution_AccountExportMoney" action="canEdit" (click)="openItemModal(OpenItemModal, item)"><i class="uil uil-pen"></i><span>تعديل</span></button>
+                            <button type="button" class="action-button action-button--delete" appRole pageKey="ZAInstitution_AccountExportMoney" action="canDelete" (click)="openDeleteItemModal(deleteItemModal, item)"><i class="uil uil-trash-alt"></i><span>حذف</span></button>
+                        </div></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-    </div>
-</div>
+
+        <ng-template #emptyState><div class="empty-state"><app-za-empty-data [showEmptyData]="!AccountMoneyList.length"></app-za-empty-data></div></ng-template>
+
+        <footer class="admin-card-footer ledger-footer" *ngIf="TotalCount">
+            <p>يتم عرض {{ AccountMoneyList.length }} من أصل {{ TotalCount }} عملية</p>
+            <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
+        </footer>
+    </section>
+</main>
 
 <ng-template #OpenItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-plus"></i>
-            <span>املأ البيانات الأتية</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="ItemForm" autocomplete="off">
-            <table class="table table-bordered table-feature-value align-middle border m-0">
-                <tbody>
-                    <tr>
-                        <td class="table-feature">المبلغ</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'المبلغ...'" [error]="formErrors.totalValue" formControlName="totalValue" [allowNumbersOnly]="true" [allowPaste]="false"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">التفاصيل</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'التفاصيل...'" [error]="formErrors.details" formControlName="details"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">تاريخ الاضافة</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ الاضافة...'" [error]="formErrors.insertDate" formControlName="insertDate"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">المتبرع</td>
-                        <td class="table-value">
-                            <div class="form-floating">
-                                <app-za-drop-down-form-control [data]="BeneFactors" [showSearch]="true" [placeholder]="'متبرع'" formControlName="beneFactorId" [hasError]="formErrors.beneFactorId"></app-za-drop-down-form-control>
-                            </div>
-                            <div class="error-message" *ngIf="formErrors.beneFactorId">
-                                {{ formErrors.beneFactorId }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">نوع التبرع</td>
-                        <td class="table-value">
-                            <div class="form-floating">
-                                <app-za-drop-down-form-control [data]="BeneFactorTypes" [showSearch]="true" [placeholder]="'نوع التبرع'" formControlName="beneFactorTypeId" [hasError]="formErrors.beneFactorTypeId"></app-za-drop-down-form-control>
-                            </div>
-                            <div class="error-message" *ngIf="formErrors.beneFactorTypeId">
-                                {{ formErrors.beneFactorTypeId }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">طريقة التبرع</td>
-                        <td class="table-value">
-                            <div class="form-floating">
-                                <app-za-drop-down-form-control [data]="DonationMethods" [showSearch]="true" [placeholder]="'طريقة التبرع'" formControlName="donationMethodId" [hasError]="formErrors.donationMethodId"></app-za-drop-down-form-control>
-                            </div>
-                            <div class="error-message" *ngIf="formErrors.donationMethodId">
-                                {{ formErrors.donationMethodId }}
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <section class="admin-modal income-modal" dir="rtl">
+        <header class="admin-modal-header modal-heading">
+            <div class="modal-title"><span><i class="uil" [ngClass]="isEditing ? 'uil-pen' : 'uil-money-withdraw'"></i></span><div><h2>{{ isEditing ? 'تعديل عملية الصرف' : 'تسجيل مصروف جديد' }}</h2><p>أدخل بيانات المبلغ والمستفيد وطريقة الدفع بدقة.</p></div></div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        </header>
+
+        <form [formGroup]="ItemForm" autocomplete="off" (ngSubmit)="AddNewItem()">
+            <div class="modal-body-content">
+                <section class="form-section-block">
+                    <div class="form-section-title"><span><i class="uil uil-money-withdraw"></i></span><div><h3>بيانات الصرف</h3><p>قيمة المصروف وتاريخه وطريقة دفعه</p></div></div>
+                    <div class="form-fields form-fields--three">
+                        <div class="form-group-admin"><label class="form-label-admin">المبلغ <em>*</em></label><app-za-input-with-label [type]="'text'" [placeholder]="'أدخل قيمة المصروف'" [error]="formErrors.totalValue" formControlName="totalValue" [allowNumbersOnly]="true" [allowPaste]="false"></app-za-input-with-label></div>
+                        <div class="form-group-admin"><label class="form-label-admin">تاريخ الصرف <em>*</em></label><app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ الصرف'" [error]="formErrors.insertDate" formControlName="insertDate"></app-za-input-with-label></div>
+                        <div class="form-group-admin"><label class="form-label-admin">طريقة الدفع <em>*</em></label><app-za-drop-down-form-control [data]="DonationMethods" [showSearch]="true" [placeholder]="'اختر طريقة الدفع'" formControlName="donationMethodId" [hasError]="formErrors.donationMethodId"></app-za-drop-down-form-control><small class="field-error" *ngIf="formErrors.donationMethodId">{{ formErrors.donationMethodId }}</small></div>
+                    </div>
+                </section>
+
+                <section class="form-section-block">
+                    <div class="form-section-title"><span><i class="uil uil-file-info-alt"></i></span><div><h3>تفاصيل المصروف</h3><p>المستفيد وبند الصرف وأي وصف إضافي</p></div></div>
+                    <div class="form-fields form-fields--two">
+                        <div class="form-group-admin"><label class="form-label-admin">المستفيد <em>*</em></label><app-za-drop-down-form-control [data]="BeneFactors" [showSearch]="true" [placeholder]="'اختر المستفيد'" formControlName="beneFactorId" [hasError]="formErrors.beneFactorId"></app-za-drop-down-form-control><small class="field-error" *ngIf="formErrors.beneFactorId">{{ formErrors.beneFactorId }}</small></div>
+                        <div class="form-group-admin"><label class="form-label-admin">بند الصرف <em>*</em></label><app-za-drop-down-form-control [data]="BeneFactorTypes" [showSearch]="true" [placeholder]="'اختر بند الصرف'" formControlName="beneFactorTypeId" [hasError]="formErrors.beneFactorTypeId"></app-za-drop-down-form-control><small class="field-error" *ngIf="formErrors.beneFactorTypeId">{{ formErrors.beneFactorTypeId }}</small></div>
+                        <div class="form-group-admin form-group-admin--wide"><label class="form-label-admin">تفاصيل إضافية</label><app-za-input-with-label [type]="'text'" [placeholder]="'اكتب سبب أو وصف المصروف (اختياري)'" formControlName="details"></app-za-input-with-label></div>
+                    </div>
+                </section>
+            </div>
+            <footer class="admin-modal-footer modal-actions"><button type="button" class="btn-secondary-admin" (click)="modal.close()">إلغاء</button><button type="submit" class="btn-primary-admin" [disabled]="showLoader"><i class="uil uil-save"></i>{{ isEditing ? 'حفظ التعديلات' : 'تسجيل المصروف' }}</button></footer>
         </form>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
+    </section>
 </ng-template>
 
 <ng-template #PDFFileItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-focus-add"></i>
-            <span>اختر أعمدة</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+    <section class="admin-modal report-modal" dir="rtl">
+        <header class="admin-modal-header modal-heading">
+            <div class="modal-title"><span><i class="uil uil-file-export"></i></span><div><h2>تخصيص تقرير PDF</h2><p>اختر الأعمدة المطلوبة وحدد ترتيب ظهورها في التقرير.</p></div></div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        </header>
+        <div class="report-body">
+            <div class="report-notice"><i class="uil uil-info-circle"></i> يمكن اختيار ستة أعمدة كحد أقصى. استخدم حقل الترتيب للتحكم في تسلسل الأعمدة.</div>
+            <div class="column-list">
+                <label class="column-option" *ngFor="let item of SearchReport.headers; let x = index" [class.column-option--selected]="item.isSelected">
+                    <input type="checkbox" [(ngModel)]="item.isSelected"><span class="check-box"><i class="uil uil-check"></i></span><strong>{{ item.nameAr }}</strong>
+                    <input type="number" class="order-input" aria-label="ترتيب العمود" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="item.displayOrder" placeholder="الترتيب">
+                </label>
+            </div>
         </div>
-    </div>
-    <div class="modal-body">
-        <table class="table table-bordered table-feature-value align-middle border m-0">
-            <tbody>
-                <tr *ngFor="let item of SearchReport.headers;let x = index">
-                    <td class="table-feature">{{item.nameAr}}</td>
-                    <td class="table-value">
-                        <div class="d-flex align-items-center justify-content-center">
-                            <div class="me-2">محدد</div>
-                            <label class="jtoggler-wrapper m-0 mx-0">
-                                <input type="checkbox" class="jtoggler" [(ngModel)]="item.isSelected">
-                                <div class="jtoggler-control">
-                                    <div class="jtoggler-handle"></div>
-                                </div>
-                            </label>
-                            <div class="ms-2">غير محدد</div>
-                            <div class="mr-25">
-                                <input type="number" class="form-control w-50 text-center" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="item.displayOrder" placeholder="الترتيب">
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">تنبيه هام</td>
-                    <td class="table-value">
-                        <ul>
-                            <li class="fs-5">لا يمكن اختيار أكثر من 6 أعمدة في الصفحة الواحدة</li>
-                        </ul>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="DownloadPdfFile()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
+        <footer class="admin-modal-footer modal-actions"><button type="button" class="btn-secondary-admin" (click)="modal.close()">إلغاء</button><button type="button" class="btn-primary-admin" [disabled]="showLoader" (click)="DownloadPdfFile()"><i class="uil uil-file-download-alt"></i>تنزيل PDF</button></footer>
+    </section>
 </ng-template>
 
 <ng-template #deleteItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <span>تأكيد الإجراء</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
-    </div>
-    <div class="modal-body">
-        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
-    </div>
-    <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success" (click)="DeleteItem()">
-            <i class="fas fa-check"></i>
-            <span class="ms-2">نعم</span>
-        </button>
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
-            <i class="fas fa-times"></i>
-            <span class="ms-2">لا</span>
-        </button>
-    </div>
+    <section class="delete-modal" dir="rtl">
+        <button type="button" class="modal-close delete-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        <span class="delete-icon"><i class="uil uil-trash-alt"></i></span><h2>حذف عملية الصرف؟</h2>
+        <p>سيتم حذف عملية بقيمة <strong>{{ SelectedAccount?.totalValue | number }} ج.م</strong> من سجل المصروفات، ولا يمكن التراجع عن هذا الإجراء.</p>
+        <div class="delete-actions"><button type="button" class="btn-secondary-admin" (click)="modal.close()">تراجع</button><button type="button" class="btn-danger-admin" [disabled]="showLoader" (click)="DeleteItem()"><i class="uil uil-trash-alt"></i>نعم، حذف العملية</button></div>
+    </section>
 </ng-template>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

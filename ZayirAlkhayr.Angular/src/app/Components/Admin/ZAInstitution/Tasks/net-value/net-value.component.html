@@ -1,56 +1,118 @@
 <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="dashboard-container">
-    <h1><i class="fas fa-chart-line me-2"></i>المعلومات المالية</h1>
+<main class="net-page admin-page" dir="rtl">
+    <section class="net-hero">
+        <div class="hero-copy">
+            <span class="hero-kicker"><i class="uil uil-balance-scale"></i> الملخص المالي</span>
+            <h1>صافي الحسابات</h1>
+            <p>نظرة تنفيذية واضحة على الإيرادات والمصروفات والرصيد المتبقي خلال الفترة المحددة.</p>
+        </div>
+        <div class="hero-status" [class.hero-status--negative]="NetValue < 0">
+            <span><i class="uil" [ngClass]="NetValue >= 0 ? 'uil-shield-check' : 'uil-exclamation-triangle'"></i></span>
+            <div><small>حالة الرصيد</small><strong>{{ NetValue >= 0 ? 'رصيد موجب' : 'عجز مالي' }}</strong></div>
+        </div>
+    </section>
 
-    <!-- Filter Section -->
-    <div class="filter-section">
-        <app-za-filters [FilterList]="filterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
-    </div>
+    <section class="admin-card filter-card">
+        <header class="filter-header">
+            <div class="section-title">
+                <span><i class="uil uil-filter"></i></span>
+                <div><h2>نطاق التقرير</h2><p>استخدم الفلاتر لعرض الملخص المالي لفترة أو نطاق محدد</p></div>
+            </div>
+            <span class="filter-count" *ngIf="activeFiltersCount"><i class="uil uil-check-circle"></i>{{ activeFiltersCount }} فلتر نشط</span>
+        </header>
+        <div class="filter-content">
+            <app-za-filters [FilterList]="filterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
+        </div>
+    </section>
 
-    <!-- Statistics Cards -->
-    <div class="row g-4">
-        <div class="col-md-4">
-            <div class="stat-card import">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="stat-label">إجمالي الإيرادات</div>
-                        <div class="stat-value" id="totalImport">{{TotalImportValue | number}} ج.م</div>
-                        <small><i class="fas fa-arrow-up me-1"></i>12% من الشهر الماضي</small>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-download"></i>
-                    </div>
+    <section class="financial-grid">
+        <article class="balance-card" [class.balance-card--negative]="NetValue < 0">
+            <div class="balance-heading">
+                <div>
+                    <span class="balance-label">صافي الرصيد</span>
+                    <p>الإيرادات مطروحاً منها المصروفات</p>
                 </div>
+                <span class="balance-icon"><i class="uil uil-balance-scale"></i></span>
+            </div>
+
+            <div class="balance-value">
+                <strong>{{ NetValue | number }}</strong><span>ج.م</span>
+            </div>
+
+            <div class="balance-footer">
+                <span><i class="uil" [ngClass]="NetValue >= 0 ? 'uil-arrow-growth' : 'uil-chart-down'"></i>{{ NetValue >= 0 ? 'المتاح بعد تغطية المصروفات' : 'المصروفات تتجاوز الإيرادات' }}</span>
+                <strong>{{ netRate | number:'1.0-1' }}%</strong>
+            </div>
+        </article>
+
+        <div class="summary-stack">
+            <article class="summary-card summary-card--income">
+                <span class="summary-icon"><i class="uil uil-money-insert"></i></span>
+                <div class="summary-data"><small>إجمالي الإيرادات</small><strong>{{ TotalImportValue | number }} <em>ج.م</em></strong><p>جميع المبالغ الواردة في النطاق المحدد</p></div>
+                <span class="direction-icon"><i class="uil uil-arrow-down-left"></i></span>
+            </article>
+
+            <article class="summary-card summary-card--expense">
+                <span class="summary-icon"><i class="uil uil-money-withdraw"></i></span>
+                <div class="summary-data"><small>إجمالي المصروفات</small><strong>{{ TotalExportValue | number }} <em>ج.م</em></strong><p>جميع المبالغ الصادرة في النطاق المحدد</p></div>
+                <span class="direction-icon"><i class="uil uil-arrow-up-left"></i></span>
+            </article>
+        </div>
+    </section>
+
+    <section class="charts-grid" aria-label="الرسوم البيانية المالية">
+        <article class="admin-card chart-card trend-chart-card">
+            <header class="chart-header">
+                <div class="section-title">
+                    <span><i class="uil uil-chart-bar"></i></span>
+                    <div><h2>الإيرادات والمصروفات</h2><p>اتجاه الأداء المالي الشهري وصافي الرصيد</p></div>
+                </div>
+                <span class="chart-period"><i class="uil uil-calendar-alt"></i> آخر 6 أشهر</span>
+            </header>
+            <div class="chart-body chart-body--trend">
+                <canvas #financialTrendChart role="img" aria-label="رسم بياني للإيرادات والمصروفات وصافي الرصيد عبر الأشهر"></canvas>
+            </div>
+        </article>
+
+        <article class="admin-card chart-card category-chart-card">
+            <header class="chart-header">
+                <div class="section-title">
+                    <span><i class="uil uil-chart-pie"></i></span>
+                    <div><h2>توزيع المصروفات حسب التصنيف</h2><p>نسبة مساهمة كل بند في المصروفات</p></div>
+                </div>
+            </header>
+            <div class="chart-body chart-body--donut">
+                <canvas #expenseCategoryChart role="img" aria-label="رسم دائري لتوزيع المصروفات حسب التصنيف"></canvas>
+            </div>
+        </article>
+    </section>
+
+    <section class="admin-card analysis-card">
+        <header class="analysis-header">
+            <div class="section-title">
+                <span><i class="uil uil-chart-pie-alt"></i></span>
+                <div><h2>تحليل التوازن المالي</h2><p>مؤشر مبسط لنسبة المصروفات إلى إجمالي الإيرادات</p></div>
+            </div>
+            <span class="ratio-value">{{ expenseRatio | number:'1.0-1' }}%</span>
+        </header>
+
+        <div class="analysis-body">
+            <div class="ratio-head"><span>نسبة استهلاك الإيرادات</span><strong>{{ TotalExportValue | number }} من {{ TotalImportValue | number }} ج.م</strong></div>
+            <div class="ratio-track" role="progressbar" aria-label="نسبة المصروفات إلى الإيرادات" [attr.aria-valuenow]="expenseRatio" aria-valuemin="0" aria-valuemax="100">
+                <span [style.width.%]="expenseRatio" [class.ratio-fill--warning]="expenseRatio >= 75" [class.ratio-fill--danger]="expenseRatio >= 100"></span>
+            </div>
+            <div class="ratio-scale"><span>0%</span><span>50%</span><span>100%</span></div>
+
+            <div class="equation-grid">
+                <div><span class="equation-icon equation-icon--income"><i class="uil uil-plus"></i></span><small>الإيرادات</small><strong>{{ TotalImportValue | number }}</strong></div>
+                <i class="operator uil uil-minus"></i>
+                <div><span class="equation-icon equation-icon--expense"><i class="uil uil-minus"></i></span><small>المصروفات</small><strong>{{ TotalExportValue | number }}</strong></div>
+                <i class="operator">=</i>
+                <div><span class="equation-icon equation-icon--net"><i class="uil uil-balance-scale"></i></span><small>صافي الرصيد</small><strong>{{ NetValue | number }}</strong></div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="stat-card export">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="stat-label">إجمالي المصروفات</div>
-                        <div class="stat-value" id="totalExport">{{TotalExportValue | number}} ج.م</div>
-                        <small><i class="fas fa-arrow-up me-1"></i>8% من الشهر الماضي</small>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-upload"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stat-card net">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="stat-label">الباقي</div>
-                        <div class="stat-value" id="netValue">{{NetValue | number}} ج.م</div>
-                        <small><i class="fas fa-chart-line me-1"></i>نظرة عامة على الرصيد</small>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-balance-scale"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+    </section>
+</main>
+
+<ngx-loading [show]="showLoader"></ngx-loading>

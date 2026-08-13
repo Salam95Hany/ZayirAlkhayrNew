@@ -29,7 +29,7 @@ import { DonationMethodPipe } from '../../../../../Pipes/donation-method.pipe';
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RoleCheckerDirective, ZaInputWithLabelComponent,
     NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule,DonationMethodPipe],
   templateUrl: './account-export-mony.component.html',
-  styleUrl: './account-export-mony.component.css',
+  styleUrls: ['../account-import-mony/account-import-mony.component.css'],
   providers: [DatePipe]
 })
 export class AccountExportMonyComponent implements OnInit {
@@ -51,6 +51,7 @@ export class AccountExportMonyComponent implements OnInit {
   ImageFile: any;
   UserId: any;
   AccountId: any;
+  SelectedAccount: any;
   DonationMethods: any[] = [
     { value: 1, name: 'فودافون كاش' },
     { value: 2, name: 'انستا باي' },
@@ -73,6 +74,20 @@ export class AccountExportMonyComponent implements OnInit {
     insertDate: '',
     donationMethodId: ''
   };
+
+  get isEditing(): boolean {
+    return Number(this.ItemForm?.get('id')?.value) > 0;
+  }
+
+  get selectedCount(): number {
+    return this.AccountMoneyList.filter(item => item.isSelected).length;
+  }
+
+  get activeFiltersCount(): number {
+    return this.PagingFilter.filterList?.filter((filter: any) =>
+      filter?.isChecked || filter?.checked || filter?.selected
+    ).length ?? 0;
+  }
 
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private authService: AuthService,
     private formService: FormService, private taskService: TaskService, private datepipe: DatePipe, private sharedService: SharedService
@@ -140,6 +155,7 @@ export class AccountExportMonyComponent implements OnInit {
 
   openDeleteItemModal(content: any, item: any) {
     this.AccountId = item.id;
+    this.SelectedAccount = item;
     this.modalService.open(content, {
       size: 'md',
       scrollable: true,
@@ -163,6 +179,7 @@ export class AccountExportMonyComponent implements OnInit {
       this.AccountMoneyList = data.results.table;
       this.AccountHeaders = data.results?.table1?.filter(i => i.displayValue != 'DonationMethod') ?? [];
       this.TotalCount = data.totalCount;
+      this.onInputSelecetAll(this.IsSelectedAll);
     });
   }
 
@@ -202,6 +219,7 @@ export class AccountExportMonyComponent implements OnInit {
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
+    this.PagingFilter.currentPage = 1;
     this.SearchReport.filterItems = filterList;
     this.GetFinancialTransactionData();
     this.GetFinancialTransactionStatistics();
@@ -351,5 +369,9 @@ export class AccountExportMonyComponent implements OnInit {
           this.TotalValue += item.totalValue;
       });
     }
+  }
+
+  trackByAccount(_: number, item: any): number {
+    return item.id;
   }
 }
