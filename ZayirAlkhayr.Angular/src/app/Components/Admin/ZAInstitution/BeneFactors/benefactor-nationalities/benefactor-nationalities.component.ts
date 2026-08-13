@@ -29,7 +29,7 @@ export class BenefactorNationalitiesComponent implements OnInit {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'جنسيات المتبرعين'];
   filterList: FilterModel[] = [];
   ItemForm: FormGroup;
-  showLoader: boolean = false;
+  showLoader = false;
   isFilter = true;
   UserId: any;
   NationalityId: number;
@@ -57,6 +57,18 @@ export class BenefactorNationalitiesComponent implements OnInit {
     this.FormInit();
     this.GetAllBeneFactorNationalities();
     this.GetAllBeneFactorNationalityFilters();
+  }
+
+  get isEditing(): boolean {
+    return Number(this.ItemForm?.get('id')?.value) > 0;
+  }
+
+  get activeFiltersCount(): number {
+    return this.pagingFilterModel.filterList?.length ?? 0;
+  }
+
+  trackByNationality(_index: number, item: any): number {
+    return item.id;
   }
 
   FormInit() {
@@ -91,7 +103,7 @@ export class BenefactorNationalitiesComponent implements OnInit {
       this.FillEditForm(item);
 
     this.modalService.open(content, {
-      size: 'xl',
+      size: 'md',
       scrollable: true,
       centered: true
     })

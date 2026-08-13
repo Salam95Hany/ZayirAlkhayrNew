@@ -33,7 +33,7 @@ import { NgxLoadingModule } from "ngx-loading";
   styleUrl: './benefactor.component.css'
 })
 export class BenefactorComponent {
-  @ViewChild('InputFile') InputFile: ElementRef;
+  @ViewChild('InputFile') InputFile: ElementRef<HTMLInputElement>;
   @ViewChild('DetailsSidePanel', { static: true }) DetailsSidePanel: TemplateRef<any>;
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'المتبرعين'];
   filterList: FilterModel[] = [];
@@ -48,7 +48,7 @@ export class BenefactorComponent {
   BeneFactorHeaders: any[] = [];
   NationalityList: any[] = [];
   ItemForm: FormGroup;
-  showLoader: boolean = false;
+  showLoader = false;
   isFilter = true;
   isFileExist = false;
   ImageFile: any;
@@ -87,6 +87,26 @@ export class BenefactorComponent {
     this.GetAllBeneFactorNationalitiesSelector();
     this.GetAllBeneFactorData();
     this.GetAllBeneFactorFilters();
+  }
+
+  get isEditing(): boolean {
+    return Number(this.ItemForm?.get('id')?.value) > 0;
+  }
+
+  get activeFiltersCount(): number {
+    return this.pagingFilterModel.filterList?.length ?? 0;
+  }
+
+  trackByBenefactor(_index: number, item: any): number {
+    return item.id;
+  }
+
+  trackByDonation(_index: number, item: any): number {
+    return item.id;
+  }
+
+  trackByReportHeader(index: number, item: any): number | string {
+    return item.id ?? item.key ?? item.nameAr ?? index;
   }
 
   FormInit() {
@@ -238,9 +258,13 @@ export class BenefactorComponent {
   }
 
   onFileChange(event: any) {
+    if (!event.target.files?.length)
+      return;
+
     let fileSize = this.fileService.getFileSize(event.target.files[0]);
     if (fileSize > 1) {
       this.toaster.warning(`هذا الملف ${event.target.files[0].name} حجمه أكبر من 1 ميجا`);
+      event.target.value = '';
       return;
     }
 

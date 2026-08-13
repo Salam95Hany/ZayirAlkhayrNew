@@ -1,183 +1,163 @@
 <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="section-content">
-    <div class="header-section">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="mb-2"><i class="fas fa-tasks me-2"></i>مهامي</h1>
-                <p class="mb-0 opacity-75">إدارة أنشطتك اليومية</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <h3 class="mb-0" id="currentDate">{{ currentDate }}</h3>
-                <p class="mb-0 opacity-75" id="currentTime">{{ currentTime }}</p>
-            </div>
+<main class="daily-page admin-page" dir="rtl">
+    <section class="daily-hero">
+        <div class="hero-copy">
+            <span class="hero-kicker"><i class="uil uil-focus-target"></i> مساحة عملي اليومية</span>
+            <h1>مهامي</h1>
+            <p>رتّب أولوياتك، تابع مواعيد التسليم، وحدّث تقدمك في المهام المسندة إليك بسهولة.</p>
         </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-md-3 col-sm-6">
-            <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-1">إجمالي المهام</h6>
-                        <h2 class="mb-0 fw-bold">{{TotalCount}}</h2>
-                    </div>
-                    <div class="text-primary">
-                        <i class="fas fa-list-check fa-2x"></i>
-                    </div>
-                </div>
+        <div class="hero-clock">
+            <span><i class="uil uil-calendar-alt"></i>{{ currentDate }}</span>
+            <strong>{{ currentTime }}</strong>
+        </div>
+    </section>
+
+    <section class="stats-grid" aria-label="ملخص مهامي">
+        <article class="stat-card stat-card--total">
+            <span class="stat-icon"><i class="uil uil-clipboard-notes"></i></span>
+            <div><small>إجمالي مهامي</small><strong>{{ TotalCount }}</strong><p>كل المهام المسندة إليك</p></div>
+        </article>
+        <article class="stat-card stat-card--received">
+            <span class="stat-icon"><i class="uil uil-inbox"></i></span>
+            <div><small>تم التسليم</small><strong>{{ CompletedCount }}</strong><p>مهام جاهزة للبدء</p></div>
+        </article>
+        <article class="stat-card stat-card--progress">
+            <span class="stat-icon"><i class="uil uil-process"></i></span>
+            <div><small>قيد العمل</small><strong>{{ InProgressCount }}</strong><p>مهام تعمل عليها الآن</p></div>
+        </article>
+        <article class="stat-card stat-card--finished">
+            <span class="stat-icon"><i class="uil uil-check-circle"></i></span>
+            <div><small>تم الانتهاء</small><strong>{{ FinishedCount }}</strong><p>إجمالي المهام المكتملة</p></div>
+        </article>
+    </section>
+
+    <section class="admin-card daily-workspace">
+        <header class="workspace-header">
+            <div class="section-title">
+                <span><i class="uil uil-list-ul"></i></span>
+                <div><h2>قائمة مهامي</h2><p>ابحث أو اختر عرضاً سريعاً للوصول إلى المهمة المطلوبة</p></div>
             </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-1">تم التسليم</h6>
-                        <h2 class="mb-0 fw-bold text-success">{{CompletedCount}}</h2>
-                    </div>
-                    <div class="text-success">
-                        <i class="fas fa-check-circle fa-2x"></i>
-                    </div>
-                </div>
+
+            <div class="search-field">
+                <i class="uil uil-search"></i>
+                <input type="search" [(ngModel)]="PagingFilter.searchText" (keyup.enter)="OnFilterClick('SearchText')"
+                    placeholder="ابحث بالعنوان أو الوصف" aria-label="البحث في المهام">
+                <button type="button" (click)="OnFilterClick('SearchText')" aria-label="تنفيذ البحث">بحث</button>
             </div>
+        </header>
+
+        <div class="quick-filters" role="group" aria-label="تصفية المهام">
+            <button type="button" (click)="OnFilterClick('All')" [class.active]="StatusFilterActive === 'All'">
+                <i class="uil uil-apps"></i><span>كل المهام</span>
+            </button>
+            <button type="button" (click)="OnFilterClick('InProgress')" [class.active]="StatusFilterActive === 'InProgress'">
+                <i class="uil uil-process"></i><span>قيد العمل</span>
+            </button>
+            <button type="button" (click)="OnFilterClick('HighPriority')" [class.active]="StatusFilterActive === 'HighPriority'">
+                <i class="uil uil-exclamation-triangle"></i><span>أولوية عالية</span>
+            </button>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-1">قيد العمل</h6>
-                        <h2 class="mb-0 fw-bold text-warning">{{InProgressCount}}</h2>
-                    </div>
-                    <div class="text-warning">
-                        <i class="fas fa-spinner fa-2x"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-1">تم الانتهاء</h6>
-                        <h2 class="mb-0 fw-bold text-primary">{{FinishedCount}}</h2>
-                    </div>
-                    <div class="text-primary">
-                        <i class="fas fa-chart-pie fa-2x"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row mb-2 align-items-center">
-        <div class="col-md-2 mb-3 mb-md-0">
-            <div class="input-group">
-                <span class="input-group-text bg-white border-end-0 cursor-pointer" style="border-radius: 0 2rem 2rem 0; border: 2px solid #e2e8f0; border-right: none;" (click)="OnFilterClick('SearchText')">
-                    <i class="fas fa-search text-muted"></i>
-                </span>
-                <input type="text" class="form-control search-box border-start-0 ps-0" [(ngModel)]="PagingFilter.searchText" (keyup.enter)="OnFilterClick('SearchText')" placeholder="بحث ب العنوان, الوصف" style="border-left: none;">
-            </div>
-        </div>
-        <!-- <div class="col-md-2">
-            <input type="text" class="form-control search-box" [(ngModel)]="PagingFilter.searchText" (input)="OnFilterClick('SearchText')" placeholder="بحث ب العنوان ,الوصف...">
-        </div> -->
-        <div class="col-md-6">
-            <div class="btn-group w-30" role="group">
-                <button class="btn filter-btn" (click)="OnFilterClick('All')" [ngClass]="{'active': StatusFilterActive == 'All'}">الكل</button>
-                <button class="btn filter-btn" (click)="OnFilterClick('InProgress')" [ngClass]="{'active': StatusFilterActive == 'InProgress'}">قيد العمل</button>
-                <button class="btn filter-btn" (click)="OnFilterClick('HighPriority')" [ngClass]="{'active': StatusFilterActive == 'HighPriority'}">أولوية عالية</button>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <app-za-pagination (pageChanged)="OnPageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
-        </div>
-    </div>
-    <div class="section-title">
-        <i class="fas fa-clipboard-list"></i> مهام اليوم
-    </div>
-    <div class="row">
-        <div class="col-md-6" *ngFor="let item of TasksData">
-            <div class="task-card" [ngClass]="
-                    {
-                        'high-priority': item?.priority == 'HighPriority',
-                        'medium-priority': item?.priority == 'MediumPriority',
-                        'low-priority': item?.priority == 'LowPriority'
+
+        <div class="task-content" *ngIf="TasksData.length; else emptyTasks">
+            <div class="task-grid">
+                <article class="task-card" *ngFor="let item of TasksData; trackBy: trackByTask"
+                    [ngClass]="{
+                        'task-card--high': item?.priority === 'HighPriority',
+                        'task-card--medium': item?.priority === 'MediumPriority',
+                        'task-card--low': item?.priority === 'LowPriority',
+                        'task-card--done': item?.statusId === 3
                     }">
-                <div class="row align-items-center" [ngClass]="{'mb-2': item?.comment}">
-                    <!-- <div class="col-auto">
-                        <input type="checkbox" class="task-checkbox form-check-input">
-                    </div> -->
-                    <div class="col">
-                        <h5 class="mb-1">{{item?.title}}</h5>
-                        <p class="mb-1 text-muted">{{item?.description}}</p>
-                        <div class="d-flex gap-2 align-items-center">
-                            <span class="priority-badge bg-danger text-white" *ngIf="item?.priority == 'HighPriority'">أولوية عالية</span>
-                            <span class="priority-badge bg-warning text-white" *ngIf="item?.priority == 'MediumPriority'">أولوية متوسطة</span>
-                            <span class="priority-badge bg-success text-white" *ngIf="item?.priority == 'LowPriority'">أولوية منخفضة</span>
-                            <span class="task-time"><i class="far fa-clock me-1"></i>تاريخ التسليم: {{item?.dueDate |
-                                date:'yyyy-MM-dd'}}</span>
+                    <header class="task-card-header">
+                        <div class="task-heading">
+                            <span class="task-marker"><i class="uil uil-clipboard-check"></i></span>
+                            <div>
+                                <span class="priority-badge priority-badge--high" *ngIf="item?.priority === 'HighPriority'"><i class="uil uil-arrow-up"></i> أولوية عالية</span>
+                                <span class="priority-badge priority-badge--medium" *ngIf="item?.priority === 'MediumPriority'"><i class="uil uil-minus"></i> أولوية متوسطة</span>
+                                <span class="priority-badge priority-badge--low" *ngIf="item?.priority === 'LowPriority'"><i class="uil uil-arrow-down"></i> أولوية منخفضة</span>
+                                <h3>{{ item?.title }}</h3>
+                            </div>
+                        </div>
+                        <span class="status-badge status-badge--received" *ngIf="item.statusId === 1"><i class="uil uil-inbox"></i> تم التسليم</span>
+                        <span class="status-badge status-badge--progress" *ngIf="item.statusId === 2"><i class="uil uil-clock"></i> قيد العمل</span>
+                        <span class="status-badge status-badge--finished" *ngIf="item.statusId === 3"><i class="uil uil-check-circle"></i> مكتملة</span>
+                    </header>
 
-                            <span class="task-time"><i class="far fa-user me-1"></i>المكلف بالمهمة: أحمد علي</span>
+                    <p class="task-description">{{ item?.description }}</p>
 
-                            <span class="task-time" *ngIf="item.statusId == 1"><i class="fas fa-traffic-light me-1"></i>
-                                <span class="text-success">تم التسليم</span>
-                            </span>
-                            <span class="task-time" *ngIf="item.statusId == 2"><i class="fas fa-traffic-light me-1"></i>
-                                <span class="text-warning">قيد العمل</span>
-                            </span>
+                    <div class="task-timeline">
+                        <div class="date-item">
+                            <span><i class="uil uil-calendar-alt"></i></span>
+                            <div><small>تاريخ المهمة</small><strong>{{ item?.taskAddedDate ? (item.taskAddedDate | date:'yyyy-MM-dd') : 'غير محدد' }}</strong></div>
+                        </div>
+                        <i class="timeline-arrow uil uil-arrow-left"></i>
+                        <div class="date-item date-item--due">
+                            <span><i class="uil uil-calendar-slash"></i></span>
+                            <div><small>موعد التسليم</small><strong>{{ item?.dueDate ? (item.dueDate | date:'yyyy-MM-dd') : 'غير محدد' }}</strong></div>
                         </div>
                     </div>
-                    <div class="col-auto">
-                        <button class="btn btn-sm btn-outline-primary me-1" (click)="OpenItemModal(ItemModal,item)"><i
-                                class="fas fa-plus"></i></button>
-                        <button class="btn btn-sm btn-outline-success" (click)="ConvertTaskStatus(item.id,item.statusId)"><i class="fas fa-edit"></i></button>
+
+                    <div class="task-comment" *ngIf="item?.comment">
+                        <i class="uil uil-comment-alt-lines"></i>
+                        <div><small>ملاحظتي</small><p>{{ item.comment }}</p></div>
                     </div>
-                </div>
-                <div class="w-95" *ngIf="item?.comment">
-                    <input type="text" class="form-control" [value]="item.comment" disabled>
-                </div>
+
+                    <footer class="task-card-footer">
+                        <button type="button" class="secondary-action" (click)="OpenItemModal(ItemModal, item)">
+                            <i class="uil uil-comment-alt-edit"></i><span>{{ item?.comment ? 'تعديل الملاحظة' : 'إضافة ملاحظة' }}</span>
+                        </button>
+                        <button type="button" class="progress-action" (click)="ConvertTaskStatus(item.id, item.statusId)" *ngIf="item.statusId !== 3">
+                            <i class="uil" [ngClass]="item.statusId === 1 ? 'uil-play' : 'uil-check-circle'"></i>
+                            <span>{{ item.statusId === 1 ? 'بدء العمل' : 'إنهاء المهمة' }}</span>
+                        </button>
+                        <span class="completion-label" *ngIf="item.statusId === 3"><i class="uil uil-check"></i> أُنجزت المهمة بنجاح</span>
+                    </footer>
+                </article>
             </div>
         </div>
-    </div>
-    <!-- Add Task Button -->
-    <!-- <button class="add-task-btn" data-bs-toggle="modal" data-bs-target="#addTaskModal">
-        <i class="fas fa-plus fa-lg text-white"></i>
-    </button> -->
-</div>
+
+        <ng-template #emptyTasks>
+            <div class="empty-tasks">
+                <span><i class="uil uil-clipboard-blank"></i></span>
+                <h3>لا توجد مهام في هذا العرض</h3>
+                <p>جرّب البحث بكلمات مختلفة أو اختر «كل المهام».</p>
+                <button type="button" class="btn-secondary-admin" *ngIf="StatusFilterActive !== 'All' || PagingFilter.searchText" (click)="OnFilterClick('All')">عرض كل المهام</button>
+            </div>
+        </ng-template>
+
+        <footer class="admin-card-footer workspace-footer" *ngIf="TotalCount">
+            <p>يتم عرض {{ TasksData.length }} من أصل {{ TotalCount }} مهمة</p>
+            <app-za-pagination (pageChanged)="OnPageChange($event)" [currentPage]="PagingFilter.currentPage"
+                [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
+        </footer>
+    </section>
+</main>
 
 <ng-template #ItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-plus"></i>
-            <span>املأ البيانات الأتية</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="ItemForm" autocomplete="off">
-            <table class="table table-bordered table-feature-value align-middle border m-0">
-                <tbody>
-                    <tr>
-                        <td class="table-feature">تعليق</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'أكتب تعليق...'" [error]="formErrors.comment" formControlName="comment"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddEditTaskComment()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
-</ng-template>
+    <section class="admin-modal comment-modal" dir="rtl">
+        <header class="admin-modal-header modal-heading">
+            <div class="modal-title">
+                <span><i class="uil uil-comment-alt-edit"></i></span>
+                <div><h2>{{ ItemForm.get('comment')?.value ? 'تعديل ملاحظة المهمة' : 'إضافة ملاحظة للمهمة' }}</h2><p>دوّن تحديثاً مختصراً يساعدك على متابعة ما تم إنجازه.</p></div>
+            </div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        </header>
 
+        <form [formGroup]="ItemForm" autocomplete="off" (ngSubmit)="AddEditTaskComment()">
+            <div class="modal-body-content">
+                <div class="comment-tip"><i class="uil uil-lightbulb-alt"></i><span>اكتب ملخصاً واضحاً عن التقدم أو أي تفاصيل تحتاج للرجوع إليها لاحقاً.</span></div>
+                <div class="form-group-admin">
+                    <label class="form-label-admin">الملاحظة <em>*</em></label>
+                    <app-za-input-with-label [type]="'text'" [placeholder]="'اكتب ملاحظتك هنا...'" [error]="formErrors.comment" formControlName="comment"></app-za-input-with-label>
+                </div>
+            </div>
+
+            <footer class="admin-modal-footer modal-actions">
+                <button type="button" class="btn-secondary-admin" (click)="modal.close()">إلغاء</button>
+                <button type="submit" class="btn-primary-admin" [disabled]="showLoader"><i class="uil uil-save"></i>حفظ الملاحظة</button>
+            </footer>
+        </form>
+    </section>
+</ng-template>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

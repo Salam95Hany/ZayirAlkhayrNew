@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { AdminBreadcrumbComponent } from '../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from "../../../../../Shared/za-pagination/za-pagination.component";
 import { ZaFiltersComponent } from "../../../../../Shared/za-filters/za-filters.component";
@@ -29,7 +29,7 @@ import { NgxLoadingModule } from "ngx-loading";
   styleUrl: './general-tasks.component.css',
   providers: [DatePipe]
 })
-export class GeneralTasksComponent {
+export class GeneralTasksComponent implements OnDestroy {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المهام', 'المهام العامة'];
   PriorityList: FormDropdownModel[] = [
     { value: 'HighPriority', name: 'أولوية عالية' },
@@ -47,6 +47,8 @@ export class GeneralTasksComponent {
   currentDate: string = '';
   currentTime: string = '';
   StatusFilterActive = 'All';
+  isFilter = true;
+  SelectedTask: any;
   CompletedCount = 0;
   InProgressCount = 0;
   FinishedCount = 0;
@@ -63,6 +65,17 @@ export class GeneralTasksComponent {
     priority: '',
     assignTo: ''
   };
+  private clockTimer?: ReturnType<typeof setInterval>;
+
+  get isEditing(): boolean {
+    return Boolean(this.TaskId);
+  }
+
+  get activeFiltersCount(): number {
+    return this.PagingFilter.filterList?.filter((filter: any) =>
+      filter?.isChecked || filter?.checked || filter?.selected
+    ).length ?? 0;
+  }
 
   constructor(private taskService: TaskService, private toaster: ToastrService, private authService: AuthService, private modalService: NgbModal,
     private fb: FormBuilder, private formService: FormService, private sharedService: SharedService, private datePipe: DatePipe
@@ -77,7 +90,12 @@ export class GeneralTasksComponent {
     this.GetAllGeneralTaskStatistics();
     this.GetAllUsers();
     this.updateDateTime();
-    setInterval(() => this.updateDateTime(), 1000);
+    this.clockTimer = setInterval(() => this.updateDateTime(), 1000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.clockTimer)
+      clearInterval(this.clockTimer);
   }
 
   updateDateTime() {
@@ -131,6 +149,14 @@ export class GeneralTasksComponent {
     this.modalService.open(content, {
       size: 'xl',
       scrollable: true,
+      centered: true
+    });
+  }
+
+  OpenDeleteItemModal(content: any, item: any) {
+    this.SelectedTask = item;
+    this.modalService.open(content, {
+      size: 'md',
       centered: true
     });
   }
@@ -240,5 +266,9 @@ export class GeneralTasksComponent {
         this.toaster.error(data.message);
       this.showLoader = false;
     });
+  }
+
+  trackByTask(_: number, item: any): number {
+    return item.id;
   }
 }

@@ -1,206 +1,226 @@
 <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="section-content">
-    <div class="header-section">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h1 class="mb-2"><i class="fas fa-tasks me-2"></i>إدارة المهام</h1>
-                <p class="mb-0 opacity-75">تنظيم المهام وتتبعها وإكمالها بكفاءة</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <h3 class="mb-0">{{ currentDate }}</h3>
-                <p class="mb-0 opacity-75">{{ currentTime }}</p>
-            </div>
+<main class="tasks-page admin-page" dir="rtl">
+    <section class="tasks-hero">
+        <div class="hero-copy">
+            <span class="hero-kicker"><i class="uil uil-clipboard-alt"></i> مركز عمليات الفريق</span>
+            <h1>إدارة المهام العامة</h1>
+            <p>أنشئ مهام فريق المؤسسة، تابع الأولويات ومواعيد التسليم، واحتفظ بصورة واضحة عن سير العمل.</p>
         </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-md-3 col-sm-6">
-            <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-1">إجمالي المهام</h6>
-                        <h2 class="mb-0 fw-bold">{{TotalCount}}</h2>
-                    </div>
-                    <div class="text-primary">
-                        <i class="fas fa-list-check fa-2x"></i>
-                    </div>
+
+        <div class="hero-side">
+            <div class="hero-clock">
+                <span><i class="uil uil-calendar-alt"></i>{{ currentDate }}</span>
+                <strong>{{ currentTime }}</strong>
+            </div>
+            <button type="button" class="hero-action" appRole pageKey="ZAInstitution_GeneralTasks" action="canAdd" (click)="OpenItemModal(AddItemModal, null)">
+                <i class="uil uil-plus-circle"></i><span>إنشاء مهمة جديدة</span>
+            </button>
+        </div>
+    </section>
+
+    <section class="stats-grid" aria-label="إحصائيات المهام">
+        <article class="stat-card stat-card--total">
+            <span class="stat-icon"><i class="uil uil-clipboard-notes"></i></span>
+            <div><small>إجمالي المهام</small><strong>{{ TotalCount }}</strong>
+                <p>كل المهام المسجلة</p>
+            </div>
+        </article>
+        <article class="stat-card stat-card--received">
+            <span class="stat-icon"><i class="uil uil-check-circle"></i></span>
+            <div><small>تم التسليم</small><strong>{{ CompletedCount }}</strong>
+                <p>مهام تم استلامها</p>
+            </div>
+        </article>
+        <article class="stat-card stat-card--progress">
+            <span class="stat-icon"><i class="uil uil-process"></i></span>
+            <div><small>قيد العمل</small><strong>{{ InProgressCount }}</strong>
+                <p>مهام جارٍ تنفيذها</p>
+            </div>
+        </article>
+        <article class="stat-card stat-card--finished">
+            <span class="stat-icon"><i class="uil uil-check-square"></i></span>
+            <div><small>تم الانتهاء</small><strong>{{ FinishedCount }}</strong>
+                <p>مهام مكتملة نهائياً</p>
+            </div>
+        </article>
+    </section>
+
+    <section class="admin-card task-workspace">
+        <header class="admin-card-header workspace-header">
+            <div class="section-title">
+                <span><i class="uil uil-list-ul"></i></span>
+                <div>
+                    <h2>سجل المهام</h2>
+                    <p>تابع تفاصيل المهام والمسؤولين عنها من مكان واحد</p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-1">تم التسليم</h6>
-                        <h2 class="mb-0 fw-bold text-success">{{CompletedCount}}</h2>
-                    </div>
-                    <div class="text-success">
-                        <i class="fas fa-check-circle fa-2x"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-1">قيد العمل</h6>
-                        <h2 class="mb-0 fw-bold text-warning">{{InProgressCount}}</h2>
-                    </div>
-                    <div class="text-warning">
-                        <i class="fas fa-spinner fa-2x"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="stats-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-1">تم الانتهاء</h6>
-                        <h2 class="mb-0 fw-bold text-primary">{{FinishedCount}}</h2>
-                    </div>
-                    <div class="text-primary">
-                        <i class="fas fa-chart-pie fa-2x"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row mb-2 align-items-center">
-        <div class="col-md-8">
+            <button type="button" class="filter-button" [class.filter-button--active]="!isFilter" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                <i class="uil uil-filter"></i>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}
+                <b *ngIf="activeFiltersCount">{{ activeFiltersCount }}</b>
+            </button>
+        </header>
+
+        <div class="filter-panel" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
             <app-za-filters (filterChanged)="OnFilterClick($event)" [FilterList]="filterList"></app-za-filters>
         </div>
-        <div class="col-md-4">
-            <app-za-pagination (pageChanged)="OnPageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
-        </div>
-    </div>
-    <div class="section-title">
-        <i class="fas fa-clipboard-list"></i> كل المهام
-    </div>
-    <div class="row">
-        <div class="col-md-6" *ngFor="let item of TasksData">
-            <div class="task-card" [ngClass]="
-                    {
-                        'high-priority': item?.priority == 'HighPriority',
-                        'medium-priority': item?.priority == 'MediumPriority',
-                        'low-priority': item?.priority == 'LowPriority'
+
+        <div class="task-content" *ngIf="TasksData.length; else emptyTasks">
+            <div class="task-grid">
+                <article class="task-card" *ngFor="let item of TasksData; trackBy: trackByTask" [ngClass]="{
+                        'task-card--high': item?.priority === 'HighPriority',
+                        'task-card--medium': item?.priority === 'MediumPriority',
+                        'task-card--low': item?.priority === 'LowPriority',
+                        'task-card--done': item?.statusId === 3
                     }">
-                <div class="row align-items-center" [ngClass]="{'mb-2': item?.comment}">
-                    <div class="col">
-                        <h5 class="mb-1">{{item?.title}}</h5>
-                        <p class="mb-1 text-muted">{{item?.description}}</p>
-                        <div class="d-flex gap-2 align-items-center">
-                            <span class="priority-badge bg-danger text-white" *ngIf="item?.priority == 'HighPriority'">أولوية عالية</span>
-                            <span class="priority-badge bg-warning text-white" *ngIf="item?.priority == 'MediumPriority'">أولوية متوسطة</span>
-                            <span class="priority-badge bg-success text-white" *ngIf="item?.priority == 'LowPriority'">أولوية منخفضة</span>
-                            <span class="task-time" *ngIf="item?.dueDate"><i class="far fa-clock me-1"></i>تاريخ التسليم: {{item?.dueDate | date:'yyyy-MM-dd'}}</span>
+                    <header class="task-card-header">
+                        <div class="task-heading">
+                            <span class="task-marker"><i class="uil uil-clipboard"></i></span>
+                            <div>
+                                <span class="priority-badge priority-badge--high" *ngIf="item?.priority === 'HighPriority'"><i class="uil uil-arrow-up"></i> أولوية عالية</span>
+                                <span class="priority-badge priority-badge--medium" *ngIf="item?.priority === 'MediumPriority'"><i class="uil uil-minus"></i> أولوية متوسطة</span>
+                                <span class="priority-badge priority-badge--low" *ngIf="item?.priority === 'LowPriority'"><i class="uil uil-arrow-down"></i> أولوية منخفضة</span>
+                                <h3>{{ item?.title }}</h3>
+                            </div>
+                        </div>
 
-                            <span class="task-time"><i class="far fa-user me-1"></i>المكلف بالمهمة:
-                                {{item?.assignTo}}</span>
+                        <div class="task-actions">
+                            <button type="button" class="icon-action icon-action--edit" title="تعديل المهمة" appRole pageKey="ZAInstitution_GeneralTasks" action="canEdit" (click)="OpenItemModal(AddItemModal, item)" *ngIf="item.statusId !== 3">
+                                <i class="uil uil-pen"></i>
+                            </button>
+                            <button type="button" class="icon-action icon-action--delete" title="حذف المهمة" appRole pageKey="ZAInstitution_GeneralTasks" action="canDelete" (click)="OpenDeleteItemModal(deleteTaskModal, item)">
+                                <i class="uil uil-trash-alt"></i>
+                            </button>
+                        </div>
+                    </header>
 
-                            <span class="task-time" *ngIf="item.statusId == 1"><i class="fas fa-traffic-light me-1"></i>
-                                <span class="text-success">تم التسليم</span>
-                            </span>
-                            <span class="task-time" *ngIf="item.statusId == 2"><i class="fas fa-traffic-light me-1"></i>
-                                <span class="text-warning">قيد العمل</span>
-                            </span>
-                            <span class="task-time" *ngIf="item.statusId == 3"><i class="fas fa-traffic-light me-1"></i>
-                                <span class="text-danger">تم الانتهاء</span>
-                            </span>
+                    <p class="task-description">{{ item?.description }}</p>
+
+                    <div class="task-meta">
+                        <div class="meta-item">
+                            <span><i class="uil uil-user"></i></span>
+                            <div><small>المكلّف بالمهمة</small><strong>{{ item?.assignTo || 'غير محدد' }}</strong></div>
+                        </div>
+                        <div class="meta-item">
+                            <span><i class="uil uil-calendar-alt"></i></span>
+                            <div><small>تاريخ التسليم</small><strong>{{ item?.dueDate ? (item.dueDate | date:'yyyy-MM-dd') : 'غير محدد' }}</strong></div>
                         </div>
                     </div>
-                    <div class="col-auto">
-                        <button class="btn btn-sm btn-outline-success me-1" appRole pageKey="ZAInstitution_GeneralTasks" action="canEdit" (click)="OpenItemModal(AddItemModal,item)" *ngIf="item.statusId != 3"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" appRole pageKey="ZAInstitution_GeneralTasks" action="canDelete" (click)="DeleteItem(item.id)"><i class="fas fa-trash"></i></button>
+
+                    <div class="task-comment" *ngIf="item?.comment">
+                        <i class="uil uil-comment-alt-lines"></i>
+                        <div><small>آخر تعليق</small>
+                            <p>{{ item.comment }}</p>
+                        </div>
                     </div>
-                </div>
-                <div class="w-95" *ngIf="item?.comment">
-                    <input type="text" class="form-control" [value]="item.comment" disabled>
-                </div>
+
+                    <footer class="task-card-footer">
+                        <span class="status-badge status-badge--received" *ngIf="item.statusId === 1"><i class="uil uil-check"></i> تم التسليم</span>
+                        <span class="status-badge status-badge--progress" *ngIf="item.statusId === 2"><i class="uil uil-clock"></i> قيد العمل</span>
+                        <span class="status-badge status-badge--finished" *ngIf="item.statusId === 3"><i class="uil uil-check-circle"></i> تم الانتهاء</span>
+                    </footer>
+                </article>
             </div>
         </div>
-    </div>
-    <button class="add-task-btn" appRole pageKey="ZAInstitution_GeneralTasks" action="canAdd" (click)="OpenItemModal(AddItemModal,null)">
-        <i class="fas fa-plus fa-lg text-white"></i>
-    </button>
-</div>
+
+        <ng-template #emptyTasks>
+            <div class="empty-tasks">
+                <span><i class="uil uil-clipboard-blank"></i></span>
+                <h3>لا توجد مهام لعرضها</h3>
+                <p>جرّب تغيير الفلاتر أو أنشئ مهمة جديدة لفريق العمل.</p>
+            </div>
+        </ng-template>
+
+        <footer class="admin-card-footer workspace-footer" *ngIf="TotalCount">
+            <p>يتم عرض {{ TasksData.length }} من أصل {{ TotalCount }} مهمة</p>
+            <app-za-pagination (pageChanged)="OnPageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
+        </footer>
+    </section>
+</main>
 
 <ng-template #AddItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-plus"></i>
-            <span>املأ البيانات الأتية</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="ItemForm" autocomplete="off">
-            <table class="table table-bordered table-feature-value align-middle border m-0">
-                <tbody>
-                    <tr>
-                        <td class="table-feature">العنوان</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'العنوان...'" [error]="formErrors.title" formControlName="title"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الوصف</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'text'" [placeholder]="'الوصف...'" [error]="formErrors.description" formControlName="description"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">تاريخ المهمة</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ المهمة...'" [error]="formErrors.taskAddedDate" formControlName="taskAddedDate"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">تاريخ التسليم</td>
-                        <td class="table-value">
-                            <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ التسليم...'" formControlName="dueDate"></app-za-input-with-label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الأولوية</td>
-                        <td class="table-value">
-                            <div class="form-floating">
-                                <app-za-drop-down-form-control [data]="PriorityList" [showSearch]="true" [placeholder]="'الأولوية'" formControlName="priority" [hasError]="formErrors.priority"></app-za-drop-down-form-control>
-                            </div>
-                            <div class="error-message" *ngIf="formErrors.priority">
-                                {{ formErrors.priority }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">المكلف بالمهمة</td>
-                        <td class="table-value">
-                            <div class="form-floating">
-                                <app-za-drop-down-form-control [data]="UsersData" [showSearch]="true" [placeholder]="'المكلف بالمهمة'" formControlName="assignTo" [hasError]="formErrors.assignTo"></app-za-drop-down-form-control>
-                            </div>
-                            <div class="error-message" *ngIf="formErrors.assignTo">
-                                {{ formErrors.assignTo }}
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <section class="admin-modal task-modal" dir="rtl">
+        <header class="admin-modal-header modal-heading">
+            <div class="modal-title">
+                <span><i class="uil" [ngClass]="isEditing ? 'uil-pen' : 'uil-clipboard-plus'"></i></span>
+                <div>
+                    <h2>{{ isEditing ? 'تعديل بيانات المهمة' : 'إنشاء مهمة جديدة' }}</h2>
+                    <p>أدخل تفاصيل واضحة وحدد المسؤول والأولوية وموعد التنفيذ.</p>
+                </div>
+            </div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        </header>
+
+        <form [formGroup]="ItemForm" autocomplete="off" (ngSubmit)="AddItem()">
+            <div class="modal-body-content">
+                <section class="form-section-block">
+                    <div class="form-section-title"><span><i class="uil uil-file-alt"></i></span>
+                        <div>
+                            <h3>بيانات المهمة</h3>
+                            <p>العنوان والوصف الأساسي للمهمة</p>
+                        </div>
+                    </div>
+                    <div class="form-fields">
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">عنوان المهمة <em>*</em></label>
+                            <app-za-input-with-label [type]="'text'" [placeholder]="'اكتب عنواناً واضحاً للمهمة'" [error]="formErrors.title" formControlName="title"></app-za-input-with-label>
+                        </div>
+                        <div class="form-group-admin form-group-admin--wide">
+                            <label class="form-label-admin">وصف المهمة <em>*</em></label>
+                            <app-za-input-with-label [type]="'text'" [placeholder]="'وضّح المطلوب والنتيجة المتوقعة'" [error]="formErrors.description" formControlName="description"></app-za-input-with-label>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="form-section-block">
+                    <div class="form-section-title"><span><i class="uil uil-schedule"></i></span>
+                        <div>
+                            <h3>التكليف والجدولة</h3>
+                            <p>حدد المسؤول، الأولوية، والفترة الزمنية</p>
+                        </div>
+                    </div>
+                    <div class="form-fields form-fields--two">
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">المكلّف بالمهمة <em>*</em></label>
+                            <app-za-drop-down-form-control [data]="UsersData" [showSearch]="true" [placeholder]="'اختر الموظف المسؤول'" formControlName="assignTo" [hasError]="formErrors.assignTo"></app-za-drop-down-form-control>
+                            <small class="field-error" *ngIf="formErrors.assignTo">{{ formErrors.assignTo }}</small>
+                        </div>
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">الأولوية <em>*</em></label>
+                            <app-za-drop-down-form-control [data]="PriorityList" [showSearch]="true" [placeholder]="'اختر أولوية المهمة'" formControlName="priority" [hasError]="formErrors.priority"></app-za-drop-down-form-control>
+                            <small class="field-error" *ngIf="formErrors.priority">{{ formErrors.priority }}</small>
+                        </div>
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">تاريخ المهمة <em>*</em></label>
+                            <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ المهمة'" [error]="formErrors.taskAddedDate" formControlName="taskAddedDate"></app-za-input-with-label>
+                        </div>
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">تاريخ التسليم</label>
+                            <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ التسليم'" formControlName="dueDate"></app-za-input-with-label>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <footer class="admin-modal-footer modal-actions">
+                <button type="button" class="btn-secondary-admin" (click)="modal.close()">إلغاء</button>
+                <button type="submit" class="btn-primary-admin" [disabled]="showLoader"><i class="uil uil-save"></i>{{ isEditing ? 'حفظ التعديلات' : 'إنشاء المهمة' }}</button>
+            </footer>
         </form>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddItem()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
+    </section>
 </ng-template>
 
+<ng-template #deleteTaskModal let-modal>
+    <section class="delete-modal" dir="rtl">
+        <button type="button" class="modal-close delete-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        <span class="delete-icon"><i class="uil uil-trash-alt"></i></span>
+        <h2>حذف المهمة؟</h2>
+        <p>سيتم حذف مهمة <strong>«{{ SelectedTask?.title }}»</strong> نهائياً من سجل المهام.</p>
+        <div class="delete-actions">
+            <button type="button" class="btn-secondary-admin" (click)="modal.close()">تراجع</button>
+            <button type="button" class="btn-danger-admin" [disabled]="showLoader" (click)="DeleteItem(SelectedTask?.id)"><i class="uil uil-trash-alt"></i>نعم، حذف المهمة</button>
+        </div>
+    </section>
+</ng-template>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

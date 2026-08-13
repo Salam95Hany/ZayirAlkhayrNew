@@ -8,7 +8,7 @@ import { ZaPaginationComponent } from '../../../../../Shared/za-pagination/za-pa
 import { ZaFiltersComponent } from '../../../../../Shared/za-filters/za-filters.component';
 import { ZaEmptyDataComponent } from '../../../../../Shared/za-empty-data/za-empty-data.component';
 import { FilterModel } from '../../../../../Models/shared/FilterModel';
-import { FileSortingModel, UploadFileModel } from '../../../../../Models/shared/FileModel';
+import { UploadFileModel } from '../../../../../Models/shared/FileModel';
 import { PagingFilterModel } from '../../../../../Models/shared/PagingFilterModel ';
 import { PagedResponseModel } from '../../../../../Models/shared/PagedResponseModel';
 import { ZaWebsiteService } from '../../../../../Services/zainstitution/za-website.service';
@@ -28,15 +28,14 @@ import { NgxLoadingModule } from 'ngx-loading';
   styleUrl: './project.component.css'
 })
 export class ProjectComponent implements OnInit {
-  @ViewChild('InputMultiFile') InputMultiFile: ElementRef;
+  @ViewChild('InputMultiFile') InputMultiFile: ElementRef<HTMLInputElement>;
   TitleList = ['مؤسسة زائر الخير', 'موقع زائر الخير', 'المشاريع'];
   filterList: FilterModel[] = [];
   fileURL: any[] = [];
   multiFileURL: any[] = [];
   multiImagesFile: any[] = [];
-  FileSotingModel: FileSortingModel[] = [];
   ItemForm: FormGroup;
-  ShowLoader: boolean = false;
+  ShowLoader = false;
   isFilter = true;
   isFileExist = false;
   ProjectId: any;
@@ -73,6 +72,41 @@ export class ProjectComponent implements OnInit {
     this.FormInit();
     this.GetAllProjects();
     this.GetProjectFilters();
+  }
+
+  get isEditing(): boolean {
+    return Number(this.ItemForm?.get('id')?.value) > 0;
+  }
+
+  get activeFiltersCount(): number {
+    return this.pagingFilterModel.filterList?.length ?? 0;
+  }
+
+  get hasGalleryChanges(): boolean {
+    return this.multiImagesFile.length > 0 || this.FileModel.deletedFiles.length > 0;
+  }
+
+  trackByProject(_index: number, item: any): number {
+    return item.id;
+  }
+
+  trackByGalleryImage(index: number, item: any): number | string {
+    return item.id ?? item.uniqueId ?? index;
+  }
+
+  getFundingProgress(item: any): number {
+    const totalAmount = this.toNumber(item?.totalAmount);
+    const donationAmount = this.toNumber(item?.totalDonationAmount);
+
+    if (totalAmount <= 0)
+      return 0;
+
+    return Math.min(100, Math.max(0, Math.round((donationAmount / totalAmount) * 100)));
+  }
+
+  private toNumber(value: unknown): number {
+    const parsedValue = Number(String(value ?? 0).replace(/,/g, ''));
+    return Number.isFinite(parsedValue) ? parsedValue : 0;
   }
 
   FormInit() {
@@ -121,7 +155,7 @@ export class ProjectComponent implements OnInit {
       this.FillEditForm(item);
 
     this.modalService.open(content, {
-      size: 'xl',
+      size: 'lg',
       scrollable: true,
       centered: true
     });
@@ -180,6 +214,9 @@ export class ProjectComponent implements OnInit {
   }
 
   onMultiFileChange(event: any) {
+    if (!event.target.files?.length)
+      return;
+
     let fileSizeValidate = false;
     [...event.target.files].forEach(element => {
       let fileSize = this.fileService.getFileSize(element);
@@ -189,8 +226,10 @@ export class ProjectComponent implements OnInit {
       }
     });
 
-    if (fileSizeValidate)
+    if (fileSizeValidate) {
+      event.target.value = '';
       return;
+    }
 
     this.fileService.onSelectedMultiFile([...event.target.files]).then(data => {
       this.multiFileURL.push(...data?.urls);

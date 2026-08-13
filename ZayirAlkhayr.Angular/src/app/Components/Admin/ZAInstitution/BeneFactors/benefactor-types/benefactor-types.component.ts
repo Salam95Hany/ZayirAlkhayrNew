@@ -46,6 +46,16 @@ export class BenefactorTypesComponent implements OnInit {
     name: ''
   };
 
+  get isEditing(): boolean {
+    return Number(this.ItemForm?.get('id')?.value) > 0;
+  }
+
+  get activeFiltersCount(): number {
+    return this.pagingFilterModel.filterList?.filter((filter: any) =>
+      filter?.isChecked || filter?.checked || filter?.selected
+    ).length ?? 0;
+  }
+
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder,
     private formService: FormService, private benefactorService: BenefactorService, private authService: AuthService) {
 
@@ -90,10 +100,10 @@ export class BenefactorTypesComponent implements OnInit {
       this.FillEditForm(item);
 
     this.modalService.open(content, {
-      size: 'xl',
+      size: 'md',
       scrollable: true,
       centered: true
-    })
+    });
   }
 
   openDeleteItemModal(content: any, item: any) {
@@ -129,6 +139,10 @@ export class BenefactorTypesComponent implements OnInit {
     this.pagingFilterModel.filterList = filterList;
     this.pagingFilterModel.currentPage = 1;
     this.GetAllBeneFactorTypes();
+  }
+
+  trackByType(_: number, item: any): number {
+    return item.id;
   }
 
   validateForm(): boolean {

@@ -1,264 +1,239 @@
 <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2">
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="ZAInstitution_Activity" action="canAdd" (click)="openItemModal(OpenItemModal,null)">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>إضافة</span>
-                </button>
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
-                    <i class="uil uil-filter"></i>
-                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
-                </button>
+<main class="activity-page admin-page" dir="rtl">
+    <section class="activity-hero">
+        <div class="activity-hero__copy">
+            <h1>الأنشطة والفعاليات</h1>
+            <p>أنشئ أنشطة المؤسسة، نظّم معرض الصور الخاص بكل نشاط، وتحكّم في ظهور المحتوى على الموقع.</p>
+        </div>
+        <button type="button" class="hero-action" appRole pageKey="ZAInstitution_Activity" action="canAdd"
+            (click)="openItemModal(OpenItemModal, null)">
+            <i class="uil uil-plus"></i><span>إضافة نشاط جديد</span>
+        </button>
+    </section>
+
+    <section class="admin-card activity-library">
+        <header class="admin-card-header library-header">
+            <div class="section-title">
+                <span class="section-title__icon"><i class="uil uil-apps"></i></span>
+                <div>
+                    <h2>مكتبة الأنشطة</h2>
+                    <p>{{ pagedResponseModel.totalCount }} نشاطاً مسجلاً في النظام</p>
+                </div>
             </div>
+            <button type="button" class="filter-button" [class.filter-button--active]="!isFilter"
+                (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                <i class="uil uil-filter"></i>
+                <span>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}</span>
+                <b *ngIf="activeFiltersCount">{{ activeFiltersCount }}</b>
+            </button>
+        </header>
+
+        <div class="filter-panel" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)"></app-za-filters>
         </div>
-        <div class="col-md-4 mb-2">
-            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage" [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount"></app-za-pagination>
+
+        <div class="activity-grid" *ngIf="pagedResponseModel.results.length; else emptyState">
+            <article class="activity-card" *ngFor="let item of pagedResponseModel.results; trackBy: trackByActivity">
+                <div class="activity-card__media">
+                    <img [src]="item.image" [alt]="item.name || 'صورة النشاط'" loading="lazy">
+                    <span class="admin-badge activity-status"
+                        [ngClass]="item.isVisible ? 'admin-badge-success' : 'admin-badge-danger'">
+                        <i class="uil" [ngClass]="item.isVisible ? 'uil-eye' : 'uil-eye-slash'"></i>
+                        {{ item.isVisible ? 'ظاهر في الموقع' : 'غير ظاهر' }}
+                    </span>
+                </div>
+
+                <div class="activity-card__body">
+                    <h3 [title]="item.name">{{ item.name }}</h3>
+                    <p [title]="item.description">{{ item.description }}</p>
+                    <div class="activity-meta">
+                        <span><i class="uil uil-user"></i>{{ item.createdBy || 'غير محدد' }}</span>
+                        <span><i class="uil uil-calendar-alt"></i>{{ item.insertDate || 'غير محدد' }}</span>
+                    </div>
+                </div>
+
+                <footer class="activity-card__actions">
+                    <button type="button" class="card-action card-action--gallery" appRole
+                        pageKey="ZAInstitution_Activity" action="canAdd"
+                        (click)="openAddImagesModal(OpenAddImagesModal, item)" title="إدارة صور النشاط">
+                        <i class="uil uil-images"></i><span>معرض الصور</span>
+                    </button>
+                    <button type="button" class="card-action card-action--edit" appRole
+                        pageKey="ZAInstitution_Activity" action="canEdit"
+                        (click)="openItemModal(OpenItemModal, item)" title="تعديل النشاط">
+                        <i class="uil uil-pen"></i><span>تعديل</span>
+                    </button>
+                    <button type="button" class="card-action card-action--delete" appRole
+                        pageKey="ZAInstitution_Activity" action="canDelete"
+                        (click)="openDeleteItemModal(deleteItemModal, item)" title="حذف النشاط">
+                        <i class="uil uil-trash-alt"></i><span>حذف</span>
+                    </button>
+                </footer>
+            </article>
         </div>
-        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
-            <div class="d-flex align-items-center">
-                <ng-container>
-                    <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)"></app-za-filters>
-                </ng-container>
+
+        <ng-template #emptyState>
+            <div class="empty-state">
+                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
             </div>
-        </div>
-    </div>
-    <div class="p-3 bg-white">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>الاسم</th>
-                        <th>الوصف</th>
-                        <th>أُضيف بواسطة</th>
-                        <th>تاريخ الاضافة</th>
-                        <th class="text-center">مرئي في الموقع</th>
-                        <th>عمليات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of pagedResponseModel.results">
-                            <td>
-                                <img src="{{item.image}}" class="table-image">
-                            </td>
-                            <td>{{item.name}}</td>
-                            <td>{{item.description}}</td>
-                            <td>{{item.createdBy}}</td>
-                            <td>{{item.insertDate}}</td>
-                            <td class="text-center">
-                                <label class="jtoggler-wrapper m-0 mx-0">
-                                <input type="checkbox" [(ngModel)]="item.isVisible" class="jtoggler" disabled>
-                                <div class="jtoggler-control">
-                                <div class="jtoggler-handle"></div>
-                                </div>
-                            </label>
-                            </td>
-                            <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_Activity" action="canEdit" (click)="openItemModal(OpenItemModal,item)">
-                                        <i class="uil uil-pen"></i>
-                                        <span>تعديل</span>
-                                    </button>
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_Activity" action="canAdd" (click)="openAddImagesModal(OpenAddImagesModal,item)">
-                                        <i class="uil uil-plus"></i>
-                                        <span>اضافة</span>
-                                    </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" appRole pageKey="ZAInstitution_Activity" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
-                                    <i class="uil uil-trash-alt"></i>
-                                    <span>حذف</span>
-                                </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!pagedResponseModel.results.length">
-                            <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+        </ng-template>
+
+        <footer class="admin-card-footer library-footer" *ngIf="pagedResponseModel.totalCount">
+            <p>يتم عرض {{ pagedResponseModel.results.length }} من أصل {{ pagedResponseModel.totalCount }} نشاط</p>
+            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage"
+                [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount">
+            </app-za-pagination>
+        </footer>
+    </section>
+</main>
 
 <ng-template #OpenItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-plus"></i>
-            <span>املأ البيانات الأتية</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="ItemForm" autocomplete="off">
-            <table class="table table-bordered table-feature-value align-middle border m-0">
-                <tbody>
-                    <tr>
-                        <td class="table-feature">الاسم</td>
-                        <td class="table-value">
-                            <input type="text" class="form-control form-control-lg input-box" formControlName="name" placeholder="الاسم..." [class.error]="formErrors.name">
-                            <div class="error-message" *ngIf="formErrors.name">
-                                {{ formErrors.name }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الوصف</td>
-                        <td class="table-value">
-                            <input type="text" class="form-control form-control-lg input-box" formControlName="description" placeholder="الوصف..." [class.error]="formErrors.description">
-                            <div class="error-message" *ngIf="formErrors.description">
-                                {{ formErrors.description }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الحالة</td>
-                        <td class="table-value">
-                            <div class="d-flex align-items-center">
-                                <div class="me-2">مرئي</div>
-                                <label class="jtoggler-wrapper m-0 mx-0">
-                                <input type="checkbox" formControlName="isVisible" class="jtoggler">
-                                <div class="jtoggler-control">
-                                    <div class="jtoggler-handle"></div>
-                                </div>
-                            </label>
-                                <div class="ms-2">غير مرئي</div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">تحميل صورة</td>
-                        <td class="table-value">
-                            <div class="choose-file-box position-relative border rounded h-58 input-box" (click)="InputFile.click()" [class.error]="isFileExist">
-                                <div class="choose-file-btn">تحميل صورة</div>
-                            </div>
-                            <div class="error-message" *ngIf="isFileExist">
-                                <span>هذا الحقل مطلوب</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature"></td>
-                        <td>
-                            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-2">
-                                <div class="w-25" *ngFor="let url of fileURL">
-                                    <div class="choosed-img img-thumbnail shadow-sm">
-                                        <img src="{{url.image}}" loading="lazy" alt="" />
-                                        <div class="choosed-img-delete" (click)="DeleteSelectedFile()">
-                                            <i class="far fa-times-circle"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <section class="admin-modal activity-modal" dir="rtl">
+        <header class="admin-modal-header modal-heading">
+            <div class="modal-title">
+                <span><i class="uil" [ngClass]="isEditing ? 'uil-pen' : 'uil-calendar-alt'"></i></span>
+                <div>
+                    <h2>{{ isEditing ? 'تعديل النشاط' : 'إضافة نشاط جديد' }}</h2>
+                    <p>{{ isEditing ? 'حدّث بيانات النشاط وصورة الغلاف.' : 'أدخل بيانات النشاط الذي سيظهر على الموقع.' }}</p>
+                </div>
+            </div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()">
+                <i class="uil uil-times"></i>
+            </button>
+        </header>
+
+        <form [formGroup]="ItemForm" autocomplete="off" (ngSubmit)="AddNewActivity()">
+            <div class="modal-body-content">
+                <div class="form-group-admin">
+                    <label class="form-label-admin" for="activityName">اسم النشاط <em>*</em></label>
+                    <div class="field-control" [class.field-control--error]="formErrors.name">
+                        <i class="uil uil-text-fields"></i>
+                        <input id="activityName" type="text" formControlName="name" placeholder="اكتب اسم النشاط">
+                    </div>
+                    <small class="field-error" *ngIf="formErrors.name">
+                        <i class="uil uil-exclamation-circle"></i>{{ formErrors.name }}
+                    </small>
+                </div>
+
+                <div class="form-group-admin">
+                    <label class="form-label-admin" for="activityDescription">وصف النشاط <em>*</em></label>
+                    <div class="field-control field-control--textarea" [class.field-control--error]="formErrors.description">
+                        <i class="uil uil-align-right"></i>
+                        <textarea id="activityDescription" rows="4" formControlName="description"
+                            placeholder="اكتب وصفاً مختصراً وواضحاً للنشاط"></textarea>
+                    </div>
+                    <small class="field-error" *ngIf="formErrors.description">
+                        <i class="uil uil-exclamation-circle"></i>{{ formErrors.description }}
+                    </small>
+                </div>
+
+                <div class="visibility-row">
+                    <span class="visibility-row__icon"><i class="uil uil-eye"></i></span>
+                    <div><strong>الظهور في الموقع</strong><small>فعّل الخيار لنشر النشاط على الموقع.</small></div>
+                    <label class="modern-switch">
+                        <input type="checkbox" formControlName="isVisible"><span></span>
+                    </label>
+                </div>
+
+                <div class="form-group-admin">
+                    <label class="form-label-admin">صورة غلاف النشاط <em>*</em></label>
+                    <button type="button" class="upload-zone" [class.upload-zone--error]="isFileExist"
+                        (click)="InputFile.click()">
+                        <i class="uil uil-cloud-upload"></i>
+                        <strong>{{ fileURL.length ? 'استبدال صورة الغلاف' : 'اختر صورة الغلاف' }}</strong>
+                        <span>صورة واضحة بحجم لا يتجاوز 1 ميجابايت</span>
+                    </button>
+                    <small class="field-error" *ngIf="isFileExist">
+                        <i class="uil uil-exclamation-circle"></i>صورة الغلاف مطلوبة
+                    </small>
+                </div>
+
+                <div class="cover-preview" *ngFor="let url of fileURL">
+                    <img [src]="url.image" alt="معاينة صورة النشاط">
+                    <button type="button" aria-label="حذف الصورة" (click)="DeleteSelectedFile()">
+                        <i class="uil uil-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <footer class="admin-modal-footer modal-actions">
+                <button type="button" class="btn-secondary-admin" (click)="modal.close()">
+                    <i class="uil uil-times"></i>إلغاء
+                </button>
+                <button type="submit" class="btn-primary-admin save-button" [disabled]="ShowLoader">
+                    <i class="uil uil-save"></i>{{ isEditing ? 'حفظ التعديلات' : 'إضافة النشاط' }}
+                </button>
+            </footer>
         </form>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewActivity()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
+    </section>
 </ng-template>
 
 <ng-template #OpenAddImagesModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-plus"></i>
-            <span>اضافة صور</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+    <section class="admin-modal gallery-modal" dir="rtl">
+        <header class="admin-modal-header modal-heading">
+            <div class="modal-title">
+                <span><i class="uil uil-images"></i></span>
+                <div><h2>معرض صور النشاط</h2><p>أضف صوراً متعددة وحدّد ترتيب ظهور الصور المحفوظة.</p></div>
+            </div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()">
+                <i class="uil uil-times"></i>
+            </button>
+        </header>
+
+        <div class="gallery-modal__body">
+            <button type="button" class="upload-zone gallery-upload" (click)="InputMultiFile.click()">
+                <i class="uil uil-images"></i>
+                <strong>إضافة صور إلى المعرض</strong>
+                <span>يمكنك اختيار عدة صور، بحد أقصى 1 ميجابايت لكل صورة</span>
+            </button>
+
+            <div class="gallery-grid" *ngIf="multiFileURL.length; else galleryEmpty">
+                <article class="gallery-item" *ngFor="let url of multiFileURL; let i = index; trackBy: trackByGalleryImage">
+                    <img [src]="url.image" alt="صورة من معرض النشاط" loading="lazy">
+                    <span class="gallery-item__type">{{ url?.id ? 'صورة محفوظة' : 'صورة جديدة' }}</span>
+                    <button type="button" class="gallery-item__delete" aria-label="حذف الصورة"
+                        (click)="DeleteMultiImageFiles(i, url)"><i class="uil uil-trash-alt"></i></button>
+                    <label *ngIf="url?.id" class="sort-field">
+                        <span>ترتيب العرض</span>
+                        <input type="number" min="1" [(ngModel)]="url.displayOrder">
+                    </label>
+                </article>
+            </div>
+
+            <ng-template #galleryEmpty>
+                <div class="gallery-empty"><i class="uil uil-image-slash"></i><strong>لا توجد صور في المعرض</strong><span>ابدأ بإضافة صور النشاط من الزر أعلاه.</span></div>
+            </ng-template>
         </div>
-    </div>
-    <div class="modal-body">
-        <table class="table table-bordered table-feature-value align-middle border m-0">
-            <tbody>
-                <tr>
-                    <td class="table-feature">تحميل صورة</td>
-                    <td class="table-value">
-                        <div class="choose-file-box position-relative border rounded h-58" (click)="InputMultiFile.click()">
-                            <div class="choose-file-btn">تحميل صورة</div>
-                        </div>
-                        <div class="error-message" *ngIf="isFileExist">
-                            <span>هذا الحقل مطلوب</span>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature"></td>
-                    <td>
-                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-2">
-                            <div class="w-25" *ngFor="let url of multiFileURL;let i = index">
-                                <div class="choosed-img img-thumbnail shadow-sm">
-                                    <img src="{{url.image}}" loading="lazy" alt="" />
-                                    <div class="choosed-img-delete" (click)="DeleteMultiImageFiles(i,url)">
-                                        <i class="far fa-times-circle"></i>
-                                    </div>
-                                </div>
-                                <input *ngIf="url?.id" type="number" class="form-control text-center" [(ngModel)]="url.displayOrder">
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddMultiImagesFile()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button class="btn btn-secondary rounded-25 d-flex align-items-center gap-2" (click)="ApplyFilesSorting()">
-        <i class="uil uil-sort fs-3"></i>
-        <span>ترتيب</span>
-      </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
+
+        <footer class="admin-modal-footer gallery-actions">
+            <button type="button" class="btn-secondary-admin" (click)="modal.close()">إلغاء</button>
+            <button type="button" class="sort-button" [disabled]="ShowLoader || !multiFileURL.length"
+                (click)="ApplyFilesSorting()"><i class="uil uil-sort-amount-down"></i>تطبيق الترتيب</button>
+            <button type="button" class="btn-primary-admin" [disabled]="ShowLoader || !hasGalleryChanges"
+                (click)="AddMultiImagesFile()"><i class="uil uil-save"></i>حفظ التغييرات</button>
+        </footer>
+    </section>
 </ng-template>
 
 <ng-template #deleteItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <span>تأكيد الإجراء</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+    <section class="delete-modal" dir="rtl">
+        <button type="button" class="modal-close delete-modal__close" aria-label="إغلاق" (click)="modal.dismiss()">
+            <i class="uil uil-times"></i>
+        </button>
+        <span class="delete-modal__icon"><i class="uil uil-trash-alt"></i></span>
+        <h2>حذف النشاط؟</h2>
+        <p>سيتم حذف النشاط وبياناته من النظام. لا يمكن التراجع عن هذا الإجراء بعد التأكيد.</p>
+        <div class="delete-modal__actions">
+            <button type="button" class="btn-secondary-admin" (click)="modal.close()">تراجع</button>
+            <button type="button" class="btn-danger-admin" [disabled]="ShowLoader" (click)="DeleteItem()">
+                <i class="uil uil-trash-alt"></i>نعم، حذف النشاط
+            </button>
         </div>
-    </div>
-    <div class="modal-body">
-        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
-    </div>
-    <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success" (click)="DeleteItem()">
-            <i class="fas fa-check"></i>
-            <span class="ms-2">نعم</span>
-        </button>
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
-            <i class="fas fa-times"></i>
-            <span class="ms-2">لا</span>
-        </button>
-    </div>
+    </section>
 </ng-template>
 
-<input type="file" #InputFile class="choose-file-input" (change)="onFileChange($event)" hidden />
-<input type="file" #InputMultiFile multiple class="choose-file-input" (change)="onMultiFileChange($event)" hidden />
+<input type="file" #InputFile accept="image/*" (change)="onFileChange($event)" hidden>
+<input type="file" #InputMultiFile accept="image/*" multiple (change)="onMultiFileChange($event)" hidden>
 
 <ngx-loading [show]="ShowLoader"></ngx-loading>

@@ -1,410 +1,299 @@
 <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2">
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="ZAInstitution_Benefactors" action="canAdd" (click)="openItemModal(OpenItemModal,null)">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>إضافة</span>
-                </button>
-                <div ngbDropdown class="d-inline-block" appRole pageKey="ZAInstitution_Benefactors" action="canExport">
-                    <button type="button" class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" id="dropdownBasic1" ngbDropdownToggle>
-                        <i class="uil uil-export"></i>
-                        <span>تنزيل</span>
+<main class="benefactor-page admin-page" dir="rtl">
+    <section class="benefactor-hero">
+        <div>
+            <h1>إدارة المتبرعين</h1>
+            <p>دليل موحّد لبيانات المتبرعين وسجلات التبرعات، مع أدوات البحث والتصدير والمتابعة.</p>
+        </div>
+        <button type="button" class="hero-action" appRole pageKey="ZAInstitution_Benefactors" action="canAdd"
+            (click)="openItemModal(OpenItemModal, null)">
+            <i class="uil uil-user-plus"></i><span>إضافة متبرع جديد</span>
+        </button>
+    </section>
+
+    <section class="admin-card benefactor-directory">
+        <header class="admin-card-header directory-header">
+            <div class="section-title">
+                <span><i class="uil uil-users-alt"></i></span>
+                <div><h2>دليل المتبرعين</h2><p>{{ pagedResponseModel.totalCount }} متبرعاً مسجلاً في النظام</p></div>
+            </div>
+
+            <div class="directory-actions">
+                <div ngbDropdown appRole pageKey="ZAInstitution_Benefactors" action="canExport">
+                    <button type="button" class="export-button" id="benefactorExport" ngbDropdownToggle>
+                        <i class="uil uil-export"></i><span>تصدير البيانات</span>
                     </button>
-                    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="border rounded">
-                        <button ngbDropdownItem class="d-flex align-items-center gap-2" (click)="OpenPdfFileItemModal(PDFFileItemModal)">
-                            <i class="fas fa-file-download"></i>
-                            <span class="px-2">PDF</span>
-                        </button>
-                        <button ngbDropdownItem (click)="DownloadExcelFile()">
-                            <i class="fas fa-file-download"></i>
-                            <span class="px-2">Excel</span>
-                        </button>
+                    <div ngbDropdownMenu aria-labelledby="benefactorExport" class="export-menu">
+                        <button ngbDropdownItem (click)="OpenPdfFileItemModal(PDFFileItemModal)"><i class="uil uil-file-download-alt"></i><span>تقرير PDF</span></button>
+                        <button ngbDropdownItem (click)="DownloadExcelFile()"><i class="uil uil-file-download-alt"></i><span>ملف Excel</span></button>
                     </div>
                 </div>
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
-                    <i class="uil uil-filter"></i>
-                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
+                <button type="button" class="filter-button" [class.filter-button--active]="!isFilter"
+                    (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                    <i class="uil uil-filter"></i>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}
+                    <b *ngIf="activeFiltersCount">{{ activeFiltersCount }}</b>
                 </button>
             </div>
+        </header>
+
+        <div class="filter-panel" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)"></app-za-filters>
         </div>
-        <div class="col-md-4 mb-2">
-            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage" [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount"></app-za-pagination>
-        </div>
-        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
-            <div class="d-flex align-items-center">
-                <ng-container>
-                    <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)"></app-za-filters>
-                </ng-container>
-            </div>
-        </div>
-    </div>
-    <div class="p-3 bg-white">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+
+        <div class="directory-table-wrap" *ngIf="pagedResponseModel.results.length; else emptyState">
+            <table class="benefactor-table">
                 <thead>
                     <tr>
-                        <th></th>
-                        <th>الكود</th>
-                        <th>الاسم</th>
-                        <th>الوصف</th>
-                        <th>رقم التلفون</th>
-                        <th>رقم التلفون 2</th>
-                        <th>العنوان</th>
-                        <th>الجنسية</th>
-                        <th>صفحة الفيس بوك</th>
-                        <th>رسالة ترحيبية</th>
-                        <th>أُضيف بواسطة</th>
-                        <th>تاريخ الاضافة</th>
-                        <th>عمليات</th>
+                        <th>المتبرع</th>
+                        <th>بيانات التواصل</th>
+                        <th>العنوان والجنسية</th>
+                        <th>بيانات إضافية</th>
+                        <th>بيانات التسجيل</th>
+                        <th>الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of pagedResponseModel.results">
-                            <td>
-                                <img src="{{item.image}}" class="table-image" (error)="$event.target.src = 'logo-2.png'">
-                            </td>
-                            <td>{{item.code}}</td>
-                            <td>{{item.fullName}}</td>
-                            <td>{{item.description}}</td>
-                            <td>{{item.phone}}</td>
-                            <td>{{item.phone2}}</td>
-                            <td>{{item.address}}</td>
-                            <td>{{item.nationality}}</td>
-                            <td>
-                                <a *ngIf="item.faceBook" style="text-decoration: none;" href="{{item.faceBook}}" target="_blank">فيسبوك</a>
-                            </td>
-                            <td>{{item.welcomeMessage}}</td>
-                            <td>{{item.createdBy}}</td>
-                            <td>{{item.insertDate}}</td>
-                            <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_Benefactors" action="canEdit" (click)="openItemModal(OpenItemModal,item)">
-                                        <i class="uil uil-pen"></i>
-                                        <span>تعديل</span>
-                                    </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2 me-2" appRole pageKey="ZAInstitution_Benefactors" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)">
-                                        <i class="uil uil-trash-alt"></i>
-                                        <span>حذف</span>
-                                    </button>
-                                    <button class="button-table-action btn-details d-flex align-items-center justify-content-center gap-2" appRole pageKey="ZAInstitution_Benefactors" action="canAdd" (click)="openCashSidePanel(CashSidePanel,item)">
-                                        <i class="uil uil-document-info"></i>
-                                        <span>معاينة</span>
-                                    </button>
+                    <tr *ngFor="let item of pagedResponseModel.results; trackBy: trackByBenefactor">
+                        <td data-label="المتبرع">
+                            <div class="benefactor-identity">
+                                <img [src]="item.image || 'logo-2.png'" [alt]="item.fullName" loading="lazy"
+                                    (error)="$any($event.target).src = 'logo-2.png'">
+                                <div>
+                                    <strong>{{ item.fullName }}</strong>
+                                    <span class="code-badge">{{ item.code }}</span>
+                                    <small [title]="item.description">{{ item.description || 'لا يوجد وصف' }}</small>
                                 </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!pagedResponseModel.results.length">
-                            <td colspan="13" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
+                            </div>
+                        </td>
+                        <td data-label="بيانات التواصل">
+                            <div class="info-stack">
+                                <a *ngIf="item.phone" [href]="'tel:' + item.phone"><i class="uil uil-phone"></i>{{ item.phone }}</a>
+                                <a *ngIf="item.phone2" [href]="'tel:' + item.phone2"><i class="uil uil-phone-alt"></i>{{ item.phone2 }}</a>
+                                <span *ngIf="!item.phone && !item.phone2">غير محدد</span>
+                            </div>
+                        </td>
+                        <td data-label="العنوان والجنسية">
+                            <div class="info-stack">
+                                <span><i class="uil uil-globe"></i>{{ item.nationality || 'غير محددة' }}</span>
+                                <span><i class="uil uil-map-marker"></i>{{ item.address || 'لا يوجد عنوان' }}</span>
+                            </div>
+                        </td>
+                        <td data-label="بيانات إضافية">
+                            <div class="info-stack extra-info">
+                                <a *ngIf="item.faceBook" [href]="item.faceBook" target="_blank" rel="noopener noreferrer"><i class="uil uil-facebook-f"></i>صفحة فيسبوك</a>
+                                <span [title]="item.welcomeMessage"><i class="uil uil-comment-heart"></i>{{ item.welcomeMessage || 'لا توجد رسالة ترحيبية' }}</span>
+                            </div>
+                        </td>
+                        <td data-label="بيانات التسجيل">
+                            <div class="info-stack">
+                                <span><i class="uil uil-user-check"></i>{{ item.createdBy || 'غير محدد' }}</span>
+                                <span><i class="uil uil-calendar-alt"></i>{{ item.insertDate || 'غير محدد' }}</span>
+                            </div>
+                        </td>
+                        <td data-label="الإجراءات">
+                            <div class="row-actions">
+                                <button type="button" class="action-button action-button--donations" appRole
+                                    pageKey="ZAInstitution_Benefactors" action="canAdd"
+                                    (click)="openCashSidePanel(CashSidePanel, item)" title="سجل التبرعات">
+                                    <i class="uil uil-money-bill"></i><span>التبرعات</span>
+                                </button>
+                                <button type="button" class="action-button action-button--edit" appRole
+                                    pageKey="ZAInstitution_Benefactors" action="canEdit"
+                                    (click)="openItemModal(OpenItemModal, item)" title="تعديل">
+                                    <i class="uil uil-pen"></i>
+                                </button>
+                                <button type="button" class="action-button action-button--delete" appRole
+                                    pageKey="ZAInstitution_Benefactors" action="canDelete"
+                                    (click)="openDeleteItemModal(deleteItemModal, item)" title="حذف">
+                                    <i class="uil uil-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-    </div>
-</div>
+
+        <ng-template #emptyState>
+            <div class="empty-state"><app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data></div>
+        </ng-template>
+
+        <footer class="admin-card-footer directory-footer" *ngIf="pagedResponseModel.totalCount">
+            <p>يتم عرض {{ pagedResponseModel.results.length }} من أصل {{ pagedResponseModel.totalCount }} متبرع</p>
+            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage"
+                [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount">
+            </app-za-pagination>
+        </footer>
+    </section>
+</main>
 
 <ng-template #OpenItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-plus"></i>
-            <span>املأ البيانات الأتية</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="ItemForm" autocomplete="off">
-            <table class="table table-bordered table-feature-value align-middle border m-0">
-                <tbody>
-                    <tr>
-                        <td class="table-feature">اسم المتبرع</td>
-                        <td class="table-value">
-                            <input type="text" class="form-control form-control-lg input-box" formControlName="fullName" placeholder="اسم المتبرع..." [class.error]="formErrors.fullName">
-                            <div class="error-message" *ngIf="formErrors.fullName">
-                                {{ formErrors.fullName }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الوصف</td>
-                        <td class="table-value">
-                            <input type="text" class="form-control form-control-lg input-box" formControlName="description" placeholder="الوصف..." [class.error]="formErrors.description">
-                            <div class="error-message" *ngIf="formErrors.description">
-                                {{ formErrors.description }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">رقم التلفون</td>
-                        <td class="table-value">
-                            <input type="text" class="form-control form-control-lg input-box" formControlName="phone" placeholder="رقم التلفون..." [class.error]="formErrors.phone">
-                            <div class="error-message" *ngIf="formErrors.phone">
-                                {{ formErrors.phone }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">رقم التلفون 2</td>
-                        <td class="table-value">
-                            <input type="text" class="form-control form-control-lg input-box" formControlName="phone2" placeholder="رقم التلفون 2..." [class.error]="formErrors.phone2">
-                            <div class="error-message" *ngIf="formErrors.phone2">
-                                {{ formErrors.phone2 }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">العنوان</td>
-                        <td class="table-value">
-                            <input type="text" class="form-control form-control-lg input-box" formControlName="address" placeholder="العنوان..." [class.error]="formErrors.address">
-                            <div class="error-message" *ngIf="formErrors.address">
-                                {{ formErrors.address }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">صفحة الفيس بوك</td>
-                        <td class="table-value">
-                            <input type="text" class="form-control form-control-lg input-box" formControlName="faceBook" placeholder="صفحة الفيس بوك..." [class.error]="formErrors.faceBook">
-                            <div class="error-message" *ngIf="formErrors.faceBook">
-                                {{ formErrors.faceBook }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">الجنسية</td>
-                        <td class="table-value">
-                            <div class="form-floating">
-                                <app-za-drop-down-form-control [data]="NationalityList" [showSearch]="true" [placeholder]="'الجنسية'" formControlName="nationalityId" [hasError]="formErrors.nationalityId"></app-za-drop-down-form-control>
-                            </div>
-                            <div class="error-message" *ngIf="formErrors.nationalityId">
-                                {{ formErrors.nationalityId }}
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature">تحميل صورة</td>
-                        <td class="table-value">
-                            <div class="choose-file-box position-relative border rounded h-58 input-box" (click)="InputFile.click()" [class.error]="isFileExist">
-                                <div class="choose-file-btn">تحميل صورة</div>
-                            </div>
-                            <div class="error-message" *ngIf="isFileExist">
-                                <span>هذا الحقل مطلوب</span>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-feature"></td>
-                        <td>
-                            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 g-2">
-                                <div class="w-25" *ngFor="let url of fileURL">
-                                    <div class="choosed-img img-thumbnail shadow-sm">
-                                        <img src="{{url.image}}" loading="lazy" alt="" (error)="$event.target.src = 'logo-2.png'" />
-                                        <div class="choosed-img-delete" (click)="DeleteSelectedFile()">
-                                            <i class="far fa-times-circle"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <section class="admin-modal benefactor-modal" dir="rtl">
+        <header class="admin-modal-header modal-heading">
+            <div class="modal-title">
+                <span><i class="uil" [ngClass]="isEditing ? 'uil-user-square' : 'uil-user-plus'"></i></span>
+                <div><h2>{{ isEditing ? 'تعديل بيانات المتبرع' : 'إضافة متبرع جديد' }}</h2><p>أدخل البيانات الشخصية ووسائل التواصل المتاحة.</p></div>
+            </div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        </header>
+
+        <form [formGroup]="ItemForm" autocomplete="off" (ngSubmit)="AddNewItem()">
+            <div class="modal-body-content">
+                <section class="profile-form-section">
+                    <h3><i class="uil uil-user"></i>البيانات الأساسية</h3>
+                    <div class="form-grid">
+                        <div class="form-group-admin">
+                            <label class="form-label-admin" for="benefactorName">اسم المتبرع <em>*</em></label>
+                            <div class="field-control" [class.field-control--error]="formErrors.fullName"><i class="uil uil-user"></i><input id="benefactorName" type="text" formControlName="fullName" placeholder="الاسم الكامل"></div>
+                            <small class="field-error" *ngIf="formErrors.fullName">{{ formErrors.fullName }}</small>
+                        </div>
+                        <div class="form-group-admin">
+                            <label class="form-label-admin">الجنسية <em>*</em></label>
+                            <app-za-drop-down-form-control [data]="NationalityList" [showSearch]="true" [placeholder]="'اختر الجنسية'"
+                                formControlName="nationalityId" [hasError]="formErrors.nationalityId"></app-za-drop-down-form-control>
+                            <small class="field-error" *ngIf="formErrors.nationalityId">{{ formErrors.nationalityId }}</small>
+                        </div>
+                        <div class="form-group-admin form-grid__full">
+                            <label class="form-label-admin" for="benefactorDescription">الوصف</label>
+                            <div class="field-control field-control--textarea" [class.field-control--error]="formErrors.description"><i class="uil uil-align-right"></i><textarea id="benefactorDescription" rows="3" formControlName="description" placeholder="ملاحظات أو وصف مختصر"></textarea></div>
+                            <small class="field-error" *ngIf="formErrors.description">{{ formErrors.description }}</small>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="profile-form-section">
+                    <h3><i class="uil uil-phone"></i>التواصل والعنوان</h3>
+                    <div class="form-grid">
+                        <div class="form-group-admin">
+                            <label class="form-label-admin" for="benefactorPhone">رقم الهاتف الأساسي <em>*</em></label>
+                            <div class="field-control" [class.field-control--error]="formErrors.phone"><i class="uil uil-phone"></i><input id="benefactorPhone" type="tel" inputmode="tel" formControlName="phone" placeholder="رقم الهاتف"></div>
+                            <small class="field-error" *ngIf="formErrors.phone">{{ formErrors.phone }}</small>
+                        </div>
+                        <div class="form-group-admin">
+                            <label class="form-label-admin" for="benefactorPhone2">رقم هاتف إضافي</label>
+                            <div class="field-control" [class.field-control--error]="formErrors.phone2"><i class="uil uil-phone-alt"></i><input id="benefactorPhone2" type="tel" inputmode="tel" formControlName="phone2" placeholder="رقم هاتف آخر"></div>
+                            <small class="field-error" *ngIf="formErrors.phone2">{{ formErrors.phone2 }}</small>
+                        </div>
+                        <div class="form-group-admin">
+                            <label class="form-label-admin" for="benefactorAddress">العنوان</label>
+                            <div class="field-control" [class.field-control--error]="formErrors.address"><i class="uil uil-map-marker"></i><input id="benefactorAddress" type="text" formControlName="address" placeholder="العنوان"></div>
+                            <small class="field-error" *ngIf="formErrors.address">{{ formErrors.address }}</small>
+                        </div>
+                        <div class="form-group-admin">
+                            <label class="form-label-admin" for="benefactorFacebook">صفحة فيسبوك</label>
+                            <div class="field-control" [class.field-control--error]="formErrors.faceBook"><i class="uil uil-facebook-f"></i><input id="benefactorFacebook" type="url" formControlName="faceBook" placeholder="رابط الصفحة"></div>
+                            <small class="field-error" *ngIf="formErrors.faceBook">{{ formErrors.faceBook }}</small>
+                        </div>
+                        <div class="form-group-admin form-grid__full">
+                            <label class="form-label-admin" for="welcomeMessage">الرسالة الترحيبية</label>
+                            <div class="field-control field-control--textarea" [class.field-control--error]="formErrors.welcomeMessage"><i class="uil uil-comment-heart"></i><textarea id="welcomeMessage" rows="3" formControlName="welcomeMessage" placeholder="اكتب رسالة ترحيبية اختيارية"></textarea></div>
+                            <small class="field-error" *ngIf="formErrors.welcomeMessage">{{ formErrors.welcomeMessage }}</small>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="profile-form-section">
+                    <h3><i class="uil uil-image"></i>الصورة الشخصية</h3>
+                    <button type="button" class="upload-zone" (click)="InputFile.click()">
+                        <i class="uil uil-cloud-upload"></i><strong>{{ fileURL.length ? 'استبدال الصورة' : 'اختيار صورة' }}</strong><span>صورة اختيارية بحجم لا يتجاوز 1 ميجابايت</span>
+                    </button>
+                    <div class="avatar-preview" *ngFor="let url of fileURL">
+                        <img [src]="url.image" alt="صورة المتبرع" (error)="$any($event.target).src = 'logo-2.png'">
+                        <button type="button" aria-label="حذف الصورة" (click)="DeleteSelectedFile()"><i class="uil uil-trash-alt"></i></button>
+                    </div>
+                </section>
+            </div>
+
+            <footer class="admin-modal-footer modal-actions">
+                <button type="button" class="btn-secondary-admin" (click)="modal.close()">إلغاء</button>
+                <button type="submit" class="btn-primary-admin" [disabled]="showLoader"><i class="uil uil-save"></i>{{ isEditing ? 'حفظ التعديلات' : 'إضافة المتبرع' }}</button>
+            </footer>
         </form>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
+    </section>
 </ng-template>
 
 <ng-template #CashSidePanel let-offcanvas>
-    <div class="offcanvas-header justify-content-between gap-3 fs-4 border-bottom py-3">
-        <div class="d-flex align-items-center gap-2">
-            <i class="fas fa-info-circle offcanvas-header-icon"></i>
-            <span>
-                {{BeneFactorValues.fullName}} - {{BeneFactorValues.code}}
-            </span>
-        </div>
-        <div class="cursor-pointer text-danger fs-2" (click)="offcanvas.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
-    </div>
-    <div class="offcanvas-body pt-4 bg-light">
-        <div class="employee-card-body mb-3">
-            <div class="inputs-wrapper border rounded bg-white mb-3">
-                <div class="inputs-sec-content px-3 py-3">
-                    <div class="row gy-3">
-                        <div class="col-lg-5">
-                            <div class="mb-2">
-                                <label class="form-label d-flex align-items-center gap-2">مبلغ التبرع</label>
-                                <input type="text" class="form-control form-control-lg" placeholder="مبلغ التبرع" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="BeneFactorValues.totalValue">
-                            </div>
-                        </div>
-                        <div class="col-lg-5">
-                            <div class="mb-2">
-                                <label class="form-label d-flex align-items-center gap-2">تاريخ التبرع</label>
-                                <input type="date" class="form-control form-control-lg" [(ngModel)]="BeneFactorValues.paymentDate">
-                            </div>
-                        </div>
-                        <div class="col-lg-2">
-                            <div class="d-flex justify-content-start mt-25">
-                                <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="AddNewBeneFactorValues()">
-                                    <i class="fas fa-plus-circle"></i>
-                                    <span>اضافة</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+    <section class="donation-panel" dir="rtl">
+        <header class="donation-panel__header">
+            <div><span><i class="uil uil-money-bill"></i></span><div><h2>سجل التبرعات</h2><p>{{ BeneFactorValues.fullName }} · {{ BeneFactorValues.code }}</p></div></div>
+            <button type="button" aria-label="إغلاق" (click)="offcanvas.dismiss()"><i class="uil uil-times"></i></button>
+        </header>
+
+        <div class="donation-panel__body">
+            <section class="new-donation-card">
+                <div class="panel-section-title"><i class="uil uil-plus-circle"></i><div><strong>تسجيل تبرع جديد</strong><span>أدخل قيمة التبرع وتاريخ الاستلام.</span></div></div>
+                <div class="donation-form">
+                    <label><span>مبلغ التبرع</span><div><i class="uil uil-money-bill"></i><input type="text" inputmode="decimal" placeholder="0" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="BeneFactorValues.totalValue"></div></label>
+                    <label><span>تاريخ التبرع</span><div><i class="uil uil-calendar-alt"></i><input type="date" [(ngModel)]="BeneFactorValues.paymentDate"></div></label>
+                    <button type="button" class="btn-primary-admin" [disabled]="showLoader" (click)="AddNewBeneFactorValues()"><i class="uil uil-plus"></i>إضافة التبرع</button>
                 </div>
-            </div>
+            </section>
+
+            <section class="donation-history">
+                <div class="panel-section-title"><i class="uil uil-history"></i><div><strong>سجل الحسابات</strong><span>{{ BeneFactorValuesData.length }} سجل تبرع</span></div></div>
+
+                <div class="donation-list" *ngIf="BeneFactorValuesData.length; else noDonations">
+                    <article class="donation-record" *ngFor="let item of BeneFactorValuesData; trackBy: trackByDonation">
+                        <button type="button" class="donation-record__summary" (click)="BeneFactorValueCollapseClick(item)" [attr.aria-expanded]="item.isCollapsed">
+                            <span class="expand-icon"><i class="uil uil-angle-down"></i></span>
+                            <div><small>مبلغ التبرع</small><strong>{{ item.totalValue }}</strong></div>
+                            <div><small>تاريخ التبرع</small><strong>{{ item.paymentDateStr }}</strong></div>
+                            <span class="spending-status" [class.spending-status--complete]="item.isActive">{{ item.isActive ? 'تم الصرف بالكامل' : 'قيد الصرف' }}</span>
+                        </button>
+
+                        <div class="donation-details" *ngIf="item.isCollapsed">
+                            <div class="donation-detail-row" *ngFor="let value of item.values">
+                                <span>{{ value.totalValue }}</span><span>{{ value.paymentDate }}</span><span>{{ value.details }}</span>
+                            </div>
+                            <div class="no-spending" *ngIf="item.values && item.values.length === 0">لم يتم صرف أي مبلغ من هذا التبرع.</div>
+                        </div>
+                    </article>
+                </div>
+
+                <ng-template #noDonations><div class="panel-empty"><i class="uil uil-receipt"></i><strong>لا توجد تبرعات مسجلة</strong><span>يمكنك إضافة أول تبرع من النموذج أعلاه.</span></div></ng-template>
+            </section>
         </div>
-        <hr class="border-black" />
-        <div class="inputs-wrapper border rounded bg-white mb-3">
-            <div class="inputs-sec-title fw-semibold fs-16 px-3 py-2 border-bottom mb-2">الحسابات</div>
-            <div class="inputs-sec-content px-3 py-2 table-responsive table-vp-height small-scroll">
-                <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
-                    <thead>
-                        <tr>
-                            <th class="width-30-per">مبلغ التبرع</th>
-                            <th class="width-30-per">تاريخ التبرع</th>
-                            <th class="width-30-per text-center">تم صرف المبلغ بالكامل</th>
-                        </tr>
-                    </thead>
-                    <ng-container *ngFor="let item of BeneFactorValuesData">
-                        <tbody>
-                            <tr>
-                                <td class="td-collapser cursor-pointer" (click)="BeneFactorValueCollapseClick(item)" [attr.aria-expanded]="item.isCollapsed">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <i class="uil uil-plus-circle"></i>
-                                        <span>{{item.totalValue}}</span>
-                                    </div>
-                                </td>
-                                <td>{{item.paymentDateStr}}</td>
-                                <td class="text-center">
-                                    <label class="jtoggler-wrapper">
-                                        <input type="checkbox" [(ngModel)]="item.isActive"
-                                            class="jtoggler jqtoggler-inited" disabled>
-                                        <span class="jtoggler-control">
-                                            <span class="jtoggler-handle"></span>
-                                        </span>
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr *ngIf="!BeneFactorValuesData.length">
-                                <td colspan="12" class="text-right">
-                                    <app-za-empty-data [showEmptyData]="!BeneFactorValuesData.length"></app-za-empty-data>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tbody *ngIf="item.isCollapsed && item.values && item.values.length > 0">
-                            <tr class="collapsed-tr" *ngFor="let value of item.values">
-                                <td>{{value.totalValue}}</td>
-                                <td>{{value.paymentDate}}</td>
-                                <td>{{value.details}}</td>
-                            </tr>
-                        </tbody>
-                        <tbody *ngIf="item.isCollapsed && item.values && item.values.length == 0">
-                            <tr class="collapsed-tr">
-                                <td colspan="3" class="text-center">لم يتم صرف اي مبلغ</td>
-                            </tr>
-                        </tbody>
-                    </ng-container>
-                </table>
-            </div>
-        </div>
-    </div>
+    </section>
 </ng-template>
 
 <ng-template #PDFFileItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-focus-add"></i>
-            <span>اختر أعمدة</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+    <section class="admin-modal export-modal" dir="rtl">
+        <header class="admin-modal-header modal-heading">
+            <div class="modal-title"><span><i class="uil uil-file-export"></i></span><div><h2>إعداد تقرير PDF</h2><p>اختر حتى ستة أعمدة وحدّد ترتيب ظهورها.</p></div></div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        </header>
+
+        <div class="export-modal__body">
+            <div class="export-fields">
+                <label class="export-field" *ngFor="let item of SearchReport.headers; trackBy: trackByReportHeader">
+                    <input type="checkbox" [(ngModel)]="item.isSelected">
+                    <strong>{{ item.nameAr }}</strong>
+                    <input type="number" min="1" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="item.displayOrder" placeholder="الترتيب">
+                </label>
+            </div>
+            <div class="export-note"><i class="uil uil-info-circle"></i><span>يمكن اختيار ستة أعمدة كحد أقصى في الصفحة الواحدة.</span></div>
         </div>
-    </div>
-    <div class="modal-body">
-        <table class="table table-bordered table-feature-value align-middle border m-0">
-            <tbody>
-                <tr *ngFor="let item of SearchReport.headers;let x = index">
-                    <td class="table-feature">{{item.nameAr}}</td>
-                    <td class="table-value">
-                        <div class="d-flex align-items-center">
-                            <div class="me-2">محدد</div>
-                            <label class="jtoggler-wrapper m-0 mx-0">
-                                <input type="checkbox" class="jtoggler" [(ngModel)]="item.isSelected">
-                                <div class="jtoggler-control">
-                                    <div class="jtoggler-handle"></div>
-                                </div>
-                            </label>
-                            <div class="ms-2">غير محدد</div>
-                            <div class="mr-25">
-                                <input type="number" class="form-control w-50 text-center" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="item.displayOrder" placeholder="الترتيب">
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">تنبيه هام</td>
-                    <td class="table-value">
-                        <ul>
-                            <li class="fs-5">لا يمكن اختيار أكثر من 6 أعمدة في الصفحة الواحدة</li>
-                        </ul>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="DownloadPdfFile()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
+
+        <footer class="admin-modal-footer modal-actions">
+            <button type="button" class="btn-secondary-admin" (click)="modal.close()">إلغاء</button>
+            <button type="button" class="btn-primary-admin" [disabled]="showLoader" (click)="DownloadPdfFile()"><i class="uil uil-file-download-alt"></i>تنزيل التقرير</button>
+        </footer>
+    </section>
 </ng-template>
 
 <ng-template #deleteItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <span>تأكيد الإجراء</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+    <section class="delete-modal" dir="rtl">
+        <button type="button" class="modal-close delete-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        <span class="delete-icon"><i class="uil uil-user-times"></i></span>
+        <h2>حذف المتبرع؟</h2>
+        <p>سيتم حذف بيانات المتبرع من النظام. لا يمكن التراجع عن هذا الإجراء بعد التأكيد.</p>
+        <div class="delete-actions">
+            <button type="button" class="btn-secondary-admin" (click)="modal.close()">تراجع</button>
+            <button type="button" class="btn-danger-admin" [disabled]="showLoader" (click)="DeleteItem()"><i class="uil uil-trash-alt"></i>نعم، حذف المتبرع</button>
         </div>
-    </div>
-    <div class="modal-body">
-        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
-    </div>
-    <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success" (click)="DeleteItem()">
-            <i class="fas fa-check"></i>
-            <span class="ms-2">نعم</span>
-        </button>
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
-            <i class="fas fa-times"></i>
-            <span class="ms-2">لا</span>
-        </button>
-    </div>
+    </section>
 </ng-template>
 
-<input type="file" #InputFile class="choose-file-input" (change)="onFileChange($event)" hidden />
+<input type="file" #InputFile accept="image/*" (change)="onFileChange($event)" hidden>
 <ngx-loading [show]="showLoader"></ngx-loading>

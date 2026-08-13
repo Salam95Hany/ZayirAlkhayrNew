@@ -28,8 +28,8 @@ import { NgxLoadingModule } from "ngx-loading";
   styleUrl: './activity.component.css'
 })
 export class ActivityComponent implements OnInit {
-  @ViewChild('InputFile') InputFile: ElementRef;
-  @ViewChild('InputMultiFile') InputMultiFile: ElementRef;
+  @ViewChild('InputFile') InputFile: ElementRef<HTMLInputElement>;
+  @ViewChild('InputMultiFile') InputMultiFile: ElementRef<HTMLInputElement>;
   TitleList = ['مؤسسة زائر الخير', 'موقع زائر الخير', 'الأنشطة'];
   filterList: FilterModel[] = [];
   fileURL: any[] = [];
@@ -71,6 +71,26 @@ export class ActivityComponent implements OnInit {
     this.FormInit();
     this.GetAllActivities();
     this.GetActivityFilters();
+  }
+
+  get isEditing(): boolean {
+    return Number(this.ItemForm?.get('id')?.value) > 0;
+  }
+
+  get activeFiltersCount(): number {
+    return this.pagingFilterModel.filterList?.length ?? 0;
+  }
+
+  get hasGalleryChanges(): boolean {
+    return this.multiImagesFile.length > 0 || this.FileModel.deletedFiles.length > 0;
+  }
+
+  trackByActivity(_index: number, item: any): number {
+    return item.id;
+  }
+
+  trackByGalleryImage(index: number, item: any): number | string {
+    return item.id ?? item.uniqueId ?? index;
   }
 
   FormInit() {
@@ -122,7 +142,7 @@ export class ActivityComponent implements OnInit {
       this.FillEditForm(item);
 
     this.modalService.open(content, {
-      size: 'xl',
+      size: 'lg',
       scrollable: true,
       centered: true
     });
@@ -180,9 +200,13 @@ export class ActivityComponent implements OnInit {
   }
 
   onFileChange(event: any) {
+    if (!event.target.files?.length)
+      return;
+
     let fileSize = this.fileService.getFileSize(event.target.files[0]);
     if (fileSize > 1) {
       this.toaster.warning(`هذا الملف ${event.target.files[0].name} حجمه أكبر من 1 ميجا`);
+      event.target.value = '';
       return;
     }
 
@@ -196,6 +220,9 @@ export class ActivityComponent implements OnInit {
   }
 
   onMultiFileChange(event: any) {
+    if (!event.target.files?.length)
+      return;
+
     let fileSizeValidate = false;
     [...event.target.files].forEach(element => {
       let fileSize = this.fileService.getFileSize(element);
@@ -205,8 +232,10 @@ export class ActivityComponent implements OnInit {
       }
     });
 
-    if (fileSizeValidate)
+    if (fileSizeValidate) {
+      event.target.value = '';
       return;
+    }
 
     this.fileService.onSelectedMultiFile([...event.target.files]).then(data => {
       this.multiFileURL.push(...data?.urls);

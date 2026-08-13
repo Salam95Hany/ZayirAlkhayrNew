@@ -79,8 +79,6 @@ namespace ZayirAlkhayr.Services.Common
 
         public static Error CancelStudentPaymentExist = new("لا يمكن إلغاء الرسوم لوجود دفعات مرتبطة بها.");
 
-
-
-
+        public static Error StudentHasFeesCannotChangeAcademicStage = new("لا يمكن تغيير المرحلة الدراسية لوجود رسوم مرتبطة بالطالب {StudentName} في السنة الدراسية الحالية.");
     }
 }

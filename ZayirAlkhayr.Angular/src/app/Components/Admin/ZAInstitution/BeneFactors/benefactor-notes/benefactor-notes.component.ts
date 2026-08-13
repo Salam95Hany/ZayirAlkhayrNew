@@ -46,6 +46,18 @@ export class BenefactorNotesComponent implements OnInit {
     this.GetBeneFactorNotes();
   }
 
+  get activeFiltersCount(): number {
+    return this.pagingFilterModel.filterList?.length ?? 0;
+  }
+
+  trackByNote(index: number, item: any): number | string {
+    return item.id ?? item.code ?? item.insertDate ?? index;
+  }
+
+  getInitial(fullName: string | null | undefined): string {
+    return fullName?.trim().charAt(0) || 'م';
+  }
+
   GetBeneFactorNotes() {
     this.showLoader = true;
     this.benefactorService.GetBeneFactorNotes(this.pagingFilterModel).subscribe(data => {

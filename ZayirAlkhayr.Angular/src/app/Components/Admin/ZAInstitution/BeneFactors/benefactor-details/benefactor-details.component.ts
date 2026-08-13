@@ -27,7 +27,7 @@ import { NgxLoadingModule } from "ngx-loading";
   styleUrl: './benefactor-details.component.css'
 })
 export class BenefactorDetailsComponent implements OnInit {
-  @ViewChild('InputFile') InputFile: ElementRef;
+  @ViewChild('InputFile') InputFile: ElementRef<HTMLInputElement>;
   TitleList = ['مؤسسة زائر الخير', 'إدارة المتبرعين', 'تفاصيل المتبرعين'];
   showLoader = false;
   BenefactorType = 'All';
@@ -82,6 +82,10 @@ export class BenefactorDetailsComponent implements OnInit {
     this.GetAllBeneFactorTypesSelector();
   }
 
+  trackByDetail(_index: number, item: any): number {
+    return item.id;
+  }
+
   FormInit() {
     this.ItemForm = this.fb.group({
       id: 0,
@@ -133,7 +137,7 @@ export class BenefactorDetailsComponent implements OnInit {
     }
     this.ResetForm();
     this.modalService.open(content, {
-      size: 'xl',
+      size: 'lg',
       scrollable: true,
       centered: true
     });
@@ -191,9 +195,13 @@ export class BenefactorDetailsComponent implements OnInit {
   }
 
   onFileChange(event: any) {
+    if (!event.target.files?.length)
+      return;
+
     let fileSize = this.fileService.getFileSize(event.target.files[0]);
     if (fileSize > 1) {
       this.toaster.warning(`هذا الملف ${event.target.files[0].name} حجمه أكبر من 1 ميجا`);
+      event.target.value = '';
       return;
     }
 

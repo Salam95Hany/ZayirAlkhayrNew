@@ -1,133 +1,135 @@
 <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2">
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" appRole pageKey="ZAInstitution_BenefactorType" action="canAdd" (click)="openItemModal(OpenItemModal,null)">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>إضافة</span>
-                </button>
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
-                    <i class="uil uil-filter"></i>
-                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
-                </button>
+<main class="type-page admin-page" dir="rtl">
+    <section class="type-hero">
+        <div class="hero-copy">
+            <span class="hero-kicker"><i class="uil uil-setting"></i> إعدادات التبرعات</span>
+            <h1>أنواع التبرعات</h1>
+            <p>نظّم تصنيفات التبرعات المستخدمة داخل المؤسسة لتوحيد التسجيل وتحسين دقة التقارير المالية.</p>
+        </div>
+        <button type="button" class="hero-action" appRole pageKey="ZAInstitution_BenefactorType" action="canAdd" (click)="openItemModal(OpenItemModal, null)">
+            <i class="uil uil-plus-circle"></i><span>إضافة نوع تبرع جديد</span>
+        </button>
+    </section>
+
+    <section class="admin-card type-register">
+        <header class="admin-card-header register-header">
+            <div class="section-title">
+                <span><i class="uil uil-layer-group"></i></span>
+                <div>
+                    <h2>دليل أنواع التبرعات</h2>
+                    <p>{{ pagedResponseModel.totalCount }} نوع تبرع مسجل في النظام</p>
+                </div>
             </div>
+            <button type="button" class="filter-button" [class.filter-button--active]="!isFilter" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                <i class="uil uil-filter"></i>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}
+                <b *ngIf="activeFiltersCount">{{ activeFiltersCount }}</b>
+            </button>
+        </header>
+
+        <div class="filter-panel" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)"></app-za-filters>
         </div>
-        <div class="col-md-4 mb-2">
-            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage" [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount"></app-za-pagination>
-        </div>
-        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
-            <div class="d-flex align-items-center">
-                <ng-container>
-                    <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)"></app-za-filters>
-                </ng-container>
-            </div>
-        </div>
-    </div>
-    <div class="p-3 bg-white">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
+
+        <div class="register-table-wrap" *ngIf="pagedResponseModel.results.length; else emptyState">
+            <table class="type-table">
                 <thead>
                     <tr>
-                        <th>الاسم</th>
+                        <th>نوع التبرع</th>
+                        <th>التصنيف</th>
                         <th>أُضيف بواسطة</th>
-                        <th>تاريخ الاضافة</th>
-                        <th>عمليات</th>
+                        <th>تاريخ الإضافة</th>
+                        <th class="text-center">الإجراءات</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of pagedResponseModel.results">
-                            <td>{{item.name}}</td>
-                            <td>{{item.createdBy}}</td>
-                            <td>{{item.insertDate}}</td>
-                            <td>
-                                <div class="w-100 d-flex align-items-center justify-content-center" *ngIf="item.id != 1">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
-                                        <i class="uil uil-pen"></i>
-                                        <span>تعديل</span>
-                                    </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item)">
-                                        <i class="uil uil-trash-alt"></i>
-                                        <span>حذف</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!pagedResponseModel.results.length">
-                            <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<ng-template #OpenItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <i class="uil uil-plus"></i>
-            <span>املأ البيانات الأتية</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
-        </div>
-    </div>
-    <div class="modal-body">
-        <form [formGroup]="ItemForm" autocomplete="off">
-            <table class="table table-bordered table-feature-value align-middle border m-0">
-                <tbody>
-                    <tr>
-                        <td class="table-feature">الاسم</td>
-                        <td class="table-value">
-                            <input type="text" class="form-control form-control-lg input-box" formControlName="name" placeholder="الاسم..." [class.error]="formErrors.name">
-                            <div class="error-message" *ngIf="formErrors.name">
-                                {{ formErrors.name }}
+                    <tr *ngFor="let item of pagedResponseModel.results; trackBy: trackByType">
+                        <td data-label="نوع التبرع">
+                            <div class="type-name"><span><i class="uil uil-gift"></i></span><strong>{{ item.name }}</strong></div>
+                        </td>
+                        <td data-label="التصنيف">
+                            <span class="type-badge" [class.type-badge--system]="item.id === 1">
+                                <i class="uil" [ngClass]="item.id === 1 ? 'uil-shield-check' : 'uil-tag-alt'"></i>
+                                {{ item.id === 1 ? 'نوع أساسي' : 'نوع مخصص' }}
+                            </span>
+                        </td>
+                        <td data-label="أُضيف بواسطة"><span class="meta-value"><i class="uil uil-user"></i>{{ item.createdBy || 'غير محدد' }}</span></td>
+                        <td data-label="تاريخ الإضافة"><span class="meta-value"><i class="uil uil-calendar-alt"></i>{{ item.insertDate || 'غير محدد' }}</span></td>
+                        <td data-label="الإجراءات">
+                            <div class="row-actions" *ngIf="item.id !== 1; else protectedType">
+                                <button type="button" class="action-button action-button--edit" (click)="openItemModal(OpenItemModal, item)">
+                                    <i class="uil uil-pen"></i><span>تعديل</span>
+                                </button>
+                                <button type="button" class="action-button action-button--delete" (click)="openDeleteItemModal(deleteItemModal, item)">
+                                    <i class="uil uil-trash-alt"></i><span>حذف</span>
+                                </button>
                             </div>
+                            <ng-template #protectedType>
+                                <span class="protected-label"><i class="uil uil-lock"></i> محمي</span>
+                            </ng-template>
                         </td>
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <ng-template #emptyState>
+            <div class="empty-state">
+                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
+            </div>
+        </ng-template>
+
+        <footer class="admin-card-footer register-footer" *ngIf="pagedResponseModel.totalCount">
+            <p>يتم عرض {{ pagedResponseModel.results.length }} من أصل {{ pagedResponseModel.totalCount }} نوع</p>
+            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage" [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount"></app-za-pagination>
+        </footer>
+    </section>
+</main>
+
+<ng-template #OpenItemModal let-modal>
+    <section class="admin-modal type-modal" dir="rtl">
+        <header class="admin-modal-header modal-heading">
+            <div class="modal-title">
+                <span><i class="uil" [ngClass]="isEditing ? 'uil-pen' : 'uil-gift'"></i></span>
+                <div>
+                    <h2>{{ isEditing ? 'تعديل نوع التبرع' : 'إضافة نوع تبرع جديد' }}</h2>
+                    <p>اكتب اسماً واضحاً يساعد فريق المؤسسة على تصنيف التبرعات بدقة.</p>
+                </div>
+            </div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        </header>
+
+        <form [formGroup]="ItemForm" autocomplete="off" (ngSubmit)="AddNewItem()">
+            <div class="modal-body-content">
+                <div class="form-group-admin">
+                    <label class="form-label-admin" for="benefactorTypeName">اسم نوع التبرع <em>*</em></label>
+                    <div class="field-control" [class.field-control--error]="formErrors.name">
+                        <i class="uil uil-gift"></i><input id="benefactorTypeName" type="text" formControlName="name" placeholder="مثال: تبرع نقدي">
+                    </div>
+                    <small class="field-error" *ngIf="formErrors.name"><i class="uil uil-exclamation-circle"></i>{{ formErrors.name }}</small>
+                </div>
+                <div class="form-hint"><i class="uil uil-info-circle"></i><span>اختر اسماً مختصراً ومميزاً، وتجنب إضافة النوع نفسه أكثر من مرة.</span></div>
+            </div>
+
+            <footer class="admin-modal-footer modal-actions">
+                <button type="button" class="btn-secondary-admin" (click)="modal.close()">إلغاء</button>
+                <button type="submit" class="btn-primary-admin" [disabled]="showLoader"><i class="uil uil-save"></i>{{ isEditing ? 'حفظ التعديلات' : 'إضافة النوع' }}</button>
+            </footer>
         </form>
-    </div>
-    <div class="modal-footer flex-nowrap gap-2">
-        <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
-            <i class="uil uil-save fs-3"></i>
-            <span>حفظ</span>
-        </button>
-        <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-            <i class="uil uil-times-circle fs-3"></i>
-            <span>الغاء</span>
-        </button>
-    </div>
+    </section>
 </ng-template>
 
 <ng-template #deleteItemModal let-modal>
-    <div class="modal-header modal-header-bg justify-content-between">
-        <h2 class="d-flex align-items-center gap-2">
-            <span>تأكيد الإجراء</span>
-        </h2>
-        <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-            <i class="uil uil-times-circle"></i>
+    <section class="delete-modal" dir="rtl">
+        <button type="button" class="modal-close delete-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        <span class="delete-icon"><i class="uil uil-trash-alt"></i></span>
+        <h2>حذف نوع التبرع؟</h2>
+        <p>سيتم حذف النوع من القائمة، وقد تتأثر إمكانية استخدامه عند تسجيل التبرعات الجديدة.</p>
+        <div class="delete-actions">
+            <button type="button" class="btn-secondary-admin" (click)="modal.close()">تراجع</button>
+            <button type="button" class="btn-danger-admin" [disabled]="showLoader" (click)="DeleteItem()"><i class="uil uil-trash-alt"></i>نعم، حذف النوع</button>
         </div>
-    </div>
-    <div class="modal-body">
-        <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
-    </div>
-    <div class="modal-footer justify-content-start">
-        <button type="button" class="btn btn-success" (click)="DeleteItem()">
-            <i class="fas fa-check"></i>
-            <span class="ms-2">نعم</span>
-        </button>
-        <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
-            <i class="fas fa-times"></i>
-            <span class="ms-2">لا</span>
-        </button>
-    </div>
+    </section>
 </ng-template>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

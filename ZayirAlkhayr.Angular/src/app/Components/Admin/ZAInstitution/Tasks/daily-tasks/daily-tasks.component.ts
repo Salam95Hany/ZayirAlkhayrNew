@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { AdminBreadcrumbComponent } from '../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { TaskService } from '../../../../../Services/zainstitution/task.service';
 import { ToastrService } from 'ngx-toastr';
@@ -16,12 +16,12 @@ import { NgxLoadingModule } from "ngx-loading";
 @Component({
   selector: 'app-daily-tasks',
   standalone: true,
-  imports: [FormsModule, NgClass, NgIf, AdminBreadcrumbComponent, FormsModule, ZaPaginationComponent, NgFor, CommonModule,
+  imports: [FormsModule, NgClass, NgIf, AdminBreadcrumbComponent, ZaPaginationComponent, NgFor, CommonModule,
     ZaInputWithLabelComponent, ReactiveFormsModule, NgbModule, NgxLoadingModule],
   templateUrl: './daily-tasks.component.html',
   styleUrl: './daily-tasks.component.css'
 })
-export class DailyTasksComponent {
+export class DailyTasksComponent implements OnDestroy {
   TitleList = ['مؤسسة زائر الخير', 'إدارة المهام', 'المهام اليومية'];
   TasksData: any[] = [];
   CurrentUserId: any;
@@ -44,6 +44,7 @@ export class DailyTasksComponent {
   formErrors = {
     comment: '',
   };
+  private clockTimer?: ReturnType<typeof setInterval>;
 
   constructor(private taskService: TaskService, private toaster: ToastrService, private authService: AuthService, private modalService: NgbModal,
     private fb: FormBuilder, private formService: FormService
@@ -55,7 +56,12 @@ export class DailyTasksComponent {
     this.FormInit();
     this.GetAllUserTasks();
     this.updateDateTime();
-    setInterval(() => this.updateDateTime(), 1000);
+    this.clockTimer = setInterval(() => this.updateDateTime(), 1000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.clockTimer)
+      clearInterval(this.clockTimer);
   }
 
   updateDateTime() {
@@ -92,7 +98,7 @@ export class DailyTasksComponent {
     this.TaskId = item.id;
     this.FillEditForm(item);
     this.modalService.open(content, {
-      size: 'xl',
+      size: 'md',
       scrollable: true,
       centered: true
     });
@@ -121,6 +127,7 @@ export class DailyTasksComponent {
 
   OnFilterClick(status: string) {
     this.PagingFilter.filterList = [];
+    this.PagingFilter.currentPage = 1;
     if (status != 'SearchText') {
       this.StatusFilterActive = status;
       this.PagingFilter.searchText = '';
@@ -131,7 +138,9 @@ export class DailyTasksComponent {
       this.GetAllUserTasks();
     }
     else {
-      if (this.PagingFilter.searchText.length > 2 || !this.PagingFilter.searchText) {
+      const searchText = this.PagingFilter.searchText?.trim() ?? '';
+      this.PagingFilter.searchText = searchText;
+      if (searchText.length > 2 || !searchText) {
         this.StatusFilterActive = 'All';
         this.PagingFilter.filterList.push({
           categoryName: 'SearchText',
@@ -184,5 +193,9 @@ export class DailyTasksComponent {
         this.toaster.error(data.message);
       this.showLoader = false;
     });
+  }
+
+  trackByTask(_: number, item: any): number {
+    return item.id;
   }
 }

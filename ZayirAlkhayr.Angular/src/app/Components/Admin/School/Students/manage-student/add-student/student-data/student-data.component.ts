@@ -164,12 +164,8 @@ export class StudentDataComponent {
   openItemModal(content: any, item: any) {
     this.ResetForm();
     this.addMode = true;
-    this.ItemForm.get('academicStageId')?.enable();
     if (item) {
       this.addMode = false;
-      if (this.UpdateMode && item.studentId) {
-        this.ItemForm.get('academicStageId')?.disable();
-      }
       this.FillEditForm(item);
     }
 

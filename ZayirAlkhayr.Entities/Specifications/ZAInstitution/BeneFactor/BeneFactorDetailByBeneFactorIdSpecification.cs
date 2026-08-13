@@ -11,7 +11,7 @@ namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.BeneFactor
     {
         public BeneFactorDetailByBeneFactorIdSpecification(int BeneFactorId, int BeneFactorTypeId):base(i => i.BeneFactorId == BeneFactorId && i.ParentId == null && (BeneFactorTypeId == 0 || i.BeneFactorTypeId == BeneFactorTypeId))
         {
-            
+            AddInclude(i => i.BeneFactorType);
         }
     }
 }

@@ -1,61 +1,83 @@
 <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2">
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
-                    <i class="uil uil-filter"></i>
-                    <span class="navbar-brand m-0">{{ isFilter ? 'عرض' : 'اخفاء' }} الفلاتر</span>
-                </button>
-            </div>
+<main class="notes-page admin-page" dir="rtl">
+    <section class="notes-hero">
+        <div>
+            <h1>ملاحظات واقتراحات المتبرعين</h1>
+            <p>راجع آراء المتبرعين ومقترحاتهم في سجل واضح يساعد فريق المؤسسة على تحسين التواصل والخدمات.</p>
         </div>
-        <div class="col-md-4 mb-2">
+        <div class="hero-stat">
+            <span><i class="uil uil-comment-alt-notes"></i></span>
+            <div><strong>{{ pagedResponseModel.totalCount }}</strong><small>إجمالي المشاركات</small></div>
+        </div>
+    </section>
+
+    <section class="admin-card notes-register">
+        <header class="admin-card-header register-header">
+            <div class="section-title">
+                <span><i class="uil uil-comments-alt"></i></span>
+                <div>
+                    <h2>سجل المشاركات</h2>
+                    <p>الملاحظات والاقتراحات المرسلة من المتبرعين.</p>
+                </div>
+            </div>
+            <button type="button" class="filter-button" [class.filter-button--active]="!isFilter" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                <i class="uil uil-filter"></i>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}
+                <b *ngIf="activeFiltersCount">{{ activeFiltersCount }}</b>
+            </button>
+        </header>
+
+        <div class="filter-panel" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)"></app-za-filters>
+        </div>
+
+        <div class="notes-grid" *ngIf="pagedResponseModel.results.length; else emptyState">
+            <article class="note-card" *ngFor="let item of pagedResponseModel.results; trackBy: trackByNote">
+                <header class="note-card__header">
+                    <div class="benefactor-avatar">{{ getInitial(item.fullName) }}</div>
+                    <div class="benefactor-heading">
+                        <h3>{{ item.fullName }}</h3>
+                        <span class="benefactor-code"><i class="uil uil-qrcode-scan"></i>{{ item.code }}</span>
+                    </div>
+                    <time><i class="uil uil-calendar-alt"></i>{{ item.insertDate || 'غير محدد' }}</time>
+                </header>
+
+                <div class="contact-strip">
+                    <a *ngIf="item.phone" [href]="'tel:' + item.phone"><i class="uil uil-phone"></i>{{ item.phone }}</a>
+                    <span><i class="uil uil-globe"></i>{{ item.nationality || 'الجنسية غير محددة' }}</span>
+                </div>
+
+                <div class="feedback-content">
+                    <section class="feedback-box feedback-box--note">
+                        <span class="feedback-icon"><i class="uil uil-comment-alt-notes"></i></span>
+                        <div>
+                            <h4>الملاحظة</h4>
+                            <p>{{ item.note || 'لا توجد ملاحظة مسجلة.' }}</p>
+                        </div>
+                    </section>
+                    <section class="feedback-box feedback-box--suggestion">
+                        <span class="feedback-icon"><i class="uil uil-lightbulb-alt"></i></span>
+                        <div>
+                            <h4>الاقتراح</h4>
+                            <p>{{ item.suggestion || 'لا يوجد اقتراح مسجل.' }}</p>
+                        </div>
+                    </section>
+                </div>
+            </article>
+        </div>
+
+        <ng-template #emptyState>
+            <div class="empty-state">
+                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
+                <p>لا توجد ملاحظات أو اقتراحات مطابقة للبحث حالياً.</p>
+            </div>
+        </ng-template>
+
+        <footer class="admin-card-footer register-footer" *ngIf="pagedResponseModel.totalCount">
+            <p>يتم عرض {{ pagedResponseModel.results.length }} من أصل {{ pagedResponseModel.totalCount }} مشاركة</p>
             <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage" [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount"></app-za-pagination>
-        </div>
-        <div class="col-md-12 mt-3" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
-            <div class="d-flex align-items-center">
-                <ng-container>
-                    <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)"></app-za-filters>
-                </ng-container>
-            </div>
-        </div>
-    </div>
-    <div class="p-3 bg-white">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
-                <thead>
-                    <tr>
-                        <th>الكود</th>
-                        <th>الاسم</th>
-                        <th>رقم التلفون</th>
-                        <th>الجنسية</th>
-                        <th>ملاحظات</th>
-                        <th>اقتراحات</th>
-                        <th>تاريخ الاضافة</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of pagedResponseModel.results">
-                            <td>{{item.code}}</td>
-                            <td>{{item.fullName}}</td>
-                            <td>{{item.phone}}</td>
-                            <td>{{item.nationality}}</td>
-                            <td>{{item.note}}</td>
-                            <td>{{item.suggestion}}</td>
-                            <td>{{item.insertDate}}</td>
-                        </tr>
-                        <tr *ngIf="!pagedResponseModel.results.length">
-                            <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+        </footer>
+    </section>
+</main>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

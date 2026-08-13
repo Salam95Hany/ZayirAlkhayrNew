@@ -8,6 +8,7 @@ using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.School.Students.ManageStudent;
 using ZayirAlkhayr.Services.Common;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZayirAlkhayr.Services.School.Students.ManageStudent
 {
@@ -166,6 +167,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             var parentRepository = _unitOfWork.Repository<Parent>();
             var studentRepository = _unitOfWork.Repository<Student>();
             var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
+            var studentFeeRepository = _unitOfWork.Repository<StudentFee>();
 
             bool parentExists = await parentRepository.AnyAsync(x => x.Name == model.ParentData.ParentName && x.Id != model.ParentData.ParentId);
             if (parentExists)
@@ -175,20 +177,31 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             if (studentExists)
                 return ApiResponseModel<string>.Failure(GenericErrors.StudentAlreadyExists);
 
+            var parent = await parentRepository.GetByIdAsync(model.ParentData.ParentId!.Value);
+            var student = await studentRepository.GetByIdAsync(studentUpdated.StudentId!.Value);
+            var enrollment = await enrollmentRepository.FirstOrDefaultAsync(x => x.StudentId == studentUpdated.StudentId && x.IsCurrent);
+
+            if (parent == null || student == null || enrollment == null)
+                return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+
+            var academicStageChanged = enrollment.AcademicStageId != studentUpdated.AcademicStageId;
+
+            if (academicStageChanged)
+            {
+                var hasFees = await studentFeeRepository.AnyAsync(x => x.StudentEnrollmentId == enrollment.Id);
+
+                if (hasFees)
+                {
+                    var error = new Entities.Common.Error(GenericErrors.StudentHasFeesCannotChangeAcademicStage.Message.Replace("{StudentName}", student.StudentName));
+                    return ApiResponseModel<string>.Failure(error);
+                }
+            }
+
+
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
             try
             {
-                var parent = await parentRepository.GetByIdAsync(model.ParentData.ParentId!.Value);
-                var student = await studentRepository.GetByIdAsync(studentUpdated.StudentId!.Value);
-                var enrollment = await enrollmentRepository.FirstOrDefaultAsync(x => x.StudentId == studentUpdated.StudentId && x.IsCurrent);
-
-                if (parent == null || student == null || enrollment == null)
-                {
-                    await transaction.RollbackAsync(cancellationToken);
-                    return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
-                }
-
                 parent.Name = model.ParentData.ParentName;
                 parent.ParentPhone = model.ParentData.FatherPhone;
                 parent.MotherPhone = model.ParentData.MotherPhone;
