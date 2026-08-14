@@ -188,7 +188,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
 
             if (academicStageChanged)
             {
-                var hasFees = await studentFeeRepository.AnyAsync(x => x.StudentEnrollmentId == enrollment.Id);
+                var hasFees = await studentFeeRepository.AnyAsync(x => x.StudentEnrollmentId == enrollment.Id && x.Status != StudentFeeStatus.Cancelled);
 
                 if (hasFees)
                 {
