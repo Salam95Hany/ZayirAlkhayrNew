@@ -105,7 +105,7 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IStudentTypeService, StudentTypeService>();
             services.AddScoped<IParentService, ParentService>();
             services.AddScoped<ITemplateService, TemplateService>();
-            
+            services.AddScoped<IPercentageService, PercentageService>();
 
             return services;
         }

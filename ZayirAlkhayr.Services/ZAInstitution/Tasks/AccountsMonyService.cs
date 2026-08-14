@@ -102,6 +102,14 @@ namespace ZayirAlkhayr.Services.ZAInstitution.Tasks
             StatisticsDto.TotalIncome = await _unitOfWork.Repository<FinancialTransaction>().SumAsync(SpecIncome, i => i.TotalValue);
             StatisticsDto.TotalExpenses = await _unitOfWork.Repository<FinancialTransaction>().SumAsync(SpecExpenses, i => i.TotalValue);
             StatisticsDto.NetValue = StatisticsDto.TotalIncome - StatisticsDto.TotalExpenses;
+            var percentageFilter = PagingFilter.FilterList.FirstOrDefault(f => f.CategoryName == "Percentage");
+            double percentage = 0;
+            if (percentageFilter != null)
+                double.TryParse(percentageFilter.ItemKey, out percentage);
+
+            StatisticsDto.TotalIncomePercentage = StatisticsDto.TotalIncome * percentage / 100;
+            StatisticsDto.TotalExpensesPercentage = StatisticsDto.TotalExpenses * percentage / 100;
+            StatisticsDto.TotalNetValuePercentage = StatisticsDto.TotalIncomePercentage - StatisticsDto.TotalExpensesPercentage;
             return ApiResponseModel<FinancialTransactionStatisticsDto>.Success(GenericErrors.GetSuccess, StatisticsDto);
         }
 

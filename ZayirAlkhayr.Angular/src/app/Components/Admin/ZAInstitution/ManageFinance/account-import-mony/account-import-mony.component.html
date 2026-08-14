@@ -15,16 +15,24 @@
     <section class="stats-grid" aria-label="ملخص الإيرادات">
         <article class="stat-card stat-card--total">
             <span class="stat-icon"><i class="uil uil-coins"></i></span>
-            <div><small>{{ selectedCount ? 'إجمالي المحدد' : 'إجمالي الإيرادات' }}</small><strong>{{ TotalValue | number
+            <div class="stat-content"><small>{{ selectedCount ? 'إجمالي المحدد' : 'إجمالي الإيرادات' }}</small><strong>{{ TotalValue | number
                     }}</strong>
                 <p>جنيه مصري</p>
+                <div class="percentage-result" *ngIf="hasSelectedPercentage">
+                    <span class="percentage-result__label"><i class="uil uil-percentage"></i> قيمة نسبة {{ selectedPercentageValue }}% من إجمالي الإيرادات</span>
+                    <span class="percentage-result__value">{{ TotalMoneyPercentage | number:'1.0-2' }} <small>ج.م</small></span>
+                </div>
             </div>
             <span class="selection-count" *ngIf="selectedCount">{{ selectedCount }} محدد</span>
         </article>
         <article class="stat-card stat-card--month">
             <span class="stat-icon"><i class="uil uil-calendar-alt"></i></span>
-            <div><small>إيرادات الشهر الحالي</small><strong>{{ ImportValueMonth | number }}</strong>
+            <div class="stat-content"><small>إيرادات الشهر الحالي</small><strong>{{ ImportValueMonth | number }}</strong>
                 <p>جنيه مصري</p>
+                <div class="percentage-result" *ngIf="hasSelectedPercentage">
+                    <span class="percentage-result__label"><i class="uil uil-percentage"></i> قيمة نسبة {{ selectedPercentageValue }}% من إيرادات الشهر</span>
+                    <span class="percentage-result__value">{{ CurrentMonthMonyPercentage | number:'1.0-2' }} <small>ج.م</small></span>
+                </div>
             </div>
         </article>
         <article class="stat-card stat-card--transactions">
@@ -122,6 +130,32 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <div class="mobile-ledger-list" *ngIf="AccountMoneyList.length" aria-label="قائمة عمليات الإيرادات">
+            <article class="mobile-transaction-card" *ngFor="let item of AccountMoneyList; trackBy: trackByAccount" [class.mobile-transaction-card--selected]="item.isSelected">
+                <header class="mobile-card-header">
+                    <label class="mobile-select"><input type="checkbox" aria-label="تحديد العملية" (change)="onInputSelected()" [(ngModel)]="item.isSelected"><span>تحديد</span></label>
+                    <strong class="mobile-amount">{{ item.totalValue | number }} <small>ج.م</small></strong>
+                </header>
+                <div class="mobile-card-body">
+                    <div class="mobile-primary-row">
+                        <span class="mobile-primary-icon"><i class="uil uil-user"></i></span>
+                        <div><small>المتبرع</small><strong>{{ item.fullName || 'فاعل خير' }}</strong></div>
+                    </div>
+                    <dl class="mobile-details-list">
+                        <div><dt>نوع التبرع</dt><dd><span class="type-badge"><i class="uil uil-tag-alt"></i>{{ item.name || 'غير محدد' }}</span></dd></div>
+                        <div><dt>طريقة التحصيل</dt><dd><span class="method-badge"><i class="uil uil-wallet"></i>{{ item.donationMethodId | donationMethod }}</span></dd></div>
+                        <div><dt>التفاصيل</dt><dd>{{ item.details || '—' }}</dd></div>
+                        <div><dt>أُضيف بواسطة</dt><dd><span class="meta-value"><i class="uil uil-user-check"></i>{{ item.createdBy || 'غير محدد' }}</span></dd></div>
+                        <div><dt>تاريخ الإضافة</dt><dd><span class="meta-value"><i class="uil uil-calendar-alt"></i>{{ item.insertDateStr || 'غير محدد' }}</span></dd></div>
+                    </dl>
+                </div>
+                <footer class="mobile-card-actions">
+                    <button type="button" class="action-button action-button--edit" appRole pageKey="ZAInstitution_AccountImportMoney" action="canEdit" (click)="openItemModal(OpenItemModal, item)"><i class="uil uil-pen"></i><span>تعديل</span></button>
+                    <button type="button" class="action-button action-button--delete" appRole pageKey="ZAInstitution_AccountImportMoney" action="canDelete" (click)="openDeleteItemModal(deleteItemModal, item)"><i class="uil uil-trash-alt"></i><span>حذف</span></button>
+                </footer>
+            </article>
         </div>
 
         <ng-template #emptyState>

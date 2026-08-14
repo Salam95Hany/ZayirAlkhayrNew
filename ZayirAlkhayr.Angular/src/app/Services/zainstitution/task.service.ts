@@ -87,4 +87,26 @@ export class TaskService {
   DeleteGeneralTask(TaskId: number) {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'GeneralTasks/DeleteGeneralTask?TaskId=' + TaskId);
   }
+
+  // ============================= Percentage ==============================
+
+  GetAllPercentageData(PagingFilter: PagingFilterModel) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Percentage/GetAllPercentageData', PagingFilter);
+  }
+
+  GetAllPercentageFilters() {
+    return this.http.get<ApiResponseModel<any[]>>(this.apiURL + 'Percentage/GetAllPercentageFilters');
+  }
+
+  AddNewPercentage(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Percentage/AddNewPercentage', Model);
+  }
+
+  UpdatePercentage(Model: any) {
+    return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Percentage/UpdatePercentage', Model);
+  }
+
+  DeletePercentage(PercentageId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Percentage/DeletePercentage?PercentageId=' + PercentageId);
+  }
 }

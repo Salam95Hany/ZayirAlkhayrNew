@@ -40,6 +40,11 @@
                 <strong>{{ NetValue | number }}</strong><span>ج.م</span>
             </div>
 
+            <div class="percentage-insight percentage-insight--balance" *ngIf="hasSelectedPercentage">
+                <span><i class="uil uil-percentage"></i> قيمة نسبة {{ selectedPercentageValue }}% من صافي الرصيد</span>
+                <strong>{{ TotalNetValuePercentage | number:'1.0-2' }} <small>ج.م</small></strong>
+            </div>
+
             <div class="balance-footer">
                 <span><i class="uil" [ngClass]="NetValue >= 0 ? 'uil-arrow-growth' : 'uil-chart-down'"></i>{{ NetValue >= 0 ? 'المتاح بعد تغطية المصروفات' : 'المصروفات تتجاوز الإيرادات' }}</span>
                 <strong>{{ netRate | number:'1.0-1' }}%</strong>
@@ -49,13 +54,23 @@
         <div class="summary-stack">
             <article class="summary-card summary-card--income">
                 <span class="summary-icon"><i class="uil uil-money-insert"></i></span>
-                <div class="summary-data"><small>إجمالي الإيرادات</small><strong>{{ TotalImportValue | number }} <em>ج.م</em></strong><p>جميع المبالغ الواردة في النطاق المحدد</p></div>
+                <div class="summary-data"><small>إجمالي الإيرادات</small><strong>{{ TotalImportValue | number }} <em>ج.م</em></strong><p>جميع المبالغ الواردة في النطاق المحدد</p>
+                    <div class="percentage-insight" *ngIf="hasSelectedPercentage">
+                        <span><i class="uil uil-percentage"></i> قيمة نسبة {{ selectedPercentageValue }}%</span>
+                        <strong>{{ TotalIncomePercentage | number:'1.0-2' }} <small>ج.م</small></strong>
+                    </div>
+                </div>
                 <span class="direction-icon"><i class="uil uil-arrow-down-left"></i></span>
             </article>
 
             <article class="summary-card summary-card--expense">
                 <span class="summary-icon"><i class="uil uil-money-withdraw"></i></span>
-                <div class="summary-data"><small>إجمالي المصروفات</small><strong>{{ TotalExportValue | number }} <em>ج.م</em></strong><p>جميع المبالغ الصادرة في النطاق المحدد</p></div>
+                <div class="summary-data"><small>إجمالي المصروفات</small><strong>{{ TotalExportValue | number }} <em>ج.م</em></strong><p>جميع المبالغ الصادرة في النطاق المحدد</p>
+                    <div class="percentage-insight" *ngIf="hasSelectedPercentage">
+                        <span><i class="uil uil-percentage"></i> قيمة نسبة {{ selectedPercentageValue }}%</span>
+                        <strong>{{ TotalExpensesPercentage | number:'1.0-2' }} <small>ج.م</small></strong>
+                    </div>
+                </div>
                 <span class="direction-icon"><i class="uil uil-arrow-up-left"></i></span>
             </article>
         </div>

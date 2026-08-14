@@ -23,17 +23,17 @@ import { NgxLoadingModule } from "ngx-loading";
 import { DonationMethodPipe } from '../../../../../Pipes/donation-method.pipe';
 
 @Component({
-  selector: 'app-account-import-mony',
+  selector: 'app-account-export-mony',
   standalone: true,
   imports: [AdminBreadcrumbComponent, ZaPaginationComponent, ZaFiltersComponent, ZaEmptyDataComponent,
     CommonModule, FormsModule, ReactiveFormsModule, NgbModule, RoleCheckerDirective, ZaInputWithLabelComponent,
     NgIf, NgFor, ZaDropDownFormControlComponent, NgxLoadingModule, DonationMethodPipe],
-  templateUrl: './account-import-mony.component.html',
-  styleUrl: './account-import-mony.component.css',
+  templateUrl: './account-export-mony.component.html',
+  styleUrls: ['../account-import-mony/account-import-mony.component.css'],
   providers: [DatePipe]
 })
-export class AccountImportMonyComponent {
-  TitleList = ['مؤسسة زائر الخير', 'إدارة الحسابات', 'الايرادات'];
+export class AccountExportMonyComponent implements OnInit {
+  TitleList = ['مؤسسة زائر الخير', 'إدارة الحسابات', 'المصروفات'];
   filterList: FilterModel[] = [];
   AccountMoneyList: any[] = [];
   BeneFactors: any[] = [];
@@ -42,11 +42,14 @@ export class AccountImportMonyComponent {
   ItemForm: FormGroup;
   showLoader: boolean = false;
   TotalCount = 0;
-  TotalImportValue = 0;
-  ImportValueMonth = 0;
+  TotalExportValue = 0;
+  ExportValueMonth = 0;
   TotalValue = 0;
-  isFilter = true;
+  CurrentMonthMonyPercentage = 0;
+  TotalMoneyPercentage = 0;
+  selectedPercentageValue: string | null = null;
   IsSelectedAll = false;
+  isFilter = true;
   ActivityId: any;
   ImageFile: any;
   UserId: any;
@@ -63,7 +66,7 @@ export class AccountImportMonyComponent {
     filterList: []
   };
   SearchReport: SearchReportModel = {
-    reportType: 'AccountImportMonyExcel',
+    reportType: 'AccountExportMonyExcel',
     headers: [],
     filterItems: []
   };
@@ -87,6 +90,10 @@ export class AccountImportMonyComponent {
     return this.PagingFilter.filterList?.filter((filter: any) =>
       filter?.isChecked || filter?.checked || filter?.selected
     ).length ?? 0;
+  }
+
+  get hasSelectedPercentage(): boolean {
+    return this.selectedPercentageValue !== null;
   }
 
   constructor(private toaster: ToastrService, private modalService: NgbModal, private fb: FormBuilder, private authService: AuthService,
@@ -127,9 +134,9 @@ export class AccountImportMonyComponent {
       id: item.id,
       beneFactorId: item?.beneFactorId?.toString() ?? '0',
       beneFactorTypeId: item?.beneFactorTypeId?.toString() ?? '',
+      donationMethodId: item?.donationMethodId?.toString() ?? '',
       details: item?.details ?? '',
       totalValue: item?.totalValue,
-      donationMethodId: item?.donationMethodId?.toString() ?? '',
       insertUser: this.UserId,
       insertDate: this.datepipe.transform(item?.insertDate, 'yyyy-MM-dd'),
       transactionType: null
@@ -174,17 +181,17 @@ export class AccountImportMonyComponent {
 
   GetFinancialTransactionData() {
     this.showLoader = true;
-    this.taskService.GetFinancialTransactionData(this.PagingFilter, 'Income').subscribe(data => {
+    this.taskService.GetFinancialTransactionData(this.PagingFilter, 'Expenses').subscribe(data => {
       this.showLoader = false;
       this.AccountMoneyList = data.results.table;
-      this.AccountHeaders = data.results.table1;
+      this.AccountHeaders = data.results?.table1?.filter(i => i.displayValue != 'DonationMethod') ?? [];
       this.TotalCount = data.totalCount;
       this.onInputSelecetAll(this.IsSelectedAll);
     });
   }
 
   GetFinancialTransactionFilters() {
-    this.taskService.GetFinancialTransactionFilters(this.PagingFilter, 'Income').subscribe(data => {
+    this.taskService.GetFinancialTransactionFilters(this.PagingFilter, 'Expenses').subscribe(data => {
       this.filterList = data.results;
     });
   }
@@ -205,10 +212,12 @@ export class AccountImportMonyComponent {
   }
 
   GetFinancialTransactionStatistics() {
-    this.taskService.GetFinancialTransactionStatistics(this.PagingFilter, 'Income').subscribe(data => {
-      this.TotalImportValue = data.results[0].totalMoney ?? 0;
-      this.ImportValueMonth = data.results[0].currentMonthMony ?? 0;
+    this.taskService.GetFinancialTransactionStatistics(this.PagingFilter, 'Expenses').subscribe(data => {
+      this.TotalExportValue = data.results[0].totalMoney ?? 0;
+      this.ExportValueMonth = data.results[0].currentMonthMony ?? 0;
       this.TotalValue = data.results[0].totalMoney ?? 0;
+      this.CurrentMonthMonyPercentage = data.results[0].currentMonthMonyPercentage ?? 0;
+      this.TotalMoneyPercentage = data.results[0].totalMoneyPercentage ?? 0;
     });
   }
 
@@ -221,8 +230,27 @@ export class AccountImportMonyComponent {
     this.PagingFilter.filterList = filterList;
     this.PagingFilter.currentPage = 1;
     this.SearchReport.filterItems = filterList;
+    const percentageFilter = this.findSelectedPercentageFilter(filterList);
+    this.selectedPercentageValue = percentageFilter
+      ? String(percentageFilter.itemKey ?? percentageFilter.itemId ?? '').replace('%', '').trim()
+      : null;
     this.GetFinancialTransactionData();
     this.GetFinancialTransactionStatistics();
+  }
+
+  private findSelectedPercentageFilter(filterList: FilterModel[] = []): FilterModel | undefined {
+    for (const filter of filterList) {
+      if (filter.categoryName?.toLowerCase() === 'percentage' && filter.isChecked) {
+        return filter;
+      }
+
+      const selectedChild = this.findSelectedPercentageFilter(filter.filterItems ?? []);
+      if (selectedChild) {
+        return selectedChild;
+      }
+    }
+
+    return undefined;
   }
 
   validateForm(): boolean {
@@ -241,7 +269,7 @@ export class AccountImportMonyComponent {
     if (!isValid)
       return;
 
-    this.ItemForm.patchValue({ transactionType: 'Income' });
+    this.ItemForm.patchValue({ transactionType: 'Expenses' });
 
     this.showLoader = true;
     if (this.ItemForm.controls['id'].value == 0) {
@@ -318,10 +346,10 @@ export class AccountImportMonyComponent {
     }
 
     let today = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
-    let fileName = 'الايرادات' + '_' + today;
+    let fileName = 'المصروفات' + '_' + today;
     this.SearchReport.headers = this.SearchReport.headers.filter(i => i.isSelected);
     this.SearchReport.rowCount = 0;
-    this.SearchReport.reportType = 'AccountImportMonyPdf';
+    this.SearchReport.reportType = 'AccountExportMonyPdf';
     this.showLoader = true;
     this.pdfService.DownloadFile(this.SearchReport, fileName + '.pdf').subscribe(data => {
       this.showLoader = false;
@@ -336,9 +364,9 @@ export class AccountImportMonyComponent {
     }
 
     this.SearchReport.userName = this.authService.userName;
-    this.SearchReport.reportType = 'AccountImportMonyExcel';
+    this.SearchReport.reportType = 'AccountExportMonyExcel';
     let today = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
-    let fileName = 'الايرادات' + '_' + today;
+    let fileName = 'المصروفات' + '_' + today;
     this.SearchReport.headers = this.pdfService.ConverHeaderToPDFModel(this.AccountHeaders);
     this.showLoader = true;
     this.pdfService.DownloadFile(this.SearchReport, fileName + '.xlsx').subscribe(data => {
@@ -349,7 +377,7 @@ export class AccountImportMonyComponent {
   onInputSelecetAll(isSelected: boolean) {
     this.AccountMoneyList.forEach(item => item.isSelected = isSelected);
     if (this.AccountMoneyList.every(i => !i.isSelected))
-      this.TotalValue = this.TotalImportValue;
+      this.TotalValue = this.TotalExportValue;
     else {
       this.TotalValue = 0;
       this.AccountMoneyList.forEach(item => {
@@ -361,7 +389,7 @@ export class AccountImportMonyComponent {
 
   onInputSelected() {
     if (this.AccountMoneyList.every(i => !i.isSelected))
-      this.TotalValue = this.TotalImportValue;
+      this.TotalValue = this.TotalExportValue;
     else {
       this.TotalValue = 0;
       this.AccountMoneyList.forEach(item => {

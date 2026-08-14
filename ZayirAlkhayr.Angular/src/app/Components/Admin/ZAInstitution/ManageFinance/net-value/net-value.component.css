@@ -251,6 +251,63 @@
     font-weight: 800;
 }
 
+.percentage-insight {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .65rem;
+    margin-top: .55rem;
+    padding: .48rem .6rem;
+    border: 1px solid #cce7e2;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #f0faf7, #eef8fa)
+}
+
+.percentage-insight>span {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: .28rem;
+    color: #397066;
+    font-size: .59rem;
+    font-weight: 800;
+    line-height: 1.5
+}
+
+.percentage-insight>span i {
+    flex: 0 0 auto;
+    color: var(--net-teal);
+    font-size: .8rem
+}
+
+.percentage-insight>strong {
+    flex: 0 0 auto;
+    margin: 0;
+    color: #0c766c;
+    font-size: .76rem;
+    font-weight: 900;
+    white-space: nowrap
+}
+
+.percentage-insight>strong small {
+    display: inline;
+    color: #5d7b77;
+    font-size: .52rem
+}
+
+.percentage-insight--balance {
+    margin: .7rem 0;
+    border-color: rgba(255, 255, 255, .22);
+    background: rgba(255, 255, 255, .11)
+}
+
+.percentage-insight--balance>span,
+.percentage-insight--balance>span i,
+.percentage-insight--balance>strong,
+.percentage-insight--balance>strong small {
+    color: #fff
+}
+
 .balance-footer {
     padding-top: .8rem;
     border-top: 1px solid rgba(255, 255, 255, .16);
@@ -302,6 +359,7 @@
 }
 
 .summary-data {
+    flex: 1;
     min-width: 0;
 }
 
@@ -335,6 +393,18 @@
     font-size: .58rem;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.summary-data .percentage-insight > strong {
+    margin: 0;
+    color: #0c766c;
+    font-size: .76rem;
+}
+
+.summary-data .percentage-insight > strong small {
+    display: inline;
+    color: #5d7b77;
+    font-size: .52rem;
 }
 
 .direction-icon {
@@ -514,4 +584,5 @@
     .balance-footer { align-items: flex-start; flex-direction: column; }
     .ratio-head { gap: .5rem; flex-direction: column; }
     .chart-header { align-items: flex-start; flex-direction: column; }
+    .percentage-insight { align-items: flex-start; flex-direction: column; gap: .25rem; }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Models.School;
 using ZayirAlkhayr.Entities.Models.Settings;
+using ZayirAlkhayr.Entities.Models.ZAInstitution;
 
 namespace ZayirAlkhayr.Entities.Models;
 
@@ -51,6 +52,7 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     public virtual DbSet<SliderImage> SliderImages { get; set; }
     public virtual DbSet<TaskStatus> TaskStatuses { get; set; }
     public virtual DbSet<WebSiteVisitor> WebSiteVisitors { get; set; }
+    public virtual DbSet<Percentage> Percentages { get; set; }
     #endregion
 
     #region Settings

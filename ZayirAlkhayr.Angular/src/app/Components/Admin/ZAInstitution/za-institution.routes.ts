@@ -95,14 +95,14 @@ export const ZAInstitutionRoutes: Routes = [
             {
                 path: 'account-export-money',
                 loadComponent: () =>
-                    import('./Tasks/account-export-mony/account-export-mony.component').then(m => m.AccountExportMonyComponent),
+                    import('./ManageFinance/account-export-mony/account-export-mony.component').then(m => m.AccountExportMonyComponent),
                 canActivate: [authGuard],
                 data: { pageKey: 'ZAInstitution_AccountExportMoney' }
             },
             {
                 path: 'account-import-money',
                 loadComponent: () =>
-                    import('./Tasks/account-import-mony/account-import-mony.component').then(m => m.AccountImportMonyComponent),
+                    import('./ManageFinance/account-import-mony/account-import-mony.component').then(m => m.AccountImportMonyComponent),
                 canActivate: [authGuard],
                 data: { pageKey: 'ZAInstitution_AccountImportMoney' }
             },
@@ -165,12 +165,18 @@ export const ZAInstitutionRoutes: Routes = [
             {
                 path: 'net-value',
                 loadComponent: () =>
-                    import('./Tasks/net-value/net-value.component').then(m => m.NetValueComponent),
+                    import('./ManageFinance/net-value/net-value.component').then(m => m.NetValueComponent),
                 canActivate: [authGuard],
                 data: { pageKey: 'ZAInstitution_NetValue' }
             },
+            {
+                path: 'percentage',
+                loadComponent: () =>
+                    import('./ManageFinance/percentage/percentage.component').then(m => m.PercentageComponent),
+                canActivate: [authGuard],
+                data: { pageKey: 'ZAInstitution_Percentage' }
+            },
 
-            
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: '**', redirectTo: 'home', pathMatch: 'full' },
         ]

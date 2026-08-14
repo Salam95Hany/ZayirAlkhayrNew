@@ -55,6 +55,10 @@ export class NetValueComponent implements OnInit, AfterViewInit, OnDestroy {
   TotalExportValue = 0;
   TotalImportValue = 0;
   NetValue = 0;
+  TotalIncomePercentage = 0;
+  TotalExpensesPercentage = 0;
+  TotalNetValuePercentage = 0;
+  selectedPercentageValue: string | null = null;
   showLoader = false;
   private viewInitialized = false;
   private chartsDataLoaded = false;
@@ -89,6 +93,10 @@ export class NetValueComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.PagingFilter.filterList?.filter((filter: any) =>
       filter?.isChecked || filter?.checked || filter?.selected
     ).length ?? 0;
+  }
+
+  get hasSelectedPercentage(): boolean {
+    return this.selectedPercentageValue !== null;
   }
 
   constructor(private taskService: TaskService, private ngZone: NgZone) {
@@ -144,6 +152,9 @@ export class NetValueComponent implements OnInit, AfterViewInit, OnDestroy {
         this.TotalExportValue = this.toFiniteNumber(data.results.totalExpenses);
         this.TotalImportValue = this.toFiniteNumber(data.results.totalIncome);
         this.NetValue = this.toFiniteNumber(data.results.netValue);
+        this.TotalIncomePercentage = this.toFiniteNumber(data.results.totalIncomePercentage);
+        this.TotalExpensesPercentage = this.toFiniteNumber(data.results.totalExpensesPercentage);
+        this.TotalNetValuePercentage = this.toFiniteNumber(data.results.totalNetValuePercentage);
       });
   }
 
@@ -157,7 +168,26 @@ export class NetValueComponent implements OnInit, AfterViewInit, OnDestroy {
 
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
+    const percentageFilter = this.findSelectedPercentageFilter(filterList);
+    this.selectedPercentageValue = percentageFilter
+      ? String(percentageFilter.itemKey ?? percentageFilter.itemId ?? '').replace('%', '').trim()
+      : null;
     this.GetFinancialTransactionStatisticsNetValue();
+  }
+
+  private findSelectedPercentageFilter(filterList: FilterModel[] = []): FilterModel | undefined {
+    for (const filter of filterList) {
+      if (filter.categoryName?.toLowerCase() === 'percentage' && filter.isChecked) {
+        return filter;
+      }
+
+      const selectedChild = this.findSelectedPercentageFilter(filter.filterItems ?? []);
+      if (selectedChild) {
+        return selectedChild;
+      }
+    }
+
+    return undefined;
   }
 
   private scheduleChartRender(): void {

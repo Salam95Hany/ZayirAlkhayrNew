@@ -1,0 +1,124 @@
+<app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
+
+<main class="type-page admin-page" dir="rtl">
+    <section class="type-hero">
+        <div class="hero-copy">
+            <span class="hero-kicker"><i class="uil uil-percentage"></i> إعدادات الإدارة المالية</span>
+            <h1>النسب المئوية</h1>
+            <p>أضف النسب المئوية المعتمدة واعرضها في مكان واحد لتسهيل استخدامها في العمليات والحسابات المالية.</p>
+        </div>
+        <button type="button" class="hero-action" appRole pageKey="ZAInstitution_BenefactorType" action="canAdd" (click)="openItemModal(OpenItemModal, null)">
+            <i class="uil uil-plus-circle"></i><span>إضافة نسبة مئوية</span>
+        </button>
+    </section>
+
+    <section class="admin-card type-register">
+        <header class="admin-card-header register-header">
+            <div class="section-title">
+                <span><i class="uil uil-percentage"></i></span>
+                <div>
+                    <h2>قائمة النسب المئوية</h2>
+                    <p>إجمالي النسب المسجلة: {{ pagedResponseModel.totalCount }}</p>
+                </div>
+            </div>
+            <button type="button" class="filter-button" [class.filter-button--active]="!isFilter" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                <i class="uil uil-filter"></i>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}
+                <b *ngIf="activeFiltersCount">{{ activeFiltersCount }}</b>
+            </button>
+        </header>
+
+        <div class="filter-panel" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)"></app-za-filters>
+        </div>
+
+        <div class="register-table-wrap" *ngIf="pagedResponseModel.results.length; else emptyState">
+            <table class="type-table">
+                <thead>
+                    <tr>
+                        <th>النسبة المئوية</th>
+                        <th>أُضيفت بواسطة</th>
+                        <th>تاريخ الإضافة</th>
+                        <th class="text-center">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of pagedResponseModel.results; trackBy: trackByType">
+                        <td data-label="النسبة المئوية">
+                            <div class="type-name"><span><i class="uil uil-percentage"></i></span><strong>{{ item.name }}</strong></div>
+                        </td>
+                        <td data-label="أُضيفت بواسطة"><span class="meta-value"><i class="uil uil-user"></i>{{ item.createdBy || 'غير محدد' }}</span></td>
+                        <td data-label="تاريخ الإضافة"><span class="meta-value"><i class="uil uil-calendar-alt"></i>{{ item.insertDate || 'غير محدد' }}</span></td>
+                        <td data-label="الإجراءات">
+                            <div class="row-actions">
+                                <button type="button" class="action-button action-button--edit" (click)="openItemModal(OpenItemModal, item)">
+                                    <i class="uil uil-pen"></i><span>تعديل</span>
+                                </button>
+                                <button type="button" class="action-button action-button--delete" (click)="openDeleteItemModal(deleteItemModal, item)">
+                                    <i class="uil uil-trash-alt"></i><span>حذف</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <ng-template #emptyState>
+            <div class="empty-state">
+                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
+            </div>
+        </ng-template>
+        <footer class="admin-card-footer register-footer" *ngIf="pagedResponseModel.totalCount">
+            <p>يتم عرض {{ pagedResponseModel.results.length }} من إجمالي {{ pagedResponseModel.totalCount }} نسبة مئوية</p>
+            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage" [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount"></app-za-pagination>
+        </footer>
+    </section>
+</main>
+
+<ng-template #OpenItemModal let-modal>
+    <section class="admin-modal type-modal" dir="rtl">
+        <header class="admin-modal-header modal-heading">
+            <div class="modal-title">
+                <span><i class="uil" [ngClass]="isEditing ? 'uil-pen' : 'uil-percentage'"></i></span>
+                <div>
+                    <h2>{{ isEditing ? 'تعديل النسبة المئوية' : 'إضافة نسبة مئوية جديدة' }}</h2>
+                    <p>{{ isEditing ? 'حدّث قيمة النسبة المئوية المسجلة.' : 'أدخل قيمة النسبة المئوية التي تريد إضافتها إلى القائمة.' }}</p>
+                </div>
+            </div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        </header>
+
+        <form [formGroup]="ItemForm" autocomplete="off" (ngSubmit)="AddNewItem()">
+            <div class="modal-body-content">
+                <div class="form-group-admin">
+                    <label class="form-label-admin" for="Percentage">النسبة المئوية <em>*</em></label>
+                    <div class="field-control" [class.field-control--error]="formErrors.value">
+                        <i class="uil uil-percentage"></i>
+                        <input id="Percentage" type="text" formControlName="value" inputmode="decimal" placeholder="مثال: 10%" (keypress)="NumbersOnly($event.key)">
+                    </div>
+                    <small class="field-error" *ngIf="formErrors.value"><i class="uil uil-exclamation-circle"></i>{{ formErrors.value }}</small>
+                </div>
+                <div class="form-hint"><i class="uil uil-info-circle"></i><span>أدخل قيمة واضحة للنسبة المئوية، وتأكد من عدم تسجيل النسبة نفسها أكثر من مرة.</span></div>
+            </div>
+
+            <footer class="admin-modal-footer modal-actions">
+                <button type="button" class="btn-secondary-admin" (click)="modal.close()">إلغاء</button>
+                <button type="submit" class="btn-primary-admin" [disabled]="showLoader"><i class="uil uil-save"></i>{{ isEditing ? 'حفظ التعديلات' : 'إضافة النسبة' }}</button>
+            </footer>
+        </form>
+    </section>
+</ng-template>
+
+<ng-template #deleteItemModal let-modal>
+    <section class="delete-modal" dir="rtl">
+        <button type="button" class="modal-close delete-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        <span class="delete-icon"><i class="uil uil-trash-alt"></i></span>
+        <h2>حذف النسبة المئوية؟</h2>
+        <p>سيتم حذف هذه النسبة من القائمة، وقد يؤثر ذلك في العمليات المالية المرتبطة بها.</p>
+        <div class="delete-actions">
+            <button type="button" class="btn-secondary-admin" (click)="modal.close()">تراجع</button>
+            <button type="button" class="btn-danger-admin" [disabled]="showLoader" (click)="DeleteItem()"><i class="uil uil-trash-alt"></i>نعم، حذف النسبة</button>
+        </div>
+    </section>
+</ng-template>
+
+<ngx-loading [show]="showLoader"></ngx-loading>

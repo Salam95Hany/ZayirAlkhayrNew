@@ -180,6 +180,14 @@ export class MenueService {
               icon: 'uil uil-sliders-v-alt',
               route: '/admin/za-institution/net-value',
               pageKey: 'ZAInstitution_NetValue',
+            },
+            {
+              displayName: 'النسب',
+              menuItem: 'percentage',
+              description: 'إدارة النسب',
+              icon: 'uil uil-sliders-v-alt',
+              route: '/admin/za-institution/percentage',
+              pageKey: 'ZAInstitution_Percentage',
             }
           ]
         },

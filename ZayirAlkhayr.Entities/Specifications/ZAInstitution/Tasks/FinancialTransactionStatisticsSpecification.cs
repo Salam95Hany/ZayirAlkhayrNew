@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Entities.Models.ZAInstitution;
 
 namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.Tasks
 {
     public class FinancialTransactionStatisticsSpecification : BaseSpecification<FinancialTransaction>
     {
-        public FinancialTransactionStatisticsSpecification(PagingFilterModel PagingFilter, string TransactionType):base(i => i.TransactionType == TransactionType)
+        public FinancialTransactionStatisticsSpecification(PagingFilterModel PagingFilter, string TransactionType) : base(i => i.TransactionType == TransactionType)
         {
             var userIds = PagingFilter.FilterList.Where(f => f.CategoryName == "Users").Select(f => f.ItemId).ToList();
             var TypeIds = PagingFilter.FilterList.Where(f => f.CategoryName == "Types").Select(f => int.Parse(f.ItemId)).ToList();
@@ -31,6 +32,23 @@ namespace ZayirAlkhayr.Entities.Specifications.ZAInstitution.Tasks
             if (FromDate != null && ToDate != null)
                 AddCriteria(fc => fc.InsertDate >= DateTime.Parse(FromDate) && fc.InsertDate <= DateTime.Parse(ToDate));
 
+        }
+    }
+
+    public class PercentageSpecification : BaseSpecification<Percentage>
+    {
+        public PercentageSpecification(PagingFilterModel PagingFilter) : base()
+        {
+            var searchText = PagingFilter.FilterList.FirstOrDefault(f => f.CategoryName == "SearchText")?.ItemId;
+            var userIds = PagingFilter.FilterList.Where(f => f.CategoryName == "Users").Select(f => f.ItemId).ToList();
+
+            if (userIds.Any())
+                AddCriteria(fc => userIds.Contains(fc.InsertUser));
+
+            if (!string.IsNullOrEmpty(searchText))
+                AddCriteria(fc => fc.Value.ToString().Contains(searchText));
+
+            AddInclude(i => i.CreatedBy);
         }
     }
 }
