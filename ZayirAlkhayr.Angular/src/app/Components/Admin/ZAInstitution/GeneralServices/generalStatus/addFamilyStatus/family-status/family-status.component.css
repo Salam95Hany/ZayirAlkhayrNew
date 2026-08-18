@@ -1,10 +1,1 @@
-th {
-    text-align: inherit;
-    text-align: -webkit-match-parent;
-    font-size: 20px;
-}
-
-.table-feature-value th {
-    background-color: #eee;
-    border-left: none;
-}
+.family-step{grid-template-columns:repeat(2,minmax(0,1fr))}.family-step>.step-section:first-child,.family-step>.step-note{grid-column:1/-1}@media(max-width:991.98px){.family-step{grid-template-columns:1fr}.family-step>.step-section:first-child,.family-step>.step-note{grid-column:auto}}

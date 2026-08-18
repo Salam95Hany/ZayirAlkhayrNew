@@ -13,12 +13,13 @@ import { FamilyStatusLookups } from '../../../../../../Models/zainstitution/Gene
 import { AddFamilyStatusModel } from '../../../../../../Models/zainstitution/GeneralStatus/AddFamilyStatusModel';
 import { GeneralStatusService } from '../../../../../../Services/zainstitution/general-status.service';
 import { NgxLoadingModule } from "ngx-loading";
+import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 
 @Component({
   selector: 'app-add-family-status',
   standalone: true,
   imports: [NgFor, NgIf, NgClass, FamilyStatusComponent, FamilyDataComponent, FamilyIncomeDataComponent, FamilyExpensesDataComponent,
-    FamilyMedicalComponent, FamilyNeedComponent, ReviewersComponent, NgxLoadingModule],
+    FamilyMedicalComponent, FamilyNeedComponent, ReviewersComponent, NgxLoadingModule, AdminBreadcrumbComponent],
   templateUrl: './add-family-status.component.html',
   styleUrl: './add-family-status.component.css'
 })
@@ -40,14 +41,23 @@ export class AddFamilyStatusComponent implements OnInit {
   viewChilds = [];
   Steps: any[] = [];
   StepList: any[] = [
-    { stepName: 'الحالة', stepId: 'familyStatus', number: 1 },
-    { stepName: 'بيانات الاسرة', stepId: 'familyDetails', number: 2 },
-    { stepName: 'بيانات دخل الاسرة', stepId: 'familyIncome', number: 3 },
-    { stepName: 'بيان المصروفات للاسرة', stepId: 'familyExpenses', number: 4 },
-    { stepName: 'الجانب الطبي لأفراد الاسرة', stepId: 'familyPatient', number: 5 },
-    { stepName: 'احتياجات الحالة', stepId: 'familyNeeds', number: 6 },
-    { stepName: 'المراجعين', stepId: 'familyExtraDetails', number: 7 }
+    { stepName: 'بيانات الحالة', stepDescription: 'البيانات الأساسية ووسائل التواصل', stepId: 'familyStatus', number: 1, icon: 'fa-solid fa-address-card' },
+    { stepName: 'أفراد الأسرة', stepDescription: 'إضافة أفراد الأسرة وبياناتهم', stepId: 'familyDetails', number: 2, icon: 'fa-solid fa-people-roof' },
+    { stepName: 'دخل الأسرة', stepDescription: 'مصادر الدخل والقيمة الشهرية', stepId: 'familyIncome', number: 3, icon: 'fa-solid fa-wallet' },
+    { stepName: 'مصروفات الأسرة', stepDescription: 'تفاصيل الالتزامات والمصروفات', stepId: 'familyExpenses', number: 4, icon: 'fa-solid fa-receipt' },
+    { stepName: 'الجانب الطبي', stepDescription: 'الحالة الصحية لأفراد الأسرة', stepId: 'familyPatient', number: 5, icon: 'fa-solid fa-heart-pulse' },
+    { stepName: 'الاحتياجات', stepDescription: 'تحديد احتياجات الحالة وأولوياتها', stepId: 'familyNeeds', number: 6, icon: 'fa-solid fa-hand-holding-heart' },
+    { stepName: 'المراجعة', stepDescription: 'ملاحظات الباحث والمراجعة النهائية', stepId: 'familyExtraDetails', number: 7, icon: 'fa-solid fa-clipboard-check' }
   ]
+  readonly TitleList = [
+    { label: 'مؤسسة زائر الخير', route: '/admin/za-institution/home' },
+    { label: 'الحالات العامة', route: '/admin/za-institution/family-status' },
+    'إضافة حالة جديدة'
+  ];
+
+  get progressPercentage(): number {
+    return Math.round(((this.activeStep - 1) / (this.StepList.length - 1)) * 100);
+  }
 
   constructor(private generalStatusService: GeneralStatusService, private toaster: ToastrService,
     private router: Router

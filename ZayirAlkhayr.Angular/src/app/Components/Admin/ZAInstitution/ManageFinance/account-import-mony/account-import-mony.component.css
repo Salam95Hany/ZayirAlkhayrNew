@@ -531,6 +531,8 @@
     display: grid;
     gap: 1rem;
     padding: 1.25rem;
+    max-height: min(68vh, 680px);
+    overflow-y: auto;
     background: #f6f8fa
 }
 

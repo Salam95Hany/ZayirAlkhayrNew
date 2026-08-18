@@ -1,69 +1,26 @@
-<div class="table-responsive shadow-sm radius-10 mb-3">
-    <table class="table table-bordered table-feature-value align-middle border m-0">
-        <thead>
-            <tr>
-                <th colspan="2">المراجعين</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="table-feature">اسم الحالة</td>
-                <td class="table-value">
-                    <textarea class="form-control" rows="3" [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.statusDescription"></textarea>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">احتياجات المسكن والحالة</td>
-                <td class="table-value">
-                    <textarea class="form-control" rows="3" [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.housingNeedsAndStatus"></textarea>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">ملاحظات الباحث</td>
-                <td class="table-value">
-                    <textarea class="form-control" rows="3" [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.researcherNotes"></textarea>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">ملاحظات المراجع</td>
-                <td class="table-value">
-                    <textarea class="form-control" rows="3" [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.referencesNotes"></textarea>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">تاريخ الزيارة</td>
-                <td class="table-value">
-                    <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ الزيارة...'" [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.lastVisitDate"></app-za-input-with-label>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+<div class="family-step">
+    <section class="step-section">
+        <header class="step-section__heading"><span><i class="fa-solid fa-clipboard-check"></i></span><span><strong>ملخص البحث الاجتماعي</strong><small>دوّن وصف الحالة ونتائج الزيارة والملاحظات اللازمة للمراجعة.</small></span></header>
+        <div class="step-grid">
+            <div class="step-field"><label>وصف الحالة</label><textarea class="form-control" rows="4" placeholder="اكتب وصفًا واضحًا للحالة..." [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.statusDescription"></textarea></div>
+            <div class="step-field"><label>احتياجات المسكن والحالة</label><textarea class="form-control" rows="4" placeholder="دوّن احتياجات المسكن والحالة..." [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.housingNeedsAndStatus"></textarea></div>
+            <div class="step-field"><label>ملاحظات الباحث</label><textarea class="form-control" rows="4" placeholder="اكتب ملاحظات الباحث الميدانية..." [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.researcherNotes"></textarea></div>
+            <div class="step-field"><label>ملاحظات المراجع</label><textarea class="form-control" rows="4" placeholder="اكتب ملاحظات المراجعة..." [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.referencesNotes"></textarea></div>
+            <div class="step-field"><label>تاريخ آخر زيارة</label><app-za-input-with-label type="date" placeholder="اختر تاريخ الزيارة" [disabled]="DetailsMode" [(ngModel)]="ExtraDetails.lastVisitDate"></app-za-input-with-label></div>
+        </div>
+    </section>
 
-<div class="table-responsive shadow-sm radius-10">
-    <table class="table table-bordered table-feature-value align-middle border m-0">
-        <thead>
-            <tr>
-                <th colspan="2">الأوراق الشخصية</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let item of PersonalPearpers">
-                <td class="table-feature-d">{{item.name}}</td>
-                <td class="table-value">
-                    <div class="d-flex d-flex align-items-center justify-content-center">
-                        <div class="me-2">نعم</div>
-                        <label class="jtoggler-wrapper m-0 mx-0">
-                            <input type="checkbox" class="jtoggler" [disabled]="DetailsMode"
-                                [(ngModel)]="item.isSelected">
-                            <div class="jtoggler-control">
-                                <div class="jtoggler-handle"></div>
-                            </div>
-                        </label>
-                        <div class="ms-2">لا</div>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <section class="step-section">
+        <header class="step-section__heading"><span><i class="fa-solid fa-folder-open"></i></span><span><strong>المستندات والأوراق الشخصية</strong><small>حدد المستندات التي تم استلامها أو الاطلاع عليها ضمن ملف الحالة.</small></span></header>
+        <div class="papers-grid">
+            <label class="paper-card" *ngFor="let item of PersonalPearpers" [class.paper-card--selected]="item.isSelected">
+                <span class="paper-card__icon"><i class="fa-regular fa-file-lines"></i></span>
+                <span class="paper-card__copy"><strong>{{ item.name }}</strong><small>{{ item.isSelected ? 'متوفر ضمن الملف' : 'غير محدد' }}</small></span>
+                <input type="checkbox" [disabled]="DetailsMode" [(ngModel)]="item.isSelected">
+                <span class="paper-check"><i class="fa-solid fa-check"></i></span>
+            </label>
+        </div>
+    </section>
+
+    <div class="step-note"><i class="fa-solid fa-shield-halved"></i><span>هذه هي الخطوة الأخيرة. راجع الملاحظات والمستندات قبل الضغط على «إتمام إضافة الحالة».</span></div>
 </div>

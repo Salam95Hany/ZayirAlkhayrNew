@@ -1,163 +1,119 @@
-<div class="table-card border radius-10 overflow-hidden shadow-sm">
-    <div class="align-items-center border-bottom d-flex flex-wrap justify-content-between p-3 table-card-title bg-light">
-        <div class="col-md-8 mb-2" *ngIf="!DetailsMode">
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-success d-flex align-items-center gap-2 border rounded px-3" (click)="openItemModal(OpenItemModal,null)">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>إضافة</span>
-                </button>
-            </div>
+<div class="family-step collection-panel">
+    <header class="collection-header">
+        <div><span class="collection-header__eyebrow">احتياجات الحالة</span>
+            <h3>المساعدات والخدمات المطلوبة</h3>
+            <p>حدد احتياجات الأسرة وتابع حالة تسليم كل احتياج.</p>
         </div>
-        <div class="col-md-4 mb-2"></div>
-        <div class="col-md-12 mt-3"></div>
-    </div>
-    <div class="p-3 bg-white">
-        <div class="table-responsive shadow-sm radius-10">
-            <table class="table table-card-table table-borderless table-middle table-hover bg-transparent m-0">
-                <thead>
-                    <tr>
-                        <th>الفئة</th>
-                        <th>الاسم</th>
-                        <th>الحالة</th>
-                        <th>تاريخ التسليم</th>
-                        <th *ngIf="!DetailsMode">عمليات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container>
-                        <tr *ngFor="let item of SelectedNeeds">
-                            <td>{{item.categoryName}}</td>
-                            <td>{{item.name}}</td>
-                            <td class="text-center align-middle">
-                                <div class="d-flex d-flex align-items-center justify-content-center">
-                                    <div class="me-2">تم التسليم</div>
-                                    <label class="jtoggler-wrapper m-0 mx-0">
-                                        <input type="checkbox" class="jtoggler" [checked]="item.isWaiting" disabled>
-                                        <div class="jtoggler-control">
-                                            <div class="jtoggler-handle"></div>
-                                        </div>
-                                    </label>
-                                    <div class="ms-2">قيد الانتظار</div>
-                                </div>
-                            </td>
-                            <td>{{item.deliveryDate}}</td>
-                            <td *ngIf="!DetailsMode">
-                                <div class="w-100 d-flex align-items-center justify-content-center">
-                                    <button class="button-table-action btn-edit d-flex align-items-center justify-content-center gap-2 me-2" (click)="openItemModal(OpenItemModal,item)">
-                                        <i class="uil uil-pen"></i>
-                                        <span>تعديل</span>
-                                    </button>
-                                    <button class="button-table-action btn-delete d-flex align-items-center justify-content-center gap-2" (click)="openDeleteItemModal(deleteItemModal,item.id)">
-                                        <i class="uil uil-trash-alt"></i>
-                                        <span>حذف</span>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="!SelectedNeeds.length">
-                            <td colspan="12" class="text-right">
-                                <app-za-empty-data [showEmptyData]="!SelectedNeeds.length"></app-za-empty-data>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-        </div>
+        <button type="button" class="add-item-button" *ngIf="!DetailsMode" (click)="openItemModal(OpenItemModal, null)"><i class="fa-solid fa-hand-holding-heart"></i><span>إضافة
+                احتياج</span></button>
+    </header>
+
+    <div class="data-table-wrap" *ngIf="SelectedNeeds.length">
+        <table class="data-table needs-table">
+            <thead>
+                <tr>
+                    <th>الفئة</th>
+                    <th>الاحتياج</th>
+                    <th>حالة التسليم</th>
+                    <th>تاريخ التسليم</th>
+                    <th *ngIf="!DetailsMode" class="text-center">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of SelectedNeeds">
+                    <td>{{ item.categoryName }}</td>
+                    <td><strong>{{ item.name }}</strong></td>
+                    <td><span class="status-pill" [class.status-pill--waiting]="!item.isWaiting"><i
+                                [class]="item.isWaiting ? 'fa-solid fa-check' : 'fa-regular fa-clock'"></i>{{
+                            item.isWaiting ? 'تم التسليم' : 'قيد الانتظار' }}</span></td>
+                    <td>{{ item.deliveryDate || '—' }}</td>
+                    <td *ngIf="!DetailsMode">
+                        <div class="table-actions"><button type="button" class="table-action table-action--edit" (click)="openItemModal(OpenItemModal, item)"><i
+                                    class="fa-regular fa-pen-to-square"></i><span>تعديل</span></button><button type="button" class="table-action table-action--delete" (click)="openDeleteItemModal(deleteItemModal, item.id)"><i
+                                    class="fa-regular fa-trash-can"></i><span>حذف</span></button></div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 
-    <ng-template #OpenItemModal let-modal>
-        <div class="modal-header modal-header-bg justify-content-between">
-            <h2 class="d-flex align-items-center gap-2">
-                <i class="uil uil-plus"></i>
-                <span>املأ البيانات الأتية</span>
-            </h2>
-            <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-                <i class="uil uil-times-circle"></i>
-            </div>
-        </div>
-        <div class="modal-body">
+    <div class="collection-empty" *ngIf="!SelectedNeeds.length"><span><i
+                class="fa-solid fa-box-open"></i></span><strong>لم تتم إضافة احتياجات بعد</strong>
+        <p>اضغط على «إضافة احتياج» لتحديد المساعدة أو الخدمة المطلوبة.</p>
+    </div>
+
+    <div class="summary-grid summary-grid--needs">
+        <div class="summary-card"><span class="summary-card__icon"><i
+                    class="fa-solid fa-list-check"></i></span><span><small>إجمالي الاحتياجات</small><strong>{{
+                    SelectedNeeds.length }}</strong></span></div>
+        <div class="summary-card summary-card--blue"><span class="summary-card__icon"><i
+                    class="fa-regular fa-clock"></i></span><span><small>قيد الانتظار</small><strong>{{ waitingNeedsCount
+                    }}</strong></span></div>
+    </div>
+</div>
+
+<ng-template #OpenItemModal let-modal>
+    <div class="family-step-modal" dir="rtl">
+        <header class="family-step-modal__header"><span class="family-step-modal__icon"><i
+                    class="fa-solid fa-hand-holding-heart"></i></span>
+            <div><span>{{ addMode ? 'إضافة احتياج جديد' : 'تحديث الاحتياج' }}</span>
+                <h2>{{ addMode ? 'بيانات احتياج الأسرة' : 'تعديل بيانات الاحتياج' }}</h2>
+                <p>اختر الفئة والاحتياج وحدد حالة التسليم.</p>
+            </div><button type="button" class="family-step-modal__close" (click)="modal.dismiss()" aria-label="إغلاق"><i
+                    class="fa-solid fa-xmark"></i></button>
+        </header>
+        <div class="family-step-modal__body">
             <form [formGroup]="ItemForm" autocomplete="off">
-                <table class="table table-bordered table-feature-value align-middle border m-0">
-                    <tbody>
-                        <tr>
-                            <td class="table-feature">الفئات</td>
-                            <td class="table-value">
-                                <div class="form-floating">
-                                    <app-za-drop-down-form-control [data]="FamilyCategories" [showSearch]="true" [placeholder]="'الفئات'" formControlName="categoryId" [hasError]="formErrors.categoryId"></app-za-drop-down-form-control>
-                                </div>
-                                <div class="error-message" *ngIf="formErrors.categoryId">
-                                    {{ formErrors.categoryId }}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">الاحتياجات</td>
-                            <td class="table-value">
-                                <div class="form-floating">
-                                    <app-za-drop-down-form-control [data]="FamilyNeedsByCategory" [showSearch]="true" [placeholder]="'الاحتياجات'" formControlName="familyNeedId" [hasError]="formErrors.familyNeedId"></app-za-drop-down-form-control>
-                                </div>
-                                <div class="error-message" *ngIf="formErrors.familyNeedId">
-                                    {{ formErrors.familyNeedId }}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="table-feature">الحالة</td>
-                            <td class="table-value">
-                                <div class="d-flex d-flex align-items-center justify-content-center">
-                                    <div class="me-2">تم التسليم</div>
-                                    <label class="jtoggler-wrapper m-0 mx-0">
-                                        <input type="checkbox" class="jtoggler" formControlName="isWaiting">
-                                        <div class="jtoggler-control">
-                                            <div class="jtoggler-handle"></div>
-                                        </div>
-                                    </label>
-                                    <div class="ms-2">قيد الانتظار</div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="ItemForm.get('isWaiting')?.value">
-                            <td class="table-feature">تاريخ التسليم</td>
-                            <td class="table-value">
-                                <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ التسليم...'" [error]="formErrors.deliveryDate" formControlName="deliveryDate"></app-za-input-with-label>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <section class="step-section">
+                    <header class="step-section__heading"><span><i
+                                class="fa-solid fa-boxes-stacked"></i></span><span><strong>تصنيف
+                                الاحتياج</strong><small>اختيار الفئة أولًا سيعرض الاحتياجات التابعة لها.</small></span>
+                    </header>
+                    <div class="step-grid">
+                        <div class="step-field"><label>الفئة <em>*</em></label>
+                            <app-za-drop-down-form-control [data]="FamilyCategories" [showSearch]="true" placeholder="اختر فئة الاحتياج" formControlName="categoryId" [hasError]="formErrors.categoryId"></app-za-drop-down-form-control>
+                            <div class="error-message" *ngIf="formErrors.categoryId">{{ formErrors.categoryId }}</div>
+                        </div>
+                        <div class="step-field"><label>الاحتياج <em>*</em></label>
+                            <app-za-drop-down-form-control [data]="FamilyNeedsByCategory" [showSearch]="true" placeholder="اختر الاحتياج" formControlName="familyNeedId" [hasError]="formErrors.familyNeedId"></app-za-drop-down-form-control>
+                            <div class="error-message" *ngIf="formErrors.familyNeedId">{{ formErrors.familyNeedId }}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="step-section">
+                    <header class="step-section__heading"><span><i
+                                class="fa-solid fa-truck-fast"></i></span><span><strong>حالة التسليم</strong><small>حدّث
+                                الحالة وأدخل التاريخ عند اكتمال التسليم.</small></span></header>
+                    <div class="step-grid">
+                        <div class="toggle-card step-field--wide"><span><strong>تم تسليم الاحتياج</strong><small>{{
+                                    ItemForm.get('isWaiting')?.value ? 'تم التسليم للأسرة' : 'ما زال قيد الانتظار'
+                                    }}</small></span>
+                            <div class="toggle-choice"><span>نعم</span><label class="jtoggler-wrapper m-0"><input
+                                        type="checkbox" class="jtoggler" formControlName="isWaiting">
+                                    <div class="jtoggler-control">
+                                        <div class="jtoggler-handle"></div>
+                                    </div>
+                                </label><span>لا</span></div>
+                        </div>
+                        <div class="step-field" *ngIf="ItemForm.get('isWaiting')?.value"><label>تاريخ التسليم
+                                <em>*</em></label>
+                            <app-za-input-with-label type="date" placeholder="اختر تاريخ التسليم" [error]="formErrors.deliveryDate" formControlName="deliveryDate"></app-za-input-with-label>
+                        </div>
+                    </div>
+                </section>
             </form>
         </div>
-        <div class="modal-footer flex-nowrap gap-2">
-            <button type="button" class="btn btn-success d-flex align-items-center justify-content-center gap-2 w-100" (click)="AddNewItem()">
-                <i class="uil uil-save fs-3"></i>
-                <span>حفظ</span>
-            </button>
-            <button type="button" class="btn btn-danger d-flex align-items-center gap-2" (click)="modal.close()">
-                <i class="uil uil-times-circle fs-3"></i>
-                <span>الغاء</span>
-            </button>
-        </div>
-    </ng-template>
+        <footer class="family-step-modal__footer"><button type="button" class="modal-button modal-button--secondary" (click)="modal.close()">إلغاء</button><button type="button" class="modal-button modal-button--primary" (click)="AddNewItem()"><i class="fa-solid fa-floppy-disk"></i><span>{{ addMode ? 'إضافة الاحتياج' : 'حفظ
+                    التعديلات' }}</span></button></footer>
+    </div>
+</ng-template>
 
-    <ng-template #deleteItemModal let-modal>
-        <div class="modal-header modal-header-bg justify-content-between">
-            <h2 class="d-flex align-items-center gap-2">
-                <span>تأكيد الإجراء</span>
-            </h2>
-            <div class="cursor-pointer text-danger fs-2" (click)="modal.dismiss()">
-                <i class="uil uil-times-circle"></i>
-            </div>
-        </div>
-        <div class="modal-body">
-            <p class="fs-5 m-0">هل أنت متأكد أنك تريد إزالة هذا العنصر؟</p>
-        </div>
-        <div class="modal-footer justify-content-start">
-            <button type="button" class="btn btn-success" (click)="DeleteItem()">
-                <i class="fas fa-check"></i>
-                <span class="ms-2">نعم</span>
-            </button>
-            <button type="button" class="btn btn-danger" (click)="modal.close('Save click')">
-                <i class="fas fa-times"></i>
-                <span class="ms-2">لا</span>
-            </button>
-        </div>
-    </ng-template>
+<ng-template #deleteItemModal let-modal>
+    <div class="delete-dialog" dir="rtl"><span class="delete-dialog__icon"><i
+                class="fa-regular fa-trash-can"></i></span>
+        <h2>حذف الاحتياج؟</h2>
+        <p>سيتم حذف هذا الاحتياج من ملف الأسرة الحالي.</p>
+        <div class="delete-dialog__actions"><button type="button" (click)="modal.close()">إلغاء</button><button type="button" class="delete-button" (click)="DeleteItem()">نعم، حذف الاحتياج</button></div>
+    </div>
+</ng-template>

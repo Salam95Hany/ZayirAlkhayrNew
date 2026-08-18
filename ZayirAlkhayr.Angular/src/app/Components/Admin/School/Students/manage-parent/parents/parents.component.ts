@@ -177,8 +177,8 @@ export class ParentsComponent {
     if (!isValid) {
       return;
     }
-
-    if (!this.ItemForm.value.fatherPhone && !this.ItemForm.value.motherPhone) {
+debugger;
+    if (!this.ItemForm.value.parentPhone && !this.ItemForm.value.motherPhone) {
       this.toaster.warning('أدخل رقم هاتف الأب أو الأم');
       return;
     }

@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [ZaInputWithLabelComponent, FormsModule],
   templateUrl: './family-expenses-data.component.html',
-  styleUrl: './family-expenses-data.component.css'
+  styleUrls: ['../family-step-shared.css', './family-expenses-data.component.css']
 })
 export class FamilyExpensesDataComponent implements OnInit, OnChanges {
   @Input() UpdateMode = false;

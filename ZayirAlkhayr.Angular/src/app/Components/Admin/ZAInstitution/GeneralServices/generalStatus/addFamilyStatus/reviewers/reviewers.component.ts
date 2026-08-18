@@ -9,7 +9,7 @@ import { DatePipe, NgFor, NgIf } from '@angular/common';
   standalone: true,
   imports: [FormsModule, ZaInputWithLabelComponent,NgFor],
   templateUrl: './reviewers.component.html',
-  styleUrl: './reviewers.component.css',
+  styleUrls: ['../family-step-shared.css', './reviewers.component.css'],
   providers: [DatePipe]
 })
 export class ReviewersComponent {

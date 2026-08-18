@@ -18,7 +18,7 @@ import { ZaEmptyDataComponent } from '../../../../../../../Shared/za-empty-data/
   standalone: true,
   imports: [ReactiveFormsModule, ZaDropDownFormControlComponent, ZaInputWithLabelComponent, NgIf, NgFor,ZaEmptyDataComponent],
   templateUrl: './family-medical.component.html',
-  styleUrl: './family-medical.component.css'
+  styleUrls: ['../family-step-shared.css', './family-medical.component.css']
 })
 export class FamilyMedicalComponent implements OnInit, OnChanges {
   @Input() PatientTypes: FormDropdownModel[] = [];

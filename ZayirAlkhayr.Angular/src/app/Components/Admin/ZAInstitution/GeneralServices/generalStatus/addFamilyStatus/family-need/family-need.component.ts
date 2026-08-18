@@ -15,7 +15,7 @@ import { ZaInputWithLabelComponent } from '../../../../../../../Shared/za-input-
   standalone: true,
   imports: [NgIf, NgFor, ReactiveFormsModule, ZaDropDownFormControlComponent, ZaEmptyDataComponent, ZaInputWithLabelComponent],
   templateUrl: './family-need.component.html',
-  styleUrl: './family-need.component.css',
+  styleUrls: ['../family-step-shared.css', './family-need.component.css'],
   providers: [DatePipe]
 })
 export class FamilyNeedComponent implements OnInit, OnChanges {
@@ -33,6 +33,10 @@ export class FamilyNeedComponent implements OnInit, OnChanges {
     familyNeedId: '',
     deliveryDate: ''
   };
+
+  get waitingNeedsCount(): number {
+    return this.SelectedNeeds.filter(item => !item.isWaiting).length;
+  }
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private formService: FormService,
     private toaster: ToastrService, private datePipe: DatePipe
@@ -60,7 +64,7 @@ export class FamilyNeedComponent implements OnInit, OnChanges {
         item.name = need.name;
       }
       if (item.deliveryDate)
-        item.deliveryDate = this.datePipe.transform(item.deliveryDate, 'yyyy-MM')
+        item.deliveryDate = this.datePipe.transform(item.deliveryDate, 'yyyy-MM-dd')
     });
   }
 
@@ -75,9 +79,9 @@ export class FamilyNeedComponent implements OnInit, OnChanges {
 
     this.ItemForm.get('isWaiting')?.valueChanges.subscribe((item) => {
       if (item)
-        this.formService.updateFieldsRequiredValidation(this.ItemForm, 'deliveryDate', true);
+        this.formService.updateFieldValidators(this.ItemForm, 'deliveryDate', true, [Validators.required]);
       else
-        this.formService.updateFieldsRequiredValidation(this.ItemForm, 'deliveryDate', false);
+        this.formService.updateFieldValidators(this.ItemForm, 'deliveryDate', false, []);
     });
 
     this.ItemForm.get('categoryId')?.valueChanges.subscribe((id) => {
@@ -97,7 +101,7 @@ export class FamilyNeedComponent implements OnInit, OnChanges {
       id: item.id,
       categoryId: item?.categoryId?.toString(),
       familyNeedId: item?.needTypeId?.toString(),
-      deliveryDate: item?.deliveryDate,
+      deliveryDate: this.datePipe.transform(item?.deliveryDate, 'yyyy-MM-dd'),
       isWaiting: item.isWaiting,
     });
   }

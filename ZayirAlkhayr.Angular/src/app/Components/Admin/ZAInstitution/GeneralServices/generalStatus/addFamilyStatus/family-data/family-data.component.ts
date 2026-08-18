@@ -15,7 +15,7 @@ import { ZaEmptyDataComponent } from '../../../../../../../Shared/za-empty-data/
   standalone: true,
   imports: [NgIf, NgFor, ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule, ZaEmptyDataComponent],
   templateUrl: './family-data.component.html',
-  styleUrl: './family-data.component.css'
+  styleUrls: ['../family-step-shared.css', './family-data.component.css']
 })
 export class FamilyDataComponent {
   @Output() FamilyDetailsChange = new EventEmitter<FamilyDetails[]>();

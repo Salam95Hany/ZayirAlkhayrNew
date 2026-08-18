@@ -1,77 +1,25 @@
-<div class="table-responsive shadow-sm radius-10">
-    <table class="table table-bordered table-feature-value align-middle border m-0">
-        <thead>
-            <tr>
-                <th colspan="2">بيانات دخل الاسرة</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td class="table-feature">عمل الأب (الزوج)</td>
-                <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'عمل الأب (الزوج)...'" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.fatherJop" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'fatherJop')"></app-za-input-with-label>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">عمل الأم (الزوجة)</td>
-                <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'عمل الأم (الزوجة)...'" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.motherJop" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'motherJop')"></app-za-input-with-label>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">عمل الأبناء</td>
-                <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'عمل الأبناء...'" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.childernsJop" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'childernsJop')"></app-za-input-with-label>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">معاش شئون \ تضامن اجتماعي</td>
-                <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'معاش شئون / تضامن اجتماعي...'" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.affairSpension_SocialSolidarity" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'affairSpension_SocialSolidarity')"></app-za-input-with-label>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">مشروع</td>
-                <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'مشروع...'" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.project" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'project')"></app-za-input-with-label>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">مواشي \ أراضي</td>
-                <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'مواشي / أراضي...'" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.liveStock_Lands" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'liveStock_Lands')"></app-za-input-with-label>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">جمعية خيرية \ جمعية شرعية \ لجنة زكاة</td>
-                <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'جمعية خيرية / جمعية شرعية / لجنة زكاة...'" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.organization_ZakatCommittee" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'organization_ZakatCommittee')"></app-za-input-with-label>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">معاش تأمينات</td>
-                <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'معاش تأمينات...'" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.insurancePension" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'insurancePension')"></app-za-input-with-label>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">أخرى</td>
-                <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'أخرى...'" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.other" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'other')"></app-za-input-with-label>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">إجمالي دخل الاسرة</td>
-                <td class="table-value">
-                    <app-za-input-with-label [type]="'text'" [placeholder]="'إجمالي دخل الاسرة...'" [(ngModel)]="FamilyIncome.totalFamilyIncome" [disabled]="true"></app-za-input-with-label>
-                </td>
-            </tr>
-            <tr>
-                <td class="table-feature">ملاحظات</td>
-                <td class="table-value">
-                    <textarea class="form-control" rows="3" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.comments"></textarea>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<div class="family-step">
+    <section class="step-section">
+        <header class="step-section__heading"><span><i class="fa-solid fa-money-bill-trend-up"></i></span><span><strong>مصادر الدخل الشهرية</strong><small>أدخل قيمة كل مصدر بالجنيه المصري، واترك المصدر غير المتاح بقيمة صفر.</small></span></header>
+        <div class="step-grid">
+            <div class="step-field"><label>دخل الأب (الزوج)</label><app-za-input-with-label type="text" placeholder="قيمة دخل الأب" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.fatherJop" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'fatherJop')"></app-za-input-with-label></div>
+            <div class="step-field"><label>دخل الأم (الزوجة)</label><app-za-input-with-label type="text" placeholder="قيمة دخل الأم" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.motherJop" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'motherJop')"></app-za-input-with-label></div>
+            <div class="step-field"><label>دخل الأبناء</label><app-za-input-with-label type="text" placeholder="إجمالي دخل الأبناء" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.childernsJop" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'childernsJop')"></app-za-input-with-label></div>
+            <div class="step-field"><label>معاش الشؤون أو التضامن</label><app-za-input-with-label type="text" placeholder="قيمة المعاش" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.affairSpension_SocialSolidarity" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'affairSpension_SocialSolidarity')"></app-za-input-with-label></div>
+            <div class="step-field"><label>دخل مشروع</label><app-za-input-with-label type="text" placeholder="قيمة دخل المشروع" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.project" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'project')"></app-za-input-with-label></div>
+            <div class="step-field"><label>دخل مواشي أو أراضٍ</label><app-za-input-with-label type="text" placeholder="قيمة الدخل" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.liveStock_Lands" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'liveStock_Lands')"></app-za-input-with-label></div>
+            <div class="step-field"><label>جمعيات خيرية أو لجنة زكاة</label><app-za-input-with-label type="text" placeholder="قيمة المساعدة الشهرية" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.organization_ZakatCommittee" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'organization_ZakatCommittee')"></app-za-input-with-label></div>
+            <div class="step-field"><label>معاش التأمينات</label><app-za-input-with-label type="text" placeholder="قيمة معاش التأمينات" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.insurancePension" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'insurancePension')"></app-za-input-with-label></div>
+            <div class="step-field"><label>مصادر أخرى</label><app-za-input-with-label type="text" placeholder="قيمة أي دخل آخر" [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.other" [allowNumbersOnly]="true" (inputChanged)="onInputChange($event, 'other')"></app-za-input-with-label></div>
+        </div>
+    </section>
+
+    <div class="summary-grid summary-grid--single">
+        <div class="summary-card summary-card--accent"><span class="summary-card__icon"><i class="fa-solid fa-coins"></i></span><span><small>إجمالي دخل الأسرة الشهري</small><strong>{{ FamilyIncome.totalFamilyIncome || 0 }} ج.م</strong></span></div>
+    </div>
+
+    <section class="step-section">
+        <header class="step-section__heading"><span><i class="fa-regular fa-note-sticky"></i></span><span><strong>ملاحظات الدخل</strong><small>دوّن أي تفاصيل تساعد الباحث على فهم طبيعة أو استقرار الدخل.</small></span></header>
+        <div class="step-field"><label>ملاحظات إضافية</label><textarea class="form-control" rows="4" placeholder="مثال: الدخل موسمي أو غير ثابت..." [disabled]="DetailsMode" [(ngModel)]="FamilyIncome.comments"></textarea></div>
+    </section>
 </div>

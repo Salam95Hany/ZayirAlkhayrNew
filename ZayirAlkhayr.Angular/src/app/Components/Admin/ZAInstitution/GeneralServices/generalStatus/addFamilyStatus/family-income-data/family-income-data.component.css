@@ -1,18 +1,1 @@
-th {
-    text-align: inherit;
-    text-align: -webkit-match-parent;
-    font-size: 20px;
-}
-
-.table-feature-value th {
-    background-color: #eee;
-    border-left: none;
-}
-
-.table-feature-value td.table-feature {
-    background-color: #f7f7f7;
-    min-width: 200px;
-    width: 265px;
-    font-weight: bold;
-    font-size: 14px;
-}
+.summary-grid--single{grid-template-columns:minmax(0,1fr)}

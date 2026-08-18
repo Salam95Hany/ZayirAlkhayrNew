@@ -9,7 +9,7 @@ import { ToastrService } from 'ngx-toastr';
   standalone: true,
   imports: [ZaInputWithLabelComponent, FormsModule],
   templateUrl: './family-income-data.component.html',
-  styleUrl: './family-income-data.component.css'
+  styleUrls: ['../family-step-shared.css', './family-income-data.component.css']
 })
 export class FamilyIncomeDataComponent {
   @Output() FamilyIncomeChange = new EventEmitter<any>();

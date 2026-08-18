@@ -14,7 +14,7 @@ import { FormDropdownModel } from '../../../../../../../Models/shared/FormDropdo
   standalone: true,
   imports: [ZaInputWithLabelComponent, ZaDropDownFormControlComponent, ReactiveFormsModule, NgIf],
   templateUrl: './family-status.component.html',
-  styleUrl: './family-status.component.css',
+  styleUrls: ['../family-step-shared.css', './family-status.component.css'],
   providers: [DatePipe]
 })
 export class FamilyStatusComponent implements OnInit {

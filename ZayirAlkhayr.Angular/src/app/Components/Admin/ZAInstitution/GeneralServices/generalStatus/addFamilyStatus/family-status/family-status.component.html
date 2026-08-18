@@ -1,138 +1,39 @@
-<div class="table-responsive shadow-sm radius-10">
-    <form [formGroup]="ItemForm" autocomplete="off">
-        <table class="table table-bordered table-feature-value align-middle border m-0">
-            <thead>
-                <tr>
-                    <th colspan="2">الحالة</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="table-feature">اسم الحالة</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'اسم الحالة...'" [error]="formErrors.name" formControlName="name"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">الشهرة</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'الشهرة...'" [error]="formErrors.fname" formControlName="fname"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">رقم الهاتف 1</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'رقم الهاتف 1...'" [error]="formErrors.phone" [allowNumbersOnly]="true" [allowPaste]="false" formControlName="phone"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">رقم الهاتف 2</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'رقم الهاتف 2...'" [allowNumbersOnly]="true" [allowPaste]="false" formControlName="phone1"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">العنوان</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'العنوان...'" [error]="formErrors.address" formControlName="address"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">الصلة</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'الصلة...'" formControlName="relevance" [error]="formErrors.relevance"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">التعليم</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'التعليم...'" formControlName="education" [error]="formErrors.education"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">المهنة</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'المهنة...'" formControlName="jop" [error]="formErrors.jop"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">السن</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'السن...'" [allowNumbersOnly]="true" [allowPaste]="false" formControlName="age"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">الرقم القومي</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'الرقم القومي...'" formControlName="nationalId" [error]="formErrors.nationalId"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">القرية</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'القرية...'" formControlName="village" [error]="formErrors.village"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">المركز</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'المركز...'" formControlName="center" [error]="formErrors.center"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">المحافظة</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'text'" [placeholder]="'المحافظة...'" formControlName="governorate" [error]="formErrors.governorate"></app-za-input-with-label>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">الحالة الاجتماعية</td>
-                    <td class="table-value">
-                        <div class="form-floating">
-                            <app-za-drop-down-form-control [data]="MaritalStatus" [showSearch]="true" [placeholder]="'الحالة الاجتماعية'" formControlName="maritalStatus" [disabled]="DetailsMode"></app-za-drop-down-form-control>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">النوع</td>
-                    <td class="table-value">
-                        <div class="form-floating">
-                            <app-za-drop-down-form-control [data]="StatusTypes" [showSearch]="true" [placeholder]="'النوع'" formControlName="statusTypeId" [hasError]="formErrors.statusTypeId" [disabled]="DetailsMode"></app-za-drop-down-form-control>
-                        </div>
-                        <div class="error-message" *ngIf="formErrors.statusTypeId">
-                            {{ formErrors.statusTypeId }}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">الجنسية</td>
-                    <td class="table-value">
-                        <div class="form-floating">
-                            <app-za-drop-down-form-control [data]="Nationalities" [showSearch]="true" [placeholder]="'الجنسية'" formControlName="nationalityId" [hasError]="formErrors.nationalityId" [disabled]="DetailsMode"></app-za-drop-down-form-control>
-                        </div>
-                        <div class="error-message" *ngIf="formErrors.nationalityId">
-                            {{ formErrors.nationalityId }}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">الفئة</td>
-                    <td class="table-value">
-                        <div class="form-floating">
-                            <app-za-drop-down-form-control [data]="Categories" [showSearch]="true" [placeholder]="'الفئة'" formControlName="categoryId" [hasError]="formErrors.categoryId" [disabled]="DetailsMode"></app-za-drop-down-form-control>
-                        </div>
-                        <div class="error-message" *ngIf="formErrors.categoryId">
-                            {{ formErrors.categoryId }}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="table-feature">تاريخ الاضافة</td>
-                    <td class="table-value">
-                        <app-za-input-with-label [type]="'date'" [placeholder]="'تاريخ الاضافة...'" [error]="formErrors.addedDate" formControlName="addedDate"></app-za-input-with-label>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </form>
-</div>
+<form class="family-step" [formGroup]="ItemForm" autocomplete="off">
+    <section class="step-section">
+        <header class="step-section__heading"><span><i class="fa-regular fa-id-card"></i></span><span><strong>البيانات الشخصية</strong><small>معلومات صاحب الحالة الأساسية وبيانات الهوية.</small></span></header>
+        <div class="step-grid">
+            <div class="step-field"><label>اسم الحالة <em>*</em></label><app-za-input-with-label type="text" placeholder="أدخل الاسم الكامل" [error]="formErrors.name" formControlName="name"></app-za-input-with-label></div>
+            <div class="step-field"><label>اسم الشهرة <em>*</em></label><app-za-input-with-label type="text" placeholder="أدخل اسم الشهرة" [error]="formErrors.fname" formControlName="fname"></app-za-input-with-label></div>
+            <div class="step-field"><label>الرقم القومي</label><app-za-input-with-label type="text" placeholder="أدخل الرقم القومي" [error]="formErrors.nationalId" formControlName="nationalId"></app-za-input-with-label></div>
+            <div class="step-field"><label>السن</label><app-za-input-with-label type="text" placeholder="أدخل السن" [allowNumbersOnly]="true" [allowPaste]="false" formControlName="age"></app-za-input-with-label></div>
+            <div class="step-field"><label>الجنسية <em>*</em></label><app-za-drop-down-form-control [data]="Nationalities" [showSearch]="true" placeholder="اختر الجنسية" formControlName="nationalityId" [hasError]="formErrors.nationalityId" [disabled]="DetailsMode"></app-za-drop-down-form-control><div class="error-message" *ngIf="formErrors.nationalityId">{{ formErrors.nationalityId }}</div></div>
+            <div class="step-field"><label>الحالة الاجتماعية</label><app-za-drop-down-form-control [data]="MaritalStatus" [showSearch]="true" placeholder="اختر الحالة الاجتماعية" formControlName="maritalStatus" [disabled]="DetailsMode"></app-za-drop-down-form-control></div>
+        </div>
+    </section>
+
+    <section class="step-section">
+        <header class="step-section__heading"><span><i class="fa-solid fa-phone-volume"></i></span><span><strong>التواصل والعنوان</strong><small>وسائل التواصل ومحل إقامة صاحب الحالة.</small></span></header>
+        <div class="step-grid">
+            <div class="step-field"><label>رقم الهاتف الأساسي <em>*</em></label><app-za-input-with-label type="text" placeholder="أدخل رقم الهاتف الأساسي" [error]="formErrors.phone" [allowNumbersOnly]="true" [allowPaste]="false" formControlName="phone"></app-za-input-with-label></div>
+            <div class="step-field"><label>رقم هاتف بديل</label><app-za-input-with-label type="text" placeholder="أدخل رقم هاتف بديل" [allowNumbersOnly]="true" [allowPaste]="false" formControlName="phone1"></app-za-input-with-label></div>
+            <div class="step-field step-field--wide"><label>العنوان بالتفصيل</label><app-za-input-with-label type="text" placeholder="أدخل عنوان السكن بالتفصيل" [error]="formErrors.address" formControlName="address"></app-za-input-with-label></div>
+            <div class="step-field"><label>القرية</label><app-za-input-with-label type="text" placeholder="أدخل اسم القرية" formControlName="village" [error]="formErrors.village"></app-za-input-with-label></div>
+            <div class="step-field"><label>المركز</label><app-za-input-with-label type="text" placeholder="أدخل اسم المركز" formControlName="center" [error]="formErrors.center"></app-za-input-with-label></div>
+            <div class="step-field"><label>المحافظة</label><app-za-input-with-label type="text" placeholder="أدخل اسم المحافظة" formControlName="governorate" [error]="formErrors.governorate"></app-za-input-with-label></div>
+        </div>
+    </section>
+
+    <section class="step-section">
+        <header class="step-section__heading"><span><i class="fa-solid fa-briefcase"></i></span><span><strong>التصنيف والبيانات الاجتماعية</strong><small>بيانات العمل والتعليم وتصنيف الحالة داخل المؤسسة.</small></span></header>
+        <div class="step-grid">
+            <div class="step-field"><label>صلة القرابة</label><app-za-input-with-label type="text" placeholder="أدخل صلة القرابة" formControlName="relevance" [error]="formErrors.relevance"></app-za-input-with-label></div>
+            <div class="step-field"><label>التعليم</label><app-za-input-with-label type="text" placeholder="أدخل المستوى التعليمي" formControlName="education" [error]="formErrors.education"></app-za-input-with-label></div>
+            <div class="step-field"><label>المهنة</label><app-za-input-with-label type="text" placeholder="أدخل المهنة الحالية" formControlName="jop" [error]="formErrors.jop"></app-za-input-with-label></div>
+            <div class="step-field"><label>نوع الحالة <em>*</em></label><app-za-drop-down-form-control [data]="StatusTypes" [showSearch]="true" placeholder="اختر نوع الحالة" formControlName="statusTypeId" [hasError]="formErrors.statusTypeId" [disabled]="DetailsMode"></app-za-drop-down-form-control><div class="error-message" *ngIf="formErrors.statusTypeId">{{ formErrors.statusTypeId }}</div></div>
+            <div class="step-field"><label>الفئة <em>*</em></label><app-za-drop-down-form-control [data]="Categories" [showSearch]="true" placeholder="اختر الفئة" formControlName="categoryId" [hasError]="formErrors.categoryId" [disabled]="DetailsMode"></app-za-drop-down-form-control><div class="error-message" *ngIf="formErrors.categoryId">{{ formErrors.categoryId }}</div></div>
+            <div class="step-field"><label>تاريخ الإضافة <em>*</em></label><app-za-input-with-label type="date" placeholder="اختر تاريخ الإضافة" [error]="formErrors.addedDate" formControlName="addedDate"></app-za-input-with-label></div>
+        </div>
+    </section>
+
+    <div class="step-note"><i class="fa-solid fa-circle-info"></i><span>راجع الاسم ورقم الهاتف والتصنيف قبل الانتقال؛ ستُستخدم هذه البيانات في ملف الحالة وجميع خطوات المتابعة.</span></div>
+</form>

@@ -1,61 +1,69 @@
-<div class="stepper-container mb-3">
-    <div class="row g-4">
-        <div class="col-xl-2 d-flex justify-content-center justify-content-xl-start m-0">
-            <div class="d-flex flex-column align-items-center justify-content-center gap-2">
-                <div class="user-icon">
-                    <i class="fas fa-user"></i>
-                </div>
-                <h4>اضافة حالة جديدة</h4>
-            </div>
-        </div>
-        <div class="col-xl-8">
-            <div class="stepper-wrapper">
-                <div class="stepper-item" *ngFor="let item of StepList; index as i" [ngClass]="{
-                'completed': i + 1 < activeStep,
-                'active': i + 1 == activeStep }">
-                    <div class="step-circle">{{ item.number }}</div>
-                    <div class="step-label">{{ item.stepName }}</div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 d-flex align-items-center justify-content-center justify-content-xl-end m-0">
-            <button class="btn btn-nav btn-next me-2" *ngIf="activeStep > 1" (click)="PreviousSteps()">
-                <i class="fas fa-arrow-right"></i>
-                السابق
-            </button>
-            <button class="btn btn-nav btn-prev" *ngIf="activeStep >= 7" (click)="AddNewFamilyStatus()">
-                <i class="fas fa-plus-circle fa-fw"></i>
-                <span class="navbar-brand m-0">اضافة</span>
-            </button>
-            <button class="btn btn-nav btn-prev" *ngIf="activeStep >= 1 && activeStep < 7" (click)="NextStep()">
-                التالي
-                <i class="fas fa-arrow-left"></i>
-            </button>
-        </div>
-    </div>
-</div>
+<div class="family-registration" dir="rtl">
+    <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-<div class="steppers-content" *ngIf="isLookupsLoaded">
-    <div [hidden]="activeStep != 1">
-        <app-family-status #FamilyStatus [Categories]="FamilyLookups.categories" [Nationalities]="FamilyLookups.nationalities" [StatusTypes]="FamilyLookups.statusTypes"></app-family-status>
-    </div>
-    <div [hidden]="activeStep != 2">
-        <app-family-data #FamilyData></app-family-data>
-    </div>
-    <div [hidden]="activeStep != 3">
-        <app-family-income-data #FamilyIncome></app-family-income-data>
-    </div>
-    <div [hidden]="activeStep != 4">
-        <app-family-expenses-data #FamilyExpenses [FamilyMembersCount]="AddFamilyStatusModel?.familyDetails?.length"></app-family-expenses-data>
-    </div>
-    <div [hidden]="activeStep != 5">
-        <app-family-medical #FamilyMedical [FamilyDetails]="AddFamilyStatusModel?.familyDetails" [FamilyStatusName]="AddFamilyStatusModel?.familyStatus?.name" [PatientTypes]="FamilyLookups.patientTypes"></app-family-medical>
-    </div>
-    <div [hidden]="activeStep != 6">
-        <app-family-need #FamilyNeed [FamilyNeeds]="FamilyLookups.familyNeeds" [FamilyCategories]="FamilyLookups.familyNeedCategories"></app-family-need>
-    </div>
-    <div [hidden]="activeStep != 7">
-        <app-reviewers #Reviewers></app-reviewers>
+    <header class="registration-header">
+        <div class="registration-header__content">
+            <span class="registration-header__eyebrow">الخدمات الاجتماعية وإدارة الحالات</span>
+            <h1>إضافة حالة أسرية جديدة</h1>
+            <p>سجّل البيانات الأساسية للأسرة، ثم استكمل تفاصيل أفرادها ودخلها واحتياجاتها حتى المراجعة النهائية.</p>
+        </div>
+        <div class="registration-header__status" aria-label="نسبة اكتمال التسجيل">
+            <span class="registration-header__icon"><i class="fa-solid fa-house-user"></i></span>
+            <span><small>نسبة الإنجاز</small><strong>{{ progressPercentage }}%</strong></span>
+        </div>
+    </header>
+
+    <section class="registration-workflow" aria-label="خطوات تسجيل الحالة">
+        <div class="workflow-heading">
+            <div><span>مسار التسجيل</span><h2>استكمل بيانات الحالة في 7 خطوات</h2></div>
+            <div class="workflow-counter">{{ activeStep }} / {{ StepList.length }}</div>
+        </div>
+
+        <div class="stepper-scroll">
+            <div class="stepper-wrapper">
+                <div class="stepper-progress" aria-hidden="true"><span [style.width.%]="progressPercentage"></span></div>
+                <div class="stepper-item" *ngFor="let item of StepList; index as i" [ngClass]="{ 'completed': i + 1 < activeStep, 'active': i + 1 === activeStep }">
+                    <div class="step-circle">
+                        <i *ngIf="i + 1 < activeStep; else stepIcon" class="fa-solid fa-check"></i>
+                        <ng-template #stepIcon><i [class]="item.icon"></i></ng-template>
+                    </div>
+                    <div class="step-copy"><small>الخطوة {{ item.number }}</small><strong>{{ item.stepName }}</strong></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="registration-content" *ngIf="isLookupsLoaded">
+        <header class="registration-content__header">
+            <div>
+                <span>الخطوة {{ activeStep }} من {{ StepList.length }}</span>
+                <h2>{{ StepList[activeStep - 1]?.stepName }}</h2>
+                <p>{{ StepList[activeStep - 1]?.stepDescription }}</p>
+            </div>
+            <div class="required-note"><span>*</span> تأكد من استكمال الحقول المطلوبة قبل المتابعة</div>
+        </header>
+
+        <div class="registration-content__body">
+            <div [hidden]="activeStep !== 1"><app-family-status #FamilyStatus [Categories]="FamilyLookups.categories" [Nationalities]="FamilyLookups.nationalities" [StatusTypes]="FamilyLookups.statusTypes"></app-family-status></div>
+            <div [hidden]="activeStep !== 2"><app-family-data #FamilyData></app-family-data></div>
+            <div [hidden]="activeStep !== 3"><app-family-income-data #FamilyIncome></app-family-income-data></div>
+            <div [hidden]="activeStep !== 4"><app-family-expenses-data #FamilyExpenses [FamilyMembersCount]="AddFamilyStatusModel?.familyDetails?.length"></app-family-expenses-data></div>
+            <div [hidden]="activeStep !== 5"><app-family-medical #FamilyMedical [FamilyDetails]="AddFamilyStatusModel?.familyDetails" [FamilyStatusName]="AddFamilyStatusModel?.familyStatus?.name" [PatientTypes]="FamilyLookups.patientTypes"></app-family-medical></div>
+            <div [hidden]="activeStep !== 6"><app-family-need #FamilyNeed [FamilyNeeds]="FamilyLookups.familyNeeds" [FamilyCategories]="FamilyLookups.familyNeedCategories"></app-family-need></div>
+            <div [hidden]="activeStep !== 7"><app-reviewers #Reviewers></app-reviewers></div>
+        </div>
+
+        <footer class="registration-actions">
+            <button type="button" class="action-button action-button--secondary" *ngIf="activeStep > 1" (click)="PreviousSteps()"><i class="fa-solid fa-arrow-right"></i><span>الخطوة السابقة</span></button>
+            <span class="registration-actions__spacer"></span>
+            <span class="registration-actions__hint" *ngIf="activeStep < StepList.length">الخطوة التالية: {{ StepList[activeStep]?.stepName }}</span>
+            <button type="button" class="action-button action-button--primary" *ngIf="activeStep < StepList.length" (click)="NextStep()"><span>حفظ ومتابعة</span><i class="fa-solid fa-arrow-left"></i></button>
+            <button type="button" class="action-button action-button--success" *ngIf="activeStep === StepList.length" (click)="AddNewFamilyStatus()"><i class="fa-solid fa-check"></i><span>إتمام إضافة الحالة</span></button>
+        </footer>
+    </section>
+
+    <div *ngIf="!isLookupsLoaded && !showLoader" class="registration-empty">
+        <i class="fa-solid fa-triangle-exclamation"></i><strong>تعذر تحميل بيانات تسجيل الحالة</strong><span>يرجى تحديث الصفحة والمحاولة مرة أخرى.</span>
     </div>
 </div>
 
