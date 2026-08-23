@@ -3,12 +3,13 @@ import { Component, ElementRef, Injector, Input, ViewChild } from '@angular/core
 import { NgxLoadingModule } from 'ngx-loading';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
-import { ParentDataComponent } from '../add-student/parent-data/parent-data.component';
-import { StudentDataComponent } from '../add-student/student-data/student-data.component';
-import { AddStudentModel, StudentDetails } from '../../../../../../Models/school/student/AddStudentModel';
-import { FormDropdownModel } from '../../../../../../Models/shared/FormDropdownModel';
-import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
-import { AuthService } from '../../../../../../Auth/auth.service';
+import { ParentDataComponent } from '../../add-student/parent-data/parent-data.component';
+import { StudentDataComponent } from '../../add-student/student-data/student-data.component';
+import { AddStudentModel, StudentDetails } from '../../../../../../../Models/school/student/AddStudentModel';
+import { FormDropdownModel } from '../../../../../../../Models/shared/FormDropdownModel';
+import { SchoolStudentService } from '../../../../../../../Services/school/school-student.service';
+import { AuthService } from '../../../../../../../Auth/auth.service';
+
 
 @Component({
   selector: 'app-student-sidepanel',

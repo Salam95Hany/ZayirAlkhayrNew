@@ -1,0 +1,208 @@
+<section class="ticket-designer" dir="rtl">
+    <aside class="panel settings-panel" aria-label="إعدادات الطباعة">
+        <header class="panel-title">
+            <span class="title-icon"><i class="uil uil-setting"></i></span>
+            <div>
+                <h2>إعدادات الطباعة</h2>
+                <p>خصص بيانات ورقة الطلاب</p>
+            </div>
+        </header>
+
+        <div class="settings-form">
+            <label class="field-label" for="academicYear">العام الدراسي</label>
+            <div class="select-wrap">
+                <select id="academicYear" [(ngModel)]="selectedAcademicYear" (change)="onContextChange()">
+                    <option [value]="0">الكل</option>
+                    <option *ngFor="let year of academicYears" [value]="year.itemId">{{ year.categoryName }}</option>
+                </select><i class="uil uil-angle-down"></i>
+            </div>
+            <label class="field-label" for="grade">المرحلة الدراسية</label>
+            <div class="select-wrap">
+                <select id="grade" [(ngModel)]="selectedGrade" (change)="onContextChange()">
+                    <option [value]="0">الكل</option>
+                    <option *ngFor="let grade of grades" [value]="grade.itemId">{{ grade.categoryName }}</option>
+                </select><i class="uil uil-angle-down"></i>
+            </div>
+            <label class="field-label" for="grade">حالة الدفع</label>
+            <div class="select-wrap">
+                <select id="grade" [(ngModel)]="selectedPayment" (change)="onContextChange()">
+                    <option value="0">الكل</option>
+                    <option value="1">مسدد بالكامل</option>
+                    <option value="2">قسط مستحق</option>
+                    <option value="3">غير مسدد</option>
+                </select><i class="uil uil-angle-down"></i>
+            </div>
+            <label class="field-label" for="grade">حالة الطباعة</label>
+            <div class="select-wrap">
+                <select id="grade" [(ngModel)]="selectedPrinted" (change)="onContextChange()">
+                     <option value="0">الكل</option>
+                    <option value="1">تمت طباعته</option>
+                    <option value="2">لم تتم طباعته</option>
+                </select><i class="uil uil-angle-down"></i>
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h3>خيارات التوزيع</h3>
+            <button type="button" class="action-button primary" (click)="autoDistribute()"><i
+                    class="uil uil-shuffle"></i><span>توزيع تلقائي</span></button>
+            <button type="button" class="action-button" (click)="confirmClearAll()"><i
+                    class="uil uil-trash-alt"></i><span>مسح الكل</span></button>
+        </div>
+
+        <div class="settings-group preview-settings">
+            <h3>طباعة</h3>
+            <button type="button" class="action-button print-button" (click)="generateAndPrintPdf()" [disabled]="printStatus === 'GENERATING'">
+                <i class="uil uil-print"></i><span>توليد وطباعة PDF</span>
+            </button>
+        </div>
+    </aside>
+
+    <main class="preview-column">
+        <header class="preview-heading">
+            <h1>ورقة الطباعة (A4) <i class="uil uil-info-circle" title="تحتوي كل ورقة على 8 كارنيهات"></i></h1>
+            <p>اسحب الطالب من القائمة وضعه في المكان المطلوب في الورقة</p>
+        </header>
+
+        <div class="a4-sheet" aria-label="معاينة ورقة A4">
+            <article *ngFor="let slotNumber of slotNumbers; let index = index" class="ticket-slot" [class.occupied]="currentSlots[index]" [class.drop-target]="dragOverSlot === slotNumber" (dragover)="allowDrop($event, slotNumber)" (dragleave)="leaveSlot($event)"
+                (drop)="dropOnSlot($event, slotNumber)">
+                <span class="slot-number">{{ slotNumber }}</span>
+
+                <ng-container *ngIf="currentSlots[index] as student; else emptySlot">
+                    <div class="student-ticket" draggable="true" (dragstart)="startDrag($event, student, slotNumber)" (dragend)="endDrag()">
+                        <button type="button" class="remove-student" title="إفراغ الخانة" (click)="removeFromSlot(slotNumber); $event.stopPropagation()"><i
+                                class="uil uil-times"></i></button>
+                        <div class="ticket-details">
+                            <div class="ticket-line"><strong>الاسم</strong><span>: </span><b [title]="student.name">{{student.name }}</b></div>
+                            <div class="ticket-line"><strong>الصف</strong><span>: </span><b>{{ student.grade }}</b>
+                            </div>
+                        </div>
+                        <div class="payment-state" [class.installment]="student.paymentStatus !== 'PAID'">
+                            <span *ngIf="student.paymentStatus == 'PAID'"><i class="uil uil-check-circle"></i> تم السداد
+                                بالكامل</span>
+                            <span *ngIf="student.paymentStatus == 'INSTALLMENT'"><i class="uil uil-calendar-alt"></i>
+                                موعد تجديد القسط: {{ formatDate(student.installmentRenewalDate) }}</span>
+                            <span *ngIf="student.paymentStatus == 'PENDING'"><i class="uil uil-calendar-alt"></i> موعد
+                                تجديد القسط: {{ formatDate(student.installmentRenewalDate) }}</span>
+                        </div>
+                    </div>
+                </ng-container>
+
+                <ng-template #emptySlot>
+                    <div class="empty-ticket">
+                        <div class="empty-lines"><span><b>الاسم</b><i></i></span><span><b>الصف</b><i></i></span></div>
+                        <div class="empty-label"><i class="uil uil-plus-circle"></i><span>فارغ</span></div>
+                    </div>
+                </ng-template>
+            </article>
+        </div>
+
+        <footer class="sheet-footer">
+            <span>عدد الكارنيهات في الورقة: <b>{{ currentPageCount }} / {{ slotsPerPage }}</b></span>
+        </footer>
+    </main>
+
+    <aside class="panel students-panel" aria-label="قائمة الطلاب">
+        <header class="panel-title students-title">
+            <span class="title-icon"><i class="uil uil-users-alt"></i></span>
+            <div>
+                <h2>قائمة الطلاب</h2>
+                <p>{{ TotalCount }} طالب متاح</p>
+            </div>
+        </header>
+
+        <div class="student-tools">
+            <label class="search-box">
+                <i class="uil uil-search"></i>
+                <input type="search" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+                    placeholder="ابحث عن طالب..." aria-label="ابحث عن طالب">
+                <button *ngIf="searchTerm" type="button" (click)="searchTerm = ''; onSearchChange()"
+                    aria-label="مسح البحث"><i class="uil uil-times"></i></button>
+            </label>
+        </div>
+
+        <div class="drag-hint"><i class="uil uil-info-circle"></i> اسحب الطالب وأفلته في المكان المطلوب في الورقة</div>
+
+        <div class="student-list">
+            <button *ngFor="let student of students; trackBy: trackByStudentId" type="button" class="student-item" [class.selected]="selectedStudentId === student.id" [class.assigned]="isStudentAssigned(student.id)" [class.dragging]="draggingStudentId === student.id"
+                draggable="true" (click)="selectStudent(student)" (dragstart)="startDrag($event, student)" (dragend)="endDrag()">
+                <span class="drag-handle" title="اسحب الطالب"><i class="uil uil-draggabledots"></i></span>
+                <span class="student-copy">
+                    <strong [title]="student.name">{{ student.name }}</strong><small>{{ student.grade }}</small>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span *ngIf="isStudentAssigned(student.id)" class="position-badge"><i class="uil uil-check"></i>
+                            {{
+                            studentPosition(student.id) }}</span>
+                        <span *ngIf="student.lastPrintedAt" class="last-print"><i class="uil uil-print"></i> آخر طباعة:
+                            {{ formatDate(student.lastPrintedAt) }}</span>
+                    </div>
+                </span>
+                <span class="status-dot" [class.due]="student.paymentStatus !== 'PAID'"
+                    [title]="student.paymentStatus === 'PAID' ? 'مسدد بالكامل' : 'قسط مستحق'"></span>
+                <i *ngIf="student.lastPrintedAt" class="uil uil-print printed-indicator" title="تمت طباعته سابقًا"></i>
+            </button>
+
+            <div *ngIf="!students.length" class="no-students"><i class="uil uil-user-exclamation"></i><strong>لا
+                    توجد نتائج</strong><span>جرّب تغيير البحث أو الفلاتر</span></div>
+        </div>
+        <div>
+            <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
+        </div>
+
+    </aside>
+</section>
+
+<div *ngIf="showRenewalDateModal" class="modal-backdrop required-date-backdrop">
+    <form class="dialog date-dialog" role="dialog" aria-modal="true" aria-labelledby="renewal-date-title" (ngSubmit)="confirmRenewalDate()" dir="rtl">
+        <span class="dialog-icon warning"><i class="uil uil-calendar-alt"></i></span>
+        <h2 id="renewal-date-title">تحديد مواعيد تجديد الأقساط</h2>
+        <p>يجب اختيار تاريخ لاحق لتاريخ اليوم لكل طالب غير مسدد قبل المتابعة.</p>
+
+        <div class="renewal-list-header" aria-hidden="true">
+            <span>اسم الطالب</span><span>موعد تجديد القسط</span>
+        </div>
+        <div class="renewal-students-list">
+            <div *ngFor="let student of pendingRenewalStudents; trackBy: trackByStudentId" class="renewal-student-row">
+                <label [for]="'renewal-date-' + student.id" [title]="student.name">{{ student.name }}</label>
+                <div>
+                    <input [id]="'renewal-date-' + student.id" class="required-date-input" type="date" [name]="'renewalDate-' + student.id" [(ngModel)]="renewalDateValues[student.id]" [min]="minimumRenewalDate" [class.invalid]="isRenewalDateInvalid(student.id)" required>
+                    <small *ngIf="isRenewalDateInvalid(student.id)">يجب أن يكون التاريخ بعد اليوم</small>
+                </div>
+            </div>
+        </div>
+
+        <small *ngIf="!allRenewalDatesValid" class="required-date-hint">
+            لا يمكن إغلاق النافذة قبل اختيار تاريخ صحيح لجميع الطلاب.
+        </small>
+        <div class="dialog-actions single-action">
+            <button type="submit" class="confirm-success" [disabled]="!allRenewalDatesValid">
+                <i class="uil uil-check"></i> موافق
+            </button>
+        </div>
+    </form>
+</div>
+
+<div *ngIf="showClearConfirmation" class="modal-backdrop" (click)="showClearConfirmation = false">
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="clear-title" (click)="$event.stopPropagation()" dir="rtl">
+        <span class="dialog-icon danger"><i class="uil uil-trash-alt"></i></span>
+        <h2 id="clear-title">مسح جميع التوزيعات؟</h2>
+        <p>سيتم إفراغ كل الخانات في جميع الصفحات، ويمكنك إعادة توزيع الطلاب مرة أخرى.</p>
+        <div class="dialog-actions"><button type="button" class="cancel" (click)="showClearConfirmation = false">إلغاء</button><button type="button" class="confirm-danger" (click)="clearAll()">مسح الكل</button></div>
+    </section>
+</div>
+
+<div *ngIf="showPreview" class="modal-backdrop" (click)="closePreview()">
+    <section class="dialog preview-dialog" role="dialog" aria-modal="true" aria-labelledby="preview-title" (click)="$event.stopPropagation()" dir="rtl">
+        <button type="button" class="dialog-close" (click)="closePreview()" aria-label="إغلاق"><i
+                class="uil uil-times"></i></button>
+        <span class="dialog-icon success"><i class="uil uil-file-check-alt"></i></span>
+        <h2 id="preview-title">معاينة PDF جاهزة للربط</h2>
+        <p>تم تجهيز نموذج الصفحة {{ currentPage }}. التوليد الفعلي سيُربط بخدمة PDF لاحقًا.</p>
+        <div class="payload-preview"><span *ngFor="let item of currentPrintModel">خانة {{ item.slotNumber }} ← {{
+                item.studentId }}<small *ngIf="item.InstallmentRenewalDate"> · {{ item.InstallmentRenewalDate
+                    }}</small></span></div>
+        <div class="dialog-actions"><button type="button" class="cancel" (click)="closePreview()">إغلاق</button><button type="button" class="confirm-success" (click)="generateAndPrintPdf(currentPrintModel); closePreview()"><i class="uil uil-print"></i> تجهيز
+                الطباعة</button></div>
+    </section>
+</div>

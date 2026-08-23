@@ -6,7 +6,7 @@ import qz from 'qz-tray';
   providedIn: 'root'
 })
 export class QzPrintService {
-  private readonly preferredPrinterKeywords = ['xp-q810k', 'xprinter'];
+  private readonly preferredPrinterKeywords = ['xp-k200l', 'xprinter'];
   private qzSecurityInitialized = false;
   private qzConnectionPromise?: Promise<void>;
 
@@ -15,7 +15,7 @@ export class QzPrintService {
 
   async Print(base64Pdf: string, jobName = 'Student Receipt'): Promise<void> {
     try {
-      // this.setupQzSecurity();
+      this.setupQzSecurity();
       await this.InitQZ();
       const printer = await this.resolvePrinterName();
       const config = qz.configs.create(printer,
@@ -172,7 +172,7 @@ export class QzPrintService {
     }
 
     qz.security.setCertificatePromise((resolve, reject) => {
-      fetch('/assets/qz/digital-certificate.txt', { cache: 'no-store' })
+      fetch('/qz/digital-certificate.txt', { cache: 'no-store' })
         .then(res => {
           if (!res.ok) {
             throw new Error(`Failed to load certificate: ${res.status} ${res.statusText}`);

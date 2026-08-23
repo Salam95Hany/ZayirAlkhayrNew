@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal, NgbModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { StudentSidepanelComponent } from '../student-sidepanel/student-sidepanel.component';
 import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaPaginationComponent } from '../../../../../../Shared/za-pagination/za-pagination.component';
 import { ZaFiltersComponent } from '../../../../../../Shared/za-filters/za-filters.component';
@@ -19,6 +18,7 @@ import { SchoolStudentService } from '../../../../../../Services/school/school-s
 import { PdfDownloadService } from '../../../../../../Services/shared/pdf-download.service';
 import { FormService } from '../../../../../../Services/shared/form.service';
 import { AuthService } from '../../../../../../Auth/auth.service';
+import { StudentSidepanelComponent } from './student-sidepanel/student-sidepanel.component';
 
 @Component({
   selector: 'app-student',

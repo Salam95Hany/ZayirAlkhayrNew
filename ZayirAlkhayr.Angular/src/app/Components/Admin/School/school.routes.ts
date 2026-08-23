@@ -57,6 +57,13 @@ export const SchoolRoutes: Routes = [
                 canActivate: [authGuard],
                 data: { pageKey: 'School_ManageStudents_AddStudent' }
             },
+            {
+                path: 'student-ticket',
+                loadComponent: () =>
+                    import('./Students/manage-student/student-ticket/student-ticket.component').then(m => m.StudentTicketComponent),
+                canActivate: [authGuard],
+                data: { pageKey: 'School_ManageStudents_StudentTicket' }
+            },
             // ======================= Manage Parents ==================================
             {
                 path: 'parents',

@@ -77,6 +77,7 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     public virtual DbSet<Template> Templates { get; set; }
     public virtual DbSet<TemplateVariableMapping> TemplateVariableMappings { get; set; }
     public virtual DbSet<TemplateVariable> TemplateVariables { get; set; }
+    public virtual DbSet<StudentTicketPrint> StudentTicketPrints { get; set; }
 
     #endregion
 

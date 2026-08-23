@@ -297,6 +297,14 @@ export class MenueService {
               icon: 'uil uil-user-times',
               route: '/admin/school/withdrawals',
               pageKey: 'School_ManageStudents_Withdrawals',
+            },
+            {
+              displayName: 'إنشاء بطاقة تعريفية',
+              menuItem: 'student-ticket',
+              description: 'إنشاء بطاقة تعريفية للطالب مع تفاصيل الدفع',
+              icon: 'uil uil-user-times',
+              route: '/admin/school/student-ticket',
+              pageKey: 'School_ManageStudents_StudentTicket',
             }
           ]
         },
