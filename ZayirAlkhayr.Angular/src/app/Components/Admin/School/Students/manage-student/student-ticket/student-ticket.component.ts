@@ -1,4 +1,4 @@
-import { CommonModule, NgIf } from '@angular/common';
+import { CommonModule, DatePipe, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -6,6 +6,10 @@ import { StudentPrintSlot, TicketStudent } from '../../../../../../Models/school
 import { StudentTicketPrintService } from '../../../../../../Services/school/student-ticket-print.service';
 import { PagingFilterModel } from '../../../../../../Models/shared/PagingFilterModel ';
 import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za-pagination.component";
+import { SearchReportModel } from '../../../../../../Models/shared/SearchReportModel';
+import { NgxLoadingModule } from "ngx-loading";
+import { PdfDownloadService } from '../../../../../../Services/shared/pdf-download.service';
+import { AuthService } from '../../../../../../Auth/auth.service';
 
 type PrintStatus = 'IDLE' | 'PREVIEWING' | 'GENERATING';
 
@@ -18,9 +22,10 @@ interface DragPayload {
 @Component({
   selector: 'app-student-ticket',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIf, ZaPaginationComponent],
+  imports: [CommonModule, FormsModule, NgIf, ZaPaginationComponent, NgxLoadingModule],
   templateUrl: './student-ticket.component.html',
-  styleUrl: './student-ticket.component.css'
+  styleUrl: './student-ticket.component.css',
+  providers: [DatePipe]
 })
 export class StudentTicketComponent implements OnInit {
   readonly slotsPerPage = 8;
@@ -42,19 +47,28 @@ export class StudentTicketComponent implements OnInit {
   showClearConfirmation = false;
   showPreview = false;
   showRenewalDateModal = false;
+  showLoader = false;
   students: TicketStudent[] = [];
   pendingRenewalStudents: TicketStudent[] = [];
   renewalDateValues: Record<string, string> = {};
   draggingStudentId: string | null = null;
   dragOverSlot: number | null = null;
   TotalCount = 0;
+  SearchReport: SearchReportModel = {
+    reportType: 'StudentCardFrontPdf',
+    headers: [],
+    filterItems: [],
+    studentCards: []
+  };
   PagingFilter: PagingFilterModel = {
     filterList: [],
     currentPage: 1,
     pageSize: 8
   }
 
-  constructor(private printService: StudentTicketPrintService, private toaster: ToastrService) {
+  constructor(private printService: StudentTicketPrintService, private toaster: ToastrService, private pdfService: PdfDownloadService, private datePipe: DatePipe,
+    private authService: AuthService
+  ) {
     this.pageSlots.set(1, this.createEmptyPage());
   }
 
@@ -110,7 +124,9 @@ export class StudentTicketComponent implements OnInit {
   }
 
   GetAllStudentTicketData() {
+    this.showLoader = true;
     this.printService.GetAllStudentTicketData(this.PagingFilter).subscribe(data => {
+      this.showLoader = false;
       this.students = data.results;
       this.TotalCount = data.totalCount;
     })
@@ -312,10 +328,18 @@ export class StudentTicketComponent implements OnInit {
     }
 
     this.printStatus = 'GENERATING';
-    this.printService.generateAndPrintPdf(slots);
-    this.toaster.success('تم تجهيز بيانات الطباعة للربط مع خدمة PDF');
-    this.printStatus = 'IDLE';
-    this.clearAll();
+    let today = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+    let fileName = 'بطاقة تعريفية' + '_' + today;
+    this.SearchReport.reportType = 'StudentCardFrontPdf';
+    this.SearchReport.studentCards = this.currentPrintModel;
+    this.SearchReport.userId = this.authService.userId;
+    this.showLoader = true;
+    this.pdfService.DownloadFile(this.SearchReport, fileName + '.pdf').subscribe(data => {
+      this.showLoader = false;
+      this.printStatus = 'IDLE';
+      this.GetAllStudentTicketData();
+      this.clearAll();
+    });
   }
 
   isStudentAssigned(studentId: string): boolean {

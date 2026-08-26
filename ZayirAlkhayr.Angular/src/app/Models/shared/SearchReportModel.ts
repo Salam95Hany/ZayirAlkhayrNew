@@ -1,3 +1,4 @@
+import { StudentPrintSlot } from "../school/student/StudentPrintSlot";
 import { FilterModel } from "./FilterModel";
 
 export interface SearchReportModel {
@@ -5,9 +6,11 @@ export interface SearchReportModel {
     isLandScape?: boolean;
     rowCount?: number;
     userName?: string;
+    userId?:string;
     queryString?: QueryString[];
     filterItems?: FilterModel[];
     headers?: PDFHeaderSelected[];
+    studentCards?:StudentPrintSlot[];
 }
 
 export interface QueryString {

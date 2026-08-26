@@ -11,8 +11,8 @@ namespace ZayirAlkhayr.Reports.POSPrinters
     {
         private const string CairoFont = "Cairo";
 
-        private const float PageWidthMm = 80f;
-        private const float HorizontalMarginMm = 2f;
+        private const float PageWidthMm = 72f;
+        private const float HorizontalMarginMm = 3f;
         private const float TopMarginMm = 3f;
         private const float BottomMarginMm = 4f;
 
@@ -90,8 +90,8 @@ namespace ZayirAlkhayr.Reports.POSPrinters
                 column.Item().PaddingTop(1.5f).Row(row =>
                 {
                     row.Spacing(2);
-                    row.RelativeItem().Element(x => ComposeHeaderContact(x,ReceiptIcons.Phone,_branding.Phone,ltr: true));
-                    row.RelativeItem().Element(x => ComposeHeaderContact(x,ReceiptIcons.Location,_branding.Location));
+                    row.RelativeItem().Element(x => ComposeHeaderContact(x, ReceiptIcons.Phone, _branding.Phone, ltr: true));
+                    row.RelativeItem().Element(x => ComposeHeaderContact(x, ReceiptIcons.Location, _branding.Location));
                 });
             });
         }
@@ -100,7 +100,7 @@ namespace ZayirAlkhayr.Reports.POSPrinters
         {
             container.Column(column =>
             {
-                if (!string.IsNullOrWhiteSpace(_branding.LogoPath) &&File.Exists(_branding.LogoPath))
+                if (!string.IsNullOrWhiteSpace(_branding.LogoPath) && File.Exists(_branding.LogoPath))
                 {
                     var logoBytes = File.ReadAllBytes(_branding.LogoPath);
                     column.Item().Width(48).AlignCenter().Image(logoBytes);
@@ -108,7 +108,7 @@ namespace ZayirAlkhayr.Reports.POSPrinters
             });
         }
 
-        private static void ComposeHeaderContact(IContainer container,string svg,string value,bool ltr = false)
+        private static void ComposeHeaderContact(IContainer container, string svg, string value, bool ltr = false)
         {
             container.MinHeight(15).Row(row =>
             {
@@ -143,9 +143,9 @@ namespace ZayirAlkhayr.Reports.POSPrinters
             container.Column(column =>
             {
                 column.Spacing(2.5f);
-                ComposeKeyValue( column,"رقم الإيصال:",_model.StudentReceipt.ReceiptNumber,valueLtr: true);
-                ComposeKeyValue(column,"تاريخ الإيصال:",_model.StudentReceipt.ReceiptDate,valueLtr: true);
-                ComposeKeyValue(column,"وقت الإيصال:",_model.StudentReceipt.ReceiptTime,valueLtr: true);
+                ComposeKeyValue(column, "رقم الإيصال:", _model.StudentReceipt.ReceiptNumber, valueLtr: true);
+                ComposeKeyValue(column, "تاريخ الإيصال:", _model.StudentReceipt.ReceiptDate, valueLtr: true);
+                ComposeKeyValue(column, "وقت الإيصال:", _model.StudentReceipt.ReceiptTime, valueLtr: true);
             });
         }
 
@@ -154,13 +154,13 @@ namespace ZayirAlkhayr.Reports.POSPrinters
             container.Column(column =>
             {
                 column.Spacing(2.5f);
-                ComposeKeyValue(column,"نوع السداد:",_model.StudentReceipt.PaymentType,badge: true);
-                ComposeKeyValue(column,"طريقة السداد:",_model.StudentReceipt.PaymentMethod);
-                ComposeKeyValue(column,"حالة السداد:",_model.StudentReceipt.PaymentStatus,badge: true);
+                ComposeKeyValue(column, "نوع السداد:", _model.StudentReceipt.PaymentType);
+                ComposeKeyValue(column, "طريقة السداد:", _model.StudentReceipt.PaymentMethod);
+                ComposeKeyValue(column, "حالة السداد:", _model.StudentReceipt.PaymentStatus);
             });
         }
 
-        private static void ComposeKeyValue(ColumnDescriptor column,string label,string value,bool valueLtr = false,bool badge = false)
+        private static void ComposeKeyValue(ColumnDescriptor column, string label, string value, bool valueLtr = false, bool badge = false)
         {
             column.Item().Row(row =>
             {
@@ -198,11 +198,11 @@ namespace ZayirAlkhayr.Reports.POSPrinters
             container.Column(column =>
             {
                 column.Spacing(2.2f);
-                column.Item().Element(x => ComposeSectionHeading(x,ReceiptIcons.User,"بيانات الطالب"));
+                column.Item().Element(x => ComposeSectionHeading(x, ReceiptIcons.User, "بيانات الطالب"));
                 ComposeSimpleField(column, "الطالب:", _model.StudentName);
-                ComposeSimpleField(column,"المرحلة:",_model.AcademicStage);
-                ComposeSimpleField(column,"السنة الدراسية:",_model.AcademicYear);
-                ComposeSimpleField(column,"كود الطالب:", _model.StudentCode,ltr: true);
+                ComposeSimpleField(column, "المرحلة:", _model.AcademicStage);
+                ComposeSimpleField(column, "السنة الدراسية:", _model.AcademicYear);
+                ComposeSimpleField(column, "كود الطالب:", _model.StudentCode, ltr: true);
             });
         }
 
@@ -211,13 +211,13 @@ namespace ZayirAlkhayr.Reports.POSPrinters
             container.Column(column =>
             {
                 column.Spacing(2.2f);
-                column.Item().Element(x => ComposeSectionHeading(x,ReceiptIcons.Users,"بيانات ولي الأمر"));
-                ComposeSimpleField(column,"ولي الأمر:", _model.ParentName);
-                ComposeSimpleField(column,"رقم الهاتف:",_model.ParentPhone,ltr: true);
+                column.Item().Element(x => ComposeSectionHeading(x, ReceiptIcons.Users, "بيانات ولي الأمر"));
+                ComposeSimpleField(column, "ولي الأمر:", _model.ParentName);
+                ComposeSimpleField(column, "رقم الهاتف:", _model.ParentPhone, ltr: true);
             });
         }
 
-        private static void ComposeSectionHeading(IContainer container,string icon,string title)
+        private static void ComposeSectionHeading(IContainer container, string icon, string title)
         {
             container.PaddingBottom(1).Row(row =>
             {
@@ -227,7 +227,7 @@ namespace ZayirAlkhayr.Reports.POSPrinters
             });
         }
 
-        private static void ComposeSimpleField(ColumnDescriptor column,string label,string value,bool ltr = false)
+        private static void ComposeSimpleField(ColumnDescriptor column, string label, string value, bool ltr = false)
         {
             column.Item().Row(row =>
             {
@@ -264,9 +264,9 @@ namespace ZayirAlkhayr.Reports.POSPrinters
                     foreach (var payment in _model.StudentPayments)
                     {
                         FeeNameCell(table.Cell(), payment.FeeName);
-                        MoneyCell(table.Cell(),payment.TotalAmount);
-                        MoneyCell(table.Cell(),payment.PaidAmount);
-                        MoneyCell(table.Cell(),payment.RemainingAmount);
+                        MoneyCell(table.Cell(), payment.TotalAmount);
+                        MoneyCell(table.Cell(), payment.PaidAmount);
+                        MoneyCell(table.Cell(), payment.RemainingAmount);
                     }
                 });
         }
@@ -277,13 +277,13 @@ namespace ZayirAlkhayr.Reports.POSPrinters
                 .FontColor(Colors.White);
         }
 
-        private static void FeeNameCell(IContainer container,string value)
+        private static void FeeNameCell(IContainer container, string value)
         {
             container.BorderBottom(0.45f).BorderColor(Colors.Grey.Medium).MinHeight(22).PaddingHorizontal(2).PaddingVertical(3).AlignRight().AlignMiddle().Text(value)
                 .FontSize(7.6f);
         }
 
-        private static void MoneyCell(IContainer container,decimal value)
+        private static void MoneyCell(IContainer container, decimal value)
         {
             container.BorderBottom(0.45f).BorderColor(Colors.Grey.Medium).MinHeight(22).PaddingHorizontal(1).PaddingVertical(3).ContentFromLeftToRight().AlignCenter()
                 .AlignMiddle()
@@ -299,11 +299,11 @@ namespace ZayirAlkhayr.Reports.POSPrinters
                 row.ConstantItem(0.6f).Background(Colors.Grey.Medium);
                 row.RelativeItem().Element(x => ComposeTotalBox(x, "إجمالي المدفوع", _model.TotalPaid));
                 row.ConstantItem(0.6f).Background(Colors.Grey.Medium);
-                row.RelativeItem().Element(x => ComposeTotalBox(x,"المتبقي",_model.TotalRemaining)); 
+                row.RelativeItem().Element(x => ComposeTotalBox(x, "المتبقي", _model.TotalRemaining));
             });
         }
 
-        private static void ComposeTotalBox(IContainer container,string title,decimal value)
+        private static void ComposeTotalBox(IContainer container, string title, decimal value)
         {
             container.PaddingVertical(4).PaddingHorizontal(2).Column(column =>
             {
@@ -315,11 +315,24 @@ namespace ZayirAlkhayr.Reports.POSPrinters
 
         private void ComposeAmountInWords(IContainer container)
         {
-            container.PaddingVertical(1).Row(row =>
+            container.Column(column =>
             {
-                row.Spacing(2);
-                row.AutoItem().AlignMiddle().Text("المبلغ المدفوع كتابة:").FontSize(7.5f).SemiBold();
-                row.RelativeItem().AlignMiddle().Text(_model.TotalPaidTxt).FontSize(6.5f).SemiBold();
+                column.Item().PaddingVertical(1).Row(row =>
+                {
+                    row.Spacing(2);
+                    row.AutoItem().AlignMiddle().Text("المبلغ المدفوع كتابة:").FontSize(7.5f).SemiBold();
+                    row.RelativeItem().AlignMiddle().Text(_model.TotalPaidTxt).FontSize(6.5f).SemiBold();
+                });
+
+                if (!string.IsNullOrEmpty(_model?.NextInstallmentDate))
+                {
+                    column.Item().PaddingVertical(1).Row(row =>
+                    {
+                        row.Spacing(2);
+                        row.AutoItem().AlignMiddle().Text("تاريخ القسط القادم:").FontSize(7.5f).SemiBold();
+                        row.RelativeItem().AlignMiddle().Text(_model.NextInstallmentDate).FontSize(6.5f).SemiBold();
+                    });
+                }
             });
         }
 
@@ -336,7 +349,7 @@ namespace ZayirAlkhayr.Reports.POSPrinters
 
         private static string FormatMoney(decimal amount)
         {
-            return amount.ToString("#,##0.00",CultureInfo.InvariantCulture);
+            return amount.ToString("#,##0.00", CultureInfo.InvariantCulture);
         }
     }
 }

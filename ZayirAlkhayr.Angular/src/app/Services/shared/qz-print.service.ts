@@ -15,7 +15,7 @@ export class QzPrintService {
 
   async Print(base64Pdf: string, jobName = 'Student Receipt'): Promise<void> {
     try {
-      this.setupQzSecurity();
+      // this.setupQzSecurity();
       await this.InitQZ();
       const printer = await this.resolvePrinterName();
       const config = qz.configs.create(printer,

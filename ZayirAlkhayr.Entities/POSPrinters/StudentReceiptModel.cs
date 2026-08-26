@@ -20,6 +20,7 @@ namespace ZayirAlkhayr.Entities.POSPrinters
         public decimal TotalPaid { get; set; }
         public decimal TotalAmount { get; set; }
         public string TotalPaidTxt { get; set; }
+        public string? NextInstallmentDate { get; set; }
     }
 
     public class StudentReceiptInfo

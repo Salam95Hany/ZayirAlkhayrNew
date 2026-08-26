@@ -378,7 +378,7 @@ button {
     align-items: baseline;
     min-width: 0; */
     /* font-size: clamp(8px, .82vw, 12px); */
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .ticket-line strong {

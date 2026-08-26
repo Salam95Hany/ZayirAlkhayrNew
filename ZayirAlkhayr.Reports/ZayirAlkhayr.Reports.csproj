@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="ExcelTemplate\School\" />
-    <Folder Include="PdfTemplate\School\" />
   </ItemGroup>
 
 </Project>

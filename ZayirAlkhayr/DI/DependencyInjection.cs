@@ -42,6 +42,7 @@ namespace ZayirAlkhayr.DI
         {
 
             services.Configure<AppSettings>(configuration);
+            services.AddHttpContextAccessor();
             services.AddSingleton<IAppSettings>(sp => sp.GetRequiredService<IOptions<AppSettings>>().Value);
             services.AddDbContext<ZADbContext>((serviceProvider, options) =>
             {
@@ -68,6 +69,7 @@ namespace ZayirAlkhayr.DI
             }).AddNewtonsoftJson();
             services.AddAuthConfig(configuration);
 
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ISQLHelper, SQLHelper>();

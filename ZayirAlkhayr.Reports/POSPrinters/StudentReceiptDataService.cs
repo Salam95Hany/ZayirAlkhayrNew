@@ -61,7 +61,7 @@ namespace ZayirAlkhayr.Reports.POSPrinters
                     FeeName = fee.FeeType.Name,
                     TotalAmount = Convert.ToDecimal(fee.NetAmount),
                     PaidAmount = Convert.ToDecimal(fee.PaidAmount),
-                    RemainingAmount = Convert.ToDecimal(fee.RemainingAmount)
+                    RemainingAmount = Convert.ToDecimal(fee.RemainingAmount),
                 }).ToList()
             };
 
@@ -69,6 +69,7 @@ namespace ZayirAlkhayr.Reports.POSPrinters
             result.TotalPaid = result.StudentPayments.Sum(x => x.PaidAmount);
             result.TotalRemaining = result.StudentPayments.Sum(x => x.RemainingAmount);
             result.TotalPaidTxt = ConvertAmountToArabicWords(result.TotalPaid);
+            result.NextInstallmentDate = payment.NextInstallmentDate.HasValue ? payment.NextInstallmentDate.Value.ToString("yyyy/MM/dd") : null;
 
             return result;
         }
