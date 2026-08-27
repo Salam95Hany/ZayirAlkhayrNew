@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.Settings;
@@ -10,6 +11,7 @@ namespace ZayirAlkhayr.Controllers.Settings
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PagePermissionController : ControllerBase
     {
         private readonly IPagePermissionService _pagePermissionService;

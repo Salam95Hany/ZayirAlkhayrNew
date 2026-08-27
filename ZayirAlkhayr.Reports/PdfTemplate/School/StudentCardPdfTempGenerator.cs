@@ -25,12 +25,14 @@ namespace ZayirAlkhayr.Reports.PdfTemplate.School
             try
             {
                 var FullPath = Path.Combine(_environment.WebRootPath, "ExportFiles", "StudentCard.pdf");
-                var ImgPath = Path.Combine(_environment.WebRootPath, "Template", "Ticket_Front.png");
-                var students = await _studentTicketService.GetStudentCardReportData(Model.StudentCards);
-                var backgroundBytes = File.ReadAllBytes(ImgPath);
-                var document = new StudentCardPdf(students, backgroundBytes);
-                document.GeneratePdf(FullPath);
-                await _studentTicketService.AddStudentTicketPrinted(Model.StudentCards.Select(i => i.StudentId).ToList(), Model.UserId);
+                var FrontImgPath = Path.Combine(_environment.WebRootPath, "Template", "Ticket_Front.png");
+                var BackImgPath = Path.Combine(_environment.WebRootPath, "Template", "Ticket_Back.jpeg");
+                var Students = await _studentTicketService.GetStudentCardReportData(Model.StudentCards);
+                var FrontBytes = File.ReadAllBytes(FrontImgPath);
+                var BackBytes = File.ReadAllBytes(BackImgPath);
+                var Document = new StudentCardPdf(Students, FrontBytes, BackBytes);
+                Document.GeneratePdf(FullPath);
+                await _studentTicketService.AddStudentTicketPrinted(Model.StudentCards.Select(i => i.StudentId).ToList());
                 return FullPath;
             }
             catch (Exception ex)

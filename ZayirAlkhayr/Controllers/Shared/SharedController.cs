@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Interfaces.Shared;
@@ -7,6 +8,7 @@ namespace ZayirAlkhayr.Controllers.Shared
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SharedController : ControllerBase
     {
         private readonly ISharedService _sharedService;

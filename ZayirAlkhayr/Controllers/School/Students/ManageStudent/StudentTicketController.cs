@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Interfaces.School.Students.ManageStudent;
@@ -7,6 +8,7 @@ namespace ZayirAlkhayr.Controllers.School.Students.ManageStudent
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StudentTicketController : ControllerBase
     {
         private readonly IStudentTicketService _studentTicketService;

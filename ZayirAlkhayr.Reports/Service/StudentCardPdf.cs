@@ -8,7 +8,8 @@ namespace ZayirAlkhayr.Reports.Service
     public sealed class StudentCardPdf : IDocument
     {
         private readonly IReadOnlyList<StudentCardData> _students;
-        private readonly byte[] _backgroundImage;
+        private readonly byte[] _frontImage;
+        private readonly byte[] _backImage;
         private const string CairoFont = "Cairo";
         private const float PageMarginHorizontalMm = 0.5f;
         private const float PageMarginVerticalMm = 0.5f;
@@ -39,16 +40,15 @@ namespace ZayirAlkhayr.Reports.Service
         private const string InstallmentColor = "#B86A00";
         private const string PaidColor = "#007C68";
 
-        public StudentCardPdf(IReadOnlyList<StudentCardData> students, byte[] backgroundImage)
+        public StudentCardPdf(IReadOnlyList<StudentCardData> students, byte[] frontImage, byte[] backImage)
         {
             ArgumentNullException.ThrowIfNull(students);
-            ArgumentNullException.ThrowIfNull(backgroundImage);
-
-            if (backgroundImage.Length == 0)
-                throw new ArgumentException("Background image cannot be empty.", nameof(backgroundImage));
+            ArgumentNullException.ThrowIfNull(frontImage);
+            ArgumentNullException.ThrowIfNull(backImage);
 
             _students = students;
-            _backgroundImage = backgroundImage;
+            _frontImage = frontImage;
+            _backImage = backImage;
         }
 
         public DocumentMetadata GetMetadata()
@@ -67,16 +67,17 @@ namespace ZayirAlkhayr.Reports.Service
             var pages = BuildPages();
 
             if (pages.Count == 0)
-            {
-                ComposePage(container, Array.Empty<StudentCardData>());
                 return;
-            }
 
             foreach (var pageStudents in pages)
-                ComposePage(container, pageStudents);
+            {
+                ComposeFrontPage(container, pageStudents);
+                ComposeBackPage(container, pageStudents);
+            }
+
         }
 
-        private void ComposePage(IDocumentContainer document, IReadOnlyList<StudentCardData> students)
+        private void ComposeFrontPage(IDocumentContainer document, IReadOnlyList<StudentCardData> students)
         {
             document.Page(page =>
             {
@@ -85,11 +86,22 @@ namespace ZayirAlkhayr.Reports.Service
                 page.MarginVertical(PageMarginVerticalMm, Unit.Millimetre);
                 page.ContentFromRightToLeft();
                 page.DefaultTextStyle(style => style.FontFamily(CairoFont).FontSize(NameFontSize).FontColor(MainTextColor));
-                page.Content().Element(container => ComposePageGrid(container, students));
+                page.Content().Element(container => ComposeFrontPageGrid(container, students));
             });
         }
 
-        private void ComposePageGrid(IContainer container, IReadOnlyList<StudentCardData> students)
+        private void ComposeBackPage(IDocumentContainer document, IReadOnlyList<StudentCardData> students)
+        {
+            document.Page(page =>
+            {
+                page.Size(PageSizes.A4.Portrait());
+                page.MarginHorizontal(PageMarginHorizontalMm, Unit.Millimetre);
+                page.MarginVertical(PageMarginVerticalMm, Unit.Millimetre);
+                page.Content().Element(container => ComposeBackPageGrid(container, students));
+            });
+        }
+
+        private void ComposeFrontPageGrid(IContainer container, IReadOnlyList<StudentCardData> students)
         {
             container.Column(column =>
             {
@@ -104,9 +116,32 @@ namespace ZayirAlkhayr.Reports.Service
 
                     column.Item().Height(CardHeightMm, Unit.Millimetre).Row(row =>
                     {
-                        row.ConstantItem(CardWidthMm, Unit.Millimetre).Element(card => ComposeCardOrEmpty(card, rightStudent));
+                        row.ConstantItem(CardWidthMm, Unit.Millimetre).Element(card => ComposeFrontCardOrEmpty(card, rightStudent));
                         row.ConstantItem(CardHorizontalSpacingMm, Unit.Millimetre);
-                        row.ConstantItem(CardWidthMm, Unit.Millimetre).Element(card => ComposeCardOrEmpty(card, leftStudent));
+                        row.ConstantItem(CardWidthMm, Unit.Millimetre).Element(card => ComposeFrontCardOrEmpty(card, leftStudent));
+                    });
+                }
+            });
+        }
+
+        private void ComposeBackPageGrid(IContainer container, IReadOnlyList<StudentCardData> students)
+        {
+            container.ContentFromRightToLeft().Column(column =>
+            {
+                column.Spacing(CardVerticalSpacingMm, Unit.Millimetre);
+
+                for (var rowIndex = 0; rowIndex < 4; rowIndex++)
+                {
+                    var frontRightSlot = rowIndex * 2 + 1;
+                    var frontLeftSlot = frontRightSlot + 1;
+                    var frontRightStudent = FindStudentBySlot(students, frontRightSlot);
+                    var frontLeftStudent = FindStudentBySlot(students, frontLeftSlot);
+
+                    column.Item().Height(CardHeightMm, Unit.Millimetre).Row(row =>
+                    {
+                        row.ConstantItem(CardWidthMm, Unit.Millimetre).Element(card => ComposeBackCardOrEmpty(card, frontLeftStudent));
+                        row.ConstantItem(CardHorizontalSpacingMm, Unit.Millimetre);
+                        row.ConstantItem(CardWidthMm, Unit.Millimetre).Element(card => ComposeBackCardOrEmpty(card, frontRightStudent));
                     });
                 }
             });
@@ -117,27 +152,43 @@ namespace ZayirAlkhayr.Reports.Service
             return students.FirstOrDefault(x => x.SlotNumber == slotNumber);
         }
 
-        private void ComposeCardOrEmpty(IContainer container, StudentCardData? student)
+        private void ComposeFrontCardOrEmpty(IContainer container, StudentCardData? student)
         {
             if (student is null)
                 return;
 
-            ComposeCard(container, student);
+            ComposeFrontCard(container, student);
         }
 
-        private void ComposeCard(IContainer container, StudentCardData student)
+        private void ComposeBackCardOrEmpty(IContainer container, StudentCardData? student)
+        {
+            if (student is null)
+                return;
+
+            ComposeBackCard(container);
+        }
+
+        private void ComposeFrontCard(IContainer container, StudentCardData student)
         {
             container.Height(CardHeightMm, Unit.Millimetre).Border(CardOuterBorderPoints).BorderColor(CardBorderColor)
                 .CornerRadius(1.1f, Unit.Millimetre)
                 .Layers(layers =>
                 {
-                    layers.Layer().Image(_backgroundImage).FitArea();
+                    layers.Layer().Image(_frontImage).FitArea();
                     layers.PrimaryLayer().ContentFromRightToLeft().Layers(cardLayers =>
                     {
                         cardLayers.PrimaryLayer().Element(content => ComposeStudentInformation(content, student));
-                        //cardLayers.Layer().Element(slot => ComposeSlotBadge(slot, student.SlotNumber));
                     });
                 });
+        }
+
+        private void ComposeBackCard(IContainer container)
+        {
+            container.Height(CardHeightMm, Unit.Millimetre).Border(CardOuterBorderPoints).BorderColor(CardBorderColor).CornerRadius(1.1f, Unit.Millimetre)
+            .Layers(layers =>
+            {
+                layers.PrimaryLayer().Image(_backImage).FitArea();
+            });
         }
 
         private void ComposeStudentInformation(IContainer container, StudentCardData student)

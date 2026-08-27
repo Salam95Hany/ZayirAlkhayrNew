@@ -67,8 +67,9 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             return Data;
         }
 
-        public async Task AddStudentTicketPrinted(List<int> StudentIds,string UserId)
+        public async Task AddStudentTicketPrinted(List<int> StudentIds)
         {
+            var UserId = _currentUserService.UserId;
             var StPrinted = StudentIds.Select(i => new StudentTicketPrint
             {
                 StudentId = i,

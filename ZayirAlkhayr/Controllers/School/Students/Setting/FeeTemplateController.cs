@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Models.School;
@@ -8,6 +9,7 @@ namespace ZayirAlkhayr.Controllers.School.Students.Setting
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FeeTemplateController : ControllerBase
     {
         private readonly IFeeTemplateService _feeTemplateService;

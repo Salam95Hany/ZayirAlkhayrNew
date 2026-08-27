@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.Tasks;
@@ -9,6 +10,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.Tasks
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AccountsMonyController : ControllerBase
     {
         private readonly IAccountsMonyService _accountsMonyService;

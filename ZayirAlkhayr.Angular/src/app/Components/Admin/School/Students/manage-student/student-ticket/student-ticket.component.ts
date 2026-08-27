@@ -9,7 +9,6 @@ import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za
 import { SearchReportModel } from '../../../../../../Models/shared/SearchReportModel';
 import { NgxLoadingModule } from "ngx-loading";
 import { PdfDownloadService } from '../../../../../../Services/shared/pdf-download.service';
-import { AuthService } from '../../../../../../Auth/auth.service';
 
 type PrintStatus = 'IDLE' | 'PREVIEWING' | 'GENERATING';
 
@@ -66,8 +65,7 @@ export class StudentTicketComponent implements OnInit {
     pageSize: 8
   }
 
-  constructor(private printService: StudentTicketPrintService, private toaster: ToastrService, private pdfService: PdfDownloadService, private datePipe: DatePipe,
-    private authService: AuthService
+  constructor(private printService: StudentTicketPrintService, private toaster: ToastrService, private pdfService: PdfDownloadService, private datePipe: DatePipe
   ) {
     this.pageSlots.set(1, this.createEmptyPage());
   }
@@ -332,7 +330,6 @@ export class StudentTicketComponent implements OnInit {
     let fileName = 'بطاقة تعريفية' + '_' + today;
     this.SearchReport.reportType = 'StudentCardFrontPdf';
     this.SearchReport.studentCards = this.currentPrintModel;
-    this.SearchReport.userId = this.authService.userId;
     this.showLoader = true;
     this.pdfService.DownloadFile(this.SearchReport, fileName + '.pdf').subscribe(data => {
       this.showLoader = false;

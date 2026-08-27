@@ -6,7 +6,6 @@ export interface SearchReportModel {
     isLandScape?: boolean;
     rowCount?: number;
     userName?: string;
-    userId?:string;
     queryString?: QueryString[];
     filterItems?: FilterModel[];
     headers?: PDFHeaderSelected[];

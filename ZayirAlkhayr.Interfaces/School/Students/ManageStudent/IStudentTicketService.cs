@@ -13,7 +13,7 @@ namespace ZayirAlkhayr.Interfaces.School.Students.ManageStudent
     {
         Task<ApiResponseModel<DataTable>> GetAllStudentTicketData(PagingFilterModel PagingFilter);
         Task<List<StudentCardData>> GetStudentCardReportData(List<StudentCardData> Model);
-        Task AddStudentTicketPrinted(List<int> StudentIds, string UserId);
+        Task AddStudentTicketPrinted(List<int> StudentIds);
         Task<List<FilterModel>> GetAcademicStages();
         Task<List<FilterModel>> GetAcademicYear();
     }

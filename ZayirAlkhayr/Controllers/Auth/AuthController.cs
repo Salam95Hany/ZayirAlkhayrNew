@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Auth;
@@ -9,6 +10,7 @@ namespace ZayirAlkhayr.Controllers.Auth
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -26,6 +28,7 @@ namespace ZayirAlkhayr.Controllers.Auth
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("AdminLogin")]
         public async Task<ApiResponseModel<ApplicationUserRespone>> AdminLogin(LoginModel model)
         {
@@ -34,6 +37,7 @@ namespace ZayirAlkhayr.Controllers.Auth
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("AdminLogout")]
         public async Task<ApiResponseModel<string>> AdminLogout(string UserId)
         {

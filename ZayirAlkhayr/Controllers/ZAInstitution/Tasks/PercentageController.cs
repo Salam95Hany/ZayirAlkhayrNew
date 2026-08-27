@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Entities.Models.ZAInstitution;
@@ -8,6 +9,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.Tasks
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PercentageController : ControllerBase
     {
         private readonly IPercentageService _percentageService;

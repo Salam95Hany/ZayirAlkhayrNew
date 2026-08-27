@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Routing;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
@@ -10,6 +11,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class WebsiteHomeController : ControllerBase
     {
         private readonly IWebsiteHomeService _websiteHomeService;
@@ -19,6 +21,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             _websiteHomeService = websiteHomeService;
         }
 
+        [AllowAnonymous]
         [HttpPost("GetHomeSliderImages")]
         public async Task<ApiResponseModel<List<SliderImagDto>>> GetHomeSliderImages(PagingFilterModel PagingFilter)
         {
@@ -61,6 +64,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             return result;
         }
 
+        [AllowAnonymous]
         [HttpGet("CreateSessionId")]
         public async Task<ApiResponseModel<string>> CreateSessionId()
         {

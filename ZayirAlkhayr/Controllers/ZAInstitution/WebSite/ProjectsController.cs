@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.WebSite;
 using ZayirAlkhayr.Entities.Models;
@@ -9,6 +9,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectsService _projectsService;
@@ -17,6 +18,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             _projectsService = projectsService;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetWebSiteProjectsById")]
         public async Task<ApiResponseModel<Project>> GetWebSiteProjectsById(int ProjectId)
         {
@@ -73,6 +75,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             return result;
         }
 
+        [AllowAnonymous]
         [HttpGet("CheckProjectLinkIsActive")]
         public async Task<ApiResponseModel<bool>> CheckProjectLinkIsActive(int ProjectId)
         {
@@ -80,6 +83,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             return result;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetAllDeniedProjects")]
         public async Task<ApiResponseModel<List<ProjectsDenied>>> GetAllDeniedProjects()
         {

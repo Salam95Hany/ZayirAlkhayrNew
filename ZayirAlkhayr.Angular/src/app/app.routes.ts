@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { AdminRoutes } from './Components/Admin/admin.routes';
 import { ProjectauthGuard } from './Components/WebSite/ProjectAuth/projectauth.guard';
 import { benefactorAuthGuard } from './Auth/benefactor-auth.guard';
+import { provideHttpClient, withInterceptors, withRequestsMadeViaParent } from '@angular/common/http';
+import { authInterceptor } from './Auth/auth.interceptor';
 
 export const routes: Routes = [
     {

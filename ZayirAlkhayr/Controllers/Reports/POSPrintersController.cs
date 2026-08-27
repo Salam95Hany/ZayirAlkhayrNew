@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Reports.POSPrinters;
 
 namespace ZayirAlkhayr.Controllers.Reports
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class POSPrintersController : ControllerBase
     {
         private readonly IStudentReceiptDataService _receiptDataService;

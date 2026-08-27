@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Diagnostics;
 using ZayirAlkhayr.Entities.Common;
@@ -10,6 +11,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ActivityController : ControllerBase
     {
         private readonly IActivityService _activityService;
@@ -19,6 +21,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             _activityService = activityService;
         }
 
+        [AllowAnonymous]
         [HttpPost("GetAllActivities")]
         public async Task<ApiResponseModel<List<ActivityDto>>> GetAllActivities(PagingFilterModel PagingFilter)
         {
@@ -40,6 +43,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             return results;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetActivityWithSliderImagesById")]
         public async Task<ApiResponseModel<ActivityModel>> GetActivityWithSliderImagesById(int ActivityId)
         {

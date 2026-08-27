@@ -1,5 +1,6 @@
-﻿using System.Data;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.WebSite;
 using ZayirAlkhayr.Entities.Models;
@@ -9,6 +10,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class PhotoController : ControllerBase
     {
         private readonly IPhotoService _photoService;
@@ -17,6 +19,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             _photoService = photoService;
         }
 
+        [AllowAnonymous]
         [HttpPost("GetAllPhotos")]
         public async Task<ApiResponseModel<List<PhotoDto>>> GetAllPhotos(PagingFilterModel PagingFilter)
         {
@@ -38,6 +41,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             return results;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetPhotoWithDetailsById")]
         public async Task<ApiResponseModel<PhotoModel>> GetPhotoWithDetailsById(int PhotoId)
         {

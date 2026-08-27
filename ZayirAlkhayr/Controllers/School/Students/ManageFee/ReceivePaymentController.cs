@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Models.School;
@@ -8,6 +9,7 @@ namespace ZayirAlkhayr.Controllers.School.Students.ManageFee
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ReceivePaymentController : ControllerBase
     {
         private readonly IReceivePaymentService _receivePaymentService;

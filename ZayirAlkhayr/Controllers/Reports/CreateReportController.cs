@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Reports;
 using ZayirAlkhayr.Reports.Interface;
 using ZayirAlkhayr.Reports.Model;
-using ZayirAlkhayr.Reports.Service;
 using ZayirAlkhayr.Services.Common;
 
 namespace ZayirAlkhayr.Controllers.Reports
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CreateReportController : ControllerBase
     {
         private readonly IReportGeneratorFactory _factory;

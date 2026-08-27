@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
@@ -11,6 +12,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.BeneFactor
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BeneFactorController : ControllerBase
     {
         private readonly IBeneFactorService _beneFactorService;
@@ -19,6 +21,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.BeneFactor
             _beneFactorService = beneFactorService;
         }
 
+        [AllowAnonymous]
         [HttpGet("BeneFactorLogin")]
         public async Task<ApiResponseModel<BeneFactorLoginModel>> BeneFactorLogin(int Code, string BeneFactorName)
         {
@@ -75,6 +78,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.BeneFactor
             return results;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetAllBeneFactorCashDetails")]
         public async Task<ApiResponseModel<List<BeneFactorDetailDto>>> GetAllBeneFactorCashDetails(int BeneFactorId, int ParentId)
         {
@@ -82,6 +86,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.BeneFactor
             return results;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetBeneFactorDetailsByBeneFactorId")]
         public async Task<ApiResponseModel<List<BeneFactorDetailDto>>> GetBeneFactorDetailsByBeneFactorId(int BeneFactorId, int BeneFactorTypeId)
         {
@@ -89,6 +94,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.BeneFactor
             return results;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetBeneFactorDetailsStatistics")]
         public async Task<ApiResponseModel<DataTable>> GetBeneFactorDetailsStatistics(int BeneFactorId)
         {
@@ -96,6 +102,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.BeneFactor
             return results;
         }
 
+        [AllowAnonymous]
         [HttpPost("GetBeneFactorTypeByIds")]
         public async Task<ApiResponseModel<List<BeneFactorType>>> GetBeneFactorTypeByIds(List<int> Ids)
         {

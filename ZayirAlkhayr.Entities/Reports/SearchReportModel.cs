@@ -14,7 +14,6 @@ namespace ZayirAlkhayr.Entities.Reports
         public bool IsLandScape { get; set; }
         public int RowCount { get; set; }
         public string? UserName { get; set; }
-        public string? UserId { get; set; }
         public List<QueryString> QueryString { get; set; } = new();
         public List<FilterModel> FilterItems { get; set; } = new();
         public List<PDFHeaderSelected> Headers { get; set; } = new();

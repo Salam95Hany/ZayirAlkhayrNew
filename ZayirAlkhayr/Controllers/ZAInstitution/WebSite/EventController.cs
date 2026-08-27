@@ -1,6 +1,7 @@
-﻿using System.Data;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.WebSite;
 using ZayirAlkhayr.Entities.Models;
@@ -10,6 +11,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EventController : ControllerBase
     {
         private readonly IEventService _eventService;
@@ -18,6 +20,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.WebSite
             _eventService = eventService;
         }
 
+        [AllowAnonymous]
         [HttpGet("GetAllWebSiteEvents")]
         public async Task<ApiResponseModel<List<EventGroupingModel>>> GetAllWebSiteEvents()
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
@@ -10,6 +11,7 @@ namespace ZayirAlkhayr.Controllers.ZAInstitution.GeneralServices
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class FamilyPatientController : ControllerBase
     {
         private readonly IFamilyPatientService _familyPatientService;

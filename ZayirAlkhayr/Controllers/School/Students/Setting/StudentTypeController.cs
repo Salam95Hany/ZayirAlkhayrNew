@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.GeneralServices;
@@ -9,6 +10,7 @@ namespace ZayirAlkhayr.Controllers.School.Students.Setting
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StudentTypeController : ControllerBase
     {
         private readonly IStudentTypeService _studentTypeService;
