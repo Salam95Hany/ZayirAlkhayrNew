@@ -19,6 +19,7 @@ import { PdfDownloadService } from '../../../../../../Services/shared/pdf-downlo
 import { FormService } from '../../../../../../Services/shared/form.service';
 import { AuthService } from '../../../../../../Auth/auth.service';
 import { StudentSidepanelComponent } from './student-sidepanel/student-sidepanel.component';
+import { StudentProfileModalComponent } from '../student-profile-modal/student-profile-modal.component';
 
 @Component({
   selector: 'app-student',
@@ -89,6 +90,25 @@ export class StudentComponent {
       if (result?.reload == 'reload') {
         this.GetAllStudentData();
         this.GetAllStudentFilter();
+      }
+    });
+  }
+
+  openStudentProfile(item: any) {
+    const ref = this.modalService.open(StudentProfileModalComponent, {
+      size: 'xl',
+      centered: true,
+      scrollable: true,
+      windowClass: 'student-profile-modal-window'
+    });
+
+    ref.componentInstance.studentId = item.id;
+    ref.componentInstance.parentId = item.parentId;
+    ref.componentInstance.listItem = item;
+
+    ref.closed.subscribe(result => {
+      if (result?.action === 'edit') {
+        this.openUpdateStudentSidePanel(item, true, false);
       }
     });
   }

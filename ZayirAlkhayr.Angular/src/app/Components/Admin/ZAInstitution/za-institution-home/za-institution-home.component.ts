@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MenuSidebarItem } from '../../../../Models/shared/MenueSidebarItem';
 import { MenueService, MenuType } from '../../../../Services/shared/menue.service';
 import { AdminBreadcrumbComponent, AdminBreadcrumbEntry } from '../../shared/admin-breadcrumb/admin-breadcrumb.component';
+import { AuthService } from '../../../../Auth/auth.service';
 
 type InstitutionTone = 'blue' | 'teal' | 'amber' | 'violet' | 'rose';
 
@@ -43,6 +44,7 @@ export class ZaInstitutionHomeComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly menuService = inject(MenueService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly authService = inject(AuthService);
 
   private readonly sectionCopy: Record<string, NavigationCopy> = {
     '1': { title: 'إدارة الموقع الإلكتروني', description: 'إدارة محتوى الموقع والأنشطة والفعاليات والصور والمشروعات المنشورة.', icon: 'uil uil-window-grid' },
@@ -86,6 +88,7 @@ export class ZaInstitutionHomeComponent implements OnInit {
   institutionMenu?: MenuSidebarItem;
   sectionCards: InstitutionNavigationCard[] = [];
   actionCards: InstitutionNavigationCard[] = [];
+  UserRoleName = '';
 
   get isSectionView(): boolean {
     return !!this.selectedSection;
@@ -130,6 +133,7 @@ export class ZaInstitutionHomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.UserRoleName = this.authService.UserRoleName;
     const sourceMenu = this.menuService.getMenuById(MenuType.ZAInstitution);
     this.institutionMenu = sourceMenu
       ? this.menuService.filterMenusByUserPermissions(JSON.parse(JSON.stringify(sourceMenu)))

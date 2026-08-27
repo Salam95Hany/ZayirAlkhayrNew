@@ -28,4 +28,19 @@ export class PosPrinterService {
 
     return btoa(binary);
   }
+
+  downloadPdf(arrayBuffer: ArrayBuffer, fileName: string): void {
+    const blob = new Blob([arrayBuffer], {
+      type: 'application/pdf'
+    });
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
 }

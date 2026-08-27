@@ -10,7 +10,7 @@ import { AuthService } from '../../../../../../Auth/auth.service';
 import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { ZaDropDownFormControlComponent } from "../../../../../../Shared/za-drop-down-form-control/za-drop-down-form-control.component";
 import { ZaEmptyDataComponent } from '../../../../../../Shared/za-empty-data/za-empty-data.component';
-import { NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { ArabicDateWithTimePipe } from '../../../../../../Pipes/arabic-date-with-time.pipe';
 import { CustomValidators, RegexType } from '../../../../../../Services/shared/custom-validators';
 import { NgxLoadingModule } from "ngx-loading";
@@ -25,7 +25,8 @@ import { PosPrinterService } from '../../../../../../Services/school/pos-printer
     ReactiveFormsModule, ZaInputWithLabelComponent
   ],
   templateUrl: './receiving-payment.component.html',
-  styleUrl: './receiving-payment.component.css'
+  styleUrl: './receiving-payment.component.css',
+  providers: [DatePipe]
 })
 export class ReceivingPaymentComponent {
   TitleList = ['مركز بشائر القرآن', 'إدارة الرسوم', 'استلام دفعة'];
@@ -59,7 +60,8 @@ export class ReceivingPaymentComponent {
   ]
 
   constructor(private modalService: NgbModal, private studentService: SchoolStudentService, private formService: FormService
-    , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService, private qzPrintService: QzPrintService, private posPrinterService: PosPrinterService) { }
+    , private fb: FormBuilder, private toaster: ToastrService, private authService: AuthService, private qzPrintService: QzPrintService,
+    private posPrinterService: PosPrinterService, private datePipe: DatePipe) { }
 
   ngOnInit(): void {
     this.UserId = this.authService.userId;
@@ -251,6 +253,8 @@ export class ReceivingPaymentComponent {
         this.showLoader = false;
         const base64Pdf = this.posPrinterService.arrayBufferToBase64(arrayBuffer);
         await this.qzPrintService.Print(base64Pdf);
+        let today = this.datePipe.transform(new Date(), 'dd-MM-yyyy');
+        this.posPrinterService.downloadPdf(arrayBuffer, `${this.Results.studentName + '_' + this.Results.academicYear + '_' + today}.pdf`);
       }
     });
   }

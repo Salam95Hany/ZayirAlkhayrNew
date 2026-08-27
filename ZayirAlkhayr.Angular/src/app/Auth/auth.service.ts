@@ -26,6 +26,17 @@ export class AuthService {
     return this.UserModel?.userApps;
   }
 
+  get UserRoleName(): string {
+    if (this._userModel.role == 'SupperAdmin')
+      return 'مدير';
+    else if (this._userModel.userApps.some(i => i.pageKey == 'ZAInstitution'))
+      return 'مؤسسة زائر الخير';
+    else if (this._userModel.userApps.some(i => i.pageKey == 'School'))
+      return 'مركز بشائر القرآن';
+
+    return 'مستخدم';
+  }
+
   AdminLogin(model: any) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Auth/AdminLogin', model);
   }

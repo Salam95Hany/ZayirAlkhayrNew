@@ -1,70 +1,84 @@
 <div class="institution-dashboard" dir="rtl">
-  <app-admin-breadcrumb [TitleList]="breadcrumbs"></app-admin-breadcrumb>
+    <app-admin-breadcrumb [TitleList]="breadcrumbs"></app-admin-breadcrumb>
 
-  <section class="institution-hero" aria-labelledby="institution-page-title">
-    <div class="hero-content">
-      <span class="hero-label"><span class="status-dot"></span> نظام إدارة المؤسسة</span>
-      <h1 id="institution-page-title">{{ pageTitle }}</h1>
-      <p>{{ pageDescription }}</p>
+    <section class="institution-hero" aria-labelledby="institution-page-title">
+        <div class="hero-content">
+            <span class="hero-label"><span class="status-dot"></span> نظام إدارة المؤسسة</span>
+            <h1 id="institution-page-title">{{ pageTitle }}</h1>
+            <p>{{ pageDescription }}</p>
 
-      <div class="hero-details">
-        <div class="hero-detail"><span><i class="uil uil-calendar-alt"></i></span><div><small>تاريخ اليوم</small><strong>{{ formattedDate }}</strong></div></div>
-        <div class="hero-detail"><span><i class="uil uil-shield-check"></i></span><div><small>نطاق الوصول</small><strong>حسب صلاحيات حسابك</strong></div></div>
-      </div>
-    </div>
-
-    <div class="hero-visual" aria-hidden="true">
-      <span class="hero-ring outer"></span><span class="hero-ring inner"></span>
-      <span class="institution-emblem"><i class="uil uil-heart-sign"></i></span>
-    </div>
-  </section>
-
-  <section class="metrics-grid" *ngIf="!isSectionView" aria-label="مؤشرات المؤسسة">
-    <article class="metric-card" [ngClass]="'metric-card--' + metric.tone" *ngFor="let metric of metrics">
-      <span class="metric-icon"><i class="uil {{ metric.icon }}"></i></span>
-      <div><small>{{ metric.title }}</small><strong>{{ metric.value }}</strong><p>{{ metric.description }}</p></div>
-      <span class="metric-state"><i class="uil uil-arrow-growth"></i> نشط</span>
-    </article>
-  </section>
-
-  <section class="quick-access" *ngIf="!isSectionView && quickActions.length" aria-labelledby="quick-actions-title">
-    <header class="section-heading compact"><div><span>اختصارات العمل</span><h2 id="quick-actions-title">الوصول السريع</h2></div></header>
-    <div class="quick-grid">
-      <a class="quick-link" [routerLink]="action.route" *ngFor="let action of quickActions">
-        <span class="quick-icon"><i class="uil {{ action.icon }}"></i></span>
-        <span class="quick-copy"><strong>{{ action.title }}</strong><small>{{ action.description }}</small></span>
-        <i class="uil uil-arrow-left quick-arrow"></i>
-      </a>
-    </div>
-  </section>
-
-  <section class="workspaces-section" aria-labelledby="workspaces-title">
-    <header class="section-heading">
-      <div>
-        <span>{{ isSectionView ? 'خدمات القسم' : 'مساحات العمل' }}</span>
-        <h2 id="workspaces-title">{{ isSectionView ? 'اختر الإجراء المطلوب' : 'أقسام إدارة المؤسسة' }}</h2>
-        <p>{{ isSectionView ? 'جميع الخدمات المتاحة داخل هذا القسم وفق صلاحيات حسابك.' : 'انتقل مباشرة إلى مساحة العمل التي تريد إدارتها.' }}</p>
-      </div>
-      <a class="back-link" routerLink="/admin/za-institution/home" *ngIf="isSectionView"><i class="uil uil-arrow-right"></i> جميع الأقسام</a>
-    </header>
-
-    <div class="workspace-grid" *ngIf="displayedCards.length; else emptyState">
-      <a class="workspace-card" [ngClass]="'workspace-card--' + card.tone" [routerLink]="card.route" *ngFor="let card of displayedCards">
-        <div class="workspace-header">
-          <span class="workspace-icon"><i class="uil {{ card.icon }}"></i></span>
-          <span class="workspace-count" *ngIf="card.itemCount !== undefined"><strong>{{ card.itemCount }}</strong> خدمات</span>
+            <div class="hero-details">
+                <div class="hero-detail"><span><i class="uil uil-calendar-alt"></i></span>
+                    <div><small>تاريخ اليوم</small><strong>{{ formattedDate }}</strong></div>
+                </div>
+                <div class="hero-detail"><span><i class="uil uil-shield-check"></i></span>
+                    <div><small>نطاق الوصول</small><strong>{{UserRoleName}}</strong></div>
+                </div>
+            </div>
         </div>
-        <div class="workspace-content"><h3>{{ card.title }}</h3><p>{{ card.description }}</p></div>
-        <footer class="workspace-footer"><span>{{ isSectionView ? 'فتح الخدمة' : 'استعراض القسم' }}</span><span><i class="uil uil-arrow-left"></i></span></footer>
-      </a>
-    </div>
 
-    <ng-template #emptyState>
-      <div class="empty-state">
-        <span><i class="uil uil-lock-alt"></i></span><h3>لا توجد خدمات متاحة</h3>
-        <p>لا توجد خدمات مرتبطة بصلاحيات حسابك داخل هذا القسم.</p>
-        <a routerLink="/admin/za-institution/home">العودة إلى أقسام المؤسسة</a>
-      </div>
-    </ng-template>
-  </section>
+        <div class="hero-visual" aria-hidden="true">
+            <span class="hero-ring outer"></span><span class="hero-ring inner"></span>
+            <span class="institution-emblem"><i class="uil uil-heart-sign"></i></span>
+        </div>
+    </section>
+
+    <section class="metrics-grid" *ngIf="!isSectionView" aria-label="مؤشرات المؤسسة">
+        <article class="metric-card" [ngClass]="'metric-card--' + metric.tone" *ngFor="let metric of metrics">
+            <span class="metric-icon"><i class="uil {{ metric.icon }}"></i></span>
+            <div><small>{{ metric.title }}</small><strong>{{ metric.value }}</strong>
+                <p>{{ metric.description }}</p>
+            </div>
+            <span class="metric-state"><i class="uil uil-arrow-growth"></i> نشط</span>
+        </article>
+    </section>
+
+    <section class="quick-access" *ngIf="!isSectionView && quickActions.length" aria-labelledby="quick-actions-title">
+        <header class="section-heading compact">
+            <div><span>اختصارات العمل</span>
+                <h2 id="quick-actions-title">الوصول السريع</h2>
+            </div>
+        </header>
+        <div class="quick-grid">
+            <a class="quick-link" [routerLink]="action.route" *ngFor="let action of quickActions">
+                <span class="quick-icon"><i class="uil {{ action.icon }}"></i></span>
+                <span class="quick-copy"><strong>{{ action.title }}</strong><small>{{ action.description }}</small></span>
+                <i class="uil uil-arrow-left quick-arrow"></i>
+            </a>
+        </div>
+    </section>
+
+    <section class="workspaces-section" aria-labelledby="workspaces-title">
+        <header class="section-heading">
+            <div>
+                <span>{{ isSectionView ? 'خدمات القسم' : 'مساحات العمل' }}</span>
+                <h2 id="workspaces-title">{{ isSectionView ? 'اختر الإجراء المطلوب' : 'أقسام إدارة المؤسسة' }}</h2>
+                <p>{{ isSectionView ? 'جميع الخدمات المتاحة داخل هذا القسم وفق صلاحيات حسابك.' : 'انتقل مباشرة إلى مساحة العمل التي تريد إدارتها.' }}</p>
+            </div>
+            <a class="back-link" routerLink="/admin/za-institution/home" *ngIf="isSectionView"><i class="uil uil-arrow-right"></i> جميع الأقسام</a>
+        </header>
+
+        <div class="workspace-grid" *ngIf="displayedCards.length; else emptyState">
+            <a class="workspace-card" [ngClass]="'workspace-card--' + card.tone" [routerLink]="card.route" *ngFor="let card of displayedCards">
+                <div class="workspace-header">
+                    <span class="workspace-icon"><i class="uil {{ card.icon }}"></i></span>
+                    <span class="workspace-count" *ngIf="card.itemCount !== undefined"><strong>{{ card.itemCount }}</strong> خدمات</span>
+                </div>
+                <div class="workspace-content">
+                    <h3>{{ card.title }}</h3>
+                    <p>{{ card.description }}</p>
+                </div>
+                <footer class="workspace-footer"><span>{{ isSectionView ? 'فتح الخدمة' : 'استعراض القسم' }}</span><span><i class="uil uil-arrow-left"></i></span></footer>
+            </a>
+        </div>
+
+        <ng-template #emptyState>
+            <div class="empty-state">
+                <span><i class="uil uil-lock-alt"></i></span>
+                <h3>لا توجد خدمات متاحة</h3>
+                <p>لا توجد خدمات مرتبطة بصلاحيات حسابك داخل هذا القسم.</p>
+                <a routerLink="/admin/za-institution/home">العودة إلى أقسام المؤسسة</a>
+            </div>
+        </ng-template>
+    </section>
 </div>

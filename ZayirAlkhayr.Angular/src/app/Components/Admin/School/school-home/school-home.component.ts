@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MenuSidebarItem } from '../../../../Models/shared/MenueSidebarItem';
 import { MenueService, MenuType } from '../../../../Services/shared/menue.service';
 import { AdminBreadcrumbComponent, AdminBreadcrumbEntry } from '../../shared/admin-breadcrumb/admin-breadcrumb.component';
+import { AuthService } from '../../../../Auth/auth.service';
 
 interface SchoolNavigationCard {
   key: string;
@@ -33,6 +34,7 @@ export class SchoolHomeComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly menuService = inject(MenueService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly authService = inject(AuthService);
 
   private readonly sectionCopy: Record<string, NavigationCopy> = {
     '1': { title: 'إدارة الطلاب', description: 'إدارة ملفات الطلاب والتسجيل السنوي والترحيل والانسحابات.' },
@@ -67,6 +69,7 @@ export class SchoolHomeComponent implements OnInit {
   schoolMenu?: MenuSidebarItem;
   sectionCards: SchoolNavigationCard[] = [];
   actionCards: SchoolNavigationCard[] = [];
+  UserRoleName = '';
 
   get isSectionView(): boolean {
     return !!this.selectedSection;
@@ -114,6 +117,7 @@ export class SchoolHomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.UserRoleName = this.authService.UserRoleName;
     const sourceMenu = this.menuService.getMenuById(MenuType.School);
     this.schoolMenu = sourceMenu
       ? this.menuService.filterMenusByUserPermissions(JSON.parse(JSON.stringify(sourceMenu)))

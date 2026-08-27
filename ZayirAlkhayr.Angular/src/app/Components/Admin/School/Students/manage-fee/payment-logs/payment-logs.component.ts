@@ -9,7 +9,7 @@ import { ZaFiltersComponent } from "../../../../../../Shared/za-filters/za-filte
 import { ZaPaginationComponent } from "../../../../../../Shared/za-pagination/za-pagination.component";
 import { AdminBreadcrumbComponent } from '../../../../shared/admin-breadcrumb/admin-breadcrumb.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { ArabicDateWithTimePipe } from '../../../../../../Pipes/arabic-date-with-time.pipe';
 import { PosPrinterService } from '../../../../../../Services/school/pos-printer.service';
 import { QzPrintService } from '../../../../../../Services/shared/qz-print.service';
@@ -19,7 +19,8 @@ import { QzPrintService } from '../../../../../../Services/shared/qz-print.servi
   standalone: true,
   imports: [NgxLoadingModule, ZaFiltersComponent, ZaPaginationComponent, AdminBreadcrumbComponent, NgbModule, NgIf, NgFor, ArabicDateWithTimePipe],
   templateUrl: './payment-logs.component.html',
-  styleUrl: './payment-logs.component.css'
+  styleUrl: './payment-logs.component.css',
+  providers: [DatePipe]
 })
 export class PaymentLogsComponent {
   TitleList = ['مركز بشائر القرآن', 'إدارة الرسوم', 'سجل الدفعات'];
@@ -35,7 +36,8 @@ export class PaymentLogsComponent {
     pageSize: 20
   };
 
-  constructor(private studentService: SchoolStudentService, private toaster: ToastrService, private authService: AuthService, private qzPrintService: QzPrintService, private posPrinterService: PosPrinterService) { }
+  constructor(private studentService: SchoolStudentService, private toaster: ToastrService, private authService: AuthService, private qzPrintService: QzPrintService,
+    private posPrinterService: PosPrinterService, private datePipe: DatePipe) { }
 
   ngOnInit(): void {
     this.UserId = this.authService.userId;
@@ -66,16 +68,27 @@ export class PaymentLogsComponent {
   FilterChecked(filterList: FilterModel[]) {
     this.PagingFilter.filterList = filterList;
     this.GetAllStudentPaymentData();
-    
+
   }
 
-  Print(enrollmentId: number, paymentId: number) {
+  Print(item: any) {
     this.showLoader = true;
-    this.posPrinterService.GetStudentReceiptData(enrollmentId, paymentId).subscribe({
+    this.posPrinterService.GetStudentReceiptData(item.enrollmentId, item.id).subscribe({
       next: async (arrayBuffer) => {
+        try {
+          const base64Pdf = this.posPrinterService.arrayBufferToBase64(arrayBuffer);
+          await this.qzPrintService.Print(base64Pdf);
+          let today = this.datePipe.transform(new Date(), 'dd-MM-yyyy');
+          this.posPrinterService.downloadPdf(arrayBuffer, `${item.studentName + '_' + item.academicYearName + '_' + today}.pdf`);
+        } catch (error) {
+          console.error('Printing failed:', error);
+        } finally {
+          this.showLoader = false;
+        }
+      },
+      error: (error) => {
         this.showLoader = false;
-        const base64Pdf = this.posPrinterService.arrayBufferToBase64(arrayBuffer);
-        await this.qzPrintService.Print(base64Pdf);
+        console.error('Failed to get receipt PDF:', error);
       }
     });
   }

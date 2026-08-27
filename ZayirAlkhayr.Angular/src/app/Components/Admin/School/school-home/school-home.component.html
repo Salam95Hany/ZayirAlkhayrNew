@@ -1,101 +1,95 @@
 <div class="school-dashboard" dir="rtl">
-  <app-admin-breadcrumb [TitleList]="breadcrumbs"></app-admin-breadcrumb>
+    <app-admin-breadcrumb [TitleList]="breadcrumbs"></app-admin-breadcrumb>
 
-  <section class="school-hero" aria-labelledby="school-page-title">
-    <div class="school-hero__content">
-      <div class="school-hero__label">
-        <span class="status-dot" aria-hidden="true"></span>
-        <span>نظام إدارة المدرسة</span>
-      </div>
-      <h1 id="school-page-title">{{ pageTitle }}</h1>
-      <p>{{ pageDescription }}</p>
+    <section class="school-hero" aria-labelledby="school-page-title">
+        <div class="school-hero__content">
+            <div class="school-hero__label">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span>نظام إدارة المدرسة</span>
+            </div>
+            <h1 id="school-page-title">{{ pageTitle }}</h1>
+            <p>{{ pageDescription }}</p>
 
-      <div class="school-hero__details">
-        <div class="hero-detail">
-          <span class="hero-detail__icon"><i class="fa-regular fa-calendar"></i></span>
-          <span><small>تاريخ اليوم</small><strong>{{ formattedDate }}</strong></span>
+            <div class="school-hero__details">
+                <div class="hero-detail">
+                    <span class="hero-detail__icon"><i class="fa-regular fa-calendar"></i></span>
+                    <span><small>تاريخ اليوم</small><strong>{{ formattedDate }}</strong></span>
+                </div>
+                <div class="hero-detail">
+                    <span class="hero-detail__icon"><i class="fa-solid fa-shield-halved"></i></span>
+                    <span><small>الصلاحيات</small><strong>{{UserRoleName}}</strong></span>
+                </div>
+            </div>
         </div>
-        <div class="hero-detail">
-          <span class="hero-detail__icon"><i class="fa-solid fa-shield-halved"></i></span>
-          <span><small>الصلاحيات</small><strong>حسب حساب المستخدم</strong></span>
+
+        <div class="school-hero__visual" aria-hidden="true">
+            <span class="hero-ring hero-ring--outer"></span>
+            <span class="hero-ring hero-ring--inner"></span>
+            <span class="school-emblem"><i class="fa-solid fa-school-flag"></i></span>
         </div>
-      </div>
-    </div>
+    </section>
 
-    <div class="school-hero__visual" aria-hidden="true">
-      <span class="hero-ring hero-ring--outer"></span>
-      <span class="hero-ring hero-ring--inner"></span>
-      <span class="school-emblem"><i class="fa-solid fa-school-flag"></i></span>
-    </div>
-  </section>
+    <section *ngIf="!isSectionView && quickActions.length" class="quick-access" aria-labelledby="quick-access-title">
+        <header class="section-heading section-heading--compact">
+            <div>
+                <span class="section-heading__eyebrow">اختصارات العمل</span>
+                <h2 id="quick-access-title">الوصول السريع</h2>
+            </div>
+        </header>
 
-  <section *ngIf="!isSectionView && quickActions.length" class="quick-access" aria-labelledby="quick-access-title">
-    <header class="section-heading section-heading--compact">
-      <div>
-        <span class="section-heading__eyebrow">اختصارات العمل</span>
-        <h2 id="quick-access-title">الوصول السريع</h2>
-      </div>
-    </header>
-
-    <div class="quick-access__grid">
-      <a *ngFor="let action of quickActions" [routerLink]="action.route" class="quick-link">
-        <span class="quick-link__icon"><i [class]="action.icon"></i></span>
-        <span class="quick-link__content">
+        <div class="quick-access__grid">
+            <a *ngFor="let action of quickActions" [routerLink]="action.route" class="quick-link">
+                <span class="quick-link__icon"><i [class]="action.icon"></i></span>
+                <span class="quick-link__content">
           <strong>{{ action.title }}</strong>
           <small>{{ action.description }}</small>
         </span>
-        <i class="fa-solid fa-arrow-left quick-link__arrow" aria-hidden="true"></i>
-      </a>
-    </div>
-  </section>
+                <i class="fa-solid fa-arrow-left quick-link__arrow" aria-hidden="true"></i>
+            </a>
+        </div>
+    </section>
 
-  <section class="workspaces-section" aria-labelledby="workspace-title">
-    <header class="section-heading">
-      <div>
-        <span class="section-heading__eyebrow">{{ isSectionView ? 'خدمات القسم' : 'مساحات العمل' }}</span>
-        <h2 id="workspace-title">{{ isSectionView ? 'اختر الإجراء المطلوب' : 'أقسام إدارة المدرسة' }}</h2>
-        <p>{{ isSectionView ? 'جميع الأدوات المتاحة داخل هذا القسم وفق صلاحياتك.' : 'انتقل مباشرة إلى القسم الذي تريد إدارته.' }}</p>
-      </div>
-      <a *ngIf="isSectionView" routerLink="/admin/school/home" class="back-link">
-        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-        جميع الأقسام
-      </a>
-    </header>
+    <section class="workspaces-section" aria-labelledby="workspace-title">
+        <header class="section-heading">
+            <div>
+                <span class="section-heading__eyebrow">{{ isSectionView ? 'خدمات القسم' : 'مساحات العمل' }}</span>
+                <h2 id="workspace-title">{{ isSectionView ? 'اختر الإجراء المطلوب' : 'أقسام إدارة المدرسة' }}</h2>
+                <p>{{ isSectionView ? 'جميع الأدوات المتاحة داخل هذا القسم وفق صلاحياتك.' : 'انتقل مباشرة إلى القسم الذي تريد إدارته.' }}</p>
+            </div>
+            <a *ngIf="isSectionView" routerLink="/admin/school/home" class="back-link">
+                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i> جميع الأقسام
+            </a>
+        </header>
 
-    <div *ngIf="displayedCards.length; else emptyState" class="workspace-grid">
-      <a
-        *ngFor="let card of displayedCards"
-        [routerLink]="card.route"
-        class="workspace-card"
-        [class]="'workspace-card workspace-card--' + card.tone"
-      >
-        <div class="workspace-card__header">
-          <span class="workspace-card__icon"><i [class]="card.icon"></i></span>
-          <span *ngIf="card.itemCount !== undefined" class="workspace-card__count">
+        <div *ngIf="displayedCards.length; else emptyState" class="workspace-grid">
+            <a *ngFor="let card of displayedCards" [routerLink]="card.route" class="workspace-card" [class]="'workspace-card workspace-card--' + card.tone">
+                <div class="workspace-card__header">
+                    <span class="workspace-card__icon"><i [class]="card.icon"></i></span>
+                    <span *ngIf="card.itemCount !== undefined" class="workspace-card__count">
             <strong>{{ card.itemCount }}</strong>
             خدمات
           </span>
+                </div>
+
+                <div class="workspace-card__content">
+                    <h3>{{ card.title }}</h3>
+                    <p>{{ card.description }}</p>
+                </div>
+
+                <div class="workspace-card__footer">
+                    <span>{{ isSectionView ? 'فتح الخدمة' : 'استعراض القسم' }}</span>
+                    <span class="workspace-card__arrow"><i class="fa-solid fa-arrow-left"></i></span>
+                </div>
+            </a>
         </div>
 
-        <div class="workspace-card__content">
-          <h3>{{ card.title }}</h3>
-          <p>{{ card.description }}</p>
-        </div>
-
-        <div class="workspace-card__footer">
-          <span>{{ isSectionView ? 'فتح الخدمة' : 'استعراض القسم' }}</span>
-          <span class="workspace-card__arrow"><i class="fa-solid fa-arrow-left"></i></span>
-        </div>
-      </a>
-    </div>
-
-    <ng-template #emptyState>
-      <div class="empty-state">
-        <span class="empty-state__icon"><i class="fa-solid fa-lock"></i></span>
-        <h3>لا توجد خدمات متاحة</h3>
-        <p>لا توجد خدمات مرتبطة بصلاحيات حسابك داخل هذا القسم.</p>
-        <a routerLink="/admin/school/home">العودة إلى أقسام المدرسة</a>
-      </div>
-    </ng-template>
-  </section>
+        <ng-template #emptyState>
+            <div class="empty-state">
+                <span class="empty-state__icon"><i class="fa-solid fa-lock"></i></span>
+                <h3>لا توجد خدمات متاحة</h3>
+                <p>لا توجد خدمات مرتبطة بصلاحيات حسابك داخل هذا القسم.</p>
+                <a routerLink="/admin/school/home">العودة إلى أقسام المدرسة</a>
+            </div>
+        </ng-template>
+    </section>
 </div>

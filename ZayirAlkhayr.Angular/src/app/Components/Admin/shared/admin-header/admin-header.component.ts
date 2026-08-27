@@ -35,6 +35,7 @@ export class AdminHeaderComponent implements OnInit {
   mobileMenuOpen = false;
   isLoggingOut = false;
   isSuperAdmin = false;
+  UserRoleName = '';
 
   get unreadCount(): number {
     return this.notifications.filter(notification => !notification.isRead).length;
@@ -66,6 +67,7 @@ export class AdminHeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.UserRoleName = this.authService.UserRoleName;
     this.isSuperAdmin = this.authService.isSupperAdmin;
     this.userModel = this.authService.getUserInfo();
     this.router.events

@@ -1,0 +1,207 @@
+<div class="student-profile" dir="rtl">
+    <header class="profile-header">
+        <button type="button" class="close-button" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+        <div class="student-heading">
+            <div class="student-avatar" [class.student-avatar--image]="imageUrl">
+                <img *ngIf="imageUrl" [src]="imageUrl" [alt]="studentName">
+                <span *ngIf="!imageUrl">{{ studentInitial }}</span>
+            </div>
+            <div class="student-heading__text">
+                <span class="student-heading__eyebrow"><i class="fa-solid fa-graduation-cap"></i> الملف الدراسي
+                    للطالب</span>
+                <h1>{{ studentName }}</h1>
+                <div class="student-heading__meta">
+                    <span dir="ltr">{{ studentCode }}</span><span class="meta-divider"></span>
+                    <span class="status-badge"><i class="fa-solid fa-circle-check"></i>{{ statusName }}</span>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="header-actions">
+            <button type="button" class="icon-button" title="طباعة" aria-label="طباعة" (click)="printProfile()"><i
+                    class="fa-solid fa-print"></i></button>
+            <button type="button" class="edit-button"><i class="fa-regular fa-pen-to-square"></i><span>تعديل
+                    البيانات</span></button>
+        </div> -->
+    </header>
+
+    <section class="quick-summary" aria-label="ملخص الطالب">
+        <div class="summary-item"><span class="summary-icon"><i class="fa-solid fa-graduation-cap"></i></span>
+            <div><small>المرحلة / الصف</small><strong>{{ academicStageName }}</strong></div>
+        </div>
+        <div class="summary-item"><span class="summary-icon summary-icon--teal"><i
+                    class="fa-regular fa-calendar"></i></span>
+            <div><small>العام الدراسي</small><strong>{{ academicYearName }}</strong></div>
+        </div>
+        <div class="summary-item"><span class="summary-icon summary-icon--violet"><i
+                    class="fa-solid fa-clock"></i></span>
+            <div><small>الفترة الدراسية</small><strong>{{ studyPeriodName }}</strong></div>
+        </div>
+        <div class="summary-item"><span class="summary-icon summary-icon--success"><i
+                    class="fa-solid fa-circle-check"></i></span>
+            <div><small>الحالة</small><strong>{{ statusName }}</strong></div>
+        </div>
+    </section>
+
+    <div class="load-warning" *ngIf="loadError"><i class="fa-solid fa-circle-info"></i> تعذر تحميل كل تفاصيل الملف؛ يتم عرض البيانات المتاحة حالياً.</div>
+
+    <main class="profile-content">
+        <section class="profile-card">
+            <div class="card-heading"><span class="card-heading__icon"><i class="fa-regular fa-address-card"></i></span>
+                <div>
+                    <h2>بيانات الطالب الأساسية</h2>
+                    <p>البيانات الشخصية والتعريفية المسجلة للطالب</p>
+                </div>
+            </div>
+            <div class="details-grid">
+                <div class="detail-row" *ngFor="let field of basicFields"><span class="detail-label">{{ field.label
+                        }}</span><strong class="detail-value" [attr.dir]="field.ltr ? 'ltr' : null">{{
+                        displayValue(field.value) }}</strong></div>
+            </div>
+        </section>
+
+        <section class="profile-card">
+            <div class="card-heading"><span class="card-heading__icon card-heading__icon--teal"><i
+                        class="fa-solid fa-user-shield"></i></span>
+                <div>
+                    <h2>بيانات ولي الأمر</h2>
+                    <p>بيانات التواصل الخاصة بولي الأمر الأساسي</p>
+                </div>
+            </div>
+            <div class="details-grid">
+                <div class="detail-row" *ngFor="let field of parentFields"><span class="detail-label">{{ field.label
+                        }}</span><strong class="detail-value" [attr.dir]="field.ltr ? 'ltr' : null"><i
+                            *ngIf="field.icon" [class]="field.icon"></i>{{ displayValue(field.value) }}</strong></div>
+            </div>
+        </section>
+
+        <section class="profile-card">
+            <div class="card-heading"><span class="card-heading__icon card-heading__icon--amber"><i
+                        class="fa-solid fa-location-dot"></i></span>
+                <div>
+                    <h2>معلومات الاتصال ومحل الإقامة</h2>
+                    <p>بيانات العنوان وقنوات التواصل المتاحة</p>
+                </div>
+            </div>
+            <div class="details-grid details-grid--wide">
+                <div class="detail-row" *ngFor="let field of contactFields"><span class="detail-label">{{ field.label
+                        }}</span><strong class="detail-value" [attr.dir]="field.ltr ? 'ltr' : null"><i
+                            *ngIf="field.icon" [class]="field.icon"></i>{{ displayValue(field.value) }}</strong></div>
+            </div>
+        </section>
+
+        <section class="profile-card">
+            <div class="card-heading"><span class="card-heading__icon card-heading__icon--violet"><i
+                        class="fa-solid fa-book-open-reader"></i></span>
+                <div>
+                    <h2>البيانات الأكاديمية</h2>
+                    <p>تفاصيل القيد والمرحلة الدراسية الحالية</p>
+                </div>
+            </div>
+            <div class="details-grid">
+                <div class="detail-row" *ngFor="let field of academicFields"><span class="detail-label">{{ field.label
+                        }}</span><strong class="detail-value" [attr.dir]="field.ltr ? 'ltr' : null">{{
+                        displayValue(field.value) }}</strong></div>
+            </div>
+        </section>
+
+        <section class="profile-card profile-card--full fees-card">
+            <div class="card-heading"><span class="card-heading__icon card-heading__icon--money"><i
+                        class="fa-solid fa-wallet"></i></span>
+                <div>
+                    <h2>بيانات الرسوم والمدفوعات</h2>
+                    <p>ملخص الموقف المالي للطالب خلال العام الدراسي</p>
+                </div>
+            </div>
+            <div class="fee-summary">
+                <div class="fee-box fee-box--total"><span><i class="fa-solid fa-receipt"></i>إجمالي
+                        الرسوم</span><strong>{{ formatMoney(feeSummary.total) }}</strong><small>ج.م</small></div>
+                <div class="fee-box fee-box--paid"><span><i class="fa-solid fa-wallet"></i>إجمالي
+                        المدفوع</span><strong>{{ formatMoney(feeSummary.paid) }}</strong><small>ج.م</small></div>
+                <div class="fee-box fee-box--remaining"><span><i
+                            class="fa-regular fa-hourglass-half"></i>المتبقي</span><strong>{{
+                        formatMoney(feeSummary.remaining) }}</strong><small>ج.م</small></div>
+            </div>
+            <div class="payments-details">
+                <div class="payments-details__title"><span><i class="fa-solid fa-list-ul"></i>تفاصيل
+                        المدفوعات</span><small>{{ paymentDetails.length }} رسوم مسجلة</small></div>
+                <div class="payments-table-wrap" *ngIf="paymentDetails.length; else noPaymentDetails" role="region" aria-label="جدول تفاصيل مدفوعات الطالب" tabindex="0">
+                    <table class="payments-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>نوع الرسوم</th>
+                                <th>القيمة</th>
+                                <th>تاريخ القسط القادم</th>
+                                <th>تاريخ الدفع</th>
+                                <th>المبلغ المدفوع</th>
+                                <th>المتبقي</th>
+                                <th>طريقة الدفع</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of paymentDetails">
+                                <td data-label="#">
+                                    <span class="row-number">{{ item.index }}</span>
+                                </td>
+                                <td data-label="نوع الرسوم">
+                                    <strong class="fee-name">{{ item.feeName }}</strong>
+                                </td>
+                                <td data-label="القيمة">
+                                    <span class="table-money">{{ formatMoney(item.amount) }}
+                                        <small>ج.م</small>
+                                    </span>
+                                </td>
+                                <td data-label="تاريخ القسط القادم">
+                                    <span class="table-date" dir="ltr">{{ item.dueDate ? (item.dueDate | date:'dd/MM/yyyy') : '-' }}</span>
+                                </td>
+                                <td data-label="تاريخ الدفع">
+                                    <span class="table-date" dir="ltr">{{ item.paymentDate ? (item.paymentDate | date:'dd/MM/yyyy') : '-' }}</span>
+                                </td>
+                                <td data-label="المبلغ المدفوع">
+                                    <span class="table-money table-money--paid">{{formatMoney(item.paidAmount) }} 
+                                        <small>ج.م</small>
+                                    </span>
+                                </td>
+                                <td data-label="المتبقي">
+                                    <span class="payment-status" [class.payment-status--paid]="item.isPaid">
+                                        <i [class]="item.isPaid ? 'fa-solid fa-circle-check' : 'fa-regular fa-clock'"></i>
+                                        {{item.isPaid ? 'مدفوع' : formatMoney(item.remainingAmount) + ' ج.م' }}
+                                    </span>
+                                </td>
+                                <td data-label="طريقة الدفع"><span class="payment-method"><i class="fa-solid fa-money-bill-wave"></i>{{ item.paymentMethod }}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <ng-template #noPaymentDetails>
+                    <div class="payments-empty"><span><i class="fa-solid fa-receipt"></i></span>
+                        <div><strong>لا توجد تفاصيل مدفوعات</strong><small>لم يتم تسجيل رسوم على الطالب حتى
+                                الآن.</small></div>
+                    </div>
+                </ng-template>
+            </div>
+        </section>
+
+        <section class="profile-card profile-card--full notes-card">
+            <div class="card-heading"><span class="card-heading__icon card-heading__icon--note"><i
+                        class="fa-solid fa-note-sticky"></i></span>
+                <div>
+                    <h2>ملاحظات عامة</h2>
+                    <p>الملاحظات المسجلة على الملف الدراسي</p>
+                </div>
+            </div>
+            <div class="notes-content"><i class="fa-regular fa-message"></i>
+                <p>{{ notes }}</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="profile-footer">
+        <span><i class="fa-solid fa-shield-halved"></i> بيانات الطالب محفوظة ضمن نظام إدارة المدرسة</span>
+        <div>
+            <button type="button" class="footer-button footer-button--secondary">إغلاق</button>
+            <!-- <button type="button" class="footer-button footer-button--primary"><i class="fa-regular fa-pen-to-square"></i>تعديل البيانات</button> -->
+        </div>
+    </footer>
+    <ngx-loading [show]="showLoader"></ngx-loading>
+</div>

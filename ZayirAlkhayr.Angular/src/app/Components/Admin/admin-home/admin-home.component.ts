@@ -27,6 +27,7 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
 
   userModel: any;
   currentTime = new Date();
+  UserRoleName = '';
 
   readonly modules: AdminModuleCard[] = [
     {
@@ -88,6 +89,7 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.UserRoleName = this.authService.UserRoleName;
     this.userModel = this.authService.getUserInfo();
     this.clockTimer = setInterval(() => this.currentTime = new Date(), 1000);
   }
