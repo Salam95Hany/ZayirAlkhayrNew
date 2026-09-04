@@ -6,7 +6,7 @@ using ZayirAlkhayr.Entities.Reports;
 
 namespace ZayirAlkhayr.Reports.Service
 {
-    public sealed class StudentProfilePdf: IDocument
+    public sealed class StudentProfilePdf : IDocument
     {
         private const string Navy = "#073B78";
         private const string NavyDark = "#062F62";
@@ -26,13 +26,16 @@ namespace ZayirAlkhayr.Reports.Service
         private readonly StudentProfilePdfModel _model;
         private readonly ReceiptBrandingOptions _branding;
 
-        public StudentProfilePdf(StudentProfilePdfModel model, ReceiptBrandingOptions branding)
+        public StudentProfilePdf(
+            StudentProfilePdfModel model,
+            ReceiptBrandingOptions branding)
         {
             _model = model;
             _branding = branding;
         }
 
-        public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
+        public DocumentMetadata GetMetadata() =>
+            DocumentMetadata.Default;
 
         public void Compose(IDocumentContainer container)
         {
@@ -40,19 +43,35 @@ namespace ZayirAlkhayr.Reports.Service
             ComposePage(container, 2, ComposeSecondPage);
         }
 
-        private void ComposePage(IDocumentContainer container, int pageNumber, Action<IContainer> content)
+        private void ComposePage(
+            IDocumentContainer container,
+            int pageNumber,
+            Action<IContainer> content)
         {
             container.Page(page =>
             {
                 page.Size(PageSizes.A4.Landscape());
                 page.Margin(10);
                 page.PageColor(Colors.White);
-                page.ContentFromRightToLeft();
-                page.DefaultTextStyle(x => x.FontFamily("Cairo").FontSize(9).FontColor(Text));
 
-                page.Header().Height(82).Element(ComposeHeader);
-                page.Content().PaddingVertical(8).Element(content);
-                page.Footer().Height(30).Element(x => ComposeFooter(x, pageNumber));
+                page.ContentFromRightToLeft();
+
+                page.DefaultTextStyle(x =>
+                    x.FontFamily("Cairo")
+                        .FontSize(9)
+                        .FontColor(Text));
+
+                page.Header()
+                    .Height(82)
+                    .Element(ComposeHeader);
+
+                page.Content()
+                    .PaddingVertical(8)
+                    .Element(content);
+
+                page.Footer()
+                    .Height(30)
+                    .Element(x => ComposeFooter(x, pageNumber));
             });
         }
 
@@ -65,38 +84,107 @@ namespace ZayirAlkhayr.Reports.Service
                 .PaddingVertical(8)
                 .Row(row =>
                 {
-                    row.RelativeItem(3).AlignMiddle().Row(brand =>
-                    {
-                        brand.AutoItem().AlignMiddle().Width(54).Height(54).Element(ComposeLogo);
-                        brand.RelativeItem().PaddingRight(8).AlignMiddle().Column(col =>
+                    row.RelativeItem(3)
+                        .AlignMiddle()
+                        .Row(brand =>
                         {
-                            col.Item().Text(_branding.ArabicSchoolName).FontSize(13).SemiBold().FontColor(NavyDark);
-                            col.Item().PaddingTop(3).Text(_branding.Tagline).FontSize(8).FontColor("#4E79A7");
+                            brand.AutoItem()
+                                .AlignMiddle()
+                                .Width(54)
+                                .Height(54)
+                                .Element(ComposeLogo);
+
+                            brand.RelativeItem()
+                                .PaddingRight(8)
+                                .AlignMiddle()
+                                .Column(col =>
+                                {
+                                    col.Item()
+                                        .Text(_branding.ArabicSchoolName)
+                                        .FontSize(13)
+                                        .SemiBold()
+                                        .FontColor(NavyDark);
+
+                                    col.Item()
+                                        .PaddingTop(3)
+                                        .Text(_branding.Tagline)
+                                        .FontSize(8)
+                                        .FontColor("#4E79A7");
+                                });
                         });
-                    });
 
-                    row.RelativeItem(4).AlignCenter().AlignMiddle().Column(col =>
-                    {
-                        col.Item().AlignCenter().Height(16).Svg(MortarboardSvg).FitArea();
-                        col.Item().PaddingTop(1).AlignCenter().Text("ملف الطالب").FontSize(15).Bold().FontColor(NavyDark);
-                        col.Item().PaddingTop(1).AlignCenter().Text(_model.AcademicYear).FontSize(8).FontColor(Navy);
-                    });
+                    row.RelativeItem(4)
+                        .AlignCenter()
+                        .AlignMiddle()
+                        .Column(col =>
+                        {
+                            col.Item()
+                                .AlignCenter()
+                                .Height(16)
+                                .Svg(MortarboardSvg)
+                                .FitArea();
 
-                    row.RelativeItem(3).AlignMiddle().AlignLeft().Column(col =>
-                    {
-                        col.Item().AlignLeft().Text("كود الطالب").FontSize(8).FontColor(Muted);
-                        col.Item().PaddingTop(2).AlignLeft().ContentFromLeftToRight().Text(_model.AcademicNumber).FontSize(11).Bold().FontColor(NavyDark);
-                    });
+                            col.Item()
+                                .PaddingTop(1)
+                                .AlignCenter()
+                                .Text("ملف الطالب")
+                                .FontSize(15)
+                                .Bold()
+                                .FontColor(NavyDark);
+
+                            col.Item()
+                                .PaddingTop(1)
+                                .AlignCenter()
+                                .Text(_model.AcademicYear)
+                                .FontSize(8)
+                                .FontColor(Navy);
+                        });
+
+                    row.RelativeItem(3)
+                        .AlignMiddle()
+                        .AlignLeft()
+                        .Column(col =>
+                        {
+                            col.Item()
+                                .AlignLeft()
+                                .Text("كود الطالب")
+                                .FontSize(8)
+                                .FontColor(Muted);
+
+                            col.Item()
+                                .PaddingTop(2)
+                                .AlignLeft()
+                                .ContentFromLeftToRight()
+                                .Text(_model.AcademicNumber)
+                                .FontSize(11)
+                                .Bold()
+                                .FontColor(NavyDark);
+                        });
                 });
         }
 
         private void ComposeLogo(IContainer container)
         {
-            if (!string.IsNullOrWhiteSpace(_branding.SchoolLogoPath) && File.Exists(_branding.SchoolLogoPath))
-                container.Image(_branding.SchoolLogoPath).FitArea();
+            if (!string.IsNullOrWhiteSpace(_branding.SchoolLogoPath)
+                && File.Exists(_branding.SchoolLogoPath))
+            {
+                container
+                    .Image(_branding.SchoolLogoPath)
+                    .FitArea();
+            }
             else
-                container.Border(1).BorderColor(Navy).CornerRadius(8).AlignCenter().AlignMiddle()
-                    .Text("LOGO").Bold().FontSize(9).FontColor(Navy);
+            {
+                container
+                    .Border(1)
+                    .BorderColor(Navy)
+                    .CornerRadius(8)
+                    .AlignCenter()
+                    .AlignMiddle()
+                    .Text("LOGO")
+                    .Bold()
+                    .FontSize(9)
+                    .FontColor(Navy);
+            }
         }
 
         private void ComposeFirstPage(IContainer container)
@@ -107,94 +195,428 @@ namespace ZayirAlkhayr.Reports.Service
 
                 column.Item().Row(row =>
                 {
-                    row.RelativeItem(5.8f).Element(ComposeStudentBasicData);
+                    row.RelativeItem(5.8f)
+                        .Element(ComposeStudentBasicData);
+
                     row.ConstantItem(10);
-                    row.RelativeItem(2.2f).Element(ComposeStudentQuickInfo);
+
+                    row.RelativeItem(2.2f)
+                        .Element(ComposeStudentQuickInfo);
                 });
 
-                column.Item().Element(c => ComposeSection(c, "البيانات الأكاديمية", ComposeAcademicData));
+                column.Item()
+                    .Element(c =>
+                        ComposeSection(
+                            c,
+                            "البيانات الأكاديمية",
+                            ComposeAcademicData));
 
                 column.Item().Row(row =>
                 {
-                    row.RelativeItem().Element(c => ComposeSection(c, "ولي الأمر", ComposeGuardian));
+                    row.RelativeItem()
+                        .Element(c =>
+                            ComposeSection(
+                                c,
+                                "ولي الأمر",
+                                ComposeGuardian));
+
                     row.ConstantItem(10);
-                    row.RelativeItem().Element(c => ComposeSection(c, "معلومات الاتصال و محل الإقامة", ComposeContact));
+
+                    row.RelativeItem()
+                        .Element(c =>
+                            ComposeSection(
+                                c,
+                                "معلومات الاتصال و محل الإقامة",
+                                ComposeContact));
                 });
             });
         }
 
         private void ComposeStudentBasicData(IContainer container)
         {
-            ComposeSection(container, "بيانات الطالب الأساسية", body =>
-            {
-                var items = new (string Label, string Value)[]
+            ComposeSection(
+                container,
+                "بيانات الطالب الأساسية",
+                body =>
                 {
-                    ("الاسم الكامل", _model.FullName),
-                    ("تاريخ الميلاد", _model.BirthDate.ToString("yyyy/MM/dd")),
-                    ("العمر", _model.Age.ToString()),
-                    ("الجنسية", _model.Nationality),
-                    ("الحالة الصحية", _model.HealthStatus),
-                    ("عدد الإخوة", _model.SiblingsCount.ToString())
-                };
-
-                body.Table(table =>
-                {
-                    table.ColumnsDefinition(cols =>
+                    var items = new (string Label, string Value)[]
                     {
-                        cols.ConstantColumn(92);
-                        cols.RelativeColumn();
+                        ("الاسم الكامل", _model.FullName),
+                        ("تاريخ الميلاد", _model.BirthDate.ToString("yyyy/MM/dd")),
+                        ("العمر", _model.Age.ToString()),
+                        ("الجنسية", _model.Nationality),
+                        ("الحالة الصحية", _model.HealthStatus),
+                        ("عدد الإخوة", _model.SiblingsCount.ToString())
+                    };
+
+                    body.Table(table =>
+                    {
+                        table.ColumnsDefinition(cols =>
+                        {
+                            cols.ConstantColumn(92);
+                            cols.RelativeColumn();
+                        });
+
+                        foreach (var item in items)
+                        {
+                            table.Cell()
+                                .Element(LabelCell)
+                                .Text(item.Label)
+                                .SemiBold();
+
+                            table.Cell()
+                                .Element(ValueCell)
+                                .Text(item.Value);
+                        }
                     });
-
-                    foreach (var item in items)
-                    {
-                        table.Cell().Element(LabelCell).Text(item.Label).SemiBold();
-                        table.Cell().Element(ValueCell).Text(item.Value);
-                    }
                 });
-            });
         }
 
+        // =========================================================
+        // NEW DESIGN - STUDENT QUICK INFO
+        // =========================================================
         private void ComposeStudentQuickInfo(IContainer container)
         {
-            container.PaddingTop(14).Column(col =>
-            {
-                col.Spacing(8);
-                col.Item().Text(_model.FullName).FontSize(15).Bold().FontColor("#111827");
-                col.Item().Element(Divider);
-                col.Item().Element(c => QuickInfo(c, "الفترة الدراسية", _model.Grade));
-                col.Item().Element(c => QuickInfo(c, "الحالة", _model.Status, true));
-            });
+            const string CardBorder = "#CFE0F3";
+            const string CardBackground = "#FBFDFF";
+            const string SoftBlue = "#EEF6FF";
+            const string IconBlue = "#275C96";
+            const string LabelColor = "#16457A";
+
+            container
+                .Border(1)
+                .BorderColor(CardBorder)
+                .CornerRadius(10)
+                .Background(CardBackground)
+                .Padding(10)
+                .Column(col =>
+                {
+                    col.Spacing(6);
+
+                    // ===========================
+                    // Student Header
+                    // ===========================
+                    col.Item()
+                        .Row(row =>
+                        {
+                            // Avatar
+                            row.AutoItem()
+                                .Width(62)
+                                .Height(62)
+                                .Svg(
+                                    """
+                                    <svg
+                                        viewBox="0 0 100 100"
+                                        xmlns="http://www.w3.org/2000/svg">
+
+                                        <defs>
+                                            <linearGradient
+                                                id="avatarBg"
+                                                x1="0"
+                                                y1="0"
+                                                x2="1"
+                                                y2="1">
+
+                                                <stop
+                                                    offset="0%"
+                                                    stop-color="#DDEEFF"/>
+
+                                                <stop
+                                                    offset="100%"
+                                                    stop-color="#AFCFF4"/>
+                                            </linearGradient>
+                                        </defs>
+
+                                        <!-- outer circle -->
+                                        <circle
+                                            cx="50"
+                                            cy="50"
+                                            r="48"
+                                            fill="#FFFFFF"/>
+
+                                        <circle
+                                            cx="50"
+                                            cy="50"
+                                            r="43"
+                                            fill="url(#avatarBg)"/>
+
+                                        <!-- body -->
+                                        <path
+                                            d="M20 92
+                                               C23 72 34 65 50 65
+                                               C66 65 77 72 80 92 Z"
+                                            fill="#153D70"/>
+
+                                        <!-- neck -->
+                                        <path
+                                            d="M41 61
+                                               L41 70
+                                               C44 75 56 75 59 70
+                                               L59 61 Z"
+                                            fill="#F3CDB5"/>
+
+                                        <!-- face -->
+                                        <ellipse
+                                            cx="50"
+                                            cy="43"
+                                            rx="20"
+                                            ry="24"
+                                            fill="#FFD9BE"/>
+
+                                        <!-- hair -->
+                                        <path
+                                            d="M30 43
+                                               C28 23 37 14 50 14
+                                               C59 14 63 19 69 18
+                                               C70 25 68 30 66 33
+                                               L65 44
+                                               L61 43
+                                               L59 31
+                                               C49 35 40 30 34 27
+                                               L34 43 Z"
+                                            fill="#17385F"/>
+                                    </svg>
+                                    """);
+
+                            row.RelativeItem()
+                                .PaddingRight(9)
+                                .AlignMiddle()
+                                .Column(info =>
+                                {
+                                    info.Item()
+                                        .Text(_model.FullName)
+                                        .FontSize(13.5f)
+                                        .Bold()
+                                        .FontColor(NavyDark);
+
+                                    info.Item()
+                                        .PaddingTop(3)
+                                        .Row(role =>
+                                        {
+                                            role.AutoItem()
+                                                .Width(15)
+                                                .Height(15)
+                                                .Svg(
+                                                    """
+                                                    <svg
+                                                        viewBox="0 0 64 40"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            fill="#275C96"
+                                                            d="M32 2 3 15l29 13 24-10.8V30h4V15L32 2Z"/>
+                                                        <path
+                                                            fill="#275C96"
+                                                            d="M15 22v8c0 5 8 8 17 8s17-3 17-8v-8l-17 8-17-8Z"/>
+                                                    </svg>
+                                                    """);
+
+                                            role.AutoItem()
+                                                .PaddingRight(5)
+                                                .Text("الطالب")
+                                                .FontSize(9)
+                                                .SemiBold()
+                                                .FontColor(IconBlue);
+                                        });
+                                });
+                        });
+
+                    // divider
+                    col.Item()
+                        .PaddingVertical(2)
+                        .Height(1)
+                        .Background(CardBorder);
+
+                    // ===========================
+                    // Status
+                    // ===========================
+                    col.Item()
+                        .Border(1)
+                        .BorderColor("#DBE8F6")
+                        .CornerRadius(7)
+                        .PaddingHorizontal(7)
+                        .PaddingVertical(6)
+                        .Row(row =>
+                        {
+                            row.AutoItem()
+                                .Width(30)
+                                .Height(30)
+                                .Background(SoftBlue)
+                                .CornerRadius(7)
+                                .Padding(6)
+                                .Svg(
+                                    """
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        stroke="#275C96"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round">
+
+                                        <path d="M3 12h4l2-6 4 12 2-6h6"/>
+                                    </svg>
+                                    """);
+
+                            row.RelativeItem()
+                                .PaddingRight(7)
+                                .AlignMiddle()
+                                .Row(statusRow =>
+                                {
+                                    statusRow.RelativeItem()
+                                        .AlignMiddle()
+                                        .Column(text =>
+                                        {
+                                            text.Item()
+                                                .Text("الحالة")
+                                                .FontSize(7.5f)
+                                                .SemiBold()
+                                                .FontColor(LabelColor);
+                                        });
+
+                                    statusRow.AutoItem()
+                                        .AlignMiddle()
+                                        .Background(GreenBg)
+                                        .CornerRadius(10)
+                                        .PaddingHorizontal(10)
+                                        .PaddingVertical(3)
+                                        .Row(badge =>
+                                        {
+                                            badge.AutoItem()
+                                                .AlignMiddle()
+                                                .PaddingLeft(4)
+                                                .Width(6)
+                                                .Height(6)
+                                                .Background(Green)
+                                                .CornerRadius(3);
+
+                                            badge.AutoItem()
+                                                .Text(_model.Status)
+                                                .FontSize(8.5f)
+                                                .Bold()
+                                                .FontColor(Green);
+                                        });
+                                });
+                        });
+
+                    // ===========================
+                    // Grade / Academic Period
+                    // ===========================
+                    col.Item()
+                        .Border(1)
+                        .BorderColor("#DBE8F6")
+                        .CornerRadius(7)
+                        .PaddingHorizontal(7)
+                        .PaddingVertical(6)
+                        .Row(row =>
+                        {
+                            row.AutoItem()
+                                .Width(30)
+                                .Height(30)
+                                .Background(SoftBlue)
+                                .CornerRadius(7)
+                                .Padding(6)
+                                .Svg(
+                                    """
+                                    <svg
+                                        viewBox="0 0 24 24"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        stroke="#275C96"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round">
+
+                                        <rect
+                                            x="3"
+                                            y="5"
+                                            width="18"
+                                            height="16"
+                                            rx="2"/>
+
+                                        <path d="M7 3v4"/>
+                                        <path d="M17 3v4"/>
+                                        <path d="M3 10h18"/>
+                                        <path d="M7 14h2"/>
+                                        <path d="M11 14h2"/>
+                                        <path d="M15 14h2"/>
+                                        <path d="M7 17h2"/>
+                                        <path d="M11 17h2"/>
+                                    </svg>
+                                    """);
+
+                            row.RelativeItem()
+                                .PaddingRight(7)
+                                .AlignMiddle()
+                                .Column(text =>
+                                {
+                                    text.Item()
+                                        .Text("الفترة الدراسية")
+                                        .FontSize(7.5f)
+                                        .SemiBold()
+                                        .FontColor(LabelColor);
+
+                                    text.Item()
+                                        .PaddingTop(1)
+                                        .Text(_model.Grade)
+                                        .FontSize(9.5f)
+                                        .Bold()
+                                        .FontColor(NavyDark);
+                                });
+                        });
+                });
         }
 
         private void ComposeAcademicData(IContainer container)
         {
-            container.PaddingVertical(4).Row(row =>
-            {
-                AcademicItem(row, "العام الدراسي", _model.AcademicYear);
-                AcademicItem(row, "المرحلة", _model.Stage);
-                AcademicItem(row, "الفترة الدراسية", _model.Grade);
-                AcademicItem(row, "تاريخ التسجيل", _model.RegistrationDate.ToString("yyyy/MM/dd"));
-            });
+            container
+                .PaddingVertical(4)
+                .Row(row =>
+                {
+                    AcademicItem(
+                        row,
+                        "العام الدراسي",
+                        _model.AcademicYear);
+
+                    AcademicItem(
+                        row,
+                        "المرحلة",
+                        _model.Stage);
+
+                    AcademicItem(
+                        row,
+                        "الفترة الدراسية",
+                        _model.Grade);
+
+                    AcademicItem(
+                        row,
+                        "تاريخ التسجيل",
+                        _model.RegistrationDate.ToString("yyyy/MM/dd"));
+                });
         }
 
         private void ComposeGuardian(IContainer container)
         {
-            KeyValueTable(container, new[]
-            {
-                ("الاسم", _model.ParentName),
-                ("صلة القرابة", _model.Relationship),
-                ("رقم الهاتف", _model.ParentPhone)
-            });
+            KeyValueTable(
+                container,
+                new[]
+                {
+                    ("الاسم", _model.ParentName),
+                    ("صلة القرابة", _model.Relationship),
+                    ("رقم الهاتف", _model.ParentPhone)
+                });
         }
 
         private void ComposeContact(IContainer container)
         {
-            KeyValueTable(container, new[]
-            {
-                ("العنوان الكامل", _model.Adress),
-                ("رقم الهاتف", _model.ParentPhone),
-                ("رقم الواتساب", _model.ParentWhatsappNumber)
-            });
+            KeyValueTable(
+                container,
+                new[]
+                {
+                    ("العنوان الكامل", _model.Adress),
+                    ("رقم الهاتف", _model.ParentPhone),
+                    ("رقم الواتساب", _model.ParentWhatsappNumber)
+                });
         }
 
         private void ComposeSecondPage(IContainer container)
@@ -202,15 +624,36 @@ namespace ZayirAlkhayr.Reports.Service
             container.Column(column =>
             {
                 column.Spacing(9);
-                column.Item().Element(ComposeFeeSummary);
-                column.Item().Row(row =>
-                {
-                    row.RelativeItem(1.25f).Element(c => ComposeSection(c, "تفاصيل الرسوم", ComposeFeesTable));
-                    //row.ConstantItem(10);
-                    //row.RelativeItem(1f).Element(c => ComposeSection(c, "آخر الأنشطة", ComposeActivities));
-                });
 
-                column.Item().Element(c => ComposeSection(c, "ملاحظات عامة", ComposeGeneralNotes));
+                column.Item()
+                    .Element(ComposeFeeSummary);
+
+                column.Item()
+                    .Row(row =>
+                    {
+                        row.RelativeItem(1.25f)
+                            .Element(c =>
+                                ComposeSection(
+                                    c,
+                                    "تفاصيل الرسوم",
+                                    ComposeFeesTable));
+
+                        //row.ConstantItem(10);
+
+                        //row.RelativeItem(1f)
+                        //    .Element(c =>
+                        //        ComposeSection(
+                        //            c,
+                        //            "آخر الأنشطة",
+                        //            ComposeActivities));
+                    });
+
+                column.Item()
+                    .Element(c =>
+                        ComposeSection(
+                            c,
+                            "ملاحظات عامة",
+                            ComposeGeneralNotes));
             });
         }
 
@@ -218,14 +661,45 @@ namespace ZayirAlkhayr.Reports.Service
         {
             container.Column(col =>
             {
-                col.Item().AlignRight().Text("ملخص الرسوم").FontSize(10).SemiBold().FontColor(NavyDark);
-                col.Item().PaddingTop(5).Row(row =>
-                {
-                    SummaryCard(row, "إجمالي الرسوم", Money(_model.Fees.Total), Navy, BlueBg);
-                    SummaryCard(row, "إجمالي المدفوع", Money(_model.Fees.Paid), Green, GreenBg);
-                    SummaryCard(row, "المتبقي", Money(_model.Fees.Remaining), Orange, OrangeBg);
-                    SummaryCard(row, "حالة السداد", _model.Fees.PaymentStatus, Red, RedBg);  
-                });
+                col.Item()
+                    .AlignRight()
+                    .Text("ملخص الرسوم")
+                    .FontSize(10)
+                    .SemiBold()
+                    .FontColor(NavyDark);
+
+                col.Item()
+                    .PaddingTop(5)
+                    .Row(row =>
+                    {
+                        SummaryCard(
+                            row,
+                            "إجمالي الرسوم",
+                            Money(_model.Fees.Total),
+                            Navy,
+                            BlueBg);
+
+                        SummaryCard(
+                            row,
+                            "إجمالي المدفوع",
+                            Money(_model.Fees.Paid),
+                            Green,
+                            GreenBg);
+
+                        SummaryCard(
+                            row,
+                            "المتبقي",
+                            Money(_model.Fees.Remaining),
+                            Orange,
+                            OrangeBg);
+
+                        SummaryCard(
+                            row,
+                            "حالة السداد",
+                            _model.Fees.PaymentStatus,
+                            Red,
+                            RedBg);
+                    });
             });
         }
 
@@ -244,18 +718,54 @@ namespace ZayirAlkhayr.Reports.Service
                     cols.ConstantColumn(70);
                 });
 
-                foreach (var h in new[] { "#", "نوع الرسوم", "القيمة", "تاريخ الاستحقاق", "المبلغ المدفوع", "المتبقي", "الحالة" })
-                    table.Cell().Element(TableHeaderCell).Text(h).SemiBold();
+                foreach (var h in new[]
+                         {
+                             "#",
+                             "نوع الرسوم",
+                             "القيمة",
+                             "المبلغ المدفوع",
+                             "المتبقي",
+                             "تاريخ الاستحقاق",
+                             "الحالة"
+                         })
+                {
+                    table.Cell()
+                        .Element(TableHeaderCell)
+                        .Text(h)
+                        .SemiBold();
+                }
 
                 foreach (var item in _model.Fees.Items)
                 {
-                    table.Cell().Element(TableBodyCell).Text(item.Number.ToString());
-                    table.Cell().Element(TableBodyCell).Text(item.FeeType);
-                    table.Cell().Element(TableBodyCell).Text(Money(item.Amount));
-                    table.Cell().Element(TableBodyCell).Text(item.DueDate);
-                    table.Cell().Element(TableBodyCell).Text(Money(item.PaidAmount));
-                    table.Cell().Element(TableBodyCell).Text(Money(item.RemainingAmount));
-                    table.Cell().Element(TableBodyCell).AlignCenter().Element(c => StatusBadge(c, item.Status));
+                    table.Cell()
+                        .Element(TableBodyCell)
+                        .Text(item.Number.ToString());
+
+                    table.Cell()
+                        .Element(TableBodyCell)
+                        .Text(item.FeeType);
+
+                    table.Cell()
+                        .Element(TableBodyCell)
+                        .Text(Money(item.Amount));
+
+                    table.Cell()
+                       .Element(TableBodyCell)
+                       .Text(Money(item.PaidAmount));
+
+                    table.Cell()
+                        .Element(TableBodyCell)
+                        .Text(Money(item.RemainingAmount));
+
+                    table.Cell()
+                        .Element(TableBodyCell)
+                        .Text(item.DueDate);
+
+                    table.Cell()
+                        .Element(TableBodyCell)
+                        .AlignCenter()
+                        .Element(c =>
+                            StatusBadge(c, item.Status));
                 }
             });
         }
@@ -285,50 +795,83 @@ namespace ZayirAlkhayr.Reports.Service
 
         private void ComposeGeneralNotes(IContainer container)
         {
-            container.Padding(8).Column(col =>
-            {
-                col.Spacing(5);
-                foreach (var note in _model.GeneralNotes)
+            container
+                .Padding(8)
+                .Column(col =>
                 {
-                    col.Item().Row(row =>
+                    col.Spacing(5);
+
+                    foreach (var note in _model.GeneralNotes)
                     {
-                        row.AutoItem().PaddingTop(2).Text("•").FontSize(12).FontColor(Navy);
-                        row.RelativeItem().PaddingRight(5).Text(note).FontSize(9.5f);
-                    });
-                }
-            });
+                        col.Item()
+                            .Row(row =>
+                            {
+                                row.AutoItem()
+                                    .PaddingTop(2)
+                                    .Text("•")
+                                    .FontSize(12)
+                                    .FontColor(Navy);
+
+                                row.RelativeItem()
+                                    .PaddingRight(5)
+                                    .Text(note)
+                                    .FontSize(9.5f);
+                            });
+                    }
+                });
         }
 
-        private void ComposeFooter(IContainer container, int pageNumber)
+        private void ComposeFooter(IContainer container,int pageNumber)
         {
             container.Background(NavyDark).PaddingHorizontal(14).Row(row =>
             {
                 row.RelativeItem().AlignMiddle().Text($"تاريخ إصدار التقرير: {_model.ReportDate:yyyy/MM/dd}").FontSize(7.5f).FontColor(Colors.White);
                 row.ConstantItem(80).AlignCenter().AlignMiddle().Background(Colors.White).CornerRadius(8).ContentFromLeftToRight().Text($"{pageNumber} / 2")
-                    .FontSize(10).Bold().FontColor(NavyDark);
+                   .FontSize(10).Bold().FontColor(NavyDark);
                 row.RelativeItem().AlignLeft().AlignMiddle().Row(phoneRow =>
                 {
-                    phoneRow.AutoItem().ContentFromRightToLeft().Text($"{_branding.Location}    |").FontSize(7.2f).FontColor(Colors.White);
+                    phoneRow.AutoItem().ContentFromRightToLeft().Text(_branding.Location).FontSize(7.2f).FontColor(Colors.White);
+                    phoneRow.AutoItem().PaddingHorizontal(6).Text("|").FontSize(7.2f).FontColor(Colors.White);
                     phoneRow.AutoItem().ContentFromLeftToRight().Text(_branding.Phone).FontSize(7.2f).FontColor(Colors.White);
                 });
             });
         }
 
-        private static void ComposeSection(IContainer container, string title, Action<IContainer> body)
+        private static void ComposeSection(
+            IContainer container,
+            string title,
+            Action<IContainer> body)
         {
-            container.Border(1).BorderColor(Border).CornerRadius(7).Column(col =>
-            {
-                col.Item().AlignRight().Element(c =>
+            container
+                .Border(1)
+                .BorderColor(Border)
+                .CornerRadius(7)
+                .Column(col =>
                 {
-                    c.AlignRight().Background(NavyDark).CornerRadius(5).PaddingHorizontal(16).PaddingVertical(5)
-                        .Text(title).FontSize(10.5f).SemiBold().FontColor(Colors.White);
-                });
+                    col.Item()
+                        .AlignRight()
+                        .Element(c =>
+                        {
+                            c.AlignRight()
+                                .Background(NavyDark)
+                                .CornerRadius(5)
+                                .PaddingHorizontal(16)
+                                .PaddingVertical(5)
+                                .Text(title)
+                                .FontSize(10.5f)
+                                .SemiBold()
+                                .FontColor(Colors.White);
+                        });
 
-                col.Item().Padding(7).Element(body);
-            });
+                    col.Item()
+                        .Padding(7)
+                        .Element(body);
+                });
         }
 
-        private static void KeyValueTable(IContainer container, IEnumerable<(string Label, string Value)> rows)
+        private static void KeyValueTable(
+            IContainer container,
+            IEnumerable<(string Label, string Value)> rows)
         {
             container.Table(table =>
             {
@@ -340,76 +883,198 @@ namespace ZayirAlkhayr.Reports.Service
 
                 foreach (var row in rows)
                 {
-                    table.Cell().Element(LabelCell).Text(row.Label).SemiBold();
-                    table.Cell().Element(ValueCell).Text(row.Value);
+                    table.Cell()
+                        .Element(LabelCell)
+                        .Text(row.Label)
+                        .SemiBold();
+
+                    table.Cell()
+                        .Element(ValueCell)
+                        .Text(row.Value);
                 }
             });
         }
 
-        private static void QuickInfo(IContainer container, string label, string value, bool badge = false)
+        private static void QuickInfo(
+            IContainer container,
+            string label,
+            string value,
+            bool badge = false)
         {
             container.Column(col =>
             {
-                col.Item().Text(label).FontSize(7.5f).FontColor(Muted);
+                col.Item()
+                    .Text(label)
+                    .FontSize(7.5f)
+                    .FontColor(Muted);
+
                 if (badge)
                 {
-                    col.Item().PaddingTop(2).AlignRight().Background(GreenBg).CornerRadius(8).PaddingHorizontal(10).PaddingVertical(3)
-                        .Text(value).FontSize(8.5f).SemiBold().FontColor(Green);
+                    col.Item()
+                        .PaddingTop(2)
+                        .AlignRight()
+                        .Background(GreenBg)
+                        .CornerRadius(8)
+                        .PaddingHorizontal(10)
+                        .PaddingVertical(3)
+                        .Text(value)
+                        .FontSize(8.5f)
+                        .SemiBold()
+                        .FontColor(Green);
                 }
                 else
                 {
-                    col.Item().PaddingTop(2).Text(value).FontSize(9).SemiBold();
+                    col.Item()
+                        .PaddingTop(2)
+                        .Text(value)
+                        .FontSize(9)
+                        .SemiBold();
                 }
             });
         }
 
-        private static void AcademicItem(RowDescriptor row, string label, string value)
+        private static void AcademicItem(
+            RowDescriptor row,
+            string label,
+            string value)
         {
-            row.RelativeItem().BorderLeft(1).BorderColor(Border).PaddingHorizontal(8).AlignCenter().Column(col =>
-            {
-                col.Item().AlignCenter().Text(label).FontSize(7.5f).SemiBold().FontColor(Navy);
-                col.Item().PaddingTop(4).AlignCenter().Text(value).FontSize(8.5f);
-            });
-        }
-
-        private static void SummaryCard(RowDescriptor row, string label, string value, string accent, string background)
-        {
-            row.RelativeItem().PaddingHorizontal(4).Border(1).BorderColor(accent).CornerRadius(6).Background(background)
-                .PaddingVertical(10).PaddingHorizontal(12).Column(col =>
+            row.RelativeItem()
+                .BorderLeft(1)
+                .BorderColor(Border)
+                .PaddingHorizontal(8)
+                .AlignCenter()
+                .Column(col =>
                 {
-                    col.Item().AlignCenter().Text(label).FontSize(9).SemiBold().FontColor(accent);
-                    col.Item().PaddingTop(5).AlignCenter().Text(value).FontSize(12).Bold().FontColor(NavyDark);
+                    col.Item()
+                        .AlignCenter()
+                        .Text(label)
+                        .FontSize(7.5f)
+                        .SemiBold()
+                        .FontColor(Navy);
+
+                    col.Item()
+                        .PaddingTop(4)
+                        .AlignCenter()
+                        .Text(value)
+                        .FontSize(8.5f);
                 });
         }
 
-        private static void StatusBadge(IContainer container, string status)
+        private static void SummaryCard(
+            RowDescriptor row,
+            string label,
+            string value,
+            string accent,
+            string background)
         {
-            var isPaid = status.Contains("مدفوع", StringComparison.OrdinalIgnoreCase);
-            container.Background(isPaid ? GreenBg : RedBg).CornerRadius(7).PaddingHorizontal(7).PaddingVertical(2)
-                .Text(status).FontSize(7.5f).SemiBold().FontColor(isPaid ? Green : Red);
+            row.RelativeItem()
+                .PaddingHorizontal(4)
+                .Border(1)
+                .BorderColor(accent)
+                .CornerRadius(6)
+                .Background(background)
+                .PaddingVertical(10)
+                .PaddingHorizontal(12)
+                .Column(col =>
+                {
+                    col.Item()
+                        .AlignCenter()
+                        .Text(label)
+                        .FontSize(9)
+                        .SemiBold()
+                        .FontColor(accent);
+
+                    col.Item()
+                        .PaddingTop(5)
+                        .AlignCenter()
+                        .Text(value)
+                        .FontSize(12)
+                        .Bold()
+                        .FontColor(NavyDark);
+                });
         }
 
-        private static IContainer LabelCell(IContainer container) =>
-            container.BorderBottom(1).BorderColor(Border).Background(LightBlue).PaddingHorizontal(7).PaddingVertical(5).AlignMiddle();
+        private static void StatusBadge(
+            IContainer container,
+            string status)
+        {
+            var isPaid = status.Contains(
+                "مدفوع",
+                StringComparison.OrdinalIgnoreCase);
 
-        private static IContainer ValueCell(IContainer container) =>
-            container.BorderBottom(1).BorderColor(Border).PaddingHorizontal(7).PaddingVertical(5).AlignMiddle();
+            container
+                .Background(isPaid ? GreenBg : RedBg)
+                .CornerRadius(7)
+                .PaddingHorizontal(7)
+                .PaddingVertical(2)
+                .Text(status)
+                .FontSize(7.5f)
+                .SemiBold()
+                .FontColor(isPaid ? Green : Red);
+        }
 
-        private static IContainer TableHeaderCell(IContainer container) =>
-            container.Border(1).BorderColor(Border).Background(LightBlue).PaddingHorizontal(4).PaddingVertical(5).AlignCenter().AlignMiddle();
+        private static IContainer LabelCell(
+            IContainer container) =>
+            container
+                .BorderBottom(1)
+                .BorderColor(Border)
+                .Background(LightBlue)
+                .PaddingHorizontal(7)
+                .PaddingVertical(5)
+                .AlignMiddle();
 
-        private static IContainer TableBodyCell(IContainer container) =>
-            container.Border(1).BorderColor(Border).PaddingHorizontal(4).PaddingVertical(5).AlignCenter().AlignMiddle();
+        private static IContainer ValueCell(
+            IContainer container) =>
+            container
+                .BorderBottom(1)
+                .BorderColor(Border)
+                .PaddingHorizontal(7)
+                .PaddingVertical(5)
+                .AlignMiddle();
 
-        private static void Divider(IContainer container) => container.Height(1).Background(Border);
+        private static IContainer TableHeaderCell(
+            IContainer container) =>
+            container
+                .Border(1)
+                .BorderColor(Border)
+                .Background(LightBlue)
+                .PaddingHorizontal(4)
+                .PaddingVertical(5)
+                .AlignCenter()
+                .AlignMiddle();
 
-        private static string Money(decimal value) => $"{value:N2} ج.م";
+        private static IContainer TableBodyCell(
+            IContainer container) =>
+            container
+                .Border(1)
+                .BorderColor(Border)
+                .PaddingHorizontal(4)
+                .PaddingVertical(5)
+                .AlignCenter()
+                .AlignMiddle();
 
-        private const string MortarboardSvg = """
-        <svg viewBox="0 0 64 40" xmlns="http://www.w3.org/2000/svg">
-          <path fill="#073B78" d="M32 2 3 15l29 13 24-10.8V30h4V15L32 2Z"/>
-          <path fill="#073B78" d="M15 22v8c0 5 8 8 17 8s17-3 17-8v-8l-17 8-17-8Z"/>
-        </svg>
-        """;
+        private static void Divider(IContainer container) =>
+            container
+                .Height(1)
+                .Background(Border);
+
+        private static string Money(decimal value) =>
+            $"{value:N2} ج.م";
+
+        private const string MortarboardSvg =
+            """
+            <svg
+                viewBox="0 0 64 40"
+                xmlns="http://www.w3.org/2000/svg">
+
+                <path
+                    fill="#073B78"
+                    d="M32 2 3 15l29 13 24-10.8V30h4V15L32 2Z"/>
+
+                <path
+                    fill="#073B78"
+                    d="M15 22v8c0 5 8 8 17 8s17-3 17-8v-8l-17 8-17-8Z"/>
+            </svg>
+            """;
     }
 }
