@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Models.School;
 using ZayirAlkhayr.Entities.Specifications.School;
@@ -8,7 +9,6 @@ using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.School.Students.ManageStudent;
 using ZayirAlkhayr.Services.Common;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ZayirAlkhayr.Services.School.Students.ManageStudent
 {
@@ -55,6 +55,84 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             Params[0] = new SqlParameter("@FilterList", FilterDt);
             var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_ExportStudentData", Params);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+        }
+
+        public async Task<ApiResponseModel<StudentFullDataDto>> GetStudentHistoryById(int StudentId)
+        {
+            var Params = new SqlParameter[1];
+            Params[0] = new SqlParameter("@StudentId", StudentId);
+            var Data = await _sQLHelper.SQLQueryAsync<StudentFullDataSqlResponse>("school.SP_GetStudentHistoryById", Params);
+
+            if (!Data.Any())
+                return ApiResponseModel<StudentFullDataDto>.Failure(GenericErrors.TransFailed);
+
+            var First = Data.First();
+
+            var Result = new StudentFullDataDto
+            {
+                StudentId = First.StudentId,
+                StudentName = First.StudentName,
+                StudentCode = First.StudentCode,
+                ParentName = First.ParentName,
+                ParentPhone = First.ParentPhone,
+                PhoneRelationship = First.PhoneRelationship,
+                ParentWhatsappNumber = First.ParentWhatsappNumber,
+                GovernmentSchool = First.GovernmentSchool,
+                Address = First.Address,
+                Gender = First.Gender,
+                Nationality = First.Nationality,
+                StudentType = First.StudentType,
+                BirthDay = First.BirthDay,
+                EnrollmentDate = First.EnrollmentDate,
+                OrderAmongChildren = First.OrderAmongChildren,
+                BrotherCount = First.BrotherCount,
+                IsHaveHealthCondition = First.IsHaveHealthCondition,
+                HealthConditionNote = First.HealthConditionNote,
+                StudentEnrollmentId = First.StudentEnrollmentId,
+                AcademicYear = First.AcademicYear,
+                AcademicStage = First.AcademicStage,
+                StudyPeriodName = First.StudyPeriodName,
+                StudentStatusName = First.StudentStatusName,
+                StudentStatusReason = First.StudentStatusReason,
+                EnrollmentNotes = First.EnrollmentNotes
+            };
+
+            Result.Fees = Data.Where(x => x.StudentFeeId.HasValue).GroupBy(x => x.StudentFeeId.Value).Select(fee =>
+            {
+                var FirstFee = fee.First();
+
+                return new StudentFeeResponse
+                {
+                    StudentFeeId = FirstFee.StudentFeeId.Value,
+                    FeeTypeId = FirstFee.FeeTypeId.Value,
+                    FeeName = FirstFee.FeeName,
+                    TotalAmount = FirstFee.FeeTotalAmount ?? 0,
+                    DiscountAmount = FirstFee.FeeDiscountAmount ?? 0,
+                    DiscountPercentage = FirstFee.FeeDiscountPercentage ?? 0,
+                    DiscountReason = FirstFee.FeeDiscountReason,
+                    DiscountTypeId = FirstFee.DiscountTypeId,
+                    DiscountType = FirstFee.DiscountType,
+                    NetAmount = FirstFee.FeeNetAmount ?? 0,
+                    PaidAmount = FirstFee.FeePaidAmount ?? 0,
+                    RemainingAmount = FirstFee.FeeRemainingAmount ?? 0,
+                    Status = FirstFee.FeeStatus ?? 0,
+                    NextAmount = FirstFee.FeeNextAmount,
+                    NextInstallmentDate = FirstFee.FeeNextInstallmentDate,
+                    Payments = fee.Where(x => x.StudentPaymentId.HasValue).Select(x => new StudentPaymentResponse
+                    {
+                        StudentPaymentId = x.StudentPaymentId.Value,
+                        ReceiptNumber = x.ReceiptNumber,
+                        PaymentDate = x.PaymentDate.Value,
+                        Amount = x.PaymentAmount ?? 0,
+                        NextAmount = x.PaymentNextAmount,
+                        NextInstallmentDate = x.PaymentNextInstallmentDate,
+                        PaymentMethod = x.PaymentMethod,
+                        Note = x.PaymentNote
+                    }).ToList()
+                };
+            }).ToList();
+
+            return ApiResponseModel<StudentFullDataDto>.Success(GenericErrors.GetSuccess, Result);
         }
 
         public async Task<ApiResponseModel<string>> AddNewStudent(AddStudentModel model, CancellationToken cancellationToken = default)

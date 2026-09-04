@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 
 namespace ZayirAlkhayr.Interfaces.School.Students.ManageStudent
 {
@@ -12,6 +13,7 @@ namespace ZayirAlkhayr.Interfaces.School.Students.ManageStudent
     {
         Task<ApiResponseModel<DataSet>> GetAllStudentData(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<List<FilterModel>>> GetAllStudentFilter(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<StudentFullDataDto>> GetStudentHistoryById(int StudentId);
         Task<ApiResponseModel<DataTable>> ExportStudentData(List<FilterModel> FilterList);
         Task<ApiResponseModel<StudentLookups>> GetStudentLookups();
         Task<ApiResponseModel<UpdateStudentLookups>> GetUpdateStudentLookups(int StudentId, int ParentId);

@@ -104,11 +104,31 @@ export class StudentComponent {
 
     ref.componentInstance.studentId = item.id;
     ref.componentInstance.parentId = item.parentId;
-    ref.componentInstance.listItem = item;
-
     ref.closed.subscribe(result => {
       if (result?.action === 'edit') {
         this.openUpdateStudentSidePanel(item, true, false);
+      }
+    });
+  }
+
+  DownloadPdfProfile(item: any) {
+    const report: SearchReportModel = {
+      reportType: 'StudentProfilePdf',
+      queryString: [
+        { key: 'StudentId', value: item.id.toString() }
+      ]
+    };
+    const today = this.datePipe.transform(new Date(), 'dd-MM-yyyy');
+    const fileName = 'ملف الطالب_' + item.studentName + '_' + today;
+
+    this.showLoader = true;
+    this.pdfService.DownloadFile(report, fileName + '.pdf').subscribe({
+      next: () => {
+        this.showLoader = false;
+      },
+      error: () => {
+        this.showLoader = false;
+        this.toaster.error('تعذر طباعة ملف الطالب');
       }
     });
   }

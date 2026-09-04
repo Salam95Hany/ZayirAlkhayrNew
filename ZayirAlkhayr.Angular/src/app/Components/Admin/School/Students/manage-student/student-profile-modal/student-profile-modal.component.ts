@@ -1,242 +1,149 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { NgxLoadingModule } from 'ngx-loading';
 import { SchoolStudentService } from '../../../../../../Services/school/school-student.service';
-
-interface ProfileField {
-  label: string;
-  value: string | number | null | undefined;
-  ltr?: boolean;
-  icon?: string;
-}
-
-interface FeeSummary {
-  total: number;
-  paid: number;
-  remaining: number;
-}
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ArabicDateWithTimePipe } from '../../../../../../Pipes/arabic-date-with-time.pipe';
+import { SearchReportModel } from '../../../../../../Models/shared/SearchReportModel';
+import { PdfDownloadService } from '../../../../../../Services/shared/pdf-download.service';
 
 @Component({
   selector: 'app-student-profile-modal',
   standalone: true,
   imports: [CommonModule, NgxLoadingModule],
   templateUrl: './student-profile-modal.component.html',
-  styleUrl: './student-profile-modal.component.css'
+  styleUrl: './student-profile-modal.component.css',
+  providers: [ArabicDateWithTimePipe, DatePipe]
 })
 export class StudentProfileModalComponent implements OnInit {
-  @Input() studentId!: number;
-  @Input() parentId!: number;
-  @Input() listItem: any;
-
+  @Input() studentId: number;
+  @Input() parentId: number;
   showLoader = false;
   loadError = false;
-  profile: any = {};
-  student: any = {};
-  parent: any = {};
-  enrollment: any = {};
-  lookups: any = {};
-  feeRecords: any[] = [];
+  StudentData: any;
+  PaymentData: any[] = [];
+  SearchReport: SearchReportModel = {
+    reportType: 'StudentProfilePdf',
+    headers: [],
+    filterItems: [],
+    queryString: []
+  };
 
-  constructor(private schoolService: SchoolStudentService) { }
+  constructor(private schoolService: SchoolStudentService, private modalService: NgbModal, private arabicDatePipe: ArabicDateWithTimePipe, private datePipe: DatePipe,
+    private pdfService: PdfDownloadService
+  ) { }
 
   ngOnInit(): void {
-    if (!this.studentId || !this.parentId) {
-      this.bindProfile(this.listItem || {});
+    this.GetStudentHistoryById();
+  }
+
+  GetStudentHistoryById() {
+    if (!this.studentId) {
       return;
     }
 
     this.showLoader = true;
-    this.schoolService.GetUpdateStudentLookups(this.studentId, this.parentId).subscribe({
+    this.schoolService.GetStudentHistoryById(this.studentId).subscribe({
       next: data => {
-        this.bindProfile(data?.results || {});
-        this.loadFees();
+        this.showLoader = false;
+        this.StudentData = data?.results || {};
+        this.CreatePaymentDetailsArray();
       },
       error: () => {
-        this.bindProfile(this.listItem || {});
-        this.loadError = true;
         this.showLoader = false;
       }
     });
   }
 
-  private bindProfile(data: any): void {
-    this.profile = data || {};
-    this.student = data?.student || data || {};
-    this.parent = data?.parent || {};
-    this.enrollment = this.student?.studentEnrollments?.[0] || data?.enrollment || {};
-    this.lookups = data?.lookups || {};
-  }
-
   get studentName(): string {
-    return this.student?.studentName || this.listItem?.studentName || 'بيانات الطالب';
+    return this.StudentData?.studentName || 'بيانات الطالب';
   }
 
   get studentInitial(): string {
     return this.studentName.trim().charAt(0) || 'ط';
   }
 
-  get studentCode(): string {
-    return this.student?.code || this.listItem?.code || `STU-${this.studentId || '---'}`;
-  }
-
-  get imageUrl(): string {
-    return this.student?.imageUrl || this.student?.photoUrl || this.listItem?.imageUrl || '';
-  }
-
-  get statusName(): string {
-    return this.enrollment?.studentStatus?.name || this.enrollment?.studentStatusName || this.listItem?.studentStatusName || 'منتظم';
-  }
-
-  get academicStageName(): string {
-    return this.lookupName('academicStages', this.enrollment?.academicStageId) ||
-      this.enrollment?.academicStageName || this.listItem?.academicStageName || '-';
-  }
-
-  get academicYearName(): string {
-    return this.enrollment?.academicYear?.name || this.enrollment?.academicYearName ||
-      this.listItem?.academicYearName || this.lookups?.currentYear?.name || '-';
-  }
-
-  get studyPeriodName(): string {
-    const periods: Record<number, string> = { 1: 'صباحي', 2: 'مسائي' };
-    return this.enrollment?.studyPeriodName || periods[+this.enrollment?.studyPeriodId] || this.listItem?.studyPeriodName || '-';
-  }
-
-  get basicFields(): ProfileField[] {
+  get basicFields() {
     return [
-      { label: 'الاسم الكامل', value: this.studentName },
-      { label: 'الجنس', value: this.genderName },
-      { label: 'تاريخ الميلاد', value: this.formatDate(this.student?.birthDay || this.listItem?.birthDay), ltr: true },
-      { label: 'الجنسية', value: this.lookupName('nationalities', this.student?.nationalityId) || this.listItem?.nationalityName },
-      { label: 'نوع الطالب', value: this.lookupName('studentTypes', this.student?.studentTypeId) || this.listItem?.studentTypeName },
-      { label: 'الترتيب بين الأبناء', value: this.student?.orderAmongChildren },
-      { label: 'الحالة الصحية', value: this.student?.isHaveHealthCondition ? (this.student?.healthConditionNote || 'توجد حالة صحية') : 'لا توجد حالة صحية' }
+      { label: 'الاسم الكامل:', value: this.StudentData?.studentName },
+      { label: 'الجنس:', value: this.StudentData?.gender },
+      { label: 'تاريخ الميلاد:', value: this.arabicDatePipe.transform(this.StudentData?.birthDay) },
+      { label: 'الجنسية:', value: this.StudentData?.nationality },
+      { label: 'نوع الطالب:', value: this.StudentData?.studentType },
+      { label: 'الترتيب بين أخوته:', value: this.StudentData?.orderAmongChildren },
+      { label: 'الحالة الصحية:', value: this.StudentData?.isHaveHealthCondition ? (this.StudentData?.healthConditionNote || 'توجد حالة صحية') : 'لا توجد حالة صحية' }
     ];
   }
 
-  get parentFields(): ProfileField[] {
+  get parentFields() {
     return [
-      { label: 'الاسم', value: this.parent?.name || this.parent?.parentName || this.listItem?.parentName },
-      { label: 'رقم الهاتف', value: this.parent?.parentPhone || this.parent?.fatherPhone || this.listItem?.parentPhone, ltr: true, icon: 'fa-solid fa-phone' },
-      { label: 'واتساب', value: this.parent?.whatsappNumber, ltr: true, icon: 'fa-brands fa-whatsapp' },
-      { label: 'البريد الإلكتروني', value: this.parent?.email, ltr: true, icon: 'fa-regular fa-envelope' },
-      { label: 'صلة القرابة', value: this.parent?.relationName || 'ولي الأمر' },
-      { label: 'المهنة', value: this.parent?.jobName || this.parent?.job }
+      { label: 'الاسم:', value: this.StudentData?.parentName },
+      { label: 'رقم الهاتف:', value: this.StudentData?.parentPhone, ltr: true, icon: 'fa-solid fa-phone' },
+      { label: 'واتساب:', value: this.StudentData?.parentWhatsappNumber, ltr: true, icon: 'fa-brands fa-whatsapp' },
+      { label: 'صلة القرابة:', value: this.StudentData?.phoneRelationship || 'ولي الأمر' },
+      { label: 'عدد الأبناء:', value: this.StudentData?.brotherCount }
     ];
   }
 
-  get contactFields(): ProfileField[] {
+  get contactFields() {
     return [
-      { label: 'العنوان الكامل', value: this.parent?.address || this.student?.address || this.listItem?.address },
-      { label: 'هاتف الطالب', value: this.student?.phoneNumber || this.student?.phone, ltr: true, icon: 'fa-solid fa-phone' },
-      { label: 'البريد الإلكتروني', value: this.student?.email, ltr: true, icon: 'fa-regular fa-envelope' },
-      { label: 'المدرسة السابقة', value: this.student?.governmentSchool }
+      { label: 'العنوان الكامل:', value: this.StudentData?.address },
+      { label: 'المدرسة الحكومية:', value: this.StudentData?.governmentSchool }
     ];
   }
 
-  get academicFields(): ProfileField[] {
+  get academicFields() {
     return [
-      { label: 'العام الدراسي', value: this.academicYearName },
-      { label: 'المرحلة / الصف', value: this.academicStageName },
-      { label: 'الفترة الدراسية', value: this.studyPeriodName },
-      { label: 'تاريخ القيد', value: this.formatDate(this.enrollment?.enrollmentDate), ltr: true },
-      { label: 'الحالة', value: this.statusName },
-      { label: 'رقم الجلوس', value: this.enrollment?.seatNumber || this.student?.seatNumber }
+      { label: 'العام الدراسي:', value: this.StudentData?.academicYear },
+      { label: 'المرحلة / الصف:', value: this.StudentData?.academicStage },
+      { label: 'الفترة الدراسية:', value: this.StudentData?.studyPeriodName },
+      { label: 'تاريخ التسجيل:', value: this.arabicDatePipe.transform(this.StudentData?.enrollmentDate), ltr: true },
+      { label: 'الحالة:', value: this.StudentData?.studentStatusName },
     ];
   }
 
-  get feeSummary(): FeeSummary {
-    const fees = this.feeRecords.length ? this.feeRecords : (this.enrollment?.studentFees || this.enrollment?.fees || []);
-    const total = this.toNumber(this.enrollment?.totalFees) || fees.reduce((sum: number, fee: any) => sum + this.toNumber(fee?.amount), 0);
-    const normalizedTotal = total || fees.reduce((sum: number, fee: any) => sum + this.toNumber(fee?.netAmount ?? fee?.totalAmount), 0);
-    const paid = this.toNumber(this.enrollment?.paidAmount) || fees.reduce((sum: number, fee: any) => sum + this.toNumber(fee?.paidAmount), 0);
+  get feeSummary() {
+    debugger;
+    const fees = this.StudentData?.fees?.length ? this.StudentData?.fees : [];
+    const total = fees.reduce((sum: number, fee: any) => sum + Number(fee?.totalAmount), 0) ?? 0;
+    const normalizedTotal = total || fees.reduce((sum: number, fee: any) => sum + Number(fee?.netAmount), 0);
+    const paid = fees.reduce((sum: number, fee: any) => sum + Number(fee?.paidAmount), 0);
     return { total: normalizedTotal, paid, remaining: Math.max(normalizedTotal - paid, 0) };
   }
 
-  get paymentDetails(): any[] {
-    const fees = this.feeRecords.length ? this.feeRecords : (this.enrollment?.studentFees || this.enrollment?.fees || []);
-    return fees.map((fee: any, index: number) => {
+  CreatePaymentDetailsArray() {
+    this.PaymentData = [];
+    const fees = this.StudentData.fees.length ? this.StudentData.fees : [];
+    fees.forEach((fee: any, index: number) => {
       const payments = fee?.payments || [];
-      const latestPayment = payments.length ? payments[payments.length - 1] : null;
-      const amount = this.toNumber(fee?.netAmount ?? fee?.totalAmount ?? fee?.amount);
-      const paidAmount = this.toNumber(fee?.paidAmount) || payments.reduce((sum: number, payment: any) => sum + (payment?.isCancelled ? 0 : this.toNumber(payment?.amount)), 0);
-      return {
-        index: index + 1,
-        feeName: fee?.feeTypeName || fee?.feeName || fee?.name || '-',
-        amount,
-        dueDate: fee?.dueDate || fee?.nextInstallmentDate,
-        paymentDate: latestPayment?.paymentDate || fee?.paymentDate,
-        paidAmount,
-        remainingAmount: this.toNumber(fee?.remainingAmount),
-        paymentMethod: latestPayment?.paymentMethodName || this.paymentMethodName(latestPayment?.paymentMethod ?? fee?.paymentMethod),
-        receiptNumber: latestPayment?.receiptNumber || fee?.receiptNumber,
-        isPaid: +fee?.statusId === 3 || (amount > 0 && paidAmount >= amount)
-      };
+      if (payments.length > 0)
+        payments.forEach((payment: any) => {
+          this.PaymentData.push({
+            index: index + 1,
+            feeName: fee?.feeName || '-',
+            amount: payment?.amount || 0,
+            nextInstallmentDate: this.arabicDatePipe.transform(payment?.nextInstallmentDate),
+            paymentDate: this.arabicDatePipe.transform(payment?.paymentDate),
+            paymentMethod: payment?.paymentMethod,
+            receiptNumber: payment?.receiptNumber,
+          });
+        });
     });
   }
 
-  get notes(): string {
-    return this.enrollment?.notes || this.student?.notes || 'لا توجد ملاحظات مسجلة على ملف الطالب.';
+  CloseModal(): void {
+    this.modalService.dismissAll();
   }
 
-  get genderName(): string {
-    const gender = +this.student?.gender;
-    return this.student?.genderName || this.listItem?.gender || (gender === 1 ? 'ذكر' : gender === 2 ? 'أنثى' : '-');
-  }
-
-  displayValue(value: unknown): string | number {
-    return value === null || value === undefined || value === '' ? '-' : value as string | number;
-  }
-
-  formatMoney(value: number): string {
-    return new Intl.NumberFormat('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value || 0);
-  }
-
-  // requestEdit(): void {
-  //   this.activeModal.close({ action: 'edit' });
-  // }
-
-  printProfile(): void {
-    window.print();
-  }
-
-  private loadFees(): void {
-    const enrollmentId = this.enrollment?.id || this.enrollment?.enrollmentId;
-    if (!enrollmentId) {
+  DownloadPdfProfile() {
+    this.SearchReport.queryString = [
+      { key: 'StudentId', value: this.studentId.toString() }
+    ];
+    let today = this.datePipe.transform(new Date(), 'dd-MM-yyyy');
+    let fileName = 'ملف الطالب_' + this.StudentData?.studentName + '_' + today;
+    this.showLoader = true;
+    this.pdfService.DownloadFile(this.SearchReport, fileName + '.pdf').subscribe(data => {
       this.showLoader = false;
-      return;
-    }
-
-    this.schoolService.GetAllStudentFeesByEnrollmentId(enrollmentId).subscribe({
-      next: data => {
-        const fees = data?.results?.fees || data?.results;
-        this.feeRecords = Array.isArray(fees) ? fees : [];
-        this.showLoader = false;
-      },
-      error: () => {
-        this.showLoader = false;
-      }
     });
-  }
-
-  paymentMethodName(method: unknown): string {
-    const methods: Record<number, string> = { 1: 'نقدي', 2: 'إنستاباي', 3: 'فودافون كاش' };
-    return methods[+method!] || '-';
-  }
-
-  private lookupName(collection: string, id: unknown): string {
-    if (id === null || id === undefined) return '';
-    return this.lookups?.[collection]?.find((item: any) => +item.value === +id)?.name || '';
-  }
-
-  private formatDate(value: unknown): string {
-    if (!value) return '-';
-    const date = new Date(value as string);
-    return Number.isNaN(date.getTime()) ? String(value) : new Intl.DateTimeFormat('en-GB').format(date);
-  }
-
-  private toNumber(value: unknown): number {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : 0;
   }
 }

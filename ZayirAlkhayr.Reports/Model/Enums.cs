@@ -19,5 +19,6 @@ namespace ZayirAlkhayr.Reports.Model
         AccountExportMonyPdf,
         StudentExcel,
         StudentCardFrontPdf,
+        StudentProfilePdf,
     }
 }

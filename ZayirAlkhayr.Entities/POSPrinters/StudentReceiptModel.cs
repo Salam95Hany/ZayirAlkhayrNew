@@ -50,5 +50,6 @@ namespace ZayirAlkhayr.Entities.POSPrinters
         public string Location { get; init; } = "القاهرة - مصر";
         public string Website { get; init; } = "www.almarefa-school.com";
         public string LogoPath { get; init; } = "Assets/school-logo.svg";
+        public string SchoolLogoPath { get; init; } = "Assets/school-logo.svg";
     }
 }

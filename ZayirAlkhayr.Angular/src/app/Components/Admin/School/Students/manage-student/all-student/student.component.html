@@ -1,82 +1,177 @@
 <div class="students-page" dir="rtl">
-  <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
+    <app-admin-breadcrumb [TitleList]="TitleList"></app-admin-breadcrumb>
 
-  <header class="students-hero">
-    <div class="students-hero__content">
-      <span class="students-hero__eyebrow">إدارة القبول والتسجيل</span>
-      <h1>سجل الطلاب</h1>
-      <p>إدارة بيانات الطلاب وملفاتهم الدراسية ومتابعة حالتهم من مكان واحد.</p>
-    </div>
-    <div class="students-hero__metrics" aria-label="ملخص الطلاب">
-      <div class="hero-metric"><span class="hero-metric__icon"><i class="fa-solid fa-users"></i></span><span><small>إجمالي الطلاب</small><strong>{{ TotalCount }}</strong></span></div>
-      <div class="hero-metric"><span class="hero-metric__icon hero-metric__icon--teal"><i class="fa-solid fa-list-check"></i></span><span><small>المعروض حالياً</small><strong>{{ Results.length }}</strong></span></div>
-    </div>
-  </header>
-
-  <section class="students-panel" aria-labelledby="students-table-title">
-    <div class="students-toolbar">
-      <div class="students-toolbar__heading">
-        <span class="students-toolbar__icon"><i class="fa-solid fa-graduation-cap"></i></span>
-        <div><h2 id="students-table-title">بيانات الطلاب</h2><p>استعرض السجلات وحدّث بيانات الطلاب أو صدّر التقرير المطلوب.</p></div>
-      </div>
-      <div class="students-toolbar__actions">
-        <button type="button" class="toolbar-button toolbar-button--primary" routerLink="/admin/school/add-student" appRole pageKey="School_ManageStudents_Student" action="canAdd"><i class="fa-solid fa-user-plus"></i><span>إضافة طالب</span></button>
-        <div ngbDropdown class="toolbar-dropdown" appRole pageKey="School_ManageStudents_Student" action="canExport">
-          <button type="button" class="toolbar-button toolbar-button--secondary" id="studentExportMenu" ngbDropdownToggle><i class="fa-solid fa-arrow-up-from-bracket"></i><span>تصدير البيانات</span></button>
-          <div ngbDropdownMenu aria-labelledby="studentExportMenu" class="export-menu">
-            <button ngbDropdownItem (click)="OpenPdfFileItemModal(PDFFileItemModal)"><span class="export-menu__icon export-menu__icon--pdf"><i class="fa-regular fa-file-pdf"></i></span><span><strong>ملف PDF</strong><small>تحديد الأعمدة قبل التنزيل</small></span></button>
-            <button ngbDropdownItem (click)="DownloadExcelFile()"><span class="export-menu__icon export-menu__icon--excel"><i class="fa-regular fa-file-excel"></i></span><span><strong>ملف Excel</strong><small>تصدير السجلات للتحليل</small></span></button>
-          </div>
+    <header class="students-hero">
+        <div class="students-hero__content">
+            <span class="students-hero__eyebrow">إدارة القبول والتسجيل</span>
+            <h1>سجل الطلاب</h1>
+            <p>إدارة بيانات الطلاب وملفاتهم الدراسية ومتابعة حالتهم من مكان واحد.</p>
         </div>
-        <button type="button" class="toolbar-button toolbar-button--filter" (click)="isFilter = !isFilter" [class.is-active]="!isFilter" [attr.aria-expanded]="!isFilter" aria-controls="studentFilters"><i class="fa-solid fa-sliders"></i><span>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}</span></button>
-      </div>
-    </div>
+        <div class="students-hero__metrics" aria-label="ملخص الطلاب">
+            <div class="hero-metric"><span class="hero-metric__icon"><i
+            class="fa-solid fa-users"></i></span><span><small>إجمالي الطلاب</small><strong>{{ TotalCount
+            }}</strong></span></div>
+            <div class="hero-metric"><span class="hero-metric__icon hero-metric__icon--teal"><i
+            class="fa-solid fa-list-check"></i></span><span><small>المعروض حالياً</small><strong>{{ Results.length
+            }}</strong></span></div>
+        </div>
+    </header>
 
-    <div id="studentFilters" class="students-filters" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
-      <div class="students-filters__header"><span><i class="fa-solid fa-filter"></i> تصفية سجل الطلاب</span><small>استخدم حقول البحث للوصول إلى السجل المطلوب بسرعة.</small></div>
-      <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
-    </div>
+    <section class="students-panel" aria-labelledby="students-table-title">
+        <div class="students-toolbar">
+            <div class="students-toolbar__heading">
+                <span class="students-toolbar__icon"><i class="fa-solid fa-graduation-cap"></i></span>
+                <div>
+                    <h2 id="students-table-title">بيانات الطلاب</h2>
+                    <p>استعرض السجلات وحدّث بيانات الطلاب أو صدّر التقرير المطلوب.</p>
+                </div>
+            </div>
+            <div class="students-toolbar__actions">
+                <button type="button" class="toolbar-button toolbar-button--primary" routerLink="/admin/school/add-student" appRole pageKey="School_ManageStudents_Student" action="canAdd"><i
+            class="fa-solid fa-user-plus"></i><span>إضافة طالب</span></button>
+                <div ngbDropdown class="toolbar-dropdown" appRole pageKey="School_ManageStudents_Student" action="canExport">
+                    <button type="button" class="toolbar-button toolbar-button--secondary" id="studentExportMenu" ngbDropdownToggle><i class="fa-solid fa-arrow-up-from-bracket"></i><span>تصدير البيانات</span></button>
+                    <div ngbDropdownMenu aria-labelledby="studentExportMenu" class="export-menu">
+                        <button ngbDropdownItem (click)="OpenPdfFileItemModal(PDFFileItemModal)"><span
+                class="export-menu__icon export-menu__icon--pdf"><i
+                  class="fa-regular fa-file-pdf"></i></span><span><strong>ملف PDF</strong><small>تحديد الأعمدة قبل
+                  التنزيل</small></span></button>
+                        <button ngbDropdownItem (click)="DownloadExcelFile()"><span
+                class="export-menu__icon export-menu__icon--excel"><i
+                  class="fa-regular fa-file-excel"></i></span><span><strong>ملف Excel</strong><small>تصدير السجلات
+                  للتحليل</small></span></button>
+                    </div>
+                </div>
+                <button type="button" class="toolbar-button toolbar-button--filter" (click)="isFilter = !isFilter" [class.is-active]="!isFilter" [attr.aria-expanded]="!isFilter" aria-controls="studentFilters"><i
+            class="fa-solid fa-sliders"></i><span>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}</span></button>
+            </div>
+        </div>
 
-    <div class="students-list-meta">
-      <div class="students-list-meta__count"><span class="status-dot"></span><span>تم العثور على <strong>{{ TotalCount }}</strong> طالب</span></div>
-      <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
-    </div>
+        <div id="studentFilters" class="students-filters" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <div class="students-filters__header"><span><i class="fa-solid fa-filter"></i> تصفية سجل
+          الطلاب</span><small>استخدم حقول البحث للوصول إلى السجل المطلوب بسرعة.</small></div>
+            <app-za-filters [FilterList]="FilterList" (filterChanged)="FilterChecked($event)"></app-za-filters>
+        </div>
 
-    <div class="students-table-wrap" role="region" aria-label="جدول بيانات الطلاب" tabindex="0">
-      <table class="students-table">
-        <thead><tr><th class="student-column">الطالب</th><th>كود الطالب</th><th>ولي الأمر</th><th>المرحلة الحالية</th><th>السنة الحالية</th><th>الجنس</th><th>تاريخ الميلاد</th><th>رقم الهاتف</th><th>الجنسية</th><th>نوع الطالب</th><th>الفترة الدراسية</th><th class="address-column">العنوان</th><th>الحالة</th><th>أُضيف بواسطة</th><th>تاريخ الإضافة</th><th class="actions-column">الإجراءات</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let item of Results">
-            <td class="student-column"><div class="student-identity"><span class="student-avatar">{{ item.studentName?.charAt(0) || 'ط' }}</span><span><strong>{{ item.studentName || '-' }}</strong><small>{{ item.academicStageName || 'غير محدد' }}</small></span></div></td>
-            <td><span class="student-code">{{ item.code || '-' }}</span></td><td>{{ item.parentName || '-' }}</td><td>{{ item.academicStageName || '-' }}</td><td>{{ item.academicYearName || '-' }}</td><td>{{ item.gender || '-' }}</td><td>{{ item.birthDay | arabicDateWithTime }}</td><td><span class="phone-value" dir="ltr">{{ item.parentPhone || '-' }}</span></td><td>{{ item.nationalityName || '-' }}</td><td>{{ item.studentTypeName || '-' }}</td><td>{{ item.studyPeriodName || '-' }}</td><td class="address-column" [title]="item.address || ''">{{ item.address || '-' }}</td>
-            <td><span class="student-status student-status--active" *ngIf="item.studentStatusId == 1"><i class="fa-solid fa-circle-check"></i>{{ item.studentStatusName }}</span><span class="student-status student-status--pending" *ngIf="item.studentStatusId == 2"><i class="fa-solid fa-clock"></i>{{ item.studentStatusName }}</span><span class="student-status student-status--inactive" *ngIf="item.studentStatusId == 3"><i class="fa-solid fa-circle-xmark"></i>{{ item.studentStatusName }}</span></td>
-            <td>{{ item.createdBy || '-' }}</td><td>{{ item.insertDateStr || '-' }}</td>
-            <td class="actions-column"><div class="row-actions" *ngIf="item.studentStatusId != 3"><button type="button" class="row-action row-action--view" title="معاينة بيانات الطالب" appRole pageKey="School_ManageStudents_Student" action="canAdd" (click)="openStudentProfile(item)"><i class="fa-regular fa-eye"></i><span>معاينة</span></button><button type="button" class="row-action row-action--edit" title="تعديل بيانات الطالب" appRole pageKey="School_ManageStudents_Student" action="canEdit" (click)="openUpdateStudentSidePanel(item,true,false)"><i class="fa-regular fa-pen-to-square"></i><span>تعديل</span></button><button type="button" class="row-action row-action--delete" title="حذف الطالب" appRole pageKey="School_ManageStudents_Student" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)"><i class="fa-regular fa-trash-can"></i><span>حذف</span></button></div><span class="no-actions" *ngIf="item.studentStatusId == 3">لا توجد إجراءات</span></td>
-          </tr>
-          <tr *ngIf="!Results.length"><td colspan="16" class="empty-cell"><app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+        <div class="students-list-meta">
+            <div class="students-list-meta__count"><span class="status-dot"></span><span>تم العثور على <strong>{{ TotalCount
+            }}</strong> طالب</span></div>
+            <app-za-pagination (pageChanged)="PageChange($event)" [currentPage]="PagingFilter.currentPage" [pageSize]="PagingFilter.pageSize" [totalCount]="TotalCount"></app-za-pagination>
+        </div>
+
+        <div class="students-table-wrap" role="region" aria-label="جدول بيانات الطلاب" tabindex="0">
+            <table class="students-table">
+                <thead>
+                    <tr>
+                        <th class="student-column">الطالب</th>
+                        <th>كود الطالب</th>
+                        <th>ولي الأمر</th>
+                        <th>المرحلة الحالية</th>
+                        <th>السنة الحالية</th>
+                        <th>الجنس</th>
+                        <th>تاريخ الميلاد</th>
+                        <th>رقم الهاتف</th>
+                        <th>الجنسية</th>
+                        <th>نوع الطالب</th>
+                        <th>الفترة الدراسية</th>
+                        <th class="address-column">العنوان</th>
+                        <th>الحالة</th>
+                        <th>أُضيف بواسطة</th>
+                        <th>تاريخ الإضافة</th>
+                        <th class="actions-column">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of Results">
+                        <td class="student-column">
+                            <div class="student-identity"><span class="student-avatar">{{ item.studentName?.charAt(0) || 'ط'
+                  }}</span><span><strong>{{ item.studentName || '-' }}</strong><small>{{ item.academicStageName || 'غير محدد' }}</small></span></div>
+                        </td>
+                        <td><span class="student-code">{{ item.code || '-' }}</span></td>
+                        <td>{{ item.parentName || '-' }}</td>
+                        <td>{{ item.academicStageName || '-' }}</td>
+                        <td>{{ item.academicYearName || '-' }}</td>
+                        <td>{{ item.gender || '-' }}</td>
+                        <td>{{ item.birthDay | arabicDateWithTime }}</td>
+                        <td><span class="phone-value" dir="ltr">{{ item.parentPhone || '-' }}</span></td>
+                        <td>{{ item.nationalityName || '-' }}</td>
+                        <td>{{ item.studentTypeName || '-' }}</td>
+                        <td>{{ item.studyPeriodName || '-' }}</td>
+                        <td class="address-column" [title]="item.address || ''">{{ item.address || '-' }}</td>
+                        <td><span class="student-status student-status--active" *ngIf="item.studentStatusId == 1"><i
+                  class="fa-solid fa-circle-check"></i>{{ item.studentStatusName }}</span><span class="student-status student-status--pending" *ngIf="item.studentStatusId == 2"><i
+                  class="fa-solid fa-clock"></i>{{ item.studentStatusName }}</span><span class="student-status student-status--inactive" *ngIf="item.studentStatusId == 3"><i
+                  class="fa-solid fa-circle-xmark"></i>{{ item.studentStatusName }}</span></td>
+                        <td>{{ item.createdBy || '-' }}</td>
+                        <td>{{ item.insertDateStr || '-' }}</td>
+                        <td class="actions-column">
+                            <div class="row-actions" *ngIf="item.studentStatusId != 3"><button type="button" class="row-action row-action--view" title="معاينة بيانات الطالب" appRole pageKey="School_ManageStudents_Student" action="canAdd" (click)="openStudentProfile(item)"><i
+                    class="fa-regular fa-eye"></i><span>معاينة</span></button><button type="button" class="row-action row-action--print" title="طباعة ملف الطالب" aria-label="طباعة ملف الطالب" appRole pageKey="School_ManageStudents_Student" action="canExport" (click)="DownloadPdfProfile(item)"><i
+                    class="fa-solid fa-print"></i><span>طباعة ملف الطالب</span></button><button type="button" class="row-action row-action--edit" title="تعديل بيانات الطالب" appRole pageKey="School_ManageStudents_Student" action="canEdit" (click)="openUpdateStudentSidePanel(item,true,false)"><i
+                    class="fa-regular fa-pen-to-square"></i><span>تعديل</span></button><button type="button" class="row-action row-action--delete" title="حذف الطالب" appRole pageKey="School_ManageStudents_Student" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)"><i
+                    class="fa-regular fa-trash-can"></i><span>حذف</span></button></div><span class="no-actions" *ngIf="item.studentStatusId == 3">لا توجد إجراءات</span>
+                        </td>
+                    </tr>
+                    <tr *ngIf="!Results.length">
+                        <td colspan="16" class="empty-cell">
+                            <app-za-empty-data [showEmptyData]="!Results.length"></app-za-empty-data>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
 
 <ng-template #PDFFileItemModal let-modal>
-  <div class="student-modal" dir="rtl">
-    <div class="student-modal__header"><div class="student-modal__title"><span class="student-modal__icon"><i class="fa-regular fa-file-pdf"></i></span><div><h2>إعداد تقرير PDF</h2><p>اختر الأعمدة وترتيب ظهورها في التقرير.</p></div></div><button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="fa-solid fa-xmark"></i></button></div>
-    <div class="student-modal__body">
-      <div class="report-options"><div class="report-option" *ngFor="let item of SearchReport.headers; let x = index"><div class="report-option__name"><span>{{ x + 1 }}</span><strong>{{ item.nameAr }}</strong></div><div class="report-option__controls"><label class="column-toggle"><input type="checkbox" [(ngModel)]="item.isSelected"><span class="column-toggle__track"><span></span></span><small>{{ item.isSelected ? 'محدد' : 'غير محدد' }}</small></label><label class="order-field"><span>الترتيب</span><input type="number" (keypress)="NumbersOnly($event.key)" (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="item.displayOrder" placeholder="0"></label></div></div></div>
-      <div class="report-note"><i class="fa-solid fa-circle-info"></i><span><strong>تنبيه مهم</strong>يمكن اختيار 6 أعمدة كحد أقصى في الصفحة الواحدة.</span></div>
+    <div class="student-modal" dir="rtl">
+        <div class="student-modal__header">
+            <div class="student-modal__title"><span class="student-modal__icon"><i class="fa-regular fa-file-pdf"></i></span>
+                <div>
+                    <h2>إعداد تقرير PDF</h2>
+                    <p>اختر الأعمدة وترتيب ظهورها في التقرير.</p>
+                </div>
+            </div><button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i
+          class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="student-modal__body">
+            <div class="report-options">
+                <div class="report-option" *ngFor="let item of SearchReport.headers; let x = index">
+                    <div class="report-option__name"><span>{{ x + 1 }}</span><strong>{{ item.nameAr }}</strong></div>
+                    <div class="report-option__controls"><label class="column-toggle"><input type="checkbox"
+                [(ngModel)]="item.isSelected"><span class="column-toggle__track"><span></span></span><small>{{
+                item.isSelected ? 'محدد' : 'غير محدد' }}</small></label><label class="order-field"><span>الترتيب</span><input type="number" (keypress)="NumbersOnly($event.key)"
+                (paste)="false" (copy)="false" (cut)="false" [(ngModel)]="item.displayOrder" placeholder="0"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="report-note"><i class="fa-solid fa-circle-info"></i><span><strong>تنبيه مهم</strong>يمكن اختيار 6
+          أعمدة كحد أقصى في الصفحة الواحدة.</span></div>
+        </div>
+        <div class="student-modal__footer"><button type="button" class="modal-button modal-button--secondary" (click)="modal.close()"><i class="fa-solid fa-xmark"></i>إلغاء</button><button type="button" class="modal-button modal-button--primary" (click)="DownloadPdfFile()"><i class="fa-solid fa-download"></i>تنزيل
+        التقرير</button></div>
     </div>
-    <div class="student-modal__footer"><button type="button" class="modal-button modal-button--secondary" (click)="modal.close()"><i class="fa-solid fa-xmark"></i>إلغاء</button><button type="button" class="modal-button modal-button--primary" (click)="DownloadPdfFile()"><i class="fa-solid fa-download"></i>تنزيل التقرير</button></div>
-  </div>
 </ng-template>
 
 <ng-template #deleteItemModal let-modal>
-  <div class="student-modal" dir="rtl">
-    <div class="student-modal__header"><div class="student-modal__title"><span class="student-modal__icon student-modal__icon--danger"><i class="fa-regular fa-trash-can"></i></span><div><h2>تأكيد حذف الطالب</h2><p>يرجى مراجعة الإجراء قبل المتابعة.</p></div></div><button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="fa-solid fa-xmark"></i></button></div>
-    <div class="student-modal__body"><div class="delete-warning"><i class="fa-solid fa-triangle-exclamation"></i><p>هل أنت متأكد أنك تريد حذف هذا الطالب؟ لا يمكن التراجع عن هذا الإجراء بعد تأكيده.</p></div></div>
-    <div class="student-modal__footer"><button type="button" class="modal-button modal-button--secondary" (click)="modal.close()">إلغاء</button><button type="button" class="modal-button modal-button--danger" (click)="DeleteItem()"><i class="fa-regular fa-trash-can"></i>تأكيد الحذف</button></div>
-  </div>
+    <div class="student-modal" dir="rtl">
+        <div class="student-modal__header">
+            <div class="student-modal__title"><span class="student-modal__icon student-modal__icon--danger"><i
+            class="fa-regular fa-trash-can"></i></span>
+                <div>
+                    <h2>تأكيد حذف الطالب</h2>
+                    <p>يرجى مراجعة الإجراء قبل المتابعة.</p>
+                </div>
+            </div><button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i
+          class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="student-modal__body">
+            <div class="delete-warning"><i class="fa-solid fa-triangle-exclamation"></i>
+                <p>هل أنت متأكد أنك تريد حذف هذا الطالب؟ لا يمكن التراجع عن هذا الإجراء بعد تأكيده.</p>
+            </div>
+        </div>
+        <div class="student-modal__footer"><button type="button" class="modal-button modal-button--secondary" (click)="modal.close()">إلغاء</button><button type="button" class="modal-button modal-button--danger" (click)="DeleteItem()"><i class="fa-regular fa-trash-can"></i>تأكيد الحذف</button></div>
+    </div>
 </ng-template>
 
 <ngx-loading [show]="showLoader"></ngx-loading>

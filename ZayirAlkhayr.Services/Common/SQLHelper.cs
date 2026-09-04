@@ -162,34 +162,42 @@ namespace ZayirAlkhayr.Services.Common
 
         private List<T> MapToList<T>(DbDataReader dr)
         {
-            var objList = new List<T>();
-            var props = typeof(T).GetRuntimeProperties();
-
-            List<string> drColumnsName = new List<string>();
-            for (int i = 0; i < dr.FieldCount; i++)
+            try
             {
-                drColumnsName.Add(dr.GetName(i));
-            }
+                var objList = new List<T>();
+                var props = typeof(T).GetRuntimeProperties();
 
-
-            if (dr.HasRows)
-            {
-                while (dr.Read())
+                List<string> drColumnsName = new List<string>();
+                for (int i = 0; i < dr.FieldCount; i++)
                 {
-                    T obj = Activator.CreateInstance<T>();
-                    foreach (var prop in props)
-                    {
-                        if (drColumnsName.Contains(prop.Name))
-                        {
-                            var ordinal = dr.GetOrdinal(prop.Name);
-                            var val = dr.GetValue(ordinal);
-                            prop.SetValue(obj, val == DBNull.Value ? null : val);
-                        }
-                    }
-                    objList.Add(obj);
+                    drColumnsName.Add(dr.GetName(i));
                 }
+
+
+                if (dr.HasRows)
+                {
+                    while (dr.Read())
+                    {
+                        T obj = Activator.CreateInstance<T>();
+                        foreach (var prop in props)
+                        {
+                            if (drColumnsName.Contains(prop.Name))
+                            {
+                                var ordinal = dr.GetOrdinal(prop.Name);
+                                var val = dr.GetValue(ordinal);
+                                prop.SetValue(obj, val == DBNull.Value ? null : val);
+                            }
+                        }
+                        objList.Add(obj);
+                    }
+                }
+                return objList;
             }
-            return objList;
+            catch (Exception ex)
+            {
+                throw;
+            }
+            
         }
 
         public async Task<int> GenerateCode(string procName)

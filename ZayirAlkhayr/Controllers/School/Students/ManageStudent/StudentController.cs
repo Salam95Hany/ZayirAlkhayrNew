@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Interfaces.School.Students.ManageStudent;
 
 namespace ZayirAlkhayr.Controllers.School.Students.ManageStudent
@@ -28,6 +29,13 @@ namespace ZayirAlkhayr.Controllers.School.Students.ManageStudent
         public async Task<ApiResponseModel<List<FilterModel>>> GetAllStudentFilter(PagingFilterModel PagingFilter)
         {
             var results = await _studentService.GetAllStudentFilter(PagingFilter);
+            return results;
+        }
+
+        [HttpGet("GetStudentHistoryById")]
+        public async Task<ApiResponseModel<StudentFullDataDto>> GetStudentHistoryById(int StudentId)
+        {
+            var results = await _studentService.GetStudentHistoryById(StudentId);
             return results;
         }
 

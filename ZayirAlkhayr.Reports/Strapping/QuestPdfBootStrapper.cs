@@ -27,7 +27,8 @@ namespace ZayirAlkhayr.Reports.Strapping
                 Tagline = "تعليم متميز .. لمستقبل أفضل",
                 Phone = "011 4061 8446",
                 Location = "شارع 33/12 شاطئ النخيل العجمي",
-                LogoPath = Path.Combine(environment.WebRootPath, "Template", "School_POS.png")
+                LogoPath = Path.Combine(environment.WebRootPath, "Template", "School_POS.png"),
+                SchoolLogoPath = Path.Combine(environment.WebRootPath, "Template", "School_Logo.jpeg")
             });
 
             return services;

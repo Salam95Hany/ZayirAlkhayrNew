@@ -14,13 +14,14 @@
 .students-table { min-width: 112rem; }
 .student-column { min-width: 13rem; }
 .address-column { max-width: 13rem; overflow: hidden; text-overflow: ellipsis; }
-.actions-column { min-width: 14rem; text-align: center; }
+.actions-column { min-width: 22rem; text-align: center; }
 .student-status--active { color: #08765c; background: #e4f7f0; }
 .student-status--pending { color: #9a6504; background: #fff4d8; }
 .student-status--inactive { color: #a83b47; background: #ffebed; }
 .row-action { transition: .15s; }
 .row-action:hover { transform: translateY(-.08rem); }
 .row-action--view { border-color: #cee5e3; color: #0f7770; background: #eff9f8; }
+.row-action--print { border-color: #cdddf2; color: #245b98; background: #f0f6fd; }
 .no-actions { color: #98a4ae; font-size: .61rem; }
 .report-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; }
 .report-option { display: flex; align-items: center; justify-content: space-between; gap: .6rem; padding: .65rem; border: 1px solid #e0e8ed; border-radius: .65rem; }

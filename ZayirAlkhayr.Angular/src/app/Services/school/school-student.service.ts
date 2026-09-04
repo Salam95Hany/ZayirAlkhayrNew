@@ -32,6 +32,10 @@ export class SchoolStudentService {
     return this.http.get<ApiResponseModel<UpdateStudentLookups>>(this.apiURL + 'Student/GetUpdateStudentLookups?StudentId=' + StudentId + '&ParentId=' + ParentId);
   }
 
+  GetStudentHistoryById(StudentId: number) {
+    return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Student/GetStudentHistoryById?StudentId=' + StudentId);
+  }
+
   AddNewStudent(Model: AddStudentModel) {
     return this.http.post<ApiResponseModel<any>>(this.apiURL + 'Student/AddNewStudent', Model);
   }
