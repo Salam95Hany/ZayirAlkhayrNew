@@ -90,8 +90,8 @@ namespace ZayirAlkhayr.Reports.POSPrinters
                 column.Item().PaddingTop(1.5f).Row(row =>
                 {
                     row.Spacing(2);
-                    row.RelativeItem().Element(x => ComposeHeaderContact(x, ReceiptIcons.Phone, _branding.Phone, ltr: true));
-                    row.RelativeItem().Element(x => ComposeHeaderContact(x, ReceiptIcons.Location, _branding.Location));
+                    row.RelativeItem(1.5f).Element(x => ComposeHeaderContact(x, ReceiptIcons.Phone, _branding.Phone, ltr: true));
+                    row.RelativeItem(2.5f).Element(x => ComposeHeaderContact(x, ReceiptIcons.Location, _branding.Location));
                 });
             });
         }
@@ -132,9 +132,9 @@ namespace ZayirAlkhayr.Reports.POSPrinters
             container.Row(row =>
             {
                 row.Spacing(5);
-                row.RelativeItem().Element(ComposeReceiptInfoBlock);
-                row.ConstantItem(0.6f).Background(Colors.Grey.Darken1);
-                row.RelativeItem().Element(ComposePaymentInfoBlock);
+                row.RelativeItem(0.9f).Element(ComposeReceiptInfoBlock);
+                row.ConstantItem(0.5f).Background(Colors.Grey.Darken1);
+                row.RelativeItem(1f).Element(ComposePaymentInfoBlock);
             });
         }
 
@@ -157,6 +157,7 @@ namespace ZayirAlkhayr.Reports.POSPrinters
                 ComposeKeyValue(column, "نوع السداد:", _model.StudentReceipt.PaymentType);
                 ComposeKeyValue(column, "طريقة السداد:", _model.StudentReceipt.PaymentMethod);
                 ComposeKeyValue(column, "حالة السداد:", _model.StudentReceipt.PaymentStatus);
+                ComposeKeyValue(column, "أمين الصندوق:", _model.UserNameAr);
             });
         }
 
@@ -164,8 +165,8 @@ namespace ZayirAlkhayr.Reports.POSPrinters
         {
             column.Item().Row(row =>
             {
-                row.Spacing(2);
-                row.RelativeItem(1.1f).AlignRight().Text(label).FontSize(7.3f);
+                row.Spacing(1);
+                row.RelativeItem(1f).AlignRight().Text(label).FontSize(6.5f);
 
                 var valueContainer = row.RelativeItem(1.35f);
                 if (valueLtr)
@@ -178,7 +179,7 @@ namespace ZayirAlkhayr.Reports.POSPrinters
                         .SemiBold();
                 }
                 else
-                    valueContainer.AlignRight().Text(value).FontSize(7.5f).SemiBold();
+                    valueContainer.AlignRight().Text(value).FontSize(6.5f).SemiBold();
             });
         }
 

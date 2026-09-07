@@ -114,6 +114,7 @@ export enum RegexType {
     noSpace,
     phoneNumber,
     englishLettersOnly,
+    arabicLettersOnly,
     FourMinLength,
     academicYear
 
@@ -208,6 +209,16 @@ export const regexList: RegexModel[] = [
         pattern: /^[a-zA-Z \-\']+/,
         message: "يُسمح فقط بالحروف الإنجليزية.",
         type: RegexType.englishLettersOnly
+    },
+    {
+        pattern: /^[a-zA-Z \-\']+/,
+        message: "يُسمح فقط بالحروف الإنجليزية.",
+        type: RegexType.englishLettersOnly
+    },
+    {
+        pattern: /^[ء-ي\s]+$/,
+        message: "يُسمح فقط بالحروف العربية.",
+        type: RegexType.arabicLettersOnly
     },
     {
         pattern: /^.{4,}$/,

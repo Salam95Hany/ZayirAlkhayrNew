@@ -80,7 +80,9 @@
                         <th>السنة الدراسية</th>
                         <th>نوع الرسوم</th>
                         <th>إجمالي الرسوم</th>
+                        <th>نسبة الخصم</th>
                         <th>الخصم</th>
+                        <th>نوع الخصم</th>
                         <th>الصافي</th>
                         <th>المدفوع</th>
                         <th>المتبقي</th>
@@ -101,7 +103,9 @@
                         <td>{{ item.academicYearName || '-' }}</td>
                         <td><span class="fee-type"><i class="fa-solid fa-tag"></i>{{ item.feeTypeName || '-' }}</span></td>
                         <td><span class="money money--total">{{ item.totalAmount ?? 0 }}</span></td>
+                        <td><span class="money money--discount">{{ (item.discountAmountPer ? item.discountAmountPer + '%' : 0 + '%') }}</span></td>
                         <td><span class="money money--discount">{{ item.discountAmount ?? 0 }}</span></td>
+                        <td><span class="money money--discount">{{ item.discountType || '-' }}</span></td>
                         <td><span class="money money--net">{{ item.netAmount ?? 0 }}</span></td>
                         <td><span class="money money--paid">{{ item.paidAmount ?? 0 }}</span></td>
                         <td><span class="money money--remaining">{{ item.remainingAmount ?? 0 }}</span></td>

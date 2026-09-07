@@ -363,7 +363,7 @@ export class AccountExportMonyComponent implements OnInit {
       return;
     }
 
-    this.SearchReport.userName = this.authService.userName;
+    this.SearchReport.userName = this.authService.userNameAr;
     this.SearchReport.reportType = 'AccountExportMonyExcel';
     let today = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
     let fileName = 'المصروفات' + '_' + today;

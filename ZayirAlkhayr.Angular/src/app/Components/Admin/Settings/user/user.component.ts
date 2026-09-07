@@ -37,6 +37,7 @@ export class UserComponent implements OnInit {
   searchTerm = '';
   formErrors = {
     userName: '',
+    userNameAr: '',
     email: '',
     password: '',
     phoneNumber: '',
@@ -92,6 +93,7 @@ export class UserComponent implements OnInit {
     this.ItemForm = this.fb.group({
       userId: null,
       userName: ['', [Validators.required, CustomValidators.regexPattern(RegexType.englishLettersOnly), CustomValidators.regexPattern(RegexType.noSpace)]],
+      userNameAr: ['', [Validators.required, CustomValidators.regexPattern(RegexType.arabicLettersOnly), CustomValidators.regexPattern(RegexType.noSpace)]],
       email: ['', [Validators.required, CustomValidators.regexPattern(RegexType.email)]],
       password: ['', [Validators.required, CustomValidators.regexPattern(RegexType.FourMinLength), CustomValidators.regexPattern(RegexType.noSpace)]],
       phoneNumber: ['', Validators.required],
@@ -111,7 +113,8 @@ export class UserComponent implements OnInit {
       email: item.email,
       password: null,
       phoneNumber: item.phoneNumber,
-      address: item?.address
+      address: item?.address,
+      userNameAr: item?.userNameAr ?? ''
     });
   }
 

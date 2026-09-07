@@ -57,6 +57,7 @@ namespace ZayirAlkhayr.Services.Auth
                 ApplicationUserRespone userModel = new ApplicationUserRespone
                 {
                     UserName = user.UserName,
+                    UserNameAr = user.UserNameAr,
                     Role = IsSuperAdmin ? "SupperAdmin" : "",
                     UserId = user.Id,
                     UserApps = UserApps,
@@ -78,6 +79,7 @@ namespace ZayirAlkhayr.Services.Auth
             AdminUser appUser = new AdminUser
             {
                 UserName = model.UserName,
+                UserNameAr = model.UserNameAr,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 Address = model.Address,
@@ -110,6 +112,7 @@ namespace ZayirAlkhayr.Services.Auth
                 }
 
                 user.UserName = model.UserName;
+                user.UserNameAr = model.UserNameAr;
                 user.NormalizedUserName = model.UserName.ToUpperInvariant();
                 user.Address = model.Address;
                 user.PhoneNumber = model.PhoneNumber;

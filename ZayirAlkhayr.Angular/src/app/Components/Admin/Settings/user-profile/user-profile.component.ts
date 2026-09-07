@@ -50,7 +50,7 @@ export class UserProfileComponent implements OnInit {
   }, { validators: matchingPasswords });
 
   get userInitials(): string {
-    const name = this.profileForm.controls.userName.value || this.authService.userName || 'مستخدم';
+    const name = this.profileForm.controls.userName.value || this.authService.userNameAr || 'مستخدم';
     const parts = name.trim().split(/\s+/).filter(Boolean);
     return `${parts[0]?.[0] || ''}${parts[1]?.[0] || ''}`;
   }

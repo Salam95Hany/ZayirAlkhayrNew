@@ -118,6 +118,10 @@ export class AuthService {
     return this.UserModel?.userName;
   }
 
+   get userNameAr(): string {
+    return this.UserModel?.userNameAr || '';
+  }
+
   get userRole(): string {
     return this.UserModel?.role;
   }

@@ -9,6 +9,6 @@ namespace ZayirAlkhayr.Reports.POSPrinters
 {
     public interface IStudentReceiptDataService
     {
-        Task<StudentReceiptModel?> GetStudentReceiptData(int enrollmentId, int studentPaymentId);
+        Task<StudentReceiptModel?> GetStudentReceiptData(int enrollmentId, int studentPaymentId, string UserName);
     }
 }

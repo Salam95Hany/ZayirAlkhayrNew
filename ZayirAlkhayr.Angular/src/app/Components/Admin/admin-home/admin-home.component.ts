@@ -64,7 +64,7 @@ export class AdminHomeComponent implements OnInit, OnDestroy {
   }
 
   get userDisplayName(): string {
-    return this.userModel?.userName || 'مستخدم النظام';
+    return this.userModel?.userNameAr || 'مستخدم النظام';
   }
 
   get userRole(): string {

@@ -12,8 +12,8 @@ export class PosPrinterService {
 
   // ============================= Student ==============================
 
-  GetStudentReceiptData(EnrollmentId: number, StudentPaymentId: number): Observable<ArrayBuffer> {
-    return this.http.get(this.apiURL + '/GetStudentReceiptData?EnrollmentId=' + EnrollmentId + '&StudentPaymentId=' + StudentPaymentId, { responseType: 'arraybuffer' });
+  GetStudentReceiptData(EnrollmentId: number, StudentPaymentId: number,UserName: string): Observable<ArrayBuffer> {
+    return this.http.get(this.apiURL + '/GetStudentReceiptData?EnrollmentId=' + EnrollmentId + '&StudentPaymentId=' + StudentPaymentId + '&UserName=' + UserName, { responseType: 'arraybuffer' });
   }
 
   arrayBufferToBase64(buffer: ArrayBuffer): string {

@@ -119,7 +119,23 @@
                 <div class="fee-box fee-box--paid"><span><i class="fa-solid fa-wallet"></i>إجمالي
                         المدفوع</span><strong>{{ feeSummary.paid }}</strong><small>ج.م</small></div>
                 <div class="fee-box fee-box--remaining"><span><i
-                            class="fa-regular fa-hourglass-half"></i>المتبقي</span><strong>{{feeSummary.remaining}}</strong><small>ج.م</small>
+                            class="fa-regular fa-hourglass-half"></i>المتبقي</span>
+                    <strong>{{feeSummary.remaining}}</strong>
+                    <small>ج.م</small>
+                </div>
+            </div>
+            <div class="discount-summary" aria-label="بيانات الخصم" *ngIf="feeSummary.discountAmount && feeSummary.discountAmount > 0">
+                <div class="discount-box discount-box--percentage">
+                    <span><i class="fa-solid fa-percent"></i>نسبة الخصم</span>
+                    <strong>{{ feeSummary.discountPercentage }}%</strong>
+                </div>
+                <div class="discount-box discount-box--type">
+                    <span><i class="fa-solid fa-tags"></i>نوع الخصم</span>
+                    <strong>{{ feeSummary.discountType }}</strong>
+                </div>
+                <div class="discount-box discount-box--value">
+                    <span><i class="fa-solid fa-coins"></i>قيمة الخصم</span>
+                    <strong>{{ feeSummary.discountAmount }} ج.م</strong>
                 </div>
             </div>
             <div class="payments-details">

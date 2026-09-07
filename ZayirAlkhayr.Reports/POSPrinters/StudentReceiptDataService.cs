@@ -16,7 +16,7 @@ namespace ZayirAlkhayr.Reports.POSPrinters
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<StudentReceiptModel?> GetStudentReceiptData(int enrollmentId, int studentPaymentId)
+        public async Task<StudentReceiptModel?> GetStudentReceiptData(int enrollmentId, int studentPaymentId, string UserName)
         {
             var repository = _unitOfWork.Repository<StudentEnrollment>();
 
@@ -53,9 +53,10 @@ namespace ZayirAlkhayr.Reports.POSPrinters
                 StudentName = enrollment.Student.StudentName,
                 StudentCode = enrollment.Student.Code,
                 ParentName = enrollment.Student.Parent.Name,
-                ParentPhone = enrollment.Student.Parent.ParentPhone ?? enrollment.Student.Parent.MotherPhone,
+                ParentPhone = !string.IsNullOrEmpty(enrollment.Student.Parent.ParentPhone) ? enrollment.Student.Parent.ParentPhone : enrollment.Student.Parent.MotherPhone,
                 AcademicYear = enrollment.AcademicYear.Name,
                 AcademicStage = enrollment.AcademicStage.Name,
+                UserNameAr = UserName,
                 StudentPayments = enrollment.StudentFees.Select(fee => new StudentPaymentItem
                 {
                     FeeName = fee.FeeType.Name,

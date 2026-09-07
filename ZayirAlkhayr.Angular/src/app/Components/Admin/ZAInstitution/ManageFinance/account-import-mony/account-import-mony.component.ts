@@ -363,7 +363,7 @@ export class AccountImportMonyComponent {
       return;
     }
 
-    this.SearchReport.userName = this.authService.userName;
+    this.SearchReport.userName = this.authService.userNameAr;
     this.SearchReport.reportType = 'AccountImportMonyExcel';
     let today = this.datepipe.transform(new Date(), 'yyyy-MM-dd');
     let fileName = 'الايرادات' + '_' + today;

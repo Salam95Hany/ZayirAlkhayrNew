@@ -16,7 +16,7 @@ export class NotAuthorizedComponent {
   ) { }
 
   get userName(): string {
-    return this.authService.userName || 'مستخدم النظام';
+    return this.authService.userNameAr || 'مستخدم النظام';
   }
 
   goToHome(): void {

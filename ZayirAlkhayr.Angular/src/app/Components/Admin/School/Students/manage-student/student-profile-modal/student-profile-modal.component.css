@@ -459,6 +459,84 @@ button {
     border-color: #f6e6b8;
 }
 
+.discount-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    padding: 0 18px 20px;
+}
+
+.discount-box {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+    min-height: 64px;
+    padding: 12px 15px;
+    border: 1px solid;
+    border-radius: 10px;
+}
+
+.discount-box span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #60728d;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.discount-box span i {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+}
+
+.discount-box strong {
+    color: #273f63;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.discount-box small {
+    align-self: end;
+    margin-inline-start: -4px;
+    color: #8290a5;
+    font-size: 9px;
+}
+
+.discount-box--percentage {
+    background: #f7f3ff;
+    border-color: #e7dcfb;
+}
+
+.discount-box--percentage span i {
+    color: #7552b4;
+    background: #eee6fc;
+}
+
+.discount-box--type {
+    background: #f1f8ff;
+    border-color: #d9eafa;
+}
+
+.discount-box--type span i {
+    color: #2568b5;
+    background: #e3f0ff;
+}
+
+.discount-box--value {
+    background: #fff5f0;
+    border-color: #f8ddd0;
+}
+
+.discount-box--value span i {
+    color: #c15d2e;
+    background: #ffeadf;
+}
+
 .payments-details {
     padding: 0 18px 20px;
 }
@@ -800,6 +878,10 @@ button {
     }
     .fee-summary {
         grid-template-columns: 1fr;
+    }
+    .discount-summary {
+        grid-template-columns: 1fr;
+        padding-inline: 14px;
     }
     .payments-details {
         padding-inline: 14px;

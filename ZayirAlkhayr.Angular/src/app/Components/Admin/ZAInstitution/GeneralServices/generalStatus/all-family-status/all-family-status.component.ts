@@ -59,7 +59,7 @@ export class AllFamilyStatusComponent {
   }
 
   ngOnInit(): void {
-    this.UserName = this.authSerive.userName;
+    this.UserName = this.authSerive.userNameAr;
     this.GetAllFamilyStatusData();
     this.GetAllFamilyStatusFilter();
   }

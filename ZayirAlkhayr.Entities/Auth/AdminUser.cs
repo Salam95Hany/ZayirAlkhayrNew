@@ -9,6 +9,7 @@ namespace ZayirAlkhayr.Entities.Auth
 {
     public class AdminUser : IdentityUser
     {
+        public string? UserNameAr { get; set; }
         public string Address { get; set; }
         public bool IsActive { get; set; }
         public DateTime? LoginDate { get; set; }

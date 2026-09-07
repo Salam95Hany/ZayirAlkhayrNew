@@ -62,7 +62,7 @@ export class StudentComponent {
   }
 
   ngOnInit(): void {
-    this.UserName = this.authSerive.userName;
+    this.UserName = this.authSerive.userNameAr;
     this.GetAllStudentData();
     this.GetAllStudentFilter();
   }

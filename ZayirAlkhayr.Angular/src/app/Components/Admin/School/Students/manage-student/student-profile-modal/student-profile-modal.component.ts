@@ -46,7 +46,7 @@ export class StudentProfileModalComponent implements OnInit {
     this.schoolService.GetStudentHistoryById(this.studentId).subscribe({
       next: data => {
         this.showLoader = false;
-        this.StudentData = data?.results || {};
+        this.StudentData = data?.results || {};        
         this.CreatePaymentDetailsArray();
       },
       error: () => {
@@ -103,12 +103,14 @@ export class StudentProfileModalComponent implements OnInit {
   }
 
   get feeSummary() {
-    debugger;
     const fees = this.StudentData?.fees?.length ? this.StudentData?.fees : [];
     const total = fees.reduce((sum: number, fee: any) => sum + Number(fee?.totalAmount), 0) ?? 0;
-    const normalizedTotal = total || fees.reduce((sum: number, fee: any) => sum + Number(fee?.netAmount), 0);
+    const normalizedTotal = fees.reduce((sum: number, fee: any) => sum + Number(fee?.netAmount), 0);
     const paid = fees.reduce((sum: number, fee: any) => sum + Number(fee?.paidAmount), 0);
-    return { total: normalizedTotal, paid, remaining: Math.max(normalizedTotal - paid, 0) };
+    const totalDiscount = fees.reduce((sum: number, fee: any) => sum + Number(fee?.discountAmount), 0);
+    const discountPer = fees[0]?.discountPercentage || 0;
+    const discountType = fees[0]?.discountType || '---';
+    return { total: total, paid, remaining: Math.max(normalizedTotal - paid, 0), discountAmount: totalDiscount, discountPercentage: discountPer, discountType };
   }
 
   CreatePaymentDetailsArray() {

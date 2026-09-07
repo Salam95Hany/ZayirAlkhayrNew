@@ -248,7 +248,7 @@ export class ReceivingPaymentComponent {
 
   Print(paymentId: number) {
     this.showLoader = true;
-    this.posPrinterService.GetStudentReceiptData(this.EnrollmentId, paymentId).subscribe({
+    this.posPrinterService.GetStudentReceiptData(this.EnrollmentId, paymentId, this.authService.userNameAr).subscribe({
       next: async (arrayBuffer) => {
         this.showLoader = false;
         const base64Pdf = this.posPrinterService.arrayBufferToBase64(arrayBuffer);

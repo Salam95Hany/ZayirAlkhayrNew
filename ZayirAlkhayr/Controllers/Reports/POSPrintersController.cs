@@ -20,9 +20,9 @@ namespace ZayirAlkhayr.Controllers.Reports
 
         [HttpGet("GetStudentReceiptData")]
         [Produces("application/pdf")]
-        public async Task<IActionResult> GetStudentReceiptData(int EnrollmentId, int StudentPaymentId)
+        public async Task<IActionResult> GetStudentReceiptData(int EnrollmentId, int StudentPaymentId,string UserName)
         {
-            var receipt = await _receiptDataService.GetStudentReceiptData(EnrollmentId, StudentPaymentId);
+            var receipt = await _receiptDataService.GetStudentReceiptData(EnrollmentId, StudentPaymentId, UserName);
 
             if (receipt is null)
                 return NotFound();

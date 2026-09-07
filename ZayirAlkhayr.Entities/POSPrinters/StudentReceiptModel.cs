@@ -15,6 +15,7 @@ namespace ZayirAlkhayr.Entities.POSPrinters
         public string StudentCode { get; set; }
         public string ParentName { get; set; }
         public string ParentPhone { get; set; }
+        public string UserNameAr { get; set; }
         public List<StudentPaymentItem> StudentPayments { get; set; }
         public decimal TotalRemaining { get; set; }
         public decimal TotalPaid { get; set; }

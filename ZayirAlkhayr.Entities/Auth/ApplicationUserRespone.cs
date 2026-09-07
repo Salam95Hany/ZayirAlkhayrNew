@@ -12,6 +12,7 @@ namespace ZayirAlkhayr.Entities.Auth
         public string UserId { get; set; }
         public string Token { get; set; }
         public string UserName { get; set; }
+        public string UserNameAr { get; set; }
         public DateTime LoginDate { get; set; }
         public string LoginDateAr { get; set; }
         public string LoginTimeAr { get; set; }
