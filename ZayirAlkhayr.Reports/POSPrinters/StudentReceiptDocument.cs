@@ -249,8 +249,8 @@ namespace ZayirAlkhayr.Reports.POSPrinters
                 {
                     table.ColumnsDefinition(columns =>
                     {
-                        columns.RelativeColumn(1.8f);
-                        columns.RelativeColumn(1.0f);
+                        columns.RelativeColumn(1.5f);
+                        columns.RelativeColumn(1.5f);
                         columns.RelativeColumn(1.0f);
                         columns.RelativeColumn(1.0f);
                     });

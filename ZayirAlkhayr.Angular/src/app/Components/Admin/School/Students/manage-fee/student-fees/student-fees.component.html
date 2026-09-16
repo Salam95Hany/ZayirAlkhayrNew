@@ -18,6 +18,10 @@
             <span class="stat-icon"><i class="uil uil-invoice"></i></span>
             <div><span>إجمالي الرسوم</span><strong>{{ FeeSummary?.totalFees ?? 0 | number:'1.2-2' }}</strong></div>
         </article>
+        <article class="stat-card stat-total">
+            <span class="stat-icon"><i class="uil uil-file-times"></i></span>
+            <div><span>إجمالي الرسوم الملغية</span><strong>{{ FeeSummary?.totalCanceledFees ?? 0 | number:'1.2-2' }}</strong></div>
+        </article>
         <article class="stat-card stat-paid">
             <span class="stat-icon"><i class="uil uil-money-bill"></i></span>
             <div><span>إجمالي المدفوع نقدًا</span><strong>{{ FeeSummary?.totalCashPaid ?? 0 | number:'1.2-2' }}</strong></div>

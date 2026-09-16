@@ -386,6 +386,33 @@ export class MenueService {
             }
           ]
         },
+        {
+          menuItemId: MenuType.School,
+          displayName: 'إدارة الحسابات',
+          menuItem: '4',
+          description: 'تتبع و إدارة الحسابات',
+          icon: 'uil uil-credit-card',
+          route: '/admin/school/home/4',
+          pageKey: 'School_ManageAccounts',
+          subMenus: [
+            {
+              displayName: 'المصروفات',
+              menuItem: 'school-expenses',
+              description: 'تتبع و إدارة المصروفات اليومية',
+              icon: 'uil uil-money-withdraw',
+              route: '/admin/school/school-expenses',
+              pageKey: 'School_ManageAccounts_SchoolExpenses',
+            },
+            {
+              displayName: 'أنواع المصروفات',
+              menuItem: 'expense-type',
+              description: 'إدارة و عرض أنواع المصروفات',
+              icon: 'uil uil-apps',
+              route: '/admin/school/expense-type',
+              pageKey: 'School_ManageAccounts_ExpenseType',
+            }
+          ]
+        },
         // {
         //   menuItemId: MenuType.School,
         //   displayName: 'التقارير',

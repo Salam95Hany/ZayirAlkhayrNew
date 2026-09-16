@@ -1,0 +1,132 @@
+<app-admin-breadcrumb [TitleList]="['مركز بشائر القرآن', 'إدارة الحسابات', 'أنواع المصروفات']"></app-admin-breadcrumb>
+
+<main class="type-page admin-page" dir="rtl">
+    <section class="type-hero">
+        <div class="hero-copy">
+            <span class="hero-kicker"><i class="uil uil-setting"></i> إعدادات المصروفات</span>
+            <h1>أنواع المصروفات</h1>
+            <p>نظّم أنواع مصروفات المركز لتوحيد تسجيل بنود الصرف وتحسين دقة التقارير المالية.</p>
+        </div>
+        <button type="button" class="hero-action" appRole pageKey="ZAInstitution_BenefactorType" action="canAdd" (click)="openItemModal(OpenItemModal, null)">
+            <i class="uil uil-plus-circle"></i><span>إضافة نوع مصروف جديد</span>
+        </button>
+    </section>
+
+    <section class="admin-card type-register">
+        <header class="admin-card-header register-header">
+            <div class="section-title">
+                <span><i class="uil uil-layer-group"></i></span>
+                <div>
+                    <h2>دليل أنواع المصروفات</h2>
+                    <p>{{ pagedResponseModel.totalCount }} نوع مصروف مسجل في النظام</p>
+                </div>
+            </div>
+            <button type="button" class="filter-button" [class.filter-button--active]="!isFilter" (click)="isFilter = !isFilter" [attr.aria-expanded]="!isFilter">
+                <i class="uil uil-filter"></i>{{ isFilter ? 'عرض الفلاتر' : 'إخفاء الفلاتر' }}
+                <b *ngIf="activeFiltersCount">{{ activeFiltersCount }}</b>
+            </button>
+        </header>
+
+        <div class="filter-panel" #collapse="ngbCollapse" [(ngbCollapse)]="isFilter">
+            <app-za-filters [FilterList]="filterList" (filterChanged)="filterChecked($event)"></app-za-filters>
+        </div>
+
+        <div class="register-table-wrap" *ngIf="pagedResponseModel.results.length; else emptyState">
+            <table class="type-table">
+                <thead>
+                    <tr>
+                        <th>نوع المصروف</th>
+                        <th>التصنيف</th>
+                        <th>أُضيف بواسطة</th>
+                        <th>تاريخ الإضافة</th>
+                        <th class="text-center">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of pagedResponseModel.results; trackBy: trackByType">
+                        <td data-label="نوع المصروف">
+                            <div class="type-name"><span><i class="uil uil-gift"></i></span><strong>{{ item.name }}</strong></div>
+                        </td>
+                        <td data-label="التصنيف">
+                            <span class="type-badge" [class.type-badge--system]="item.id === 1">
+                                <i class="uil" [ngClass]="item.id === 1 ? 'uil-shield-check' : 'uil-tag-alt'"></i>
+                                {{ item.id === 1 ? 'نوع أساسي' : 'نوع مخصص' }}
+                            </span>
+                        </td>
+                        <td data-label="أُضيف بواسطة"><span class="meta-value"><i class="uil uil-user"></i>{{ item.createdBy || 'غير محدد' }}</span></td>
+                        <td data-label="تاريخ الإضافة"><span class="meta-value"><i class="uil uil-calendar-alt"></i>{{ item.insertDate || 'غير محدد' }}</span></td>
+                        <td data-label="الإجراءات">
+                            <div class="row-actions">
+                                <button type="button" class="action-button action-button--edit" (click)="openItemModal(OpenItemModal, item)">
+                                    <i class="uil uil-pen"></i><span>تعديل</span>
+                                </button>
+                                <button type="button" class="action-button action-button--delete" (click)="openDeleteItemModal(deleteItemModal, item)">
+                                    <i class="uil uil-trash-alt"></i><span>حذف</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <ng-template #emptyState>
+            <div class="empty-state">
+                <app-za-empty-data [showEmptyData]="!pagedResponseModel.results.length"></app-za-empty-data>
+            </div>
+        </ng-template>
+
+        <footer class="admin-card-footer register-footer" *ngIf="pagedResponseModel.totalCount">
+            <p>يتم عرض {{ pagedResponseModel.results.length }} من أصل {{ pagedResponseModel.totalCount }} نوع</p>
+            <app-za-pagination (pageChanged)="pageChanged($event)" [currentPage]="pagingFilterModel.currentPage" [pageSize]="pagingFilterModel.pageSize" [totalCount]="pagedResponseModel.totalCount"></app-za-pagination>
+        </footer>
+    </section>
+</main>
+
+<ng-template #OpenItemModal let-modal>
+    <section class="admin-modal type-modal" dir="rtl">
+        <header class="admin-modal-header modal-heading">
+            <div class="modal-title">
+                <span><i class="uil" [ngClass]="isEditing ? 'uil-pen' : 'uil-gift'"></i></span>
+                <div>
+                    <h2>{{ isEditing ? 'تعديل نوع المصروف' : 'إضافة نوع مصروف جديد' }}</h2>
+                    <p>اكتب اسماً واضحاً يساعد فريق المركز على تصنيف المصروفات بدقة.</p>
+                </div>
+            </div>
+            <button type="button" class="modal-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        </header>
+
+        <form [formGroup]="ItemForm" autocomplete="off" (ngSubmit)="AddNewItem()">
+            <div class="modal-body-content">
+                <div class="form-group-admin">
+                    <label class="form-label-admin" for="benefactorTypeName">اسم نوع المصروف <em>*</em></label>
+                    <div class="field-control" [class.field-control--error]="formErrors.name">
+                        <i class="uil uil-gift"></i><input id="benefactorTypeName" type="text" formControlName="name" placeholder="مثال: أدوات مكتبية">
+                    </div>
+                    <small class="field-error" *ngIf="formErrors.name"><i class="uil uil-exclamation-circle"></i>{{ formErrors.name }}</small>
+                </div>
+                <div class="form-hint"><i class="uil uil-info-circle"></i><span>اختر اسماً مختصراً ومميزاً، وتجنب إضافة النوع نفسه أكثر من مرة.</span></div>
+            </div>
+
+            <footer class="admin-modal-footer modal-actions">
+                <button type="button" class="btn-secondary-admin" (click)="modal.close()">إلغاء</button>
+                <button type="submit" class="btn-primary-admin" [disabled]="showLoader"><i class="uil uil-save"></i>{{ isEditing ? 'حفظ التعديلات' : 'إضافة النوع' }}</button>
+            </footer>
+        </form>
+    </section>
+</ng-template>
+
+<ng-template #deleteItemModal let-modal>
+    <section class="delete-modal" dir="rtl">
+        <button type="button" class="modal-close delete-close" aria-label="إغلاق" (click)="modal.dismiss()"><i class="uil uil-times"></i></button>
+        <span class="delete-icon"><i class="uil uil-trash-alt"></i></span>
+        <h2>حذف نوع المصروف؟</h2>
+        <p>سيتم حذف نوع المصروف من القائمة، ولن يكون متاحاً عند تسجيل مصروفات جديدة.</p>
+        <div class="delete-actions">
+            <button type="button" class="btn-secondary-admin" (click)="modal.close()">تراجع</button>
+            <button type="button" class="btn-danger-admin" [disabled]="showLoader" (click)="DeleteItem()"><i class="uil uil-trash-alt"></i>نعم، حذف النوع</button>
+        </div>
+    </section>
+</ng-template>
+
+<ngx-loading [show]="showLoader"></ngx-loading>

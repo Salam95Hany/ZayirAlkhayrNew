@@ -6,7 +6,7 @@ namespace ZayirAlkhayr.Controllers.Reports
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class POSPrintersController : ControllerBase
     {
         private readonly IStudentReceiptDataService _receiptDataService;

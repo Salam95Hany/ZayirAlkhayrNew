@@ -9,6 +9,7 @@ using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Auth;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
+using ZayirAlkhayr.Interfaces.School.Students.ManageAccount;
 using ZayirAlkhayr.Interfaces.School.Students.ManageFee;
 using ZayirAlkhayr.Interfaces.School.Students.ManageParent;
 using ZayirAlkhayr.Interfaces.School.Students.ManageStudent;
@@ -22,6 +23,7 @@ using ZayirAlkhayr.Interfaces.ZAInstitution.WebSite;
 using ZayirAlkhayr.Services.Auth;
 using ZayirAlkhayr.Services.Common;
 using ZayirAlkhayr.Services.Repositories;
+using ZayirAlkhayr.Services.School.Students.ManageAccount;
 using ZayirAlkhayr.Services.School.Students.ManageFee;
 using ZayirAlkhayr.Services.School.Students.ManageParent;
 using ZayirAlkhayr.Services.School.Students.ManageStudent;
@@ -109,6 +111,8 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<ITemplateService, TemplateService>();
             services.AddScoped<IPercentageService, PercentageService>();
             services.AddScoped<IStudentTicketService, StudentTicketService>();
+            services.AddScoped<ISchoolExpensesService, SchoolExpensesService>();
+            services.AddScoped<IExpensesTypeService, ExpensesTypeService>();
 
             return services;
         }

@@ -78,6 +78,8 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     public virtual DbSet<TemplateVariableMapping> TemplateVariableMappings { get; set; }
     public virtual DbSet<TemplateVariable> TemplateVariables { get; set; }
     public virtual DbSet<StudentTicketPrint> StudentTicketPrints { get; set; }
+    public virtual DbSet<Expense> Expenses { get; set; }
+    public virtual DbSet<ExpensesType> ExpensesTypes { get; set; }
 
     #endregion
 

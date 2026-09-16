@@ -16,7 +16,8 @@ export class SchoolLayoutComponent {
   menuItem: MenuSidebarItem;
 
   constructor(private menuService: MenueService) {
-    this.menuItem = this.menuService.getMenuById(MenuType.School);
+    let menue = JSON.parse(JSON.stringify(this.menuService.getMenuById(MenuType.School)));
+    this.menuItem = this.menuService.filterMenusByUserPermissions(menue);
   }
 
 }

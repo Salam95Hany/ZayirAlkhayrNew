@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
+using ZayirAlkhayr.Entities.Models.School;
 using ZayirAlkhayr.Entities.Specifications.ZAInstitution.BeneFactor;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.Shared;
@@ -90,6 +91,17 @@ namespace ZayirAlkhayr.Services.Shared
         public async Task<ApiResponseModel<List<FormDropdownModel>>> GetAllFamilyNeedCategoriesSelector()
         {
             var Data = await _unitOfWork.Repository<FamilyNeedCategory>().GetAllAsync();
+            var Results = Data.Select(i => new FormDropdownModel
+            {
+                Value = i.Id.ToString(),
+                Name = i.Name,
+            }).ToList();
+            return ApiResponseModel<List<FormDropdownModel>>.Success(GenericErrors.GetSuccess, Results);
+        }
+
+        public async Task<ApiResponseModel<List<FormDropdownModel>>> GetAllExpensesTypesSelector()
+        {
+            var Data = await _unitOfWork.Repository<ExpensesType>().GetAllAsync();
             var Results = Data.Select(i => new FormDropdownModel
             {
                 Value = i.Id.ToString(),

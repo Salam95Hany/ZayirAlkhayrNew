@@ -41,21 +41,21 @@ export const SchoolRoutes: Routes = [
                 loadComponent: () =>
                     import('./Students/manage-student/enrollment/enrollment.component').then(m => m.EnrollmentComponent),
                 canActivate: [authGuard],
-                data: { pageKey: 'School_ManageStudents_AddStudent' }
+                data: { pageKey: 'School_ManageStudents_Enrollment' }
             },
             {
                 path: 'promotion',
                 loadComponent: () =>
                     import('./Students/manage-student/promotion/promotion.component').then(m => m.PromotionComponent),
                 canActivate: [authGuard],
-                data: { pageKey: 'School_ManageStudents_AddStudent' }
+                data: { pageKey: 'School_ManageStudents_Promotion' }
             },
             {
                 path: 'withdrawals',
                 loadComponent: () =>
                     import('./Students/manage-student/withdrawals/withdrawals.component').then(m => m.WithdrawalsComponent),
                 canActivate: [authGuard],
-                data: { pageKey: 'School_ManageStudents_AddStudent' }
+                data: { pageKey: 'School_ManageStudents_Withdrawals' }
             },
             {
                 path: 'student-ticket',
@@ -70,7 +70,7 @@ export const SchoolRoutes: Routes = [
                 loadComponent: () =>
                     import('./Students/manage-parent/parents/parents.component').then(m => m.ParentsComponent),
                 canActivate: [authGuard],
-                data: { pageKey: 'School_ManageStudents_AddStudent' }
+                data: { pageKey: 'School_ManageParents_Parents' }
             },
             {
                 path: 'add-parent',
@@ -92,28 +92,43 @@ export const SchoolRoutes: Routes = [
                 loadComponent: () =>
                     import('./Students/manage-fee/student-fees/student-fees.component').then(m => m.StudentFeesComponent),
                 canActivate: [authGuard],
-                data: { pageKey: 'School_ManageStudents_AddStudent' }
+                data: { pageKey: 'School_ManageFee_StudentFees' }
             },
             {
                 path: 'receiving-payment',
                 loadComponent: () =>
                     import('./Students/manage-fee/receiving-payment/receiving-payment.component').then(m => m.ReceivingPaymentComponent),
                 canActivate: [authGuard],
-                data: { pageKey: 'School_ManageStudents_AddStudent' }
+                data: { pageKey: 'School_ManageFee_ReceivingPayment' }
             },
             {
                 path: 'payment-logs',
                 loadComponent: () =>
                     import('./Students/manage-fee/payment-logs/payment-logs.component').then(m => m.PaymentLogsComponent),
                 canActivate: [authGuard],
-                data: { pageKey: 'School_ManageStudents_AddStudent' }
+                data: { pageKey: 'School_ManageFee_PaymentLogs' }
             },
             {
                 path: 'debts',
                 loadComponent: () =>
                     import('./Students/manage-fee/debts/debts.component').then(m => m.DebtsComponent),
                 canActivate: [authGuard],
-                data: { pageKey: 'School_ManageStudents_AddStudent' }
+                data: { pageKey: 'School_ManageFee_Debts' }
+            },
+            // ======================= Manage Accounts ==================================
+            {
+                path: 'school-expenses',
+                loadComponent: () =>
+                    import('./Students/manage-account/school-expenses/school-expenses.component').then(m => m.SchoolExpensesComponent),
+                canActivate: [authGuard],
+                data: { pageKey: 'School_ManageAccounts_SchoolExpenses' }
+            },
+            {
+                path: 'expense-type',
+                loadComponent: () =>
+                    import('./Students/manage-account/expenses-type/expenses-type.component').then(m => m.ExpensesTypeComponent),
+                canActivate: [authGuard],
+                data: { pageKey: 'School_ManageAccounts_ExpenseType' }
             },
             // ======================= Settings ==================================
             {

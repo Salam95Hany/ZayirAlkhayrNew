@@ -40,6 +40,7 @@ export class SchoolHomeComponent implements OnInit {
     '1': { title: 'إدارة الطلاب', description: 'إدارة ملفات الطلاب والتسجيل السنوي والترحيل والانسحابات.' },
     '2': { title: 'أولياء الأمور', description: 'إدارة بيانات أولياء الأمور وقنوات التواصل والقوالب.' },
     '3': { title: 'إدارة الرسوم', description: 'متابعة الرسوم والمدفوعات والإيصالات والمديونيات.' },
+    '4': { title: 'إدارة الحسابات', description: 'متابعة الحسابات والمدفوعات والمصروفات.' },
     '5': { title: 'إعدادات المدرسة', description: 'تهيئة السنوات والمراحل وأنواع الرسوم والبيانات الأساسية.' }
   };
 
@@ -55,6 +56,8 @@ export class SchoolHomeComponent implements OnInit {
     'receiving-payment': { title: 'استلام دفعة', description: 'تسجيل دفعة جديدة وإصدار إيصال السداد.' },
     'payment-logs': { title: 'سجل الدفعات', description: 'مراجعة عمليات السداد والإيصالات السابقة.' },
     'debts': { title: 'المديونيات', description: 'متابعة الأرصدة والمتأخرات المستحقة.' },
+    'expense-type': { title: 'أنواع المصروفات', description: 'إدارة أنواع المصروفات والحسابات.' },
+    'school-expenses': { title: 'مصروفات المدرسة', description: 'متابعة المصروفات والمدفوعات.' },
     'academic-years': { title: 'السنوات الدراسية', description: 'إدارة السنوات الدراسية وحالتها.' },
     'academic-stages': { title: 'المراحل الدراسية', description: 'تعريف المراحل والصفوف الدراسية.' },
     'fee-types': { title: 'أنواع الرسوم', description: 'تعريف بنود الرسوم الدراسية.' },

@@ -31,6 +31,7 @@ export class AdminSideMenuComponent implements OnDestroy {
     [`${MenuType.School}:1`]: 'إدارة الطلاب',
     [`${MenuType.School}:2`]: 'أولياء الأمور',
     [`${MenuType.School}:3`]: 'إدارة الرسوم',
+    [`${MenuType.School}:4`]: 'إدارة الحسابات',
     [`${MenuType.School}:5`]: 'إعدادات المدرسة',
     [`${MenuType.Settings}:user`]: 'المستخدمون',
     [`${MenuType.Settings}:backup`]: 'النسخ الاحتياطية'

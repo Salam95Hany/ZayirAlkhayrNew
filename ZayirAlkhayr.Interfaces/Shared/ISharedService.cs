@@ -15,5 +15,6 @@ namespace ZayirAlkhayr.Interfaces.Shared
         Task<ApiResponseModel<List<FormDropdownModel>>> GetAllBeneFactorTypesSelector();
         Task<ApiResponseModel<List<FormDropdownModel>>> GetAllUsersSelector();
         Task<ApiResponseModel<List<FormDropdownModel>>> GetAllFamilyNeedCategoriesSelector();
+        Task<ApiResponseModel<List<FormDropdownModel>>> GetAllExpensesTypesSelector();
     }
 }
