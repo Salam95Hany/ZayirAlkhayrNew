@@ -113,6 +113,7 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IStudentTicketService, StudentTicketService>();
             services.AddScoped<ISchoolExpensesService, SchoolExpensesService>();
             services.AddScoped<IExpensesTypeService, ExpensesTypeService>();
+            services.AddScoped<IStudentDueService, StudentDueService>();
 
             return services;
         }

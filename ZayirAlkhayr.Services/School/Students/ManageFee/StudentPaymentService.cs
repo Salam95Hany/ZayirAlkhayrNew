@@ -19,11 +19,16 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
         public async Task<ApiResponseModel<DataSet>> GetAllStudentPaymentData(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[4];
+            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
+            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
+
+            var Params = new SqlParameter[6];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[3] = new SqlParameter("@IsFilter", false);
+            Params[4] = new SqlParameter("@FromDate", FromDate);
+            Params[5] = new SqlParameter("@ToDate", ToDate);
             var dt = await _sQLHelper.ExecuteDatasetAsync("school.SP_GetAllStudentPaymentWithFilters", Params);
             return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
         }
@@ -31,11 +36,16 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
         public async Task<ApiResponseModel<List<FilterModel>>> GetAllStudentPaymentFilters(PagingFilterModel PagingFilter)
         {
             var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[4];
+            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
+            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
+
+            var Params = new SqlParameter[6];
             Params[0] = new SqlParameter("@FilterList", FilterDt);
             Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
             Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
             Params[3] = new SqlParameter("@IsFilter", true);
+            Params[4] = new SqlParameter("@FromDate", FromDate);
+            Params[5] = new SqlParameter("@ToDate", ToDate);
             var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetAllStudentPaymentWithFilters", Params);
             var Filters = dt.ToGroupedFilters();
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);

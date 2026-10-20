@@ -141,7 +141,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
             var studentRepository = _unitOfWork.Repository<Student>();
             var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
 
-            bool parentExists = await parentRepository.AnyAsync(x => x.Name == model.ParentData.ParentName);
+            bool parentExists = await parentRepository.AnyAsync(x => x.Name == model.ParentData.ParentName && !x.IsActive);
             if (parentExists)
                 return ApiResponseModel<string>.Failure(GenericErrors.ParentStudentAlreadyExists);
 
