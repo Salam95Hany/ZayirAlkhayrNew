@@ -1,7 +1,15 @@
-:host { display: block; min-height: 0; overflow: auto; color: #142d4e; }
-.withdrawal { background: #f9fbfd; }
+:host { display: flex; flex-direction: column; min-height: 0; color: #142d4e; }
+.withdrawal {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: calc(100vh - 2 * var(--bs-modal-margin, 1rem) - 2px);
+  max-height: calc(100dvh - 2 * var(--bs-modal-margin, 1rem) - 2px);
+  background: #f9fbfd;
+}
+.body { min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; }
 header, footer, .body { padding: 1rem 1.35rem; }
-header, footer { display: flex; align-items: center; justify-content: space-between; gap: .7rem; background: white; }
+header, footer { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: .7rem; background: white; }
 header { border-bottom: 1px solid #dce6ed; }
 h2 { font-size: 1.3rem; margin: 0; }
 h2 i { color: #2069a7; margin-inline-end: .45rem; }
@@ -26,7 +34,7 @@ dd { margin: 0; font-weight: 650; }
 .amount--owed-by-student { background: #fff1f0; color: #a3212c; }
 .retained { margin-top: .5rem; background: #eef4fc; color: #244e7c; }
 select { width: 100%; }
-footer { border-top: 1px solid #dce6ed; position: sticky; bottom: 0; }
+footer { border-top: 1px solid #dce6ed; }
 footer button:last-child { margin-inline-start: auto; }
 @media (max-width: 760px) {
   .layout { grid-template-columns: minmax(0,1fr); }
