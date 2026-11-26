@@ -137,6 +137,9 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
 
         public async Task<ApiResponseModel<string>> AddNewStudent(AddStudentModel model, CancellationToken cancellationToken = default)
         {
+            if (model.StudentData.Any(s => s.StudentStatusId == StudentStatus.Withdrawn))
+                return ApiResponseModel<string>.Failure(new Error("استخدم عملية انسحاب الطالب لتسوية الرسوم."));
+
             var parentRepository = _unitOfWork.Repository<Parent>();
             var studentRepository = _unitOfWork.Repository<Student>();
             var enrollmentRepository = _unitOfWork.Repository<StudentEnrollment>();
@@ -236,6 +239,9 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
 
         public async Task<ApiResponseModel<string>> UpdateStudent(AddStudentModel model, CancellationToken cancellationToken = default)
         {
+            if (model.StudentData.Any(s => s.StudentStatusId == StudentStatus.Withdrawn))
+                return ApiResponseModel<string>.Failure(new Error("استخدم عملية انسحاب الطالب لتسوية الرسوم."));
+
             var studentUpdated = model.StudentData.FirstOrDefault(x => x.StudentId.HasValue);
 
             if (studentUpdated == null)
@@ -261,6 +267,9 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
 
             if (parent == null || student == null || enrollment == null)
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+
+            if (enrollment.StudentStatusId == StudentStatus.Withdrawn)
+                return ApiResponseModel<string>.Failure(new Error("هذا القيد منسحب."));
 
             var academicStageChanged = enrollment.AcademicStageId != studentUpdated.AcademicStageId;
 
@@ -415,7 +424,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
                     return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
                 }
 
-                if (student.ParentId != parentId)
+                if (student.ParentId != parentId || enrollment.StudentStatusId == StudentStatus.Withdrawn)
                 {
                     await transaction.RollbackAsync(cancellationToken);
                     return ApiResponseModel<string>.Failure(GenericErrors.NotFound);

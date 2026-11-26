@@ -17,9 +17,9 @@ namespace ZayirAlkhayr.Entities.Specifications.School
 
     public class StudentEnrollmentSpecification : BaseSpecification<Student>
     {
-        public StudentEnrollmentSpecification() : base(i => i.StudentEnrollments.Any(e => e.IsCurrent && e.StudentStatusId != Common.StudentStatus.Deleted))
+        public StudentEnrollmentSpecification() : base(i => i.StudentEnrollments.Any(e => e.IsCurrent && e.StudentStatusId == Common.StudentStatus.Present))
         {
-            AddInclude(i => i.StudentEnrollments.Where(i => i.IsCurrent));
+            AddInclude(i => i.StudentEnrollments.Where(e => e.IsCurrent && e.StudentStatusId == Common.StudentStatus.Present));
         }
     }
 

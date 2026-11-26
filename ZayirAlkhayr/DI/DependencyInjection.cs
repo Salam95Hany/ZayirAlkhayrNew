@@ -11,6 +11,8 @@ using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.School.Students.ManageAccount;
 using ZayirAlkhayr.Interfaces.School.Students.ManageFee;
+using ZayirAlkhayr.Interfaces.School.Students.Withdrawal;
+using ZayirAlkhayr.Services.School.Students.Withdrawal;
 using ZayirAlkhayr.Interfaces.School.Students.ManageParent;
 using ZayirAlkhayr.Interfaces.School.Students.ManageStudent;
 using ZayirAlkhayr.Interfaces.School.Students.Setting;
@@ -103,6 +105,7 @@ namespace ZayirAlkhayr.DI
             services.AddScoped<IAcademicYearService, AcademicYearService>();
             services.AddScoped<IFeeTemplateService, FeeTemplateService>();
             services.AddScoped<IFeeTypeService, FeeTypeService>();
+            services.AddScoped<IStudentWithdrawalService, StudentWithdrawalService>();
             services.AddScoped<IStudentFeeService, StudentFeeService>();
             services.AddScoped<IReceivePaymentService, ReceivePaymentService>();
             services.AddScoped<IStudentPaymentService, StudentPaymentService>();

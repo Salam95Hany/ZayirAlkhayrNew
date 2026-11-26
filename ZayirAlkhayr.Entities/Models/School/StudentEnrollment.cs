@@ -15,6 +15,7 @@ namespace ZayirAlkhayr.Entities.Models.School
         public int StudentId { get; set; }
         public int AcademicYearId { get; set; }
         public int AcademicStageId { get; set; }
+        [System.ComponentModel.DataAnnotations.ConcurrencyCheck]
         public StudentStatus StudentStatusId { get; set; }
         public StudyPeriod StudyPeriodId { get; set; }
         public string? StudentStatusReason { get; set; }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
@@ -13,10 +14,12 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
 {
     public class StudentFeeService : IStudentFeeService
     {
+        private readonly ZADbContext _context;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISQLHelper _sQLHelper;
         public StudentFeeService(ZADbContext context, ISQLHelper sQLHelper, IUnitOfWork unitOfWork)
         {
+            _context = context;
             _sQLHelper = sQLHelper;
             _unitOfWork = unitOfWork;
         }
@@ -73,7 +76,13 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
 
         public async Task<ApiResponseModel<string>> AddNewStudentFee(StudentFee Model, CancellationToken cancellationToken = default)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead);
             var StudentFeeRepository = _unitOfWork.Repository<StudentFee>();
+
+            var enrollmentStatus = await _context.StudentEnrollments.Where(e => e.Id == Model.StudentEnrollmentId)
+                .Select(e => e.StudentStatusId).SingleAsync();
+            if (enrollmentStatus == StudentStatus.Withdrawn)
+                return ApiResponseModel<string>.Failure(new Error("تتم معالجة القيد المنسحب من شاشة الطلاب المنسحبين."));
 
             bool StudentFeeExists = await StudentFeeRepository.AnyAsync(x => x.StudentEnrollmentId == Model.StudentEnrollmentId && x.FeeTypeId == Model.FeeTypeId);
             if (StudentFeeExists)
@@ -105,6 +114,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
 
                 await StudentFeeRepository.AddAsync(StudentFee);
                 await _unitOfWork.CompleteAsync();
+                await transaction.CommitAsync();
 
                 return ApiResponseModel<string>.Success(GenericErrors.AddSuccess);
             }
@@ -116,11 +126,17 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
 
         public async Task<ApiResponseModel<string>> UpdateStudentFee(StudentFee model, CancellationToken cancellationToken = default)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead);
             var studentFeeRepository = _unitOfWork.Repository<StudentFee>();
 
             var studentFee = await studentFeeRepository.GetByIdAsync(model.Id);
             if (studentFee == null)
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+
+            var enrollmentStatus = await _context.StudentEnrollments.Where(e => e.Id == studentFee.StudentEnrollmentId)
+                .Select(e => e.StudentStatusId).SingleAsync();
+            if (enrollmentStatus == StudentStatus.Withdrawn)
+                return ApiResponseModel<string>.Failure(new Error("تتم معالجة القيد المنسحب من شاشة الطلاب المنسحبين."));
 
             bool hasPayments = await _unitOfWork.Repository<StudentPayment>().AnyAsync(x => x.StudentFeeId == studentFee.Id && x.IsCancelled != true);
             if (hasPayments)
@@ -153,6 +169,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
                 studentFee.Status = StudentFeeStatus.Pending;
 
                 await _unitOfWork.CompleteAsync();
+                await transaction.CommitAsync();
 
                 return ApiResponseModel<string>.Success(GenericErrors.UpdateSuccess);
             }
@@ -164,11 +181,17 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
 
         public async Task<ApiResponseModel<string>> CancelStudentFee(int StudentFeeId, CancellationToken cancellationToken = default)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead);
             var studentFeeRepository = _unitOfWork.Repository<StudentFee>();
 
             var studentFee = await studentFeeRepository.GetByIdAsync(StudentFeeId);
             if (studentFee == null)
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+
+            var enrollmentStatus = await _context.StudentEnrollments.Where(e => e.Id == studentFee.StudentEnrollmentId)
+                .Select(e => e.StudentStatusId).SingleAsync();
+            if (enrollmentStatus == StudentStatus.Withdrawn)
+                return ApiResponseModel<string>.Failure(new Error("تتم معالجة القيد المنسحب من شاشة الطلاب المنسحبين."));
 
             if (studentFee.PaidAmount > 0)
                 return ApiResponseModel<string>.Failure(GenericErrors.CancelStudentPaymentExist);
@@ -176,6 +199,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
             studentFee.Status = StudentFeeStatus.Cancelled;
 
             await _unitOfWork.CompleteAsync();
+            await transaction.CommitAsync();
 
             return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
         }
@@ -183,6 +207,8 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
         public async Task<List<FormDropdownModel>> GetFeeTemplates(int EnrollmentId)
         {
             var Enrollment = await _unitOfWork.Repository<StudentEnrollment>().GetByIdAsync(EnrollmentId);
+            if (Enrollment == null || Enrollment.StudentStatusId == StudentStatus.Withdrawn)
+                return new List<FormDropdownModel>();
             var results = await _unitOfWork.Repository<FeeTemplate>().GetAllWithSpecAsync(new StudentFeeTemplateSpecification(Enrollment.AcademicYearId, Enrollment.AcademicStageId));
             var data = results.Select(i => new FormDropdownModel
             {

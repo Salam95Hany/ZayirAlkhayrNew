@@ -9,7 +9,7 @@ namespace ZayirAlkhayr.Entities.Specifications.School
 {
     public class StudentFeePaymentSpecification : BaseSpecification<StudentEnrollment>
     {
-        public StudentFeePaymentSpecification(int EnrollmentId) : base(x => x.Id == EnrollmentId && x.IsCurrent)
+        public StudentFeePaymentSpecification(int EnrollmentId) : base(x => x.Id == EnrollmentId && x.IsCurrent && x.StudentStatusId != Common.StudentStatus.Withdrawn)
         {
             AddInclude(x => x.Student);
             AddInclude(x => x.Student.Parent);

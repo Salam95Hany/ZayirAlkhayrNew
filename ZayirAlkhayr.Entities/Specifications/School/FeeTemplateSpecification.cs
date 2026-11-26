@@ -54,7 +54,7 @@ namespace ZayirAlkhayr.Entities.Specifications.School
 
     public class StudentFeeSpecification : BaseSpecification<StudentFee>
     {
-        public StudentFeeSpecification(int EnrollmentId) : base(i => i.StudentEnrollmentId == EnrollmentId && i.Status != StudentFeeStatus.Cancelled)
+        public StudentFeeSpecification(int EnrollmentId) : base(i => i.StudentEnrollmentId == EnrollmentId && i.StudentEnrollment!.StudentStatusId != StudentStatus.Withdrawn && i.Status != StudentFeeStatus.Cancelled)
         {
             AddInclude(i => i.FeeType);
         }
@@ -66,7 +66,7 @@ namespace ZayirAlkhayr.Entities.Specifications.School
             base(i => i.StudentEnrollments.Any(e => e.IsCurrent && e.StudentStatusId != Common.StudentStatus.Deleted
             && e.StudentStatusId != Common.StudentStatus.Withdrawn && e.StudentFees.Any(i => i.Status != StudentFeeStatus.Cancelled)))
         {
-            AddInclude(i => i.StudentEnrollments.Where(i => i.IsCurrent));
+            AddInclude(i => i.StudentEnrollments.Where(e => e.IsCurrent && e.StudentStatusId == StudentStatus.Present && e.StudentFees.Any(f => f.Status != StudentFeeStatus.Cancelled)));
         }
     }
 }

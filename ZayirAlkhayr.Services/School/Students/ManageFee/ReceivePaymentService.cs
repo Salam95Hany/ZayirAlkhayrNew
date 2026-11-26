@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.School;
@@ -14,10 +15,12 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
 {
     public class ReceivePaymentService : IReceivePaymentService
     {
+        private readonly ZADbContext _context;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISQLHelper _sQLHelper;
         public ReceivePaymentService(ZADbContext context, ISQLHelper sQLHelper, IUnitOfWork unitOfWork)
         {
+            _context = context;
             _sQLHelper = sQLHelper;
             _unitOfWork = unitOfWork;
         }
@@ -77,6 +80,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
 
         public async Task<ApiResponseModel<string>> ReceivePayment(StudentPayment model)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead);
             var feeRepository = _unitOfWork.Repository<StudentFee>();
             var paymentRepository = _unitOfWork.Repository<StudentPayment>();
 
@@ -84,6 +88,11 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
 
             if (fee == null)
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+
+            var enrollmentStatus = await _context.StudentEnrollments.Where(e => e.Id == fee.StudentEnrollmentId)
+                .Select(e => e.StudentStatusId).SingleAsync();
+            if (enrollmentStatus == StudentStatus.Withdrawn)
+                return ApiResponseModel<string>.Failure(new Error("تتم معالجة القيد المنسحب من شاشة الطلاب المنسحبين."));
 
             var ReceiptNumberTable = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetReceiptNumberSequences", Array.Empty<SqlParameter>());
             var ReceiptNumber = ReceiptNumberTable.AsEnumerable().FirstOrDefault().Field<string>("ReceiptNumber");
@@ -117,6 +126,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
                     fee.Status = StudentFeeStatus.PartiallyPaid;
 
                 await _unitOfWork.CompleteAsync();
+                await transaction.CommitAsync();
                 return ApiResponseModel<string>.Success(GenericErrors.AddSuccess, payment.Id.ToString());
             }
             catch
@@ -127,6 +137,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
 
         public async Task<ApiResponseModel<string>> CancelPayment(int StudentPaymentId, string CancelledBy)
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead);
             var paymentRepository = _unitOfWork.Repository<StudentPayment>();
             var feeRepository = _unitOfWork.Repository<StudentFee>();
 
@@ -139,6 +150,11 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
 
             if (fee == null)
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
+
+            var enrollmentStatus = await _context.StudentEnrollments.Where(e => e.Id == fee.StudentEnrollmentId)
+                .Select(e => e.StudentStatusId).SingleAsync();
+            if (enrollmentStatus == StudentStatus.Withdrawn)
+                return ApiResponseModel<string>.Failure(new Error("تتم معالجة القيد المنسحب من شاشة الطلاب المنسحبين."));
 
             try
             {
@@ -167,6 +183,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageFee
                 }
 
                 await _unitOfWork.CompleteAsync();
+                await transaction.CommitAsync();
                 return ApiResponseModel<string>.Success(GenericErrors.DeleteSuccess);
             }
             catch
