@@ -32,7 +32,7 @@ export class StudentDataComponent {
   @Input() DetailsMode = false;
   @Output() StudentDetailsChange = new EventEmitter<StudentDetails[]>();
   studentStatus: FormDropdownModel[] = [
-    { value: 1, name: 'مستمر' },
+    { value: 1, name: 'موجود' },
     { value: 2, name: 'منسحب' }
   ];
   Genders: FormDropdownModel[] = [

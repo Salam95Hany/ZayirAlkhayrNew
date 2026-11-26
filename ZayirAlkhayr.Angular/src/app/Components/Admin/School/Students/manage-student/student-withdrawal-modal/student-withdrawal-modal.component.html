@@ -62,7 +62,7 @@
               [disabled]="saving" (click)="load(m)">{{ m }}</button></div>
           </section>
           <section><h3>نتيجة الحساب بعد الانسحاب</h3>
-            <div class="amount" *ngIf="d.student.balance != null; else legacy">
+            <div class="amount" [class.amount--owed-by-student]="d.student.settlementPayer === 'Student'" *ngIf="d.student.balance != null; else legacy">
               <span>{{ d.student.settlementPayer === 'School' ? 'المبلغ المستحق للطالب' : d.student.settlementPayer === 'Student' ? 'المبلغ المستحق على الطالب' : 'الحساب متوازن' }}</span>
               <strong>{{ d.student.settlementAmount | number:'1.2-2' }} ج.م</strong>
             </div>

@@ -23,6 +23,7 @@ dd { margin: 0; font-weight: 650; }
 .months { display: flex; flex-wrap: wrap; gap: .35rem; }
 .selected, .primary { background: #185ba2; color: white; border-color: #185ba2; }
 .amount { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; padding: .7rem; background: #edf8f1; color: #136541; border-radius: .45rem; }
+.amount--owed-by-student { background: #fff1f0; color: #a3212c; }
 .retained { margin-top: .5rem; background: #eef4fc; color: #244e7c; }
 select { width: 100%; }
 footer { border-top: 1px solid #dce6ed; position: sticky; bottom: 0; }

@@ -8,7 +8,7 @@
         <p>{{ item.academicStageName }} · {{ item.academicYear }}</p>
       </div>
       <span class="student-card__status" [class.student-card__status--inactive]="item.studentStatusId == 2">
-        {{ item.studentStatusId == 2 ? 'منسحب' : 'مستمر' }}
+        {{ item.studentStatusId == 2 ? 'منسحب' : 'موجود' }}
       </span>
     </header>
 
