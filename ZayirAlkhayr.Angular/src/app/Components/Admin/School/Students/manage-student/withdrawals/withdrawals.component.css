@@ -1,0 +1,11 @@
+.withdrawals-page { color: #183952; }
+section { padding: 1.2rem; background: white; border: 1px solid #dbe6ed; border-radius: .8rem; }
+header, form { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; }
+header { justify-content: space-between; margin-bottom: 1rem; }
+h1 { font-size: 1.45rem; margin: 0; }
+button, input { border: 1px solid #bfcedb; border-radius: .45rem; padding: .4rem .75rem; }
+button { color: #185785; background: #f0f6fb; }
+.scroll { overflow-x: auto; margin-bottom: .75rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: .7rem; text-align: start; white-space: nowrap; border-bottom: 1px solid #e0e8ee; }
+th { background: #edf4f9; }

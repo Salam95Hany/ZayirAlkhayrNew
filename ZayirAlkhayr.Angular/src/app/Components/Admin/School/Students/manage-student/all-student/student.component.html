@@ -107,8 +107,10 @@
                         <td class="actions-column">
                             <div class="row-actions" *ngIf="item.studentStatusId != 3"><button type="button" class="row-action row-action--view" title="معاينة بيانات الطالب" appRole pageKey="School_ManageStudents_Student" action="canAdd" (click)="openStudentProfile(item)"><i
                     class="fa-regular fa-eye"></i><span>معاينة</span></button><button type="button" class="row-action row-action--print" title="طباعة ملف الطالب" aria-label="طباعة ملف الطالب" appRole pageKey="School_ManageStudents_Student" action="canExport" (click)="DownloadPdfProfile(item)"><i
-                    class="fa-solid fa-print"></i><span>طباعة ملف الطالب</span></button><button type="button" class="row-action row-action--edit" title="تعديل بيانات الطالب" appRole pageKey="School_ManageStudents_Student" action="canEdit" (click)="openUpdateStudentSidePanel(item,true,false)"><i
-                    class="fa-regular fa-pen-to-square"></i><span>تعديل</span></button><button type="button" class="row-action row-action--delete" title="حذف الطالب" appRole pageKey="School_ManageStudents_Student" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)"><i
+                    class="fa-solid fa-print"></i><span>طباعة ملف الطالب</span></button><button *ngIf="item.studentStatusId == 1" type="button" class="row-action row-action--edit" title="تعديل بيانات الطالب" appRole pageKey="School_ManageStudents_Student" action="canEdit" (click)="openUpdateStudentSidePanel(item,true,false)"><i
+                    class="fa-regular fa-pen-to-square"></i><span>تعديل</span></button><button *ngIf="item.studentStatusId == 1" type="button" class="row-action row-action--delete"
+                    appRole pageKey="School_ManageStudents_Student" action="canEdit" (click)="openWithdrawal(item.studentEnrollmentId)">
+                    <i class="fa-solid fa-user-minus"></i><span>سحب طالب</span></button><button *ngIf="item.studentStatusId == 1" type="button" class="row-action row-action--delete" title="حذف الطالب" appRole pageKey="School_ManageStudents_Student" action="canDelete" (click)="openDeleteItemModal(deleteItemModal,item)"><i
                     class="fa-regular fa-trash-can"></i><span>حذف</span></button></div><span class="no-actions" *ngIf="item.studentStatusId == 3">لا توجد إجراءات</span>
                         </td>
                     </tr>

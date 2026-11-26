@@ -71,6 +71,7 @@ export class StudentDataComponent {
   ) { }
 
   ngOnInit(): void {
+    if (!this.DetailsMode) this.studentStatus = this.studentStatus.filter(status => status.value !== 2);
     this.FormInit();
     this.FamilyChildCount = this.StudentDetails.length;
   }

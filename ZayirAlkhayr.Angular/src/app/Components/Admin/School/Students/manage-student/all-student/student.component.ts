@@ -21,6 +21,8 @@ import { AuthService } from '../../../../../../Auth/auth.service';
 import { StudentSidepanelComponent } from './student-sidepanel/student-sidepanel.component';
 import { StudentProfileModalComponent } from '../student-profile-modal/student-profile-modal.component';
 
+import { StudentWithdrawalModalComponent } from '../student-withdrawal-modal/student-withdrawal-modal.component';
+
 @Component({
   selector: 'app-student',
   standalone: true,
@@ -94,6 +96,24 @@ export class StudentComponent {
     });
   }
 
+  openWithdrawal(enrollmentId: number) {
+    if (!enrollmentId) {
+      this.toaster.error('معرّف القيد الدراسي غير متاح. أعد تحميل قائمة الطلاب.');
+      return;
+    }
+    const ref = this.modalService.open(StudentWithdrawalModalComponent, {
+      size: 'xl', centered: true, scrollable: true, backdrop: 'static', keyboard: false, ariaLabelledBy: 'student-withdrawal-title'
+    });
+    ref.componentInstance.enrollmentId = enrollmentId;
+    ref.componentInstance.previewMode = true;
+    ref.closed.subscribe(changed => {
+      if (changed) {
+        this.GetAllStudentData();
+        this.GetAllStudentFilter();
+      }
+    });
+  }
+
   openStudentProfile(item: any) {
     const ref = this.modalService.open(StudentProfileModalComponent, {
       size: 'xl',
@@ -105,7 +125,7 @@ export class StudentComponent {
     ref.componentInstance.studentId = item.id;
     ref.componentInstance.parentId = item.parentId;
     ref.closed.subscribe(result => {
-      if (result?.action === 'edit') {
+      if (result?.action === 'edit' && item.studentStatusId == 1) {
         this.openUpdateStudentSidePanel(item, true, false);
       }
     });

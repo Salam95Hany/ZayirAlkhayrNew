@@ -51,3 +51,6 @@
     .report-option { align-items: stretch; flex-direction: column; }
     .report-option__controls { justify-content: space-between; }
 }
+
+.students-table-wrap { max-width: 100%; overflow-x: auto; }
+.row-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .3rem; }

@@ -1,0 +1,91 @@
+<div dir="rtl" class="withdrawal">
+  <header>
+    <h2 id="student-withdrawal-title"><i class="fa-solid fa-user-minus"></i> {{ previewMode ? 'انسحاب الطالب' : 'تفاصيل انسحاب الطالب' }}</h2>
+    <button class="close-button" type="button" aria-label="إغلاق" [disabled]="saving" (click)="modal.close(changed)">×</button>
+  </header>
+  <div class="body">
+    <p *ngIf="loading" role="status">جارٍ تحميل البيانات…</p>
+    <p *ngIf="error" role="alert">{{ error }} <button type="button" (click)="load()">إعادة المحاولة</button></p>
+    <ng-container *ngIf="data as d">
+      <section class="identity">
+        <div><strong>{{ d.student.name }}</strong><small>رقم الطالب {{ d.student.code }}</small></div>
+        <div><small>المرحلة الدراسية</small>{{ d.student.stage }}</div>
+        <div><small>تاريخ التسجيل</small>{{ d.enrollmentDate | date:'yyyy/MM/dd' }}</div>
+        <div><small>تاريخ الانسحاب</small>{{ (d.student.withdrawalDate | date:'yyyy/MM/dd') || 'غير مسجل' }}</div>
+        <div><small>السنة الدراسية</small>{{ d.student.year }}</div>
+      </section>
+      <div class="layout" [attr.aria-busy]="loading">
+        <main>
+          <section>
+            <h3>تفاصيل الرسوم</h3>
+            <div class="scroll"><table><thead><tr>
+              <th>نوع الرسم</th><th>المبلغ الأصلي</th><th>الخصم</th><th>المدفوع</th><th>المستحق بعد الانسحاب</th><th>حالة الرسم</th>
+            </tr></thead><tbody>
+              <tr *ngFor="let f of d.fees">
+                <td>{{ f.name }}</td><td>{{ f.original | number:'1.2-2' }}</td><td>{{ f.discount | number:'1.2-2' }}</td>
+                <td>{{ f.paid | number:'1.2-2' }}</td><td>{{ (f.due | number:'1.2-2') ?? '—' }}</td>
+                <td>{{ feeStatuses[f.originalStatus] || 'غير محددة' }}</td>
+              </tr>
+              <tr *ngIf="!d.fees.length"><td colspan="6">لا توجد رسوم مسجلة.</td></tr>
+            </tbody><tfoot *ngIf="d.fees.length"><tr><th>الإجمالي الفعّال</th><td>{{ originalTotal | number:'1.2-2' }}</td>
+              <td>{{ discountTotal | number:'1.2-2' }}</td><td>{{ d.totalPaid | number:'1.2-2' }}</td>
+              <td>{{ (d.totalDue | number:'1.2-2') ?? '—' }}</td><td>ج.م</td></tr></tfoot></table></div>
+          </section>
+          <section><h3>الدفعات السابقة</h3><div class="scroll"><table>
+            <thead><tr><th>تاريخ الدفع</th><th>رقم الإيصال</th><th>المبلغ (ج.م)</th><th>طريقة الدفع</th><th>الحالة</th></tr></thead>
+            <tbody><tr *ngFor="let p of payments"><td>{{ p.paymentDate | date:'yyyy/MM/dd' }}</td><td>{{ p.receiptNumber || '—' }}</td>
+              <td>{{ p.amount | number:'1.2-2' }}</td><td>{{ methods[p.paymentMethod] || 'غير محددة' }}</td><td>{{ p.isCancelled ? 'ملغاة' : 'مكتملة' }}</td></tr>
+              <tr *ngIf="!payments.length"><td colspan="5">لا توجد دفعات سابقة.</td></tr></tbody>
+          </table></div></section>
+          <section><h3>{{ d.student.settlementPayer === 'Student' ? 'تحصيل مبلغ التسوية' : 'المبالغ المستردة' }}</h3>
+            <div class="scroll"><table><thead><tr><th>تاريخ السداد</th><th>المبلغ (ج.م)</th><th>طريقة السداد</th><th>الحالة</th></tr></thead>
+              <tbody><tr *ngIf="d.student.status === 2; else noSettlement"><td>{{ d.paidOn | date:'yyyy/MM/dd' }}</td>
+                <td>{{ d.student.settlementAmount | number:'1.2-2' }}</td><td>{{ methods[d.method] }}</td><td>تم السداد</td></tr>
+                <ng-template #noSettlement><tr><td colspan="4">لا توجد حركة سداد مسجلة للتسوية.</td></tr></ng-template></tbody></table></div>
+          </section>
+          <section><h3>ملخص التسوية المالية</h3><dl>
+            <dt>إجمالي المدفوع قبل التسوية</dt><dd>{{ d.totalPaid | number:'1.2-2' }} ج.م</dd>
+            <dt>إجمالي المستحق للمدرسة بعد الانسحاب</dt><dd>{{ (d.totalDue | number:'1.2-2') ?? '—' }}</dd>
+            <dt>المتبقي لسداد التسوية</dt><dd>{{ (d.student.amountOutstanding | number:'1.2-2') ?? '—' }}</dd>
+          </dl></section>
+        </main>
+        <aside>
+          <section><h3>معلومات الانسحاب</h3><dl>
+            <dt>المدة المحتسبة</dt><dd>{{ d.months != null ? d.months + ' شهر' : 'غير مسجلة' }}</dd>
+            <dt>نوع التسوية</dt><dd>{{ d.student.settlementPayer === 'School' ? 'رد مبلغ للطالب' : d.student.settlementPayer === 'Student' ? 'تحصيل من الطالب' : d.student.balance === 0 ? 'متوازنة' : 'غير مسجل' }}</dd>
+            <dt>حالة التسوية</dt><dd>{{ previewMode ? 'معاينة قبل التأكيد' : statuses[d.student.status] || 'لا توجد تسوية مسجلة' }}</dd>
+            <ng-container *ngIf="d.withdrawalReason"><dt>سبب الانسحاب</dt><dd>{{ d.withdrawalReason }}</dd></ng-container>
+          </dl></section>
+          <section *ngIf="previewMode"><h3>عدد الأشهر التي قضاها الطالب في المدرسة</h3>
+            <div class="months" role="group" aria-label="عدد الأشهر"><button type="button" *ngFor="let m of months"
+              [class.selected]="m === selectedMonths" [attr.aria-pressed]="m === selectedMonths"
+              [disabled]="saving" (click)="load(m)">{{ m }}</button></div>
+          </section>
+          <section><h3>نتيجة الحساب بعد الانسحاب</h3>
+            <div class="amount" *ngIf="d.student.balance != null; else legacy">
+              <span>{{ d.student.settlementPayer === 'School' ? 'المبلغ المستحق للطالب' : d.student.settlementPayer === 'Student' ? 'المبلغ المستحق على الطالب' : 'الحساب متوازن' }}</span>
+              <strong>{{ d.student.settlementAmount | number:'1.2-2' }} ج.م</strong>
+            </div>
+            <ng-template #legacy><p>لم تُسجّل تسوية مالية لهذا الانسحاب.</p></ng-template>
+            <div class="amount retained"><span>صافي ما حصلت عليه المدرسة حتى الآن</span>
+              <strong>{{ (d.student.status === 2 ? d.totalPaid - d.student.balance : d.totalPaid) | number:'1.2-2' }} ج.م</strong></div>
+          </section>
+          <section *ngIf="!previewMode && d.student.status === 1" appRole pageKey="School_ManageStudents_Withdrawals" action="canEdit">
+            <label for="withdrawal-method">طريقة سداد كامل المبلغ</label>
+            <select id="withdrawal-method" [(ngModel)]="method" [disabled]="saving || loading">
+              <option [ngValue]="null">اختر طريقة السداد</option><option *ngFor="let pair of methods | keyvalue" [ngValue]="+pair.key">{{ pair.value }}</option>
+            </select>
+          </section>
+        </aside>
+      </div>
+    </ng-container>
+  </div>
+  <footer>
+    <button *ngIf="previewMode" appRole pageKey="School_ManageStudents_Student" action="canEdit" class="primary" type="button"
+      [disabled]="saving || loading || !data" (click)="confirm()">تأكيد الانسحاب</button>
+    <button *ngIf="!previewMode && data?.student.status === 1" appRole pageKey="School_ManageStudents_Withdrawals" action="canEdit"
+      class="primary" type="button" [disabled]="saving || loading || !method" (click)="settle()">
+      {{ data.student.settlementPayer === 'School' ? 'تسجيل رد كامل المبلغ' : 'تسجيل تحصيل كامل المبلغ' }}</button>
+    <button type="button" [disabled]="saving" (click)="modal.close(changed)">إغلاق</button>
+  </footer>
+</div>

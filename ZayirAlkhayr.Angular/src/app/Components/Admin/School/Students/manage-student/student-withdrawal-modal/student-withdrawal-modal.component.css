@@ -1,0 +1,34 @@
+:host { display: block; min-height: 0; overflow: auto; color: #142d4e; }
+.withdrawal { background: #f9fbfd; }
+header, footer, .body { padding: 1rem 1.35rem; }
+header, footer { display: flex; align-items: center; justify-content: space-between; gap: .7rem; background: white; }
+header { border-bottom: 1px solid #dce6ed; }
+h2 { font-size: 1.3rem; margin: 0; }
+h2 i { color: #2069a7; margin-inline-end: .45rem; }
+button, select { border: 1px solid #bccedb; border-radius: .45rem; padding: .42rem .8rem; background: white; color: inherit; }
+button:disabled { opacity: .5; }
+.close-button { border: 0; font-size: 1.6rem; line-height: 1; }
+section { background: white; border: 1px solid #d7e3ed; border-radius: .65rem; padding: .9rem; margin-bottom: .8rem; }
+.identity { display: flex; justify-content: space-between; gap: .8rem; flex-wrap: wrap; }
+.identity small { display: block; color: #526b82; }
+.layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 1rem; }
+h3, label { font-size: 1rem; font-weight: 700; margin-bottom: .8rem; }
+.scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+th, td { padding: .6rem .45rem; border-bottom: 1px solid #e4ecf1; text-align: start; }
+thead, tfoot { background: #edf4f9; }
+dl { display: grid; grid-template-columns: 1fr auto; gap: .7rem; margin: 0; }
+dt { font-weight: 500; }
+dd { margin: 0; font-weight: 650; }
+.months { display: flex; flex-wrap: wrap; gap: .35rem; }
+.selected, .primary { background: #185ba2; color: white; border-color: #185ba2; }
+.amount { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem; padding: .7rem; background: #edf8f1; color: #136541; border-radius: .45rem; }
+.retained { margin-top: .5rem; background: #eef4fc; color: #244e7c; }
+select { width: 100%; }
+footer { border-top: 1px solid #dce6ed; position: sticky; bottom: 0; }
+footer button:last-child { margin-inline-start: auto; }
+@media (max-width: 760px) {
+  .layout { grid-template-columns: minmax(0,1fr); }
+  aside { grid-row: 1; }
+  header, footer, .body { padding: .8rem; }
+}

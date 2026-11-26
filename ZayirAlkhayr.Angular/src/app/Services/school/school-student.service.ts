@@ -7,6 +7,8 @@ import { StudentLookups } from '../../Models/school/student/StudentLookups';
 import { UpdateStudentLookups } from '../../Models/school/student/UpdateStudentLookups';
 import { AddStudentModel } from '../../Models/school/student/AddStudentModel';
 
+import { StudentWithdrawal, WithdrawnStudent } from '../../Models/school/student/StudentWithdrawal';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -46,6 +48,30 @@ export class SchoolStudentService {
 
   DeleteStudent(ParentId: number, StudentId: number) {
     return this.http.get<ApiResponseModel<any>>(this.apiURL + 'Student/DeleteStudent?ParentId=' + ParentId + '&StudentId=' + StudentId);
+  }
+
+  PreviewWithdrawal(enrollmentId: number, months: number) {
+    return this.http.get<ApiResponseModel<StudentWithdrawal>>(this.apiURL + 'StudentWithdrawal/Preview', { params: { enrollmentId, months } });
+  }
+
+  ConfirmWithdrawal(preview: StudentWithdrawal) {
+    return this.http.post<ApiResponseModel<StudentWithdrawal>>(this.apiURL + 'StudentWithdrawal/Confirm', {
+      enrollmentId: preview.student.enrollmentId, months: preview.months, previewDate: preview.student.withdrawalDate,
+      expectedPaid: preview.totalPaid, expectedDue: preview.totalDue
+    });
+  }
+
+  GetWithdrawnStudents(page: number, pageSize: number, search: string) {
+    return this.http.get<ApiResponseModel<WithdrawnStudent[]>>(this.apiURL + 'StudentWithdrawal/GetWithdrawnStudents',
+      { params: { page, pageSize, search } });
+  }
+
+  GetWithdrawalDetails(enrollmentId: number) {
+    return this.http.get<ApiResponseModel<StudentWithdrawal>>(this.apiURL + 'StudentWithdrawal/GetDetails', { params: { enrollmentId } });
+  }
+
+  PayWithdrawalSettlement(enrollmentId: number, method: number) {
+    return this.http.post<ApiResponseModel<string>>(this.apiURL + 'StudentWithdrawal/PaySettlement', { enrollmentId, method });
   }
 
   // ============================= StudentFee ==============================
