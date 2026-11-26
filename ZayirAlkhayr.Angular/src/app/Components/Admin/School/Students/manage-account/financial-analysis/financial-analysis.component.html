@@ -1,0 +1,105 @@
+<div class="students-page analysis" dir="rtl">
+  <app-admin-breadcrumb [TitleList]="titles"></app-admin-breadcrumb>
+  <header class="students-hero">
+    <div><h1>التحليل المالي</h1><span *ngIf="summary as s">من {{ s.from | date:'yyyy/MM/dd' }} إلى {{ s.to | date:'yyyy/MM/dd' }}</span></div>
+    <span class="unit">الجنيه المصري</span>
+  </header>
+  <form class="panel filters" (ngSubmit)="apply()">
+    <label>الفترة<select name="period" [(ngModel)]="period"><option value="month">هذا الشهر</option><option value="today">اليوم</option><option value="year">السنة الدراسية</option><option value="custom">فترة مخصصة</option></select></label>
+    <label *ngIf="period === 'year'">السنة الدراسية<select name="year" [(ngModel)]="year" required><option *ngFor="let y of years" [value]="y.id">{{ y.name }}</option></select></label>
+    <ng-container *ngIf="period === 'custom'">
+      <label>من تاريخ<input type="date" name="from" [(ngModel)]="from" required></label>
+      <label>إلى تاريخ<input type="date" name="to" [(ngModel)]="to" [min]="from" required></label>
+    </ng-container>
+    <label>المرحلة الدراسية<select name="stage" [(ngModel)]="stage"><option value="">كل المراحل</option><option *ngFor="let s of stages" [value]="s.value">{{ s.name }}</option></select></label>
+    <button class="primary" type="submit">تطبيق</button>
+  </form>
+  <p *ngIf="stage" class="hint">مصروفات المدرسة تشمل جميع المراحل.</p>
+  <p role="alert" *ngIf="summaryError">{{ summaryError }} <button (click)="refresh()">إعادة المحاولة</button></p>
+  <p role="status" *ngIf="!summary && !summaryError">جارٍ تحميل الملخص…</p>
+  <ng-container *ngIf="summary as s">
+    <div class="metrics">
+      <button type="button" (click)="ledger(1)"><i class="fa-solid fa-arrow-down"></i><span>إجمالي المقبوضات</span><strong>{{ s.totals.receipts | number:'1.2-2' }}</strong></button>
+      <button type="button" (click)="ledger(2)"><i class="fa-solid fa-arrow-up"></i><span>مصروفات المدرسة</span><strong>{{ s.totals.expenses | number:'1.2-2' }}</strong></button>
+      <button type="button" (click)="ledger(3)"><i class="fa-solid fa-arrow-rotate-left"></i><span>المبالغ المردودة</span><strong>{{ s.totals.refunds | number:'1.2-2' }}</strong></button>
+      <button type="button" class="net" (click)="ledger(0)"><i class="fa-solid fa-scale-balanced"></i><span>صافي حركة الفترة</span><strong>{{ s.totals.net | number:'1.2-2' }}</strong></button>
+    </div>
+    <div class="breakdowns">
+      <section class="panel"><h2>حركة الأموال الشهرية</h2><div class="legend"><span>الوارد</span><span>الصادر</span></div>
+        <div class="months"><div class="month" *ngFor="let m of s.monthly">
+          <strong><bdi>{{ m.year }}/{{ m.month }}</bdi></strong>
+          <div class="bar"><span [style.width.%]="100*m.totals.receipts/maxBar"></span><b>{{ m.totals.receipts | number:'1.2-2' }}</b></div>
+          <div class="bar out"><span [style.width.%]="100*(m.totals.expenses+m.totals.refunds)/maxBar"></span><b>{{ m.totals.expenses+m.totals.refunds | number:'1.2-2' }}</b></div>
+        </div></div><p *ngIf="!s.monthly.length">لا توجد حركات في الفترة.</p>
+      </section>
+      <section class="panel"><h2>المقبوضات حسب طريقة الدفع</h2>
+        <button class="line" *ngFor="let m of s.byMethod" [disabled]="!m.method" (click)="ledger(1,m.method)"><span>{{ methods[m.method || 0] }}</span><b>{{ m.amount | number:'1.2-2' }}</b></button>
+        <p *ngIf="!s.byMethod.length">لا توجد مقبوضات.</p>
+      </section>
+      <section class="panel"><h2>المصروفات حسب النوع</h2>
+        <button class="line" *ngFor="let x of s.byExpenseType" (click)="ledger(2,0,x.expenseTypeId)"><span>{{ x.name }}</span><b>{{ x.amount | number:'1.2-2' }}</b></button>
+        <p *ngIf="!s.byExpenseType.length">لا توجد مصروفات.</p>
+      </section>
+    </div>
+  </ng-container>
+  <section class="panel"><h2>الأرصدة الحالية</h2>
+    <p class="hint">تُعرض الأرصدة القائمة الآن للمرحلة والسنة المختارتين، بصرف النظر عن تاريخ الحركة.</p>
+    <div class="debts" *ngIf="current as c">
+      <button (click)="debt('fees')">رسوم متبقية على الطلاب <b>{{ c.fees | number:'1.2-2' }}</b></button>
+      <button (click)="debt('settlements','school')">تسويات على المدرسة <b>{{ c.school | number:'1.2-2' }}</b></button>
+      <button (click)="debt('settlements','student')">تسويات على الطلاب <b>{{ c.students | number:'1.2-2' }}</b></button>
+    </div>
+    <p *ngIf="!current && !balanceError" role="status">جارٍ تحميل الأرصدة…</p>
+    <p role="alert" *ngIf="balanceError">{{ balanceError }} <button (click)="refresh()">إعادة المحاولة</button></p>
+  </section>
+
+  <section class="panel" #detailPanel>
+    <div class="tabs" role="group" aria-label="تفاصيل التحليل المالي">
+      <button *ngFor="let t of tabs" [attr.aria-pressed]="t.key === tab" [class.active]="t.key === tab" (click)="switchTab(t.key)">{{ t.label }}</button>
+    </div>
+    <form class="filters" (ngSubmit)="find()">
+      <label>البحث<input type="search" name="search" maxlength="200" [(ngModel)]="search" [placeholder]="tab === 'ledger' ? 'الاسم أو الكود أو الإيصال' : 'اسم الطالب أو كوده'"></label>
+      <ng-container *ngIf="tab === 'ledger'">
+        <label>الحركات<select name="group" [(ngModel)]="group" (ngModelChange)="expenseType=null;movementType=0;load()"><option *ngFor="let g of groups; index as i" [ngValue]="i">{{ g }}</option></select></label>
+        <label *ngIf="group === 0 || group === 1">نوع الحركة<select name="movementType" [(ngModel)]="movementType" (ngModelChange)="load()"><option [ngValue]="0">كل الأنواع</option><option *ngFor="let t of (group === 1 ? [1,2] : [1,2,3,4])" [ngValue]="t">{{ types[t] }}</option></select></label>
+        <label>طريقة الدفع<select name="method" [(ngModel)]="method" (ngModelChange)="load()"><option [ngValue]="0">كل الطرق</option><option *ngFor="let m of [1,2,3]" [ngValue]="m">{{ methods[m] }}</option></select></label>
+        <label *ngIf="group === 2">نوع المصروف<select name="expense" [(ngModel)]="expenseType" (ngModelChange)="load()"><option [ngValue]="null">كل الأنواع</option><option *ngFor="let e of summary?.byExpenseType" [ngValue]="e.expenseTypeId">{{ e.name }}</option></select></label>
+        <label class="check"><input type="checkbox" name="cancelled" [(ngModel)]="cancelled" (ngModelChange)="load()">الدفعات الملغاة فقط</label>
+      </ng-container>
+      <ng-container *ngIf="tab === 'settlements'">
+        <label>الجهة المدينة<select name="payer" [(ngModel)]="payer" (ngModelChange)="load()"><option value="">كل الجهات</option><option value="school">المدرسة</option><option value="student">الطالب</option></select></label>
+        <label>الحالة<select name="status" [(ngModel)]="status" (ngModelChange)="outstanding=false;load()"><option [ngValue]="0">كل الحالات</option><option *ngFor="let n of [1,2,3]" [ngValue]="n">{{ statuses[n] }}</option></select></label>
+      </ng-container>
+      <label class="check" *ngIf="tab !== 'ledger'"><input type="checkbox" name="outstanding" [(ngModel)]="outstanding" (ngModelChange)="status=0;load()">المستحق فقط</label>
+      <button type="submit">بحث</button>
+      <button *ngIf="tab === 'fees' && feeType != null" type="button" (click)="feeType=null;load()">عرض كل أنواع الرسوم</button>
+      <button type="button" *ngIf="tab === 'ledger'" appRole [pageKey]="pageKey" action="canExport" [disabled]="!total || busy || exporting" (click)="exportLedger()">{{ exporting ? 'جارٍ التصدير…' : 'تصدير Excel' }}</button>
+    </form>
+    <p role="status" *ngIf="busy">جارٍ تحميل التفاصيل…</p>
+    <p role="alert" *ngIf="error">{{ error }} <button (click)="load(page)">إعادة المحاولة</button></p>
+    <ng-container *ngIf="!busy && !error">
+      <div *ngIf="tab === 'fees' && balances?.byFeeType.length" class="scroll"><table><caption>إجمالي الرسوم حسب النوع</caption><thead><tr><th>نوع الرسم</th><th>الأصل</th><th>الخصم</th><th>الصافي</th><th>المدفوع</th><th>المتبقي</th></tr></thead><tbody>
+        <tr *ngFor="let f of balances.byFeeType"><td><button (click)="feeType=f.feeTypeId;load()">{{ f.feeType }}</button></td><td>{{ f.original | number:'1.2-2' }}</td><td>{{ f.discount | number:'1.2-2' }}</td><td>{{ f.net | number:'1.2-2' }}</td><td>{{ f.paid | number:'1.2-2' }}</td><td>{{ f.remaining | number:'1.2-2' }}</td></tr>
+      </tbody></table></div>
+      <div *ngIf="tab === 'settlements' && balances?.bySettlementStatus.length" class="scroll"><table><caption>إجمالي التسويات حسب الحالة</caption><thead><tr><th>الحالة</th><th>على المدرسة</th><th>على الطلاب</th></tr></thead><tbody>
+        <tr *ngFor="let s of balances.bySettlementStatus"><td>{{ statuses[s.status] }}</td><td>{{ s.schoolOwes | number:'1.2-2' }}</td><td>{{ s.studentOwes | number:'1.2-2' }}</td></tr>
+      </tbody></table></div>
+      <div class="scroll" *ngIf="total" tabindex="0" role="region" aria-label="السجلات المطابقة">
+        <table *ngIf="tab === 'ledger'"><thead><tr><th>التاريخ</th><th>نوع الحركة</th><th>الطالب أو البند</th><th>المرجع</th><th>طريقة الدفع</th><th *ngIf="cancelled">المبلغ الملغى</th><th>وارد</th><th>صادر</th><th>التفاصيل</th></tr></thead><tbody>
+          <tr *ngFor="let r of movements"><td>{{ r.date | date:'yyyy/MM/dd' }}</td><td>{{ types[r.type] }}</td><td>{{ r.name }} <small>{{ r.studentCode }}</small></td><td>{{ r.reference || r.id }}</td><td>{{ methods[r.method || 0] }}</td><td *ngIf="cancelled">{{ r.amount | number:'1.2-2' }}</td><td>{{ r.incoming | number:'1.2-2' }}</td><td>{{ r.outgoing | number:'1.2-2' }}</td><td>
+            <button *ngIf="r.type === 1 && !r.isCancelled && auth.hasPageAccess('School_ManageFee_PaymentLogs')" appRole pageKey="School_ManageFee_PaymentLogs" action="canExport" (click)="receipt(r)">تحميل الإيصال</button>
+            <button *ngIf="(r.type === 2 || r.type === 4) && auth.hasPageAccess('School_ManageStudents_Withdrawals')" (click)="openSettlement(r.enrollmentId)">تفاصيل التسوية</button>
+            <a *ngIf="r.type === 3 && auth.hasPageAccess('School_ManageAccounts_SchoolExpenses')" routerLink="/admin/school/school-expenses">سجل المصروفات</a></td></tr>
+        </tbody></table>
+        <table *ngIf="tab === 'fees'"><thead><tr><th>الطالب</th><th>المرحلة / السنة</th><th>الرسم</th><th>الأصل</th><th>الخصم</th><th>الصافي</th><th>المدفوع</th><th>المتبقي</th><th>القسط القادم</th></tr></thead><tbody>
+          <tr *ngFor="let f of balances.fees"><td>{{ f.student }} <small>{{ f.code }}</small></td><td>{{ f.stage }} / {{ f.year }}</td><td>{{ f.feeType }}</td><td>{{ f.original | number:'1.2-2' }}</td><td>{{ f.discount | number:'1.2-2' }}</td><td>{{ f.net | number:'1.2-2' }}</td><td>{{ f.paid | number:'1.2-2' }}</td><td>{{ f.remaining | number:'1.2-2' }}</td><td>{{ (f.nextAmount | number:'1.2-2') ?? '—' }} <small>{{ f.nextInstallmentDate | date:'yyyy/MM/dd' }}</small></td></tr>
+        </tbody></table>
+        <table *ngIf="tab === 'settlements'"><thead><tr><th>الطالب</th><th>المرحلة / السنة</th><th>الانسحاب</th><th>الجهة المدينة</th><th>مبلغ التسوية</th><th>الحالة</th><th>تاريخ السداد</th><th>التفاصيل</th></tr></thead><tbody>
+          <tr *ngFor="let s of balances.settlements"><td>{{ s.student }} <small>{{ s.code }}</small></td><td>{{ s.stage }} / {{ s.year }}</td><td>{{ s.withdrawalDate | date:'yyyy/MM/dd' }}</td><td>{{ s.balance > 0 ? 'المدرسة' : s.balance < 0 ? 'الطالب' : '—' }}</td><td>{{ (s.balance < 0 ? -s.balance : s.balance) | number:'1.2-2' }}</td><td>{{ statuses[s.status] }}</td><td>{{ (s.paidOn | date:'yyyy/MM/dd') || '—' }}</td><td><button *ngIf="auth.hasPageAccess('School_ManageStudents_Withdrawals')" (click)="openSettlement(s.enrollmentId)">تفاصيل التسوية</button></td></tr>
+        </tbody></table>
+      </div>
+      <p *ngIf="!total">لا توجد سجلات مطابقة.</p>
+      <app-za-pagination *ngIf="total" [currentPage]="page" [pageSize]="pageSize" [totalCount]="total" (pageChanged)="load($event.page)"></app-za-pagination>
+    </ng-container>
+  </section>
+</div>

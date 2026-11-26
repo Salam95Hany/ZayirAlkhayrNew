@@ -3,6 +3,7 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { PagingFilterModel } from '../../Models/shared/PagingFilterModel ';
 import { ApiResponseModel } from '../../Models/shared/ErrorResponseModel';
+import { AnalysisParams, FinancialSummary, FinancialMovement, FinancialBalances } from '../../Models/school/FinancialAnalysis';
 import { FormDropdownModel } from '../../Models/shared/FormDropdownModel';
 
 @Injectable({
@@ -11,6 +12,18 @@ import { FormDropdownModel } from '../../Models/shared/FormDropdownModel';
 export class SchoolAccountService {
   apiURL = environment.apiUrl;
   constructor(private http: HttpClient) { }
+
+  GetFinancialSummary(params: AnalysisParams) {
+    return this.http.get<ApiResponseModel<FinancialSummary>>(this.apiURL + 'FinancialAnalysis/GetSummary', { params });
+  }
+
+  GetFinancialTransactions(params: AnalysisParams) {
+    return this.http.get<ApiResponseModel<FinancialMovement[]>>(this.apiURL + 'FinancialAnalysis/GetTransactions', { params });
+  }
+
+  GetFinancialBalances(params: AnalysisParams) {
+    return this.http.get<ApiResponseModel<FinancialBalances>>(this.apiURL + 'FinancialAnalysis/GetOutstandingBalances', { params });
+  }
 
   // ============================= SchoolExpenses ==============================
 

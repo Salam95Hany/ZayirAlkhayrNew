@@ -396,6 +396,14 @@ export class MenueService {
           pageKey: 'School_ManageAccounts',
           subMenus: [
             {
+              displayName: 'التحليل المالي',
+              menuItem: 'financial-analysis',
+              description: 'حركة الأموال والأرصدة والتسويات',
+              icon: 'uil uil-chart-line',
+              route: '/admin/school/financial-analysis',
+              pageKey: 'School_ManageAccounts_FinancialAnalysis',
+            },
+            {
               displayName: 'المصروفات',
               menuItem: 'school-expenses',
               description: 'تتبع و إدارة المصروفات اليومية',

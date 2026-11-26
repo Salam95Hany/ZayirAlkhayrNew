@@ -117,6 +117,12 @@ export const SchoolRoutes: Routes = [
             },
             // ======================= Manage Accounts ==================================
             {
+                path: 'financial-analysis',
+                loadComponent: () => import('./Students/manage-account/financial-analysis/financial-analysis.component').then(m => m.FinancialAnalysisComponent),
+                canActivate: [authGuard],
+                data: { pageKey: 'School_ManageAccounts_FinancialAnalysis' }
+            },
+            {
                 path: 'school-expenses',
                 loadComponent: () =>
                     import('./Students/manage-account/school-expenses/school-expenses.component').then(m => m.SchoolExpensesComponent),

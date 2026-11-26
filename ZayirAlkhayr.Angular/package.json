@@ -34,6 +34,7 @@
         "rxjs": "~7.8.0",
         "swiper": "^9.4.1",
         "tslib": "^2.3.0",
+        "write-excel-file": "2.3.10",
         "zone.js": "~0.14.10"
     },
     "devDependencies": {
