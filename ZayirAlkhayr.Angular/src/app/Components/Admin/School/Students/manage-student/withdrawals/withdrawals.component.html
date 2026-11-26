@@ -1,26 +1,45 @@
-<div dir="rtl" class="withdrawals-page">
+<div dir="rtl" class="students-page withdrawals-page">
   <app-admin-breadcrumb [TitleList]="titles"></app-admin-breadcrumb>
-  <section>
-    <header><h1>الطلاب المنسحبون</h1>
-      <form (ngSubmit)="searchStudents()"><input type="search" name="search" [(ngModel)]="search"
-        placeholder="اسم الطالب أو كوده" aria-label="اسم الطالب أو كوده"><button type="submit">بحث</button></form>
-    </header>
-    <p *ngIf="loading" role="status">جارٍ تحميل الطلاب…</p>
-    <p *ngIf="error" role="alert">{{ error }} <button type="button" (click)="load(page)">إعادة المحاولة</button></p>
-    <ng-container *ngIf="!loading && !error">
-      <div class="scroll"><table>
-        <thead><tr><th>اسم الطالب</th><th>كود الطالب</th><th>المرحلة</th><th>السنة الدراسية</th><th>تاريخ الانسحاب</th>
+
+  <header class="students-hero">
+    <h1>الطلاب المنسحبون</h1>
+    <div class="hero-metric" *ngIf="!loading && !error">
+      <span class="hero-metric__icon hero-metric__icon--teal" aria-hidden="true"><i class="fa-solid fa-user-graduate"></i></span>
+      <div><small>عدد النتائج</small><strong>{{ total }}</strong></div>
+    </div>
+  </header>
+
+  <section class="students-panel" aria-label="سجل الانسحابات">
+    <div class="students-toolbar">
+      <form role="search" (ngSubmit)="searchStudents()">
+        <label class="search-field"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input type="search" name="search" [(ngModel)]="search" placeholder="اسم الطالب أو كوده" aria-label="اسم الطالب أو كوده">
+        </label>
+        <button class="toolbar-button search-button" type="submit">بحث</button>
+      </form>
+      <app-za-pagination *ngIf="!loading && !error && total > 0" [currentPage]="page" [pageSize]="pageSize"
+        [totalCount]="total" (pageChanged)="load($event.page)"></app-za-pagination>
+    </div>
+
+    <p class="feedback" *ngIf="loading" role="status">جارٍ تحميل الطلاب…</p>
+    <p class="feedback" *ngIf="error" role="alert">{{ error }} <button type="button" class="toolbar-button" (click)="load(page)">إعادة المحاولة</button></p>
+    <div *ngIf="!loading && !error" class="students-table-wrap" role="region" aria-label="جدول الطلاب المنسحبين" tabindex="0">
+      <table class="students-table">
+        <thead><tr><th>الطالب</th><th>المرحلة</th><th>السنة الدراسية</th><th>تاريخ الانسحاب</th>
           <th>جهة السداد</th><th>مبلغ التسوية (ج.م)</th><th>حالة التسوية</th><th>التفاصيل</th></tr></thead>
-        <tbody><tr *ngFor="let s of rows">
-          <td>{{ s.name }}</td><td>{{ s.code }}</td><td>{{ s.stage }}</td><td>{{ s.year }}</td>
-          <td>{{ (s.withdrawalDate | date:'yyyy/MM/dd') || 'غير مسجل' }}</td>
-          <td>{{ s.settlementPayer === 'School' ? 'المدرسة' : s.settlementPayer === 'Student' ? 'الطالب' : '—' }}</td>
-          <td>{{ (s.settlementAmount | number:'1.2-2') ?? '—' }}</td><td>{{ statuses[s.status] || 'لا توجد تسوية مسجلة' }}</td>
-          <td><button type="button" (click)="openDetails(s)">عرض التفاصيل</button></td>
-        </tr><tr *ngIf="!rows.length"><td colspan="9">لا توجد سجلات مطابقة.</td></tr></tbody>
-      </table></div>
-      <app-za-pagination *ngIf="total > 0" [currentPage]="page" [pageSize]="pageSize" [totalCount]="total"
-        (pageChanged)="load($event.page)"></app-za-pagination>
-    </ng-container>
+        <tbody>
+          <tr *ngFor="let s of rows">
+            <td><div class="student-identity"><span class="student-avatar" aria-hidden="true">{{ s.name?.charAt(0) }}</span>
+              <div><strong>{{ s.name }}</strong><small><bdi>{{ s.code }}</bdi></small></div></div></td>
+            <td>{{ s.stage }}</td><td>{{ s.year }}</td><td>{{ (s.withdrawalDate | date:'yyyy/MM/dd') || 'غير مسجل' }}</td>
+            <td>{{ s.settlementPayer === 'School' ? 'المدرسة' : s.settlementPayer === 'Student' ? 'الطالب' : '—' }}</td>
+            <td class="money">{{ (s.settlementAmount | number:'1.2-2') ?? '—' }}</td>
+            <td><span class="student-status" [class.pending]="s.status === 1" [class.paid]="s.status === 2">{{ statuses[s.status] || 'لا توجد تسوية مسجلة' }}</span></td>
+            <td><button class="row-action details-button" type="button" (click)="openDetails(s)"><i class="fa-regular fa-eye" aria-hidden="true"></i> عرض التفاصيل</button></td>
+          </tr>
+          <tr *ngIf="!rows.length"><td class="feedback" colspan="8">لا توجد سجلات مطابقة.</td></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
 </div>

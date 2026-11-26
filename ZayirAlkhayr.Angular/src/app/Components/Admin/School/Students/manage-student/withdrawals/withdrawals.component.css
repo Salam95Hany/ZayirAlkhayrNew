@@ -1,11 +1,17 @@
-.withdrawals-page { color: #183952; }
-section { padding: 1.2rem; background: white; border: 1px solid #dbe6ed; border-radius: .8rem; }
-header, form { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; }
-header { justify-content: space-between; margin-bottom: 1rem; }
-h1 { font-size: 1.45rem; margin: 0; }
-button, input { border: 1px solid #bfcedb; border-radius: .45rem; padding: .4rem .75rem; }
-button { color: #185785; background: #f0f6fb; }
-.scroll { overflow-x: auto; margin-bottom: .75rem; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: .7rem; text-align: start; white-space: nowrap; border-bottom: 1px solid #e0e8ee; }
-th { background: #edf4f9; }
+:host, .students-panel { display: block; min-width: 0; }
+form, .search-field { display: flex; align-items: center; gap: .55rem; min-width: 0; }
+.search-field { padding: .55rem .8rem; border: 1px solid var(--border); border-radius: .7rem; color: var(--muted); background: #f8fafb; }
+.search-field:focus-within { outline: 2px solid var(--teal); }
+.search-field input { border: 0; outline: 0; background: transparent; min-width: 0; width: 100%; }
+.students-page .search-button { background: var(--navy); color: white; }
+.students-table { min-width: 49rem; }
+.money { font-weight: 750; font-variant-numeric: tabular-nums; }
+.student-status { color: #516575; background: #edf2f5; }
+.pending { color: #82550b; background: #fff3d9; }
+.paid { color: #08765c; background: #e4f7f0; }
+.students-page .details-button { color: #0f706a; background: #eff9f8; border: 1px solid #cee5e3; }
+.feedback { text-align: center; padding: 1.5rem; margin: 0; }
+@media (max-width: 640px) {
+  form { width: 100%; }
+  .search-field { flex: 1; }
+}
