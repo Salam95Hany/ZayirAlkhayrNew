@@ -62,7 +62,7 @@ export class StudentFeesComponent {
     this.FormInit();
     this.GetAllStudentFeeData();
     this.GetAllStudentFeeFilters();
-    this.GetCurrentAcademicYearFinancialSummary();
+    // this.GetCurrentAcademicYearFinancialSummary();
     this.GetStudents();
     this.GetDiscountTypes();
   }
@@ -180,12 +180,12 @@ export class StudentFeesComponent {
     });
   }
 
-  FeeSummary: any;
-  GetCurrentAcademicYearFinancialSummary() {
-    this.studentService.GetCurrentAcademicYearFinancialSummary().subscribe(data => {
-      this.FeeSummary = data.results[0];
-    });
-  }
+  // FeeSummary: any;
+  // GetCurrentAcademicYearFinancialSummary() {
+  //   this.studentService.GetCurrentAcademicYearFinancialSummary().subscribe(data => {
+  //     this.FeeSummary = data.results[0];
+  //   });
+  // }
 
   GetAllStudentFeeData() {
     this.showLoader = true;
