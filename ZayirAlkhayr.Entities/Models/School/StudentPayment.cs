@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Auth;
 
 namespace ZayirAlkhayr.Entities.Models.School
 {
@@ -23,6 +24,11 @@ namespace ZayirAlkhayr.Entities.Models.School
         public string? CancelledBy { get; set; }
         public DateTime? CancelledDate { get; set; }
         public bool IsCancelled { get; set; }
+
+        [ForeignKey(nameof(CancelledBy))]
+        [Newtonsoft.Json.JsonIgnore]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public AdminUser? CancelledByUser { get; set; }
 
         // Navigation
         public virtual StudentFee? StudentFee { get; set; } = null!;
