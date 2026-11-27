@@ -1,12 +1,9 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Models.School;
-using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.School.Students.ManageAccount;
 using ZayirAlkhayr.Services.Common;
@@ -17,55 +14,116 @@ namespace ZayirAlkhayr.Services.School.Students.ManageAccount
     {
         private readonly ZADbContext _context;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ISQLHelper _sQLHelper;
-        public SchoolExpensesService(ZADbContext context, ISQLHelper sQLHelper, IUnitOfWork unitOfWork)
+        public SchoolExpensesService(ZADbContext context, IUnitOfWork unitOfWork)
         {
             _context = context;
-            _sQLHelper = sQLHelper;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ApiResponseModel<DataSet>> GetExpensesData(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<SchoolExpensePageDto>> GetExpensesData(PagingFilterModel PagingFilter)
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
-            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
+            var filters = PagingFilter.FilterList.ToLookup(f => f.CategoryName, StringComparer.OrdinalIgnoreCase);
+            var filtered = FilterExpenses(filters);
+            var page = await filtered.OrderByDescending(e => e.ExpensesDate).ThenByDescending(e => e.Id)
+                .Skip(checked((PagingFilter.Currentpage - 1) * PagingFilter.Pagesize)).Take(PagingFilter.Pagesize)
+                .Select(e => new SchoolExpenseRowDto
+                {
+                    Id = e.Id,
+                    ExpensesTypeId = e.ExpensesTypeId,
+                    ExpensesTypeName = e.ExpensesType!.Name,
+                    UserId = e.InsertUser,
+                    CreatedBy = e.CreatedBy!.UserName,
+                    DonationMethodId = e.DonationMethodId,
+                    TotalValue = e.TotalValue,
+                    Details = e.Details,
+                    InsertDate = e.InsertDate,
+                    ExpensesDate = e.ExpensesDate,
+                    TotalCount = filtered.Count()
+                }).ToListAsync();
 
-            var Params = new SqlParameter[6];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@FromDate", FromDate);
-            Params[2] = new SqlParameter("@ToDate", ToDate);
-            Params[3] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[4] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            Params[5] = new SqlParameter("@IsFilter", false);
-            var dt = await _sQLHelper.ExecuteDatasetAsync("school.SP_GetAllExpensesDataWithFilter", Params);
-            return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
+            return ApiResponseModel<SchoolExpensePageDto>.Success(GenericErrors.GetSuccess,
+                new SchoolExpensePageDto { Table = page }, page.FirstOrDefault()?.TotalCount ?? 0);
         }
 
         public async Task<ApiResponseModel<List<FilterModel>>> GetExpensesFilters(PagingFilterModel PagingFilter)
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
-            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
-            var Params = new SqlParameter[6];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@FromDate", FromDate);
-            Params[2] = new SqlParameter("@ToDate", ToDate);
-            Params[3] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[4] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            Params[5] = new SqlParameter("@IsFilter", true);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetAllExpensesDataWithFilter", Params);
-            var Filters = dt.ToGroupedFilters();
-            return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
+            var expenses = ExpensesWithCreator();
+            var types = await expenses.GroupBy(e => new { e.ExpensesTypeId, e.ExpensesType!.Name })
+                .Select(g => new { g.Key.ExpensesTypeId, g.Key.Name, Count = g.Count() }).ToListAsync();
+            var users = await expenses.GroupBy(e => new { e.InsertUser, e.CreatedBy!.UserName })
+                .Select(g => new { g.Key.InsertUser, g.Key.UserName, Count = g.Count() }).ToListAsync();
+            var methods = await expenses.Where(e => e.DonationMethodId != 0).GroupBy(e => e.DonationMethodId)
+                .Select(g => new { Id = g.Key, Count = g.Count() }).ToListAsync();
+            var percentages = await _context.Percentages.GroupBy(p => p.Value)
+                .Select(g => new { Value = g.Key, Count = g.Count() }).ToListAsync();
+
+            var groups = new List<FilterModel>();
+            AddGroup("SearchText", "التفاصيل", "SearchText", [Item("", "", "")]);
+            AddGroup("DateRange", "اختر التاريخ", "DateRange", [Item("", "", "")]);
+            AddGroup("ExpensesType", "نوع المصروف", "Checkbox", types.Select(t => Item(t.ExpensesTypeId.ToString(), t.Name, t.Count.ToString())));
+            AddGroup("Users", "المستخدمين", "Checkbox", users.Select(u => Item(u.InsertUser, u.UserName, u.Count.ToString())));
+            AddGroup("DonationMethod", "طريقة الدفع", "Checkbox", methods.Select(m => Item(m.Id.ToString(),
+                m.Id switch { 1 => "فودافون كاش", 2 => "انستا باي", 3 => "نقداً", _ => null }, m.Count.ToString())));
+            AddGroup("Percentage", "النسب المئوية", "Checkbox", percentages.Select(p =>
+            {
+                var value = p.Value.ToString("G6", CultureInfo.InvariantCulture);
+                return Item(value, value, p.Count.ToString());
+            }));
+            return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, groups);
+
+            static FilterModel Item(string? id, string? key, string count) =>
+                new() { ItemId = id, ItemKey = key, ItemValue = count };
+
+            void AddGroup(string category, string label, string type, IEnumerable<FilterModel> items)
+            {
+                var options = items.ToList();
+                if (options.Count == 0)
+                    return;
+                foreach (var option in options)
+                    option.CategoryName = category;
+                groups.Add(new FilterModel { CategoryName = category, CategoryDisplayName = label, FilterType = type, FilterItems = options });
+            }
         }
 
         public async Task<ApiResponseModel<List<SchoolExpenseStatisticsDto>>> GetExpensesStatistics(PagingFilterModel PagingFilter)
         {
             var filters = PagingFilter.FilterList.ToLookup(f => f.CategoryName, StringComparer.OrdinalIgnoreCase);
             var expenses = _context.Expenses;
-            // Older expenses may reference a user who no longer exists.
-            var filtered = expenses.Where(e => _context.Users.Any(user => user.Id == e.InsertUser));
+            var filtered = FilterExpenses(filters);
 
+            // Use SQL Server's current month, independently of the selected filters.
+            var monthExpenses = from e in expenses
+                                let start = EF.Functions.DateFromParts(DateTime.Now.Year, DateTime.Now.Month, 1)
+                                where e.ExpensesDate >= start && e.ExpensesDate < start.AddMonths(1)
+                                select e;
+
+            var totals = await filtered.GroupBy(e => 1)
+                .Select(g => new { IsCurrentMonth = false, Amount = g.Sum(e => e.TotalValue) })
+                .Concat(monthExpenses.GroupBy(e => 1)
+                    .Select(g => new { IsCurrentMonth = true, Amount = g.Sum(e => e.TotalValue) }))
+                .ToListAsync();
+
+            var total = totals.FirstOrDefault(x => !x.IsCurrentMonth)?.Amount;
+            var month = totals.FirstOrDefault(x => x.IsCurrentMonth)?.Amount;
+            double.TryParse(filters["Percentage"].LastOrDefault()?.ItemId, NumberStyles.Float,
+                CultureInfo.InvariantCulture, out var percentage);
+
+            var statistics = new SchoolExpenseStatisticsDto
+            {
+                TotalMoney = total,
+                CurrentMonthMony = month,
+                TotalMoneyPercentage = total.GetValueOrDefault() * percentage / 100,
+                CurrentMonthMonyPercentage = month.GetValueOrDefault() * percentage / 100
+            };
+            return ApiResponseModel<List<SchoolExpenseStatisticsDto>>.Success(GenericErrors.GetSuccess, [statistics], 0);
+        }
+
+        private IQueryable<Expense> ExpensesWithCreator() =>
+            _context.Expenses.Where(e => _context.Users.Any(user => user.Id == e.InsertUser));
+
+        private IQueryable<Expense> FilterExpenses(ILookup<string, FilterModel> filters)
+        {
+            var filtered = ExpensesWithCreator();
             var dates = filters["DateRange"].FirstOrDefault();
             if (!string.IsNullOrEmpty(dates?.From) && !string.IsNullOrEmpty(dates.To))
             {
@@ -93,31 +151,7 @@ namespace ZayirAlkhayr.Services.School.Students.ManageAccount
             if (search != null)
                 filtered = filtered.Where(e => EF.Functions.Like(e.Details!, "%" + search + "%"));
 
-            // Use SQL Server's current month, independently of the selected filters.
-            var monthExpenses = from e in expenses
-                                let start = EF.Functions.DateFromParts(DateTime.Now.Year, DateTime.Now.Month, 1)
-                                where e.ExpensesDate >= start && e.ExpensesDate < start.AddMonths(1)
-                                select e;
-
-            var totals = await filtered.GroupBy(e => 1)
-                .Select(g => new { IsCurrentMonth = false, Amount = g.Sum(e => e.TotalValue) })
-                .Concat(monthExpenses.GroupBy(e => 1)
-                    .Select(g => new { IsCurrentMonth = true, Amount = g.Sum(e => e.TotalValue) }))
-                .ToListAsync();
-
-            var total = totals.FirstOrDefault(x => !x.IsCurrentMonth)?.Amount;
-            var month = totals.FirstOrDefault(x => x.IsCurrentMonth)?.Amount;
-            double.TryParse(filters["Percentage"].LastOrDefault()?.ItemId, NumberStyles.Float,
-                CultureInfo.InvariantCulture, out var percentage);
-
-            var statistics = new SchoolExpenseStatisticsDto
-            {
-                TotalMoney = total,
-                CurrentMonthMony = month,
-                TotalMoneyPercentage = total.GetValueOrDefault() * percentage / 100,
-                CurrentMonthMonyPercentage = month.GetValueOrDefault() * percentage / 100
-            };
-            return ApiResponseModel<List<SchoolExpenseStatisticsDto>>.Success(GenericErrors.GetSuccess, [statistics], 0);
+            return filtered;
         }
 
         public async Task<ApiResponseModel<string>> AddNewExpenses(Expense Model)
