@@ -184,34 +184,34 @@ export class FinancialAnalysisComponent implements OnInit, OnDestroy {
   }
 
   async exportLedger() {
-    if (this.exporting || !this.total || this.tab !== 'ledger') return;
-    this.exporting = true;
-    const params = this.ledgerParams();
-    try {
-      const {default:writeExcel} = await import('write-excel-file');
-      const headers = ['التاريخ','الحركة','الاسم أو البند','كود الطالب','المرجع','طريقة الدفع','المبلغ','وارد','صادر','الحالة'];
-      const rows: (string | number)[][] = [];
-      const seen = new Set<string>();
-      let page = 1;
-      let expected: number;
-      do {
-        const r = await firstValueFrom(this.service.GetFinancialTransactions({...params,page,pageSize:200}).pipe(takeUntilDestroyed(this.destroyRef)));
-        if (!r.isSuccess) throw new Error(r.message);
-        expected ??= r.totalCount;
-        if (expected !== r.totalCount || (!r.results.length && rows.length < expected)) throw new Error('تغير الكشف أثناء التصدير. أعد المحاولة.');
-        for (const m of r.results) {
-          const key = m.type + ':' + m.id;
-          if (seen.has(key)) throw new Error('تغير الكشف أثناء التصدير. أعد المحاولة.');
-          seen.add(key);
-          rows.push([m.date.slice(0,10),this.types[m.type],m.name,m.studentCode || '',m.reference || String(m.id),
-          this.methods[m.method ?? 0],m.amount,m.incoming,m.outgoing,m.isCancelled?'ملغاة':'مسجلة']);
-        }
-        page++;
-      } while (rows.length < expected);
-      await writeExcel([headers.map(value=>({value,fontWeight:'bold' as const})),...rows.map(row=>row.map(value=>
-        typeof value === 'number' ? {type:Number,value,format:'#,##0.00'} : {type:String,value}))],
-        {sheet:'كشف الحركة',fileName:'كشف الحركة المالية.xlsx',columns:headers.map(()=>({width:20})),stickyRowsCount:1});
-    } catch (e) { this.toast.error(e instanceof Error && /[ء-ي]/.test(e.message) ? e.message : 'تعذر تصدير الكشف.'); }
-    finally { this.exporting = false; }
+    // if (this.exporting || !this.total || this.tab !== 'ledger') return;
+    // this.exporting = true;
+    // const params = this.ledgerParams();
+    // try {
+    //   const {default:writeExcel} = await import('write-excel-file');
+    //   const headers = ['التاريخ','الحركة','الاسم أو البند','كود الطالب','المرجع','طريقة الدفع','المبلغ','وارد','صادر','الحالة'];
+    //   const rows: (string | number)[][] = [];
+    //   const seen = new Set<string>();
+    //   let page = 1;
+    //   let expected: number;
+    //   do {
+    //     const r = await firstValueFrom(this.service.GetFinancialTransactions({...params,page,pageSize:200}).pipe(takeUntilDestroyed(this.destroyRef)));
+    //     if (!r.isSuccess) throw new Error(r.message);
+    //     expected ??= r.totalCount;
+    //     if (expected !== r.totalCount || (!r.results.length && rows.length < expected)) throw new Error('تغير الكشف أثناء التصدير. أعد المحاولة.');
+    //     for (const m of r.results) {
+    //       const key = m.type + ':' + m.id;
+    //       if (seen.has(key)) throw new Error('تغير الكشف أثناء التصدير. أعد المحاولة.');
+    //       seen.add(key);
+    //       rows.push([m.date.slice(0,10),this.types[m.type],m.name,m.studentCode || '',m.reference || String(m.id),
+    //       this.methods[m.method ?? 0],m.amount,m.incoming,m.outgoing,m.isCancelled?'ملغاة':'مسجلة']);
+    //     }
+    //     page++;
+    //   } while (rows.length < expected);
+    //   await writeExcel([headers.map(value=>({value,fontWeight:'bold' as const})),...rows.map(row=>row.map(value=>
+    //     typeof value === 'number' ? {type:Number,value,format:'#,##0.00'} : {type:String,value}))],
+    //     {sheet:'كشف الحركة',fileName:'كشف الحركة المالية.xlsx',columns:headers.map(()=>({width:20})),stickyRowsCount:1});
+    // } catch (e) { this.toast.error(e instanceof Error && /[ء-ي]/.test(e.message) ? e.message : 'تعذر تصدير الكشف.'); }
+    // finally { this.exporting = false; }
   }
 }
