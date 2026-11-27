@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Common;
-using ZayirAlkhayr.Interfaces.Repositories;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
+using ZayirAlkhayr.Services.School.Students.ManageFee;
 using ZayirAlkhayr.Interfaces.School.Students.ManageAccount;
 using ZayirAlkhayr.Services.Common;
 
@@ -16,12 +17,12 @@ namespace ZayirAlkhayr.Services.School.Students.ManageAccount
 {
     public class StudentDueService : IStudentDueService
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ZADbContext _context;
         private readonly ISQLHelper _sQLHelper;
-        public StudentDueService(ZADbContext context, ISQLHelper sQLHelper, IUnitOfWork unitOfWork)
+        public StudentDueService(ZADbContext context, ISQLHelper sQLHelper)
         {
             _sQLHelper = sQLHelper;
-            _unitOfWork = unitOfWork;
+            _context = context;
         }
 
         public async Task<ApiResponseModel<DataTable>> GetStudentHasNextInstallmentSummary()
@@ -30,37 +31,13 @@ namespace ZayirAlkhayr.Services.School.Students.ManageAccount
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
-        public async Task<ApiResponseModel<DataSet>> GetStudentHasNextInstallment(PagingFilterModel PagingFilter)
-        {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
-            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
-            var Params = new SqlParameter[6];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@FromDate", FromDate);
-            Params[2] = new SqlParameter("@ToDate", ToDate);
-            Params[3] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[4] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            Params[5] = new SqlParameter("@IsFilter", false);
-            var dt = await _sQLHelper.ExecuteDatasetAsync("school.SP_GetAllStudentHasNextInstallment", Params);
-            return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
-        }
+        private IQueryable<StudentFeeRowDto> NextInstallments() =>
+            StudentFeeQueries.Rows(_context).Where(row => row.NextAmount.HasValue);
 
-        public async Task<ApiResponseModel<List<FilterModel>>> GetStudentHasNextInstallmentFilters(PagingFilterModel PagingFilter)
-        {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
-            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
-            var Params = new SqlParameter[6];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@FromDate", FromDate);
-            Params[2] = new SqlParameter("@ToDate", ToDate);
-            Params[3] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[4] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            Params[5] = new SqlParameter("@IsFilter", true);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetAllStudentHasNextInstallment", Params);
-            var Filters = dt.ToGroupedFilters();
-            return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
-        }
+        public Task<ApiResponseModel<StudentFeePageDto>> GetStudentHasNextInstallment(PagingFilterModel PagingFilter) =>
+            StudentFeeQueries.GetPage(NextInstallments(), PagingFilter);
+
+        public Task<ApiResponseModel<List<FilterModel>>> GetStudentHasNextInstallmentFilters(PagingFilterModel PagingFilter) =>
+            StudentFeeQueries.GetFilters(NextInstallments(), "تاريخ القسط القادم");
     }
 }
