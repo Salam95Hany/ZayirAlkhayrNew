@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Interfaces.School.Students.ManageFee;
 
 namespace ZayirAlkhayr.Controllers.School.Students.ManageFee
@@ -18,7 +19,7 @@ namespace ZayirAlkhayr.Controllers.School.Students.ManageFee
         }
 
         [HttpPost("GetAllStudentPaymentData")]
-        public async Task<ApiResponseModel<DataSet>> GetAllStudentPaymentData(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<StudentPaymentPageDto>> GetAllStudentPaymentData(PagingFilterModel PagingFilter)
         {
             var results = await _studentPaymentService.GetAllStudentPaymentData(PagingFilter);
             return results;
