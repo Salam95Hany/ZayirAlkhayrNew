@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Models.School;
 using ZayirAlkhayr.Interfaces.School.Students.ManageFee;
 
@@ -26,7 +27,7 @@ namespace ZayirAlkhayr.Controllers.School.Students.ManageFee
         }
 
         [HttpPost("GetAllStudentFeeData")]
-        public async Task<ApiResponseModel<DataSet>> GetAllStudentFeeData(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<StudentFeePageDto>> GetAllStudentFeeData(PagingFilterModel PagingFilter)
         {
             var results = await _studentFeeService.GetAllStudentFeeData(PagingFilter);
             return results;
