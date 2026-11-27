@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +11,7 @@ namespace ZayirAlkhayr.Interfaces.School.Students.ManageStudent
 {
     public interface IStudentTicketService
     {
-        Task<ApiResponseModel<DataTable>> GetAllStudentTicketData(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<List<StudentTicketDto>>> GetAllStudentTicketData(PagingFilterModel PagingFilter);
         Task<List<StudentCardData>> GetStudentCardReportData(List<StudentCardData> Model);
         Task AddStudentTicketPrinted(List<int> StudentIds);
         Task<List<FilterModel>> GetAcademicStages();
