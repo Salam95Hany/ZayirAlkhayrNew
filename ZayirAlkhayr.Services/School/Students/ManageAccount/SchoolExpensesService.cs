@@ -2,8 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Globalization;
-using ZayirAlkhayr.Entities.Auth;
+using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Models.School;
 using ZayirAlkhayr.Interfaces.Common;
 using ZayirAlkhayr.Interfaces.Repositories;
@@ -14,10 +15,12 @@ namespace ZayirAlkhayr.Services.School.Students.ManageAccount
 {
     public class SchoolExpensesService: ISchoolExpensesService
     {
+        private readonly ZADbContext _context;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISQLHelper _sQLHelper;
-        public SchoolExpensesService(ISQLHelper sQLHelper, IUnitOfWork unitOfWork)
+        public SchoolExpensesService(ZADbContext context, ISQLHelper sQLHelper, IUnitOfWork unitOfWork)
         {
+            _context = context;
             _sQLHelper = sQLHelper;
             _unitOfWork = unitOfWork;
         }
@@ -56,14 +59,12 @@ namespace ZayirAlkhayr.Services.School.Students.ManageAccount
             return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetExpensesStatistics(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<SchoolExpenseStatisticsDto>>> GetExpensesStatistics(PagingFilterModel PagingFilter)
         {
             var filters = PagingFilter.FilterList.ToLookup(f => f.CategoryName, StringComparer.OrdinalIgnoreCase);
-            var expenses = _unitOfWork.Repository<Expense>().GetAllAsQueryable();
-            var filtered = from expense in expenses
-                           join user in _unitOfWork.Repository<AdminUser>().GetAllAsQueryable() on expense.InsertUser equals user.Id
-                           join type in _unitOfWork.Repository<ExpensesType>().GetAllAsQueryable() on expense.ExpensesTypeId equals type.Id
-                           select expense;
+            var expenses = _context.Expenses;
+            // Older expenses may reference a user who no longer exists.
+            var filtered = expenses.Where(e => _context.Users.Any(user => user.Id == e.InsertUser));
 
             var dates = filters["DateRange"].FirstOrDefault();
             if (!string.IsNullOrEmpty(dates?.From) && !string.IsNullOrEmpty(dates.To))
@@ -109,14 +110,14 @@ namespace ZayirAlkhayr.Services.School.Students.ManageAccount
             double.TryParse(filters["Percentage"].LastOrDefault()?.ItemId, NumberStyles.Float,
                 CultureInfo.InvariantCulture, out var percentage);
 
-            var dt = new DataTable();
-            dt.Columns.Add("TotalMoney", typeof(double));
-            dt.Columns.Add("CurrentMonthMony", typeof(double));
-            dt.Columns.Add("TotalMoneyPercentage", typeof(double));
-            dt.Columns.Add("CurrentMonthMonyPercentage", typeof(double));
-            dt.Rows.Add(total, month, total.GetValueOrDefault() * percentage / 100,
-                month.GetValueOrDefault() * percentage / 100);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var statistics = new SchoolExpenseStatisticsDto
+            {
+                TotalMoney = total,
+                CurrentMonthMony = month,
+                TotalMoneyPercentage = total.GetValueOrDefault() * percentage / 100,
+                CurrentMonthMonyPercentage = month.GetValueOrDefault() * percentage / 100
+            };
+            return ApiResponseModel<List<SchoolExpenseStatisticsDto>>.Success(GenericErrors.GetSuccess, [statistics], 0);
         }
 
         public async Task<ApiResponseModel<string>> AddNewExpenses(Expense Model)
