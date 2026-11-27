@@ -11,7 +11,7 @@ namespace ZayirAlkhayr.Interfaces.School.Students.ManageStudent
 {
     public interface IStudentService
     {
-        Task<ApiResponseModel<DataSet>> GetAllStudentData(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<StudentPageDto>> GetAllStudentData(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<List<FilterModel>>> GetAllStudentFilter(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<StudentFullDataDto>> GetStudentHistoryById(int StudentId);
         Task<ApiResponseModel<DataTable>> ExportStudentData(List<FilterModel> FilterList);

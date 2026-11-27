@@ -19,7 +19,7 @@ namespace ZayirAlkhayr.Controllers.School.Students.ManageStudent
         }
 
         [HttpPost("GetAllStudentData")]
-        public async Task<ApiResponseModel<DataSet>> GetAllStudentData(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<StudentPageDto>> GetAllStudentData(PagingFilterModel PagingFilter)
         {
             var results = await _studentService.GetAllStudentData(PagingFilter);
             return results;

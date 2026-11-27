@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Globalization;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Models;
@@ -15,39 +16,137 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
 {
     public class StudentService : IStudentService
     {
+        private readonly ZADbContext _context;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ISQLHelper _sQLHelper;
         private const string Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         public StudentService(ZADbContext context, ISQLHelper sQLHelper, IUnitOfWork unitOfWork)
         {
+            _context = context;
             _sQLHelper = sQLHelper;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ApiResponseModel<DataSet>> GetAllStudentData(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<StudentPageDto>> GetAllStudentData(PagingFilterModel PagingFilter)
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[4];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            Params[3] = new SqlParameter("@IsFilter", false);
-            var dt = await _sQLHelper.ExecuteDatasetAsync("school.SP_GetAllStudentDataWithFilters", Params);
-            return ApiResponseModel<DataSet>.Success(GenericErrors.GetSuccess, dt);
+            var rows = StudentRows();
+            var filters = PagingFilter.FilterList.ToLookup(f => f.CategoryName, StringComparer.OrdinalIgnoreCase);
+            int?[] Ids(string category) => filters[category].Select(f =>
+                f.ItemId == null ? (int?)null : int.Parse(f.ItemId, CultureInfo.InvariantCulture)).ToArray();
+
+            var users = filters["Users"].Select(f => f.ItemId).ToArray();
+            if (users.Length > 0)
+                rows = rows.Where(r => users.Contains(r.UserId));
+            var statuses = Ids("StudentStatus");
+            if (statuses.Length > 0)
+                rows = rows.Where(r => statuses.Contains(r.StudentStatusId));
+            var nationalities = Ids("Nationality");
+            if (nationalities.Length > 0)
+                rows = rows.Where(r => nationalities.Contains(r.NationalityId));
+            var stages = Ids("AcademicStage");
+            if (stages.Length > 0)
+                rows = rows.Where(r => stages.Contains(r.AcademicStageId));
+            var genders = filters["Gender"].Select(f => f.ItemId).ToArray();
+            if (genders.Length > 0)
+                rows = rows.Where(r => genders.Contains(r.GenderId));
+            var periods = Ids("StudyPeriod");
+            if (periods.Length > 0)
+                rows = rows.Where(r => periods.Contains(r.StudyPeriodId));
+            var types = Ids("StudentType");
+            if (types.Length > 0)
+                rows = rows.Where(r => types.Contains(r.StudentTypeId));
+
+            var search = filters["SearchText"].LastOrDefault()?.ItemId;
+            if (search != null)
+                rows = rows.Where(r => EF.Functions.Like(ZADbContext.NormalizeArabicText(r.StudentName), "%" + ZADbContext.NormalizeArabicText(search) + "%")
+                    || EF.Functions.Like(ZADbContext.NormalizeArabicText(r.ParentName), "%" + ZADbContext.NormalizeArabicText(search) + "%"));
+
+            var results = await rows.OrderByDescending(r => r.InsertDate).ThenByDescending(r => r.StudentEnrollmentId)
+                .Skip(checked((PagingFilter.Currentpage - 1) * PagingFilter.Pagesize)).Take(PagingFilter.Pagesize)
+                .Select(r => new { Row = r, Count = rows.Count() }).ToListAsync();
+            var page = new StudentPageDto();
+            foreach (var result in results)
+            {
+                result.Row.TotalCount = result.Count;
+                page.Table.Add(result.Row);
+            }
+            return ApiResponseModel<StudentPageDto>.Success(GenericErrors.GetSuccess, page, page.Table.FirstOrDefault()?.TotalCount ?? 0);
         }
 
         public async Task<ApiResponseModel<List<FilterModel>>> GetAllStudentFilter(PagingFilterModel PagingFilter)
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var Params = new SqlParameter[4];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@CurrentPage", PagingFilter.Currentpage);
-            Params[2] = new SqlParameter("@PageSize", PagingFilter.Pagesize);
-            Params[3] = new SqlParameter("@IsFilter", true);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetAllStudentDataWithFilters", Params);
-            var Filters = dt.ToGroupedFilters();
-            return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, Filters);
+            var rows = StudentRows();
+            var groups = new List<FilterModel>();
+            AddGroup("SearchText", "باسم الطالب, ولي الأمر", "SearchText", [new() { ItemId = "", ItemKey = "", ItemValue = "" }]);
+            AddGroup("DateRange", "تاريخ الاضافة", "DateRange", [new() { ItemId = "", ItemKey = "", ItemValue = "" }]);
+            AddGroup("Users", "المستخدمين", "Checkbox", await rows
+                .GroupBy(r => new { r.UserId, r.CreatedBy })
+                .Select(g => new FilterModel { ItemId = g.Key.UserId, ItemKey = g.Key.CreatedBy, ItemValue = g.Count().ToString() }).ToListAsync());
+            AddGroup("StudentStatus", "حالة الطالب", "Checkbox", await rows
+                .GroupBy(r => new { r.StudentStatusId, r.StudentStatusName })
+                .Select(g => new FilterModel { ItemId = g.Key.StudentStatusId.ToString(), ItemKey = g.Key.StudentStatusName, ItemValue = g.Count().ToString() }).ToListAsync());
+            AddGroup("Nationality", "الجنسية", "Checkbox", await rows
+                .GroupBy(r => new { r.NationalityId, r.NationalityName })
+                .Select(g => new FilterModel { ItemId = g.Key.NationalityId.ToString(), ItemKey = g.Key.NationalityName, ItemValue = g.Count().ToString() }).ToListAsync());
+            AddGroup("AcademicStage", "المرحلة الدراسية", "Checkbox", await rows
+                .GroupBy(r => new { r.AcademicStageId, r.AcademicStageName })
+                .Select(g => new FilterModel { ItemId = g.Key.AcademicStageId.ToString(), ItemKey = g.Key.AcademicStageName, ItemValue = g.Count().ToString() }).ToListAsync());
+            AddGroup("Gender", "الجنس", "Checkbox", await rows
+                .GroupBy(r => new { r.GenderId, r.Gender })
+                .Select(g => new FilterModel { ItemId = g.Key.GenderId, ItemKey = g.Key.Gender, ItemValue = g.Count().ToString() }).ToListAsync());
+            AddGroup("StudyPeriod", "الفترة الدراسية", "Checkbox", await rows
+                .GroupBy(r => new { r.StudyPeriodId, r.StudyPeriodName })
+                .Select(g => new FilterModel { ItemId = g.Key.StudyPeriodId.ToString(), ItemKey = g.Key.StudyPeriodName, ItemValue = g.Count().ToString() }).ToListAsync());
+            AddGroup("StudentType", "نوع الطالب", "Checkbox", await rows
+                .GroupBy(r => new { r.StudentTypeId, r.StudentTypeName })
+                .Select(g => new FilterModel { ItemId = g.Key.StudentTypeId.ToString(), ItemKey = g.Key.StudentTypeName, ItemValue = g.Count().ToString() }).ToListAsync());
+            return ApiResponseModel<List<FilterModel>>.Success(GenericErrors.GetSuccess, groups);
+
+            void AddGroup(string category, string label, string type, List<FilterModel> items)
+            {
+                if (items.Count == 0)
+                    return;
+                foreach (var item in items)
+                    item.CategoryName = category;
+                groups.Add(new FilterModel { CategoryName = category, CategoryDisplayName = label, FilterType = type, FilterItems = items });
+            }
         }
+
+        private IQueryable<StudentRowDto> StudentRows() =>
+            from enrollment in _context.StudentEnrollments
+            let student = enrollment.Student
+            let parent = student.Parent
+            where student.InsertUser != null
+            select new StudentRowDto
+            {
+                Id = student.Id,
+                StudentEnrollmentId = enrollment.Id,
+                ParentId = student.ParentId,
+                Code = student.Code,
+                StudentName = student.StudentName,
+                ParentName = parent.Name,
+                AcademicStageName = enrollment.AcademicStage.Name,
+                AcademicYearName = enrollment.AcademicYear.Name,
+                ParentPhone = string.IsNullOrEmpty(parent.ParentPhone) ? parent.MotherPhone : parent.ParentPhone,
+                NationalityName = student.Nationality.Name,
+                StudentStatusName = enrollment.StudentStatusId == StudentStatus.Present ? "موجود"
+                    : enrollment.StudentStatusId == StudentStatus.Withdrawn ? "منسحب"
+                    : enrollment.StudentStatusId == StudentStatus.Deleted ? "محذوف" : "غير معروف",
+                BirthDay = student.BirthDay,
+                Address = parent.Address,
+                Gender = Convert.ToInt32(student.Gender) == 1 ? "ذكر" : "أنثى",
+                GenderId = student.Gender,
+                AcademicStageId = enrollment.AcademicStageId,
+                StudyPeriodId = (int)enrollment.StudyPeriodId,
+                StudyPeriodName = enrollment.StudyPeriodId == StudyPeriod.Morning ? "صباحي" : "مسائي",
+                NationalityId = student.NationalityId,
+                StudentStatusId = (int)enrollment.StudentStatusId,
+                StudentTypeId = student.StudentTypeId,
+                StudentTypeName = student.StudentType.Name,
+                CreatedBy = student.CreatedBy!.UserName,
+                UserId = student.InsertUser!,
+                InsertDate = student.InsertDate
+            };
 
         public async Task<ApiResponseModel<DataTable>> ExportStudentData(List<FilterModel> FilterList)
         {
