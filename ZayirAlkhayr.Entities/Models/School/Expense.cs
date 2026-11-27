@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 using ZayirAlkhayr.Entities.Common;
 
 namespace ZayirAlkhayr.Entities.Models.School
@@ -12,6 +13,9 @@ namespace ZayirAlkhayr.Entities.Models.School
         public int DonationMethodId { get; set; }
         public string? TransactionType { get; set; }
         public int ExpensesTypeId { get; set; }
+        [ForeignKey(nameof(ExpensesTypeId))]
+        [DeleteBehavior(DeleteBehavior.NoAction)]
+        public ExpensesType? ExpensesType { get; set; }
         public DateTime ExpensesDate { get; set; }
     }
 }
