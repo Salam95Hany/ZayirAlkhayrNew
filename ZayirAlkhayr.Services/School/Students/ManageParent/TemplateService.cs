@@ -1,6 +1,4 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
@@ -9,7 +7,7 @@ using ZayirAlkhayr.Entities.Contracts.DTOs.ZAInstitution.GeneralServices;
 using ZayirAlkhayr.Entities.Contracts.Requests;
 using ZayirAlkhayr.Entities.Models.School;
 using ZayirAlkhayr.Entities.Specifications.School;
-using ZayirAlkhayr.Interfaces.Common;
+using ZayirAlkhayr.Entities.Models;
 using ZayirAlkhayr.Interfaces.Repositories;
 using ZayirAlkhayr.Interfaces.School.Students.ManageParent;
 using ZayirAlkhayr.Services.Common;
@@ -19,49 +17,41 @@ namespace ZayirAlkhayr.Services.School.Students.ManageParent
     public class TemplateService : ITemplateService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ISQLHelper _sQLHelper;
-        public TemplateService(IUnitOfWork unitOfWork, ISQLHelper sQLHelper)
+        private readonly ZADbContext _context;
+        public TemplateService(IUnitOfWork unitOfWork, ZADbContext context)
         {
             _unitOfWork = unitOfWork;
-            _sQLHelper = sQLHelper;
+            _context = context;
         }
 
         public async Task<ApiResponseModel<string>> GetStudentTempMessage(int TemplateId, int ParentId, int? StudentId)
         {
-            var templateResult = await GetTemplateById(TemplateId);
-            var studentResult = await GetStudentTempDetails(ParentId, StudentId);
-            if (!templateResult.IsSuccess || !studentResult.IsSuccess || studentResult.Results.Rows.Count == 0)
+            var body = await _context.Templates.Where(t => t.Id == TemplateId)
+                .Select(t => t.Body).FirstOrDefaultAsync();
+            if (body == null)
                 return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
 
-            var body = templateResult.Results.Body;
-            DataRow row = studentResult.Results.Rows[0];
+            var details = await GetStudentTempDetails(ParentId, StudentId);
+            if (details == null)
+                return ApiResponseModel<string>.Failure(GenericErrors.NotFound);
 
-            foreach (DataColumn column in studentResult.Results.Columns)
+            foreach (var field in typeof(StudentTemplateDetailsDto).GetProperties())
             {
-                var rawValue = row[column.ColumnName];
-                string value;
-
-                if (rawValue == DBNull.Value || rawValue == null)
-                    value = string.Empty;
-                else if (rawValue is DateTime dateTime)
-                    value = dateTime.ToString("yyyy/MM/dd");
-                else
-                    value = rawValue.ToString();
-
-                body = body.Replace($"{{{{{column.ColumnName}}}}}", value);
+                var value = field.GetValue(details);
+                var text = value is DateTime date ? date.ToString("yyyy/MM/dd") : value?.ToString() ?? string.Empty;
+                body = body.Replace($"{{{{{field.Name}}}}}", text);
             }
 
-            body = body.TrimEnd();
-            return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, body);
+            return ApiResponseModel<string>.Success(GenericErrors.GetSuccess, body.TrimEnd());
         }
 
-        public async Task<ApiResponseModel<DataTable>> GetStudentTempDetails(int ParentId, int? StudentId)
+        private Task<StudentTemplateDetailsDto?> GetStudentTempDetails(int parentId, int? studentId)
         {
-            var Params = new SqlParameter[2];
-            Params[0] = new SqlParameter("@ParentId", ParentId);
-            Params[1] = new SqlParameter("@StudentId", StudentId);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetStudentTempDetails", Params);
-            return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
+            var query = _context.Set<StudentTemplateDetailsDto>().Where(row => row.ParentId == parentId);
+            if (studentId.HasValue)
+                query = query.Where(row => row.StudentId == studentId.Value);
+
+            return query.FirstOrDefaultAsync();
         }
 
         public async Task<ApiResponseModel<List<FamilyDto>>> GetAllTemplateData(PagingFilterModel PagingFilter)

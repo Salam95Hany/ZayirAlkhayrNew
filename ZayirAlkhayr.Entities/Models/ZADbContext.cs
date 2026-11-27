@@ -90,6 +90,10 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     {
         base.OnModelCreating(builder);
 
+        builder.Entity<StudentTemplateDetailsDto>()
+            .HasNoKey()
+            .ToView("V_StudentDetails", "school");
+
         builder.Entity<StudentFullDataSqlResponse>()
             .HasNoKey()
             .ToView("V_StudentFullData", "school");
