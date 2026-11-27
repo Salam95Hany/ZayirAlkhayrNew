@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Models.School;
@@ -18,7 +17,7 @@ namespace ZayirAlkhayr.Controllers.School.Students.ManageAccount
         }
 
         [HttpPost("GetExpensesData")]
-        public async Task<ApiResponseModel<DataSet>> GetExpensesData(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<SchoolExpensePageDto>> GetExpensesData(PagingFilterModel PagingFilter)
         {
             var result = await _schoolExpensesService.GetExpensesData(PagingFilter);
             return result;
