@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Data;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Interfaces.School.Students.ManageStudent;
 
@@ -18,7 +18,7 @@ namespace ZayirAlkhayr.Controllers.School.Students.ManageStudent
         }
 
         [HttpPost("GetAllStudentTicketData")]
-        public async Task<ApiResponseModel<DataTable>> GetAllStudentTicketData(PagingFilterModel PagingFilter)
+        public async Task<ApiResponseModel<List<StudentTicketDto>>> GetAllStudentTicketData(PagingFilterModel PagingFilter)
         {
             var results = await _studentTicketService.GetAllStudentTicketData(PagingFilter);
             return results;

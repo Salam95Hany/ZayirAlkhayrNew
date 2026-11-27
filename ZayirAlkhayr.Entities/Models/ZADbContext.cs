@@ -86,6 +86,9 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     #endregion
 
 
+    [DbFunction("NormalizeArabicText", "dbo")]
+    public static string NormalizeArabicText(string text) => throw new NotSupportedException();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
