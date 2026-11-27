@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using ZayirAlkhayr.Entities.Auth;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Models.School;
 using ZayirAlkhayr.Entities.Models.Settings;
 using ZayirAlkhayr.Entities.Models.ZAInstitution;
@@ -88,6 +89,10 @@ public partial class ZADbContext : IdentityDbContext<AdminUser>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<StudentFullDataSqlResponse>()
+            .HasNoKey()
+            .ToView("V_StudentFullData", "school");
 
         builder.Entity<TemplateVariableMapping>()
             .HasOne(x => x.Template)

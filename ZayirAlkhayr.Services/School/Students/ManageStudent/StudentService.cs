@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Contracts.DTOs.School;
@@ -59,9 +60,9 @@ namespace ZayirAlkhayr.Services.School.Students.ManageStudent
 
         public async Task<ApiResponseModel<StudentFullDataDto>> GetStudentHistoryById(int StudentId)
         {
-            var Params = new SqlParameter[1];
-            Params[0] = new SqlParameter("@StudentId", StudentId);
-            var Data = await _sQLHelper.SQLQueryAsync<StudentFullDataSqlResponse>("school.SP_GetStudentHistoryById", Params);
+            var Data = await _unitOfWork.Repository<StudentFullDataSqlResponse>().GetAllAsQueryable()
+                .Where(row => row.StudentId == StudentId)
+                .ToListAsync();
 
             if (!Data.Any())
                 return ApiResponseModel<StudentFullDataDto>.Failure(GenericErrors.TransFailed);
