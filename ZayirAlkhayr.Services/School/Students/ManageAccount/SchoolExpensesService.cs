@@ -1,5 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Globalization;
+using ZayirAlkhayr.Entities.Auth;
 using ZayirAlkhayr.Entities.Common;
 using ZayirAlkhayr.Entities.Models.School;
 using ZayirAlkhayr.Interfaces.Common;
@@ -55,15 +58,64 @@ namespace ZayirAlkhayr.Services.School.Students.ManageAccount
 
         public async Task<ApiResponseModel<DataTable>> GetExpensesStatistics(PagingFilterModel PagingFilter)
         {
-            var FilterDt = PagingFilter.FilterList.ToDataTableFromFilterModel();
-            var FromDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.From;
-            var ToDate = PagingFilter.FilterList.FirstOrDefault(i => i.CategoryName == "DateRange")?.To;
+            var filters = PagingFilter.FilterList.ToLookup(f => f.CategoryName, StringComparer.OrdinalIgnoreCase);
+            var expenses = _unitOfWork.Repository<Expense>().GetAllAsQueryable();
+            var filtered = from expense in expenses
+                           join user in _unitOfWork.Repository<AdminUser>().GetAllAsQueryable() on expense.InsertUser equals user.Id
+                           join type in _unitOfWork.Repository<ExpensesType>().GetAllAsQueryable() on expense.ExpensesTypeId equals type.Id
+                           select expense;
 
-            var Params = new SqlParameter[3];
-            Params[0] = new SqlParameter("@FilterList", FilterDt);
-            Params[1] = new SqlParameter("@FromDate", FromDate);
-            Params[2] = new SqlParameter("@ToDate", ToDate);
-            var dt = await _sQLHelper.ExecuteDataTableAsync("school.SP_GetExpensesStatistics", Params);
+            var dates = filters["DateRange"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(dates?.From) && !string.IsNullOrEmpty(dates.To))
+            {
+                var start = DateTime.Parse(dates.From, CultureInfo.InvariantCulture).Date;
+                var end = DateTime.Parse(dates.To, CultureInfo.InvariantCulture).Date;
+                filtered = filtered.Where(e => e.ExpensesDate >= start);
+                if (end < DateTime.MaxValue.Date)
+                {
+                    var until = end.AddDays(1);
+                    filtered = filtered.Where(e => e.ExpensesDate < until);
+                }
+            }
+
+            var users = filters["Users"].Select(f => f.ItemId).ToArray();
+            var types = filters["ExpensesType"].Select(f => f.ItemId == null ? (int?)null : int.Parse(f.ItemId, CultureInfo.InvariantCulture)).ToArray();
+            var methods = filters["DonationMethod"].Select(f => f.ItemId == null ? (int?)null : int.Parse(f.ItemId, CultureInfo.InvariantCulture)).ToArray();
+            if (users.Length > 0)
+                filtered = filtered.Where(e => users.Contains(e.InsertUser));
+            if (types.Length > 0)
+                filtered = filtered.Where(e => types.Contains(e.ExpensesTypeId));
+            if (methods.Length > 0)
+                filtered = filtered.Where(e => methods.Contains(e.DonationMethodId));
+
+            var search = filters["SearchText"].LastOrDefault()?.ItemId;
+            if (search != null)
+                filtered = filtered.Where(e => EF.Functions.Like(e.Details!, "%" + search + "%"));
+
+            // Use SQL Server's current month, independently of the selected filters.
+            var monthExpenses = from e in expenses
+                                let start = EF.Functions.DateFromParts(DateTime.Now.Year, DateTime.Now.Month, 1)
+                                where e.ExpensesDate >= start && e.ExpensesDate < start.AddMonths(1)
+                                select e;
+
+            var totals = await filtered.GroupBy(e => 1)
+                .Select(g => new { IsCurrentMonth = false, Amount = g.Sum(e => e.TotalValue) })
+                .Concat(monthExpenses.GroupBy(e => 1)
+                    .Select(g => new { IsCurrentMonth = true, Amount = g.Sum(e => e.TotalValue) }))
+                .ToListAsync();
+
+            var total = totals.FirstOrDefault(x => !x.IsCurrentMonth)?.Amount;
+            var month = totals.FirstOrDefault(x => x.IsCurrentMonth)?.Amount;
+            double.TryParse(filters["Percentage"].LastOrDefault()?.ItemId, NumberStyles.Float,
+                CultureInfo.InvariantCulture, out var percentage);
+
+            var dt = new DataTable();
+            dt.Columns.Add("TotalMoney", typeof(double));
+            dt.Columns.Add("CurrentMonthMony", typeof(double));
+            dt.Columns.Add("TotalMoneyPercentage", typeof(double));
+            dt.Columns.Add("CurrentMonthMonyPercentage", typeof(double));
+            dt.Rows.Add(total, month, total.GetValueOrDefault() * percentage / 100,
+                month.GetValueOrDefault() * percentage / 100);
             return ApiResponseModel<DataTable>.Success(GenericErrors.GetSuccess, dt);
         }
 
