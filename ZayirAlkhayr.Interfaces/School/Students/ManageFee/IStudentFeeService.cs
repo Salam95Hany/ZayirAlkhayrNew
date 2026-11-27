@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZayirAlkhayr.Entities.Common;
+using ZayirAlkhayr.Entities.Contracts.DTOs.School;
 using ZayirAlkhayr.Entities.Models.School;
 
 namespace ZayirAlkhayr.Interfaces.School.Students.ManageFee
@@ -12,7 +13,7 @@ namespace ZayirAlkhayr.Interfaces.School.Students.ManageFee
     public interface IStudentFeeService
     {
         Task<ApiResponseModel<DataTable>> GetCurrentAcademicYearFinancialSummary();
-        Task<ApiResponseModel<DataSet>> GetAllStudentFeeData(PagingFilterModel PagingFilter);
+        Task<ApiResponseModel<StudentFeePageDto>> GetAllStudentFeeData(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<List<FilterModel>>> GetAllStudentFeeFilters(PagingFilterModel PagingFilter);
         Task<ApiResponseModel<DataTable>> ExportStudentFee(List<FilterModel> FilterList);
         Task<ApiResponseModel<string>> AddNewStudentFee(StudentFee Model, CancellationToken cancellationToken = default);
